@@ -7,27 +7,37 @@ extern "C" {
 
 TEST_GROUP(RequestLineTestGroup)
 {
-    char requestLineString[128];
-    struct RequestLine requestLine;
+    char RegisterRequestLineString[128];
+    char InviteRequestLineString[128];
+
+    struct RequestLine RegisterRequestLine;
+    struct RequestLine InviteRequestLine;
 
     void setup()
     {
-        strcpy(requestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
-        parseRequestLine(requestLineString, &requestLine);
+        strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
+        parseRequestLine(RegisterRequestLineString, &RegisterRequestLine);
+
+        strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0");
+        parseRequestLine(InviteRequestLineString, &InviteRequestLine);
+        
     }
 };
 
-TEST(RequestLineTestGroup, MethodTest)
+TEST(RequestLineTestGroup, RegisterMethodTest)
 {
-    STRCMP_EQUAL(requestLine.Method, "REGISTER");
+    STRCMP_EQUAL("REGISTER",RegisterRequestLine.Method);
+    STRCMP_EQUAL("INVITE", InviteRequestLine.Method);
 }
 
-TEST(RequestLineTestGroup, Request_URITest)
+TEST(RequestLineTestGroup, RegisterRequest_URITest)
 {
-    STRCMP_EQUAL(requestLine.Request_URI, "sip:192.168.2.89");
+    STRCMP_EQUAL(RegisterRequestLine.Request_URI, "sip:192.168.2.89");
+    STRCMP_EQUAL(InviteRequestLine.Request_URI, "sip:7170@iptel.org");
 }
 
-TEST(RequestLineTestGroup, SIP_VersionTest)
+TEST(RequestLineTestGroup, RegisterSIP_VersionTest)
 {
-    STRCMP_EQUAL(requestLine.SIP_Version, "SIP/2.0");
+    STRCMP_EQUAL("SIP/2.0", RegisterRequestLine.SIP_Version);
+    STRCMP_EQUAL("SIP/1.0", InviteRequestLine.SIP_Version);
 }
