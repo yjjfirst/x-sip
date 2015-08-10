@@ -4,15 +4,24 @@ CXX=g++
 CPPUTEST_HOME=../cpputest
 CPPFLAGS += -I$(CPPUTEST_HOME)/include -I../include
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
-
-TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o
-PRODUCT_OBJS= ../src/RequestLine.o
-%.o:%.cpp
-	$(CXX) -c -o $@ $< $(CPPFLAGS)
+SRCS= AllTests.cpp FirstTest.cpp RequestLineTest.cpp ../src/RequestLine.cpp
 CFLAGS= -I.
-AllTests: $(TESTSUITE_OBJS) $(PRODUCT_OBJS)
+
+.PHONY: all
+
+all:AllTests
+
+TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o ../src/RequestLine.o
+
+%.o:%.cpp
+	$(CXX) -MMD -c -o $@ $< $(CPPFLAGS)
+
+AllTests: $(TESTSUITE_OBJS) 
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LD_LIBRARIES)
 
 clean:
-	rm *.o
-	rm AllTests
+	@rm *.d
+	@rm *.o
+	@rm AllTests
+
+-include $(SRCS:%.cpp=%.d)

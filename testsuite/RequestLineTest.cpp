@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
+#include "RequestLine.h"
 
 extern "C" {
-#include "RequestLine.h"
 #include "string.h"
 }
 
@@ -15,10 +15,10 @@ TEST_GROUP(RequestLineTestGroup)
 
     void setup()
     {
-        strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
+        strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0\r\n");
         parseRequestLine(RegisterRequestLineString, &RegisterRequestLine);
 
-        strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0");
+        strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0\r\n");
         parseRequestLine(InviteRequestLineString, &InviteRequestLine);
         
     }
