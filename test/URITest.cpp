@@ -1,9 +1,11 @@
 #include "CppUTest/TestHarness.h"
-#include "URI.h"
 
 extern "C" {
 
 #include <string.h>
+#include "URI.h"
+#include "RequestLine.h"
+
 }
 
 TEST_GROUP(URITestGroup)

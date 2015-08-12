@@ -4,5 +4,5 @@ struct RequestLine {
 	char SIP_Version[16];
 };
 
-int parseRequestLine(char *RequestLineString, struct RequestLine *requestLine);
+int parse(char *header, void *target);
    
