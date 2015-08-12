@@ -1,8 +1,8 @@
 #include "CppUTest/TestHarness.h"
-#include "RequestLine.h"
 
 extern "C" {
-#include "string.h"
+#include <string.h>
+#include "RequestLine.h"
 }
 
 TEST_GROUP(RequestLineTestGroup)
