@@ -1,18 +1,7 @@
-#include "RequestLine.h"
-
 #include <string.h>
 #include <stdio.h>
 
-#define SPACE " "
-#define CRLF "\r\n"
-
-struct ParseStruct {
-    char *name;
-    char *separator;
-    int optional;
-    int (*parser) (char *value, void *target);
-};
-
+#include "RequestLine.h"
 
 int parseMethod (char *method, void *target) 
 {
@@ -32,27 +21,14 @@ int parseSIPVersion(char *version, void *target)
     strcpy(rl->SIP_Version, version);
 }
 
-struct ParseStruct RequestLineParser[] = {
+struct ParsePattern RequestLinePattern[] = {
     {"method",     SPACE, 0, parseMethod},
     {"uri",        SPACE, 0, parseURI},
     {"sip_version",CRLF,  0, parseSIPVersion},
     {NULL, NULL, 0, NULL}
 };
 
-int parse(char *header, void* target)
+struct ParsePattern *GetRequestLinePattern ()
 {
-    char *curr = header;
-    char *next = header;
-    int i = 0;
-    char value[128];
-    
-    for ( ; RequestLineParser[i].name != NULL; i ++) {
-        if (!(curr = strstr(next, RequestLineParser[i].separator))) continue;
-        bzero(value, sizeof(value));
-        strncpy(value, next, curr - next);
-        RequestLineParser[i].parser(value, target);
-        next = curr + strlen(RequestLineParser[i].separator);
-    }
-
-    return 0;
+    return RequestLinePattern;
 }

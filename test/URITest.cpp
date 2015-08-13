@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
-
+#include <stdio.h>
 #include <string.h>
 #include "URI.h"
 #include "RequestLine.h"
@@ -10,19 +10,24 @@ extern "C" {
 
 TEST_GROUP(URITestGroup)
 {
-    char URIString[128];
     void setup()
     {
-        strcpy(URIString, "sip:alice:secretword@atlanta.com;transport=tcp");
     }
 };
 
 TEST(URITestGroup, URISchemeParseTest)
 {
     struct URI uri;
-    ParseURI(URIString, &uri);
+    char *URIString1 = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char *URIString2 = "sips:peter@192.168.10.62:5060";
 
+    ParseURI(URIString1, &uri);
     STRCMP_EQUAL("sip", uri.scheme);
     STRCMP_EQUAL("alice", uri.user);
-    STRCMP_EQUAL("secretword", uri.password);
+
+    ParseURI(URIString2, &uri);
+
+    STRCMP_EQUAL("sips", uri.scheme);
+    STRCMP_EQUAL("peter", uri.user);
+
 }
