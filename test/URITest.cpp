@@ -3,8 +3,9 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+
 #include "URI.h"
-#include "RequestLine.h"
+#include "Parser.h"
 
 }
 
@@ -15,19 +16,20 @@ TEST_GROUP(URITestGroup)
     }
 };
 
-TEST(URITestGroup, URISchemeParseTest)
+TEST(URITestGroup, URISchemeSIPParseTest)
 {
     struct URI uri;
-    char *URIString1 = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
-    char *URIString2 = "sips:peter@192.168.10.62:5060";
-
-    ParseURI(URIString1, &uri);
+    char *URIString = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+ 
+    Parse(URIString, &uri, GetURIParsePattern());
     STRCMP_EQUAL("sip", uri.scheme);
-    STRCMP_EQUAL("alice", uri.user);
+}
 
-    ParseURI(URIString2, &uri);
+TEST(URITestGroup, URISchemeSIPSParseTest)
+{
+    struct URI uri;
+    char *URIString = "sips:peter@192.168.10.62:5060";
 
+    Parse(URIString, &uri, GetURIParsePattern());
     STRCMP_EQUAL("sips", uri.scheme);
-    STRCMP_EQUAL("peter", uri.user);
-
 }

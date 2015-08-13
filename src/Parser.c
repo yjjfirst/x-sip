@@ -3,7 +3,7 @@
 
 #include "Parser.h"
 
-int parse(char *header, void* target, struct ParsePattern *pattern)
+int Parse(char *header, void* target, struct ParsePattern *pattern)
 {
     char *curr = header;
     char *next = header;

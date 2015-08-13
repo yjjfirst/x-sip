@@ -1,6 +1,9 @@
 
 #define SPACE " "
 #define CRLF "\r\n"
+#define SEMICOLON ";"
+#define COLON ":"
+#define AT "@"
 
 struct ParsePattern {
     char *name;
@@ -9,6 +12,6 @@ struct ParsePattern {
     int (*parser) (char *value, void *target);
 };
 
-int parse(char *header, void *target, struct ParsePattern *pattern);
+int Parse(char *header, void *target, struct ParsePattern *pattern);
 
 

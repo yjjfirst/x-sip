@@ -1,10 +1,20 @@
 #include <string.h>
 #include "URI.h"
+#include "Parser.h"
 
-  
-int ParseURI(char *URIString, struct URI *uri)
+int ParseScheme(char *value, void *target)
 {
-    strcpy(uri->scheme, "sip");
-    strcpy(uri->user,"alice");
-    return 0;
+    struct URI *uri = (struct URI *) target;
+    strcpy(uri->scheme, value);
+}
+
+struct ParsePattern URIParsePattern[] = {
+    { "scheme", COLON, 0, ParseScheme},
+    {NULL, NULL, 0, NULL}
+
+};
+
+struct ParsePattern *GetURIParsePattern ()
+{
+    return URIParsePattern;
 }
