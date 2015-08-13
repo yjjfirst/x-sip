@@ -3,6 +3,11 @@
 
 #include "Parser.h"
 
+int FillTarget(char *value, void *target)
+{
+    strcpy(target, value);
+}
+
 int Parse(char *header, void* target, struct ParsePattern *pattern)
 {
     char *curr = header;
@@ -13,7 +18,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
         if (!(curr = strstr(next, pattern->separator))) continue;
         bzero(value, sizeof(value));
         strncpy(value, next, curr - next);
-        pattern->parser(value, target);
+        FillTarget(value, target + pattern->offset);
         next = curr + strlen(pattern->separator);
     }
 
