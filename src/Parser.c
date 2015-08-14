@@ -8,6 +8,35 @@ int FillTarget(char *value, void *target)
     strcpy(target, value);
 }
 
+int HasNextToken (char *string)
+{
+    return strstr(string, SPACE) ||
+        strstr(string, SEMICOLON) ||
+        strstr(string, COLON) ||
+        strstr(string, AT) ||
+        strstr(string, QUESTION);
+}
+
+char *FindNextToken(char *string, char *token, int last)
+{
+    char *curr = NULL;
+
+    if (!(curr = strstr(string, token))) 
+    {
+        if (HasNextToken(string)) {
+            curr = string;
+        } else {
+            curr = string + strlen(string);
+        }        
+        return curr;
+    }
+    
+    if (curr == string) {
+        curr = string + strlen(string);
+    }
+    return curr;
+}
+
 int Parse(char *header, void* target, struct ParsePattern *pattern)
 {
     char *curr = header;
@@ -15,11 +44,13 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
     char value[128];
     
     for ( ; pattern->name != NULL;  pattern++) {
-        if (!(curr = strstr(next, pattern->separator))) continue;
+
+        curr = FindNextToken(next, pattern->token, pattern->maybe_last);
         bzero(value, sizeof(value));
         strncpy(value, next, curr - next);
+
         FillTarget(value, target + pattern->offset);
-        next = curr + strlen(pattern->separator);
+        next = curr + strlen(pattern->token);
     }
 
     return 0;
