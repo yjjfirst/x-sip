@@ -17,10 +17,10 @@ TEST_GROUP(RequestLineTestGroup)
     void setup()
     {
         
-        strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0\r\n");
+        strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
         Parse(RegisterRequestLineString, &RegisterRequestLine,GetRequestLinePattern());
 
-        strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0\r\n");
+        strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0");
         Parse(InviteRequestLineString, &InviteRequestLine,GetRequestLinePattern());
         
     }

@@ -1,16 +1,18 @@
 
-#define SPACE " "
+#define SPACE 0x20
 #define CRLF "\r\n"
-#define SEMICOLON ";"
-#define COLON ":"
-#define AT "@"
-#define QUESTION "?"
-#define EMPTY ""
+#define SEMICOLON 0x3b
+#define COLON     0x3a
+#define AT        0x40
+#define QUESTION  0x3f
+#define EMPTY     0x00
+#define ANY       0x7F
 
 struct ParsePattern {
     char *name;
-    char *token;
-    int maybe_last;
+    char startToken;
+    char endToken;
+    int  optional;
     unsigned long offset;
 };
 
