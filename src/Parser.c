@@ -8,31 +8,31 @@ int FillTarget(char *value, void *target)
     strcpy(target, value);
 }
 
-int HasNextToken (char *string)
+int HasNextToken (char *header)
 {
-    return strstr(string, SPACE) ||
-        strstr(string, SEMICOLON) ||
-        strstr(string, COLON) ||
-        strstr(string, AT) ||
-        strstr(string, QUESTION);
+    return strstr(header, SPACE) ||
+        strstr(header, SEMICOLON) ||
+        strstr(header, COLON) ||
+        strstr(header, AT) ||
+        strstr(header, QUESTION);
 }
 
-char *FindNextToken(char *string, char *token, int last)
+char *FindNextToken(char *header, char *token, int last)
 {
     char *curr = NULL;
 
-    if (!(curr = strstr(string, token))) 
+    if (!(curr = strstr(header, token))) 
     {
-        if (HasNextToken(string)) {
-            curr = string;
+        if (HasNextToken(header)) {
+            curr = header;
         } else {
-            curr = string + strlen(string);
+            curr = header + strlen(header);
         }        
         return curr;
     }
     
-    if (curr == string) {
-        curr = string + strlen(string);
+    if (curr == header) {
+        curr = header + strlen(header);
     }
     return curr;
 }
