@@ -4,15 +4,15 @@ CXX=g++
 CPPUTEST_HOME=../cpputest
 CPPFLAGS += -I$(CPPUTEST_HOME)/include -I../include
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
-TEST_SRCS = AllTests.cpp FirstTest.cpp RequestLineTest.cpp URITtest.cpp 
-PRODUCT_SRCS = ../src/RequestLine.c ../src/URI.c ../src/Parser.c
+TEST_SRCS = AllTests.cpp FirstTest.cpp RequestLineTest.cpp URITtest.cpp ToTest.cpp 
+PRODUCT_SRCS = ../src/RequestLine.c ../src/URI.c ../src/Parser.c ../src/ToHeader.c
 
 .PHONY: all
 
 all:AllTests
 
-TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ../src/RequestLine.o \
-	       	../src/URI.o ../src/Parser.o
+TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ToHeaderTest.o ../src/RequestLine.o \
+	       	../src/URI.o ../src/Parser.o ../src/ToHeader.o
 
 %.o:%.cpp
 	$(CXX) -MMD -c -o $@ $< $(CPPFLAGS)

@@ -81,24 +81,30 @@ TEST(URITestGroup, URIParameterParseTest)
     STRCMP_EQUAL("transport=tcp", uri.parameters);
 }
 
-TEST(URITestGroup, URIHeaderParseTest)
+TEST(URITestGroup, URIParseTest)
 {
     const char *URIString = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
  
     Parse((char *)URIString, &uri, GetURIParsePattern());
     STRCMP_EQUAL("subject=project", uri.headers);
+    STRCMP_EQUAL("transport=tcp", uri.parameters);
+    STRCMP_EQUAL("subject=project", uri.headers);
 }
 
-TEST(URITestGroup, URIParameterParseNoHeaderTest)
+TEST(URITestGroup, URIParseNoHeaderTest)
 {
     const char *URIString = "sip:alice:secretword@atlanta.com;transport=tcp";
  
     Parse((char *)URIString, &uri, GetURIParsePattern());
     STRCMP_EQUAL("transport=tcp", uri.parameters);
+    STRCMP_EQUAL("sip", uri.scheme);
+    STRCMP_EQUAL("alice:secretword", uri.user);
+    STRCMP_EQUAL("atlanta.com", uri.host);
+    STRCMP_EQUAL("transport=tcp", uri.parameters);
 
 }
 
-TEST(URITestGroup, URIHeaderParseNoParameterTest)
+TEST(URITestGroup, URIParseNoParameterTest)
 {
     const char *URIString = "sip:alice:secretword@atlanta.com?subject=project";
  

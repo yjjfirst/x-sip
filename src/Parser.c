@@ -36,23 +36,23 @@ char *FindEndToken(char *header, char token)
 
 char *FindNextComponent(char *header, struct ParsePattern *pattern)
 {
-    char *curr = NULL;
-    char *nextToken = NULL;
+    char *next = NULL;
 
+    //printf("%s\n", header);
     if (pattern->startToken == EMPTY) {
-        curr = strchr(header, pattern->endToken);
-        return curr;
+        next = strchr(header, pattern->endToken);
+        return next;
     }
     
     if (pattern->startToken == header[0]) {
-        curr = FindEndToken (header + 1, pattern->endToken);
-        if (curr == NULL) curr = header;
+        next = FindEndToken (header + 1, pattern->endToken);
+        if (next == NULL) next = header;
     }
     else {
-        curr = header;
+        next = header;
     }
 
-    return curr;
+    return next;
 }
 
 char *SkipToken(char *original, char *current) 
@@ -74,15 +74,21 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
     char value[128];
     char *start = NULL;
     
+    if (pattern == NULL) {
+        return -1;
+    }
+
     for ( ; pattern->name != NULL;  pattern++) {
             
         curr = FindNextComponent(next, pattern);
         bzero(value, sizeof(value));
         start = SkipToken(header, next);
-        if (curr - start >= 0)            
+        if (curr - start >= 0) {         
             strncpy(value, start , curr - start);
-
-        FillTarget(value, target + pattern->offset);
+        }
+        if (!pattern->placeholder) {
+            FillTarget(value, target + pattern->offset);
+        }
         next = curr;
     }
 
