@@ -5,12 +5,24 @@
 
 int FillTarget(char *value, void *target)
 {
-    strcpy(target, value);
+    char *start = value;
+    char length = strlen(value);
+    char *end = value + length - 1;
+    
+    if (length == 0) {
+        strcpy(target, value);
+        return 0;
+    }
+    while (*start == SPACE) start ++;
+    while (*end == SPACE) end--;
+
+    strncpy(target, start, end - start + 1);
+    return 0;
 }
 
 char *NextToken (char *header)
 {
-    char tokens[] = {SPACE, SEMICOLON, COLON, AT, QUESTION, };
+    char tokens[] = {SPACE, SEMICOLON, COLON, AT, QUESTION, QUOTE};
     int i = 0;
     int tokenCount = sizeof(tokens) / sizeof (char);
     char *pos = header;

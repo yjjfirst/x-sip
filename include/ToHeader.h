@@ -6,4 +6,7 @@ struct ToHeader {
     char parameters[128];
 };
 
-struct ParsePattern *GetToHeaderPattern();
+struct ParsePattern *GetToHeaderPattern(char *header);
+struct ToHeader *CreateToHeader();
+void DestoryToHeader(struct ToHeader *to);
+
