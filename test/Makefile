@@ -17,7 +17,7 @@ TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ToHeaderTest.o
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)
 
-AllTests: $(TESTSUITE_OBJS) 
+AllTests: $(TESTSUITE_OBJS) ../src/libsip.a 
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LD_LIBRARIES) ../src/libsip.a
 
 clean:
