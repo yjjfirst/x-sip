@@ -6,29 +6,29 @@
 #include "list.h"
 
 struct ParsePattern ToHeaderPattern[] = {
-    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name)},
-    { "displayName", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName)},
-    { "uri",         LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri)},
-    { "empty",       RIGHT_ANGLE, SEMICOLON, 1, 0},
-    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters)},
+    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
+    { "displayName", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
+    { "uri",         LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
+    { "empty",       RIGHT_ANGLE, SEMICOLON, 1, 0, ParseAtomElement},
+    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseAtomElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ToHeaderWithQuotedDisplayNamePattern[] = {
-    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name)},
-    { "empty",       COLON, QUOTE, 1, 0},
-    { "displayName", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName)},
-    { "empty",       QUOTE, LEFT_ANGLE, 1, 0},
-    { "uri",         LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri)},
-    { "empty",       RIGHT_ANGLE, SEMICOLON, 1, 0},
-    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters)},
+    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
+    { "empty",       COLON, QUOTE, 1, 0, ParseAtomElement},
+    { "displayName", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
+    { "empty",       QUOTE, LEFT_ANGLE, 1, 0, ParseAtomElement},
+    { "uri",         LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
+    { "empty",       RIGHT_ANGLE, SEMICOLON, 1, 0, ParseAtomElement},
+    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseAtomElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ToHeaderNoDisplayNamePattern[] = {
-    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name)},
-    { "uri",         COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri)},
-    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters)},
+    { "name",        EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
+    { "uri",         COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
+    { "parameters",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters),ParseAtomElement},
     {NULL, 0, 0, 0}
 };
 

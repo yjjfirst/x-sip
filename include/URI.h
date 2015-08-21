@@ -8,4 +8,4 @@ struct URI {
     char headers[128];
 };
 
-struct ParsePattern *GetURIParsePattern ();
+struct ParsePattern *GetURIParsePattern (char *header);

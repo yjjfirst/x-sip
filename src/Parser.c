@@ -3,7 +3,7 @@
 
 #include "Parser.h"
 
-int FillTarget(char *value, void *target)
+int ParseAtomElement(char *value, void *target)
 {
     char *start = value;
     char length = strlen(value);
@@ -99,7 +99,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
             strncpy(value, start , curr - start);
         }
         if (!pattern->placeholder) {
-            FillTarget(value, target + pattern->offset);
+            pattern->Parse(value, target + pattern->offset);
         }
         position = curr;
     }

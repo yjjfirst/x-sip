@@ -32,14 +32,22 @@ TEST(RequestLineTestGroup, RegisterMethodTest)
     STRCMP_EQUAL("INVITE", InviteRequestLine.Method);
 }
 
-TEST(RequestLineTestGroup, RegisterRequest_URITest)
-{
-    STRCMP_EQUAL(RegisterRequestLine.Request_URI, "sip:192.168.2.89");
-    STRCMP_EQUAL(InviteRequestLine.Request_URI, "sip:7170@iptel.org");
-}
+// TEST(RequestLineTestGroup, RegisterRequest_URITest)
+// {
+//     STRCMP_EQUAL(RegisterRequestLine.Request_URI, "sip:192.168.2.89");
+//     STRCMP_EQUAL(InviteRequestLine.Request_URI, "sip:7170@iptel.org");
+// }
 
 TEST(RequestLineTestGroup, RegisterSIP_VersionTest)
 {
     STRCMP_EQUAL("SIP/2.0", RegisterRequestLine.SIP_Version);
     STRCMP_EQUAL("SIP/1.0", InviteRequestLine.SIP_Version);
+}
+
+TEST(RequestLineTestGroup, RegisterURIParseTest)
+{
+    URI *uri = &RegisterRequestLine.Request_URI;
+
+    STRCMP_EQUAL("sip", uri->scheme);
+    STRCMP_EQUAL("192.168.2.89", uri->host);
 }

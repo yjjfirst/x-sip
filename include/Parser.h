@@ -16,10 +16,11 @@ struct ParsePattern {
     char endToken;
     int  placeholder;
     unsigned long offset;
+    int (*Parse)(char *header, void *target);
 };
 
 #define OFFSETOF(type, field)  ((unsigned long) &(((type *) 0)->field))
 
 int Parse(char *header, void *target, struct ParsePattern *pattern);
 char *NextToken(char *header);
-
+int ParseAtomElement(char *value, void *target);
