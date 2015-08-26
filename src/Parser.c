@@ -38,35 +38,39 @@ char *NextToken (char *header)
     return header + strlen(header);
 }
 
-char *FindEndToken(char *header, char token)
+char *FindEndToken(char *header, struct ParsePattern *pattern)
 {
-    if (token == ANY)
+    char *format = pattern->format;
+
+    if (pattern->endToken == ANY)
         return NextToken(header);
-    
-    return strchr(header, token);
+
+    if (*format == '*')
+        return strchr(header, pattern->endToken);
+
+    for ( ; *format != 0; format++) {
+        header =  strchr (header, *format);        
+    }
+
+    header ++;
+    return strchr(header, pattern->endToken);
 }
 
 char *FindNextComponent(char *header, struct ParsePattern *pattern)
 {
     char *next = NULL;
 
-    if (strcmp("*", pattern->format) == 0){
-        //printf("%s\n", header);
-        if (pattern->startToken == EMPTY) {
-            next = strchr(header, pattern->endToken);
-            return next;
-        }
+    if (pattern->startToken == EMPTY) {
+        next = strchr(header, pattern->endToken);
+        return next;
+    }
         
-        if (pattern->startToken == header[0]) {
-            next = FindEndToken (header + 1, pattern->endToken);
-            if (next == NULL) next = header;
-        }
-        else {
-            next = header;
-        }
-    } 
+    if (pattern->startToken == header[0]) {
+        next = FindEndToken (header + 1, pattern);
+        if (next == NULL) next = header;
+    }
     else {
-        
+        next = header;
     }
 
     return next;

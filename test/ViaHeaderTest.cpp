@@ -12,7 +12,7 @@ TEST_GROUP(ViaHeaderTestGroup)
 TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
 {
     struct ViaHeader *via = CreateViaHeader();
-    char header[] = "Via:SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+    char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
 
     Parse(header, via, GetViaPattern());
     STRCMP_EQUAL ("Via", ViaHeaderGetName(via));
