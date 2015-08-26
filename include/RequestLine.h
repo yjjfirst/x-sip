@@ -1,10 +1,13 @@
 #include "Parser.h"
 #include "URI.h"
 
-struct RequestLine {
-    char Method[20];
-    struct URI Request_URI;
-    char SIP_Version[16];
-};
+struct RequestLine;
 
 struct ParsePattern *GetRequestLinePattern();   
+void DestoryRequestLine(struct RequestLine *requestLine);
+struct RequestLine *CreateRequestLine();
+
+char *RequestLineGetMethod (struct RequestLine *r);
+char *RequestLineGetSipVersion(struct RequestLine *r);
+struct URI *RequestLineGetUri(struct RequestLine *r);
+

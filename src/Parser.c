@@ -50,24 +50,29 @@ char *FindNextComponent(char *header, struct ParsePattern *pattern)
 {
     char *next = NULL;
 
-    //printf("%s\n", header);
-    if (pattern->startToken == EMPTY) {
-        next = strchr(header, pattern->endToken);
-        return next;
-    }
-    
-    if (pattern->startToken == header[0]) {
-        next = FindEndToken (header + 1, pattern->endToken);
-        if (next == NULL) next = header;
-    }
+    if (strcmp("*", pattern->format) == 0){
+        //printf("%s\n", header);
+        if (pattern->startToken == EMPTY) {
+            next = strchr(header, pattern->endToken);
+            return next;
+        }
+        
+        if (pattern->startToken == header[0]) {
+            next = FindEndToken (header + 1, pattern->endToken);
+            if (next == NULL) next = header;
+        }
+        else {
+            next = header;
+        }
+    } 
     else {
-        next = header;
+        
     }
 
     return next;
 }
 
-char *SkipToken(char *header, char *position) 
+char *SkipFirstToken(char *header, char *position) 
 {
     char *start = NULL;
     
@@ -90,17 +95,19 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
         return -1;
     }
 
-    for ( ; pattern->name != NULL;  pattern++) {
+    for ( ; pattern->format != NULL;  pattern++) {
             
         curr = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
-        start = SkipToken(header, position);
+        start = SkipFirstToken(header, position);
         if (curr - start >= 0) {         
             strncpy(value, start , curr - start);
         }
+
         if (!pattern->placeholder) {
             pattern->Parse(value, target + pattern->offset);
         }
+
         position = curr;
     }
 

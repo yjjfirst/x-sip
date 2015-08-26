@@ -1,12 +1,13 @@
 #include "Parser.h"
-struct ToHeader {
-    char name[16];
-    char displayName[32];
-    char uri[128];
-    char parameters[128];
-};
+
+struct ToHeader;
 
 struct ParsePattern *GetToHeaderPattern(char *header);
 struct ToHeader *CreateToHeader();
 void DestoryToHeader(struct ToHeader *to);
+
+char *ToHeaderGetName(struct ToHeader *toHeader);
+char *ToHeaderGetDisplayName(struct ToHeader *toHeader);
+char *ToHeaderGetUri(struct ToHeader *toHeader);
+char *ToHeaderGetParameters(struct ToHeader *toHeader);
 

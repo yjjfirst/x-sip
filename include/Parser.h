@@ -1,5 +1,5 @@
 #define SPACE 0x20
-#define CRLF "\r\n"
+#define CRLF        "\r\n"
 #define SEMICOLON   0x3b
 #define COLON       0x3a
 #define AT          0x40
@@ -11,7 +11,7 @@
 #define ANY         0x7F
 
 struct ParsePattern {
-    char *name;
+    char *format;
     char startToken;
     char endToken;
     int  placeholder;

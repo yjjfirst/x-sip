@@ -1,11 +1,12 @@
+struct URI;
 
-struct URI {
-    char scheme[8];
-    char user[32];
-    char host[32];
-    char port[8];
-    char parameters[128];
-    char headers[128];
-};
+void DestoryUri(struct URI *uri);
+struct URI *CreateUri();
 
 struct ParsePattern *GetURIParsePattern (char *header);
+char *UriGetScheme(struct URI *uri);
+char *UriGetUser(struct URI *uri);
+char *UriGetHost(struct URI *uri);
+char *UriGetPort(struct URI *uri);
+char *UriGetParameters(struct URI *uri);
+char *UriGetHeaders(struct URI *uri);

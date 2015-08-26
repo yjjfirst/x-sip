@@ -1,27 +1,74 @@
 #include <string.h>
+#include <stdlib.h>
+
 #include "URI.h"
 #include "Parser.h"
 
+struct URI {
+    char scheme[8];
+    char user[32];
+    char host[32];
+    char port[8];
+    char parameters[128];
+    char headers[128];
+};
+
 struct ParsePattern URIParsePattern[] = {
-    { "scheme",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
-    { "user",    COLON,      AT,    0, OFFSETOF(struct URI, user), ParseAtomElement},
-    { "host",    AT,         ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
-    { "port",    COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
-    { "parameters",SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
-    { "headers", QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
+    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseAtomElement},
+    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
     {NULL, 0, 0, 0, 0}
 
 };
 
 struct ParsePattern URINoUserParsePattern[] = {
-    { "scheme",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
-    { "host",    COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
-    { "port",    COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
-    { "parameters",SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
-    { "headers", QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
     {NULL, 0, 0, 0, 0}
 
 };
+
+char *UriGetScheme(struct URI *uri)
+{
+    return uri->scheme;
+}
+char *UriGetUser(struct URI *uri)
+{
+    return uri->user;
+}
+char *UriGetHost(struct URI *uri)
+{
+    return uri->host;
+}
+char *UriGetPort(struct URI *uri)
+{
+    return uri->port;
+}
+char *UriGetParameters(struct URI *uri)
+{
+    return uri->parameters;
+}
+char *UriGetHeaders(struct URI *uri)
+{
+    return uri->headers;
+}
+
+struct URI *CreateUri()
+{
+    struct URI *uri = (struct URI *)calloc(1, sizeof (struct URI));
+    return uri;
+}
+
+void DestoryUri(struct URI *uri)
+{
+    free (uri);
+}
 
 struct ParsePattern *GetURIParsePattern (char *header)
 {

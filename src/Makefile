@@ -1,13 +1,13 @@
 CC=gcc
 CXX=g++
 
-CPPFLAGS += -I../include -Wall
-SRCS = RequestLine.c URI.c Parser.c ToHeader.c list.c
+CPPFLAGS += -I../include -Wall -g
+SRCS = RequestLine.c URI.c Parser.c ToHeader.c list.c ViaHeader.c
 
 
 .PYONY: all clean
 
-OBJS = Parser.o RequestLine.o URI.o ToHeader.o list.o
+OBJS = Parser.o RequestLine.o URI.o ToHeader.o ViaHeader.o list.o
 
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)

@@ -16,10 +16,10 @@ TEST(ToTestGroup, ToHeaderParseTest)
     char toString[]= "To:Martin Yang<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
 
     Parse((char *)toString, toHeader, GetToHeaderPattern(toString));    
-    STRCMP_EQUAL("To", toHeader->name);
-    STRCMP_EQUAL("Martin Yang", toHeader->displayName);
-    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", toHeader->uri);
-    STRCMP_EQUAL("tag=287447", toHeader->parameters);
+    STRCMP_EQUAL("To", ToHeaderGetName(toHeader));
+    STRCMP_EQUAL("Martin Yang", ToHeaderGetDisplayName(toHeader));
+    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ToHeaderGetUri(toHeader));
+    STRCMP_EQUAL("tag=287447", ToHeaderGetParameters(toHeader));
     
     DestoryToHeader(toHeader);
 }
@@ -30,10 +30,10 @@ TEST(ToTestGroup, ToHeaderWithSpaceParseTest)
     char toString[]= "To:  Martin Yang  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetToHeaderPattern(toString));    
-    STRCMP_EQUAL("To", toHeader->name);
-    STRCMP_EQUAL("Martin Yang", toHeader->displayName);
-    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", toHeader->uri);
-    STRCMP_EQUAL("tag=287447", toHeader->parameters);
+    STRCMP_EQUAL("To", ToHeaderGetName(toHeader));
+    STRCMP_EQUAL("Martin Yang", ToHeaderGetDisplayName(toHeader));
+    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ToHeaderGetUri(toHeader));
+    STRCMP_EQUAL("tag=287447", ToHeaderGetParameters(toHeader));
     
     DestoryToHeader(toHeader);
 }
@@ -44,10 +44,10 @@ TEST(ToTestGroup, ToHeaderQuotedDisplayNameParseTest)
     char toString[]= "To:  \"Martin Yang\"  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetToHeaderPattern(toString));    
-    STRCMP_EQUAL("To", toHeader->name);
-    STRCMP_EQUAL("Martin Yang", toHeader->displayName);
-    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", toHeader->uri);
-    STRCMP_EQUAL("tag=287447", toHeader->parameters);
+    STRCMP_EQUAL("To", ToHeaderGetName(toHeader));
+    STRCMP_EQUAL("Martin Yang", ToHeaderGetDisplayName(toHeader));
+    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ToHeaderGetUri(toHeader));
+    STRCMP_EQUAL("tag=287447", ToHeaderGetParameters(toHeader));
     
     DestoryToHeader(toHeader);
 }
@@ -58,10 +58,10 @@ TEST(ToTestGroup, ToHeaderNoDisplayNameParseTest)
     char toString[]= "To:sip:Martin.Yang@cs.columbia.edu;tag=287447";
 
     Parse((char *)toString, toHeader, GetToHeaderPattern(toString));    
-    STRCMP_EQUAL("To", toHeader->name);
-    STRCMP_EQUAL("", toHeader->displayName);
-    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", toHeader->uri);
-    STRCMP_EQUAL("tag=287447", toHeader->parameters);
+    STRCMP_EQUAL("To", ToHeaderGetName(toHeader));
+    STRCMP_EQUAL("", ToHeaderGetDisplayName(toHeader));
+    STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ToHeaderGetUri(toHeader));
+    STRCMP_EQUAL("tag=287447", ToHeaderGetParameters(toHeader));
     
     DestoryToHeader(toHeader);
     
