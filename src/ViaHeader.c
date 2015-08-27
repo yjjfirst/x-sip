@@ -9,10 +9,10 @@ struct ViaHeader {
 };
 
 struct ParsePattern ViaHeaderPattern []= {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, name), ParseAtomElement},
-    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseAtomElement},
-    {"*", SPACE, SEMICOLON, 0, OFFSETOF(struct ViaHeader, uri), ParseAtomElement},
-    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseAtomElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, name), ParseStringElement},
+    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement},
+    {"*", SPACE, SEMICOLON, 0, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
+    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0, 0},
 };
 

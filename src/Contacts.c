@@ -13,29 +13,29 @@ struct ToHeader {
 };
 
 struct ParsePattern ContactsHeaderPattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
-    { "*", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
-    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
-    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseAtomElement},
-    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseAtomElement},
+    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName), ParseStringElement},
+    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseStringElement},
+    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseStringElement},
+    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
-    { "*", COLON, QUOTE, 1, 0, ParseAtomElement},
-    { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
-    { "*", QUOTE, LEFT_ANGLE, 1, 0, ParseAtomElement},
-    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
-    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseAtomElement},
-    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseAtomElement},
+    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*", COLON, QUOTE, 1, 0, ParseStringElement},
+    { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName), ParseStringElement},
+    { "*", QUOTE, LEFT_ANGLE, 1, 0, ParseStringElement},
+    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseStringElement},
+    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseStringElement},
+    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
-    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
-    { "*",  COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
-    { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters),ParseAtomElement},
+    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*",  COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri), ParseStringElement},
+    { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters),ParseStringElement},
     {NULL, 0, 0, 0}
 };
 

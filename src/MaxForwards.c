@@ -4,12 +4,12 @@
 
 struct MaxForwardsHeader {
     char name[16];
-    char maxForwards[16];
+    int maxForwards;
 };
 
 struct ParsePattern MaxForwardsPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, name), ParseAtomElement},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct MaxForwardsHeader, maxForwards), ParseAtomElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, name), ParseStringElement},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct MaxForwardsHeader, maxForwards), ParseIntegerElement},
     {NULL, 0, 0, 0, 0, 0},
 };
 
@@ -32,7 +32,7 @@ char *MaxForwardsGetName(struct MaxForwardsHeader *m)
     return m->name;
 }
 
-char *MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
+int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
 {
     return m->maxForwards;
 }

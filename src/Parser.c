@@ -3,7 +3,7 @@
 
 #include "Parser.h"
 
-int ParseAtomElement(char *value, void *target)
+int ParseStringElement(char *value, void *target)
 {
     char *start = value;
     char length = strlen(value);
@@ -18,6 +18,12 @@ int ParseAtomElement(char *value, void *target)
 
     strncpy(target, start, end - start + 1);
     return 0;
+}
+
+int ParseIntegerElement(char *value, void *target)
+{
+    int *t = (int *) target;
+    *t = atoi(value);
 }
 
 char *NextToken (char *header)

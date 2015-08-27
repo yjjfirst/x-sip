@@ -14,22 +14,22 @@ struct URI {
 };
 
 struct ParsePattern URIParsePattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
-    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseAtomElement},
-    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
+    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement},
+    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement},
     {NULL, 0, 0, 0, 0}
 
 };
 
 struct ParsePattern URINoUserParsePattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseAtomElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseAtomElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseAtomElement},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseAtomElement},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseAtomElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement},
     {NULL, 0, 0, 0, 0}
 
 };

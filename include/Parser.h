@@ -23,4 +23,5 @@ struct ParsePattern {
 
 int Parse(char *header, void *target, struct ParsePattern *pattern);
 char *NextToken(char *header);
-int ParseAtomElement(char *value, void *target);
+int ParseStringElement(char *value, void *target);
+int ParseIntegerElement(char *value, void *target);

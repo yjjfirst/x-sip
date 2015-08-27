@@ -21,9 +21,9 @@ static int ParseURI(char *header, void *target)
 }
 
 struct ParsePattern RequestLinePattern[] = {
-    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseAtomElement},
+    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement},
     {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI},
-    {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseAtomElement},
+    {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0}
 };
 

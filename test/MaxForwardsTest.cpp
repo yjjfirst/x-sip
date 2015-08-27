@@ -17,6 +17,6 @@ TEST(MaxForwardsTestGroup, MaxForwardsParseTest)
     Parse(maxForwardsString, maxForwards, GetMaxForwardPattern());
     
     STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(maxForwards));
-    STRCMP_EQUAL("69", MaxForwardsGetMaxForwards(maxForwards));
+    CHECK_EQUAL(69, MaxForwardsGetMaxForwards(maxForwards));
     DestoryMaxForwardsHeader(maxForwards);
 }
