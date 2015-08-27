@@ -2,12 +2,12 @@ CC=gcc
 CXX=g++
 
 CPPFLAGS += -I../include -Wall -g
-SRCS = RequestLine.c URI.c Parser.c ToHeader.c ViaHeader.c
+SRCS = RequestLine.c URI.c Parser.c Contacts.c ViaHeader.c MaxForwards.c
 
 
 .PYONY: all clean
 
-OBJS = Parser.o RequestLine.o URI.o ToHeader.o ViaHeader.o
+OBJS = Parser.o RequestLine.o URI.o Contacts.o ViaHeader.o MaxForwards.o
 
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)

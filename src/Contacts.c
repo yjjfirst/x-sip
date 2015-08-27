@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ToHeader.h"
+#include "Contacts.h"
 #include "list.h"
 
 struct ToHeader {
@@ -12,7 +12,7 @@ struct ToHeader {
     char parameters[128];
 };
 
-struct ParsePattern ToHeaderPattern[] = {
+struct ParsePattern ContactsHeaderPattern[] = {
     { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
     { "*", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
@@ -21,7 +21,7 @@ struct ParsePattern ToHeaderPattern[] = {
     {NULL, 0, 0, 0}
 };
 
-struct ParsePattern ToHeaderWithQuotedDisplayNamePattern[] = {
+struct ParsePattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
     { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
     { "*", COLON, QUOTE, 1, 0, ParseAtomElement},
     { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName), ParseAtomElement},
@@ -32,14 +32,14 @@ struct ParsePattern ToHeaderWithQuotedDisplayNamePattern[] = {
     {NULL, 0, 0, 0}
 };
 
-struct ParsePattern ToHeaderNoDisplayNamePattern[] = {
+struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
     { "*",  EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseAtomElement},
     { "*",  COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri), ParseAtomElement},
     { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters),ParseAtomElement},
     {NULL, 0, 0, 0}
 };
 
-struct ParsePattern *GetToHeaderPattern(char *header)
+struct ParsePattern *GetContactsHeaderPattern(char *header)
 {  
     struct ParsePattern *pattern = NULL;
     char *token = NextToken(header);
@@ -48,47 +48,47 @@ struct ParsePattern *GetToHeaderPattern(char *header)
     while (*token == SPACE) token ++;
     
     if (strncmp(token, "sip:", 4) == 0) {
-        pattern = ToHeaderNoDisplayNamePattern;
+        pattern = ContactsHeaderNoDisplayNamePattern;
         return pattern;
     }
 
     token = NextToken(token);
     if (*token == QUOTE)        
-        pattern = ToHeaderWithQuotedDisplayNamePattern;
+        pattern = ContactsHeaderWithQuotedDisplayNamePattern;
     else {
-        pattern = ToHeaderPattern;
+        pattern = ContactsHeaderPattern;
     }
     
     return pattern;
 }
 
-char *ToHeaderGetName(struct ToHeader *toHeader)
+char *ContactsHeaderGetName(struct ToHeader *toHeader)
 {
     return toHeader->name;
 }
 
-char *ToHeaderGetDisplayName(struct ToHeader *toHeader)
+char *ContactsHeaderGetDisplayName(struct ToHeader *toHeader)
 {
     return toHeader->displayName;
 }
 
-char *ToHeaderGetUri(struct ToHeader *toHeader)
+char *ContactsHeaderGetUri(struct ToHeader *toHeader)
 {
     return toHeader->uri;
 }
 
-char *ToHeaderGetParameters(struct ToHeader *toHeader)
+char *ContactsHeaderGetParameters(struct ToHeader *toHeader)
 {
     return toHeader->parameters;
 }
 
-struct ToHeader *CreateToHeader()
+struct ToHeader *CreateContactsHeader()
 {
     struct ToHeader *to = (struct ToHeader *)calloc(1, sizeof(struct ToHeader));
     return to;
 }
 
-void DestoryToHeader(struct ToHeader *to)
+void DestoryContactsHeader(struct ToHeader *to)
 {
     if (to != NULL) {
         free(to);
