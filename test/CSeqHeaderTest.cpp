@@ -11,7 +11,7 @@ TEST_GROUP(CSeqTestGroup)
 TEST(CSeqTestGroup, CSeqParseTest)
 {
     struct CSeqHeader *c = CreateCSeqHeader(); 
-    char header[] = "CSeq :1826 REGISTER";
+    char header[] = "CSeq : 1826 REGISTER";
 
     Parse(header, c, GetCSeqParsePattern());
     STRCMP_EQUAL("CSeq", CSeqHeaderGetName(c));

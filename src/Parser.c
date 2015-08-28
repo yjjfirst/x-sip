@@ -51,6 +51,8 @@ char *FindEndToken(char *header, struct ParsePattern *pattern)
 {
     char *format = pattern->format;
 
+    while (*header == SPACE) header ++;
+
     if (pattern->endToken == ANY)
         return NextToken(header);
 
