@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "Parser.h"
 
@@ -24,6 +25,8 @@ int ParseIntegerElement(char *value, void *target)
 {
     int *t = (int *) target;
     *t = atoi(value);
+    
+    return 0;
 }
 
 char *NextToken (char *header)

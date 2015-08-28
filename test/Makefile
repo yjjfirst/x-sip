@@ -4,13 +4,16 @@ CXX=g++
 CPPUTEST_HOME=../cpputest
 CPPFLAGS += -I$(CPPUTEST_HOME)/include -I../include -Wall -g
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
-TEST_SRCS = AllTests.cpp FirstTest.cpp RequestLineTest.cpp URITtest.cpp ContactsHeader.cpp ViaHeaderTest.cpp MaxForwardsTest.cpp
+TEST_SRCS = AllTests.cpp FirstTest.cpp RequestLineTest.cpp URITtest.cpp ContactsHeader.cpp \
+	    ViaHeaderTest.cpp MaxForwardsTest.cpp CallIDHeaderTest.cpp CSeqHeaderTest.cpp ExpiresHeaderTest.cpp \
+	    ContentLengthHeaderTest.cpp
 
 .PHONY: all
 
 all:AllTests
 
-TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeader.o ViaHeaderTest.o MaxForwardsTest.o 
+TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeader.o ViaHeaderTest.o MaxForwardsTest.o \
+	CallIDHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o
 
 %.o:%.cpp
 	$(CXX) -MMD -c -o $@ $< $(CPPFLAGS)
