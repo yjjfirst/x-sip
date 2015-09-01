@@ -36,6 +36,7 @@ char *NextToken (char *header)
     int tokenCount = sizeof(tokens) / sizeof (char);
     char *pos = header;
 
+    //printf("%s\n", header);
     for (; *pos != 0; pos ++) {
         for (i = 0; i < tokenCount; i ++) {
             if (*pos == tokens[i]) {
@@ -101,17 +102,19 @@ char *SkipFirstToken(char *header, char *position)
 
 int Parse(char *header, void* target, struct ParsePattern *pattern)
 {
-    char *curr = header;
-    char *position = header;
+    char *curr;
+    char *position;
     char value[128];
     char *start = NULL;
     
     if (pattern == NULL) {
         return -1;
     }
+    
+    while (*header == SPACE) header ++;
+    curr = position = header;
 
-    for ( ; pattern->format != NULL;  pattern++) {
-            
+    for ( ; pattern->format != NULL;  pattern++) {            
         curr = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
         start = SkipFirstToken(header, position);

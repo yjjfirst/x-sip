@@ -14,8 +14,8 @@ struct ParsePattern CallIdParsePattern[] = {
     {NULL, 0, 0, 0, 0, 0},
 };
 
-DEFINE_HEADER_CREATER(struct CallIDHeader, CreateCallIDHeader)
-DEFINE_HEADER_DESTROYER(struct CallIDHeader, DestoryCallIDHeader)
+DEFINE_CREATER(struct CallIDHeader, CreateCallIDHeader)
+DEFINE_DESTROYER(struct CallIDHeader, DestoryCallIDHeader)
 
 char *CallIDHeaderGetName(struct CallIDHeader *id)
 {

@@ -20,8 +20,8 @@ struct ParsePattern *GetCSeqParsePattern()
     return CSeqHeaderPattern;
 }
 
-DEFINE_HEADER_CREATER(struct CSeqHeader, CreateCSeqHeader);
-DEFINE_HEADER_DESTROYER(struct CSeqHeader, DestoryCSeqHeader);
+DEFINE_CREATER(struct CSeqHeader, CreateCSeqHeader);
+DEFINE_DESTROYER(struct CSeqHeader, DestoryCSeqHeader);
 
 char *CSeqHeaderGetName(struct CSeqHeader *c)
 {

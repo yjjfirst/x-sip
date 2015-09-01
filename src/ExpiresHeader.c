@@ -18,8 +18,8 @@ struct ParsePattern *GetExpiresPattern()
     return ExpiresHeaderPattern;
 }
    
-DEFINE_HEADER_CREATER(struct ExpiresHeader, CreateExpiresHeader)
-DEFINE_HEADER_DESTROYER(struct ExpiresHeader, DestoryExpiresHeader)
+DEFINE_CREATER(struct ExpiresHeader, CreateExpiresHeader)
+DEFINE_DESTROYER(struct ExpiresHeader, DestoryExpiresHeader)
 
 char *ExpiresHeaderGetName(struct ExpiresHeader *e)
 {

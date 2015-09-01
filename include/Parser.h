@@ -21,13 +21,13 @@ struct ParsePattern {
 
 #define OFFSETOF(type, field)  ((unsigned long) &(((type *) 0)->field))
 
-#define DEFINE_HEADER_CREATER(type, name)       \
+#define DEFINE_CREATER(type, name)              \
     type *name ()                               \
     {                                           \
         return (type *)calloc(1,sizeof (type)); \
     }  
 
-#define DEFINE_HEADER_DESTROYER(type, name)     \
+#define DEFINE_DESTROYER(type, name)            \
     void name (type *header)                    \
     {                                           \
         if (header != NULL)                     \

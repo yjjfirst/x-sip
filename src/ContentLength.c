@@ -18,8 +18,8 @@ struct ParsePattern *GetContentLengthParsePattern()
     return ContentLengthParsePattern;
 }
 
-DEFINE_HEADER_CREATER(struct ContentLengthHeader, CreateContentLengthHeader)
-DEFINE_HEADER_DESTROYER(struct ContentLengthHeader, DestoryContentLengthHeader)
+DEFINE_CREATER(struct ContentLengthHeader, CreateContentLengthHeader)
+DEFINE_DESTROYER(struct ContentLengthHeader, DestoryContentLengthHeader)
 
 char *ContentLengthGetName(struct ContentLengthHeader *c)
 {
