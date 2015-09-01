@@ -88,7 +88,7 @@ char *FindNextComponent(char *header, struct ParsePattern *pattern)
     return next;
 }
 
-char *SkipFirstToken(char *header, char *position) 
+char *SkipLeadingToken(char *header, char *position) 
 {
     char *start = NULL;
     
@@ -117,7 +117,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
     for ( ; pattern->format != NULL;  pattern++) {            
         curr = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
-        start = SkipFirstToken(header, position);
+        start = SkipLeadingToken(header, position);
         if (curr - start >= 0) {         
             strncpy(value, start , curr - start);
         }
