@@ -29,7 +29,7 @@ int ParseIntegerElement(char *value, void *target)
     return 0;
 }
 
-char *NextToken (char *header)
+char *NextSeparator (char *header)
 {
     char tokens[] = {SPACE, SEMICOLON, COLON, AT, QUESTION, QUOTE};
     int i = 0;
@@ -48,37 +48,37 @@ char *NextToken (char *header)
     return header + strlen(header);
 }
 
-char *FindEndToken(char *header, struct ParsePattern *pattern)
+char *FindEndSeparator(char *header, struct ParsePattern *pattern)
 {
     char *format = pattern->format;
 
     while (*header == SPACE) header ++;
 
-    if (pattern->endToken == ANY)
-        return NextToken(header);
+    if (pattern->endSeparator == ANY)
+        return NextSeparator(header);
 
     if (*format == '*')
-        return strchr(header, pattern->endToken);
+        return strchr(header, pattern->endSeparator);
 
     for ( ; *format != 0; format++) {
         header =  strchr (header, *format);        
     }
 
     header ++;
-    return strchr(header, pattern->endToken);
+    return strchr(header, pattern->endSeparator);
 }
 
 char *FindNextComponent(char *header, struct ParsePattern *pattern)
 {
     char *next = NULL;
 
-    if (pattern->startToken == EMPTY) {
-        next = strchr(header, pattern->endToken);
+    if (pattern->startSeparator == EMPTY) {
+        next = strchr(header, pattern->endSeparator);
         return next;
     }
         
-    if (pattern->startToken == header[0]) {
-        next = FindEndToken (header + 1, pattern);
+    if (pattern->startSeparator == header[0]) {
+        next = FindEndSeparator (header + 1, pattern);
         if (next == NULL) next = header;
     }
     else {
@@ -88,7 +88,7 @@ char *FindNextComponent(char *header, struct ParsePattern *pattern)
     return next;
 }
 
-char *SkipLeadingToken(char *header, char *position) 
+char *SkipLeadingSeparator(char *header, char *position) 
 {
     char *start = NULL;
     
@@ -117,7 +117,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
     for ( ; pattern->format != NULL;  pattern++) {            
         curr = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
-        start = SkipLeadingToken(header, position);
+        start = SkipLeadingSeparator(header, position);
         if (curr - start >= 0) {         
             strncpy(value, start , curr - start);
         }

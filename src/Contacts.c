@@ -42,7 +42,7 @@ struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
 struct ParsePattern *GetContactsHeaderPattern(char *header)
 {  
     struct ParsePattern *pattern = NULL;
-    char *token = NextToken(header);
+    char *token = NextSeparator(header);
 
     token ++;
     while (*token == SPACE) token ++;
@@ -52,7 +52,7 @@ struct ParsePattern *GetContactsHeaderPattern(char *header)
         return pattern;
     }
 
-    token = NextToken(token);
+    token = NextSeparator(token);
     if (*token == QUOTE)        
         pattern = ContactsHeaderWithQuotedDisplayNamePattern;
     else {

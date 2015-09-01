@@ -12,8 +12,8 @@
 
 struct ParsePattern {
     char *format;
-    char startToken;
-    char endToken;
+    char startSeparator;
+    char endSeparator;
     int  placeholder;
     unsigned long offset;
     int (*Parse)(char *header, void *target);
@@ -35,6 +35,6 @@ struct ParsePattern {
     }           
 
 int Parse(char *header, void *target, struct ParsePattern *pattern);
-char *NextToken(char *header);
+char *NextSeparator(char *header);
 int ParseStringElement(char *value, void *target);
 int ParseIntegerElement(char *value, void *target);

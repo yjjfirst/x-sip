@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "Messages.h"
+#include "utils/list/include/list.h"
 
 struct Message {
     struct RequestLine *request;
@@ -46,11 +47,12 @@ struct Message *CreateMessage ()
     return (struct Message *)calloc(1,sizeof (struct Message)); 
 }
 
-void DestoryMessage (struct Message *message) 
+void DestoryMessage (struct Message **message) 
 { 
-    if (message != ((void *)0)) {
-        DestoryRequestLine(message->request);
-        free(message); 
+    if ((*message) != ((void *)0)) {
+        DestoryRequestLine((*message)->request);
+        free(*message);
+        *message = NULL;
     }
 }
 

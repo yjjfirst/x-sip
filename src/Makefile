@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 
-CPPFLAGS += -I../include -Wall -g
+CPPFLAGS += -I../include -I..  -Wall -g
 SRCS = RequestLine.c URI.c Parser.c Contacts.c ViaHeader.c MaxForwards.c CallIDHeader.c ContentLength.c ExpiresHeader.c \
        CSeqHeader.c Messages.c
 
