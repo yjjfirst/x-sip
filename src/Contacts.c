@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Header.h"
 #include "Contacts.h"
-#include "list.h"
 
 struct ToHeader {
-    char name[16];
+    struct Header headerBase;
     char displayName[32];
     char uri[128];
     char parameters[128];
 };
 
 struct ParsePattern ContactsHeaderPattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, headerBase), ParseStringElement},
     { "*", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ToHeader, displayName), ParseStringElement},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ToHeader, uri), ParseStringElement},
     { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseStringElement},
@@ -22,7 +22,7 @@ struct ParsePattern ContactsHeaderPattern[] = {
 };
 
 struct ParsePattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*", EMPTY, COLON, 0, OFFSETOF(struct ToHeader, headerBase), ParseStringElement},
     { "*", COLON, QUOTE, 1, 0, ParseStringElement},
     { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ToHeader, displayName), ParseStringElement},
     { "*", QUOTE, LEFT_ANGLE, 1, 0, ParseStringElement},
@@ -33,7 +33,7 @@ struct ParsePattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
 };
 
 struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
-    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ToHeader, name), ParseStringElement},
+    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ToHeader, headerBase), ParseStringElement},
     { "*",  COLON, SEMICOLON, 0, OFFSETOF(struct ToHeader, uri), ParseStringElement},
     { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ToHeader, parameters),ParseStringElement},
     {NULL, 0, 0, 0}
@@ -64,7 +64,7 @@ struct ParsePattern *GetContactsHeaderPattern(char *header)
 
 char *ContactsHeaderGetName(struct ToHeader *toHeader)
 {
-    return toHeader->name;
+    return toHeader->headerBase.name;
 }
 
 char *ContactsHeaderGetDisplayName(struct ToHeader *toHeader)

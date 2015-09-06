@@ -2,6 +2,7 @@
 
 extern "C" {
 #include <string.h>
+#include "Parser.h"
 #include "ViaHeader.h"
 }
 

@@ -1,14 +1,15 @@
 #include <stdlib.h>
 
+#include "Header.h"
 #include "MaxForwards.h"
 
 struct MaxForwardsHeader {
-    char name[16];
+    struct Header headerBase;
     int maxForwards;
 };
 
 struct ParsePattern MaxForwardsPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, name), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct MaxForwardsHeader, maxForwards), ParseIntegerElement},
     {NULL, 0, 0, 0, 0, 0},
 };
@@ -29,7 +30,7 @@ void DestoryMaxForwardsHeader(struct MaxForwardsHeader *m)
 
 char *MaxForwardsGetName(struct MaxForwardsHeader *m)
 {
-    return m->name;
+    return m->headerBase.name;
 }
 
 int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)

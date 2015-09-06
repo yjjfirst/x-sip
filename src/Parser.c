@@ -118,6 +118,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
         curr = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
         start = SkipLeadingSeparator(header, position);
+
         if (curr - start >= 0) {         
             strncpy(value, start , curr - start);
         }

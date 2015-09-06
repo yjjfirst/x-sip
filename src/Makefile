@@ -13,9 +13,13 @@ OBJS = Parser.o RequestLine.o URI.o Contacts.o ViaHeader.o MaxForwards.o CallIDH
 
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)
+
+libsip.a: ../utils/list/liblist.a sip.a
+	ar -M <libsip.mri
+
 sip.a: $(OBJS)
 	ar rcs $@ $^
-all:sip.a
+all:libsip.a
 
 clean:
 	-@rm -f *.d

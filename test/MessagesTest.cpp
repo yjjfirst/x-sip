@@ -4,7 +4,10 @@ extern "C" {
 #include <stdio.h>
 #include <strings.h>
 #include <string.h>
+
+#include "Parser.h"
 #include "Messages.h"
+#include "ViaHeader.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -47,6 +50,18 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
     struct Message *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    //struct ViaHeader *via =  MessageGetHeader("Via", message);
+    struct Header *header =  MessageGetHeader("Via", message);
+    struct ViaHeader *via = (struct ViaHeader*)header;
+
+    STRCMP_EQUAL("Via", ViaHeaderGetName(via));
     DestoryMessage(&message);    
+}
+
+TEST(MessageTestGroup, ExtractHeaderNameTest)
+{
+    char header[] = "Via: SIP/2.0/UDP 200.201.202.203:5060;branch=z9hG4bKus19";
+    char name[32] = {0};
+
+    ExtractHeaderName(header, name);
+    STRCMP_EQUAL("Via", name);
 }

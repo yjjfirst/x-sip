@@ -1,0 +1,5 @@
+create libsip.a
+addlib ../utils/list/liblist.a
+addlib sip.a
+save
+end

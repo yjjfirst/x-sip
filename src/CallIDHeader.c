@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Header.h"
 #include "CallIDHeader.h"
 
 struct CallIDHeader {
-    char name[16];
+    struct Header headerBase;
     char id[64];
 };
 
 struct ParsePattern CallIdParsePattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, name), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0},
 };
@@ -19,7 +20,7 @@ DEFINE_DESTROYER(struct CallIDHeader, DestoryCallIDHeader)
 
 char *CallIDHeaderGetName(struct CallIDHeader *id)
 {
-    return id->name;
+    return id->headerBase.name;
 }
 
 char *CallIDHeaderGetID(struct CallIDHeader *id)

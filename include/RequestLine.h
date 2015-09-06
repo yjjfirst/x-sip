@@ -1,4 +1,3 @@
-#include "Parser.h"
 #include "URI.h"
 
 struct RequestLine;

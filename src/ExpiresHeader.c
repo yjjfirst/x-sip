@@ -1,14 +1,16 @@
 #include <stdlib.h>
+
+#include "Header.h"
 #include "ExpiresHeader.h"
 
 struct ExpiresHeader 
 {
-    char name[16];
+    struct Header headerBase;
     int expires;
 };
 
 struct ParsePattern ExpiresHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, name), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct ExpiresHeader, expires), ParseIntegerElement},
     {NULL, 0, 0, 0, 0, 0},
 };
@@ -23,7 +25,7 @@ DEFINE_DESTROYER(struct ExpiresHeader, DestoryExpiresHeader)
 
 char *ExpiresHeaderGetName(struct ExpiresHeader *e)
 {
-    return e->name;
+    return e->headerBase.name;
 }
 
 int ExpiresHeaderGetExpires(struct ExpiresHeader *e)

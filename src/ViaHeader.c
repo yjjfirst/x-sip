@@ -1,15 +1,17 @@
 #include <stdlib.h>
 #include "ViaHeader.h"
+#include "Header.h"
+#include "Parser.h"
 
 struct ViaHeader {
-    char name[16];
+    struct Header headerBase;
     char transport[32];
     char uri[128];
     char parameters[128];
 };
 
 struct ParsePattern ViaHeaderPattern []= {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, name), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement},
     {"*", SPACE, SEMICOLON, 0, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
     {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement},
@@ -23,7 +25,7 @@ struct ParsePattern *GetViaPattern()
 
 char *ViaHeaderGetName(struct ViaHeader *via)
 {
-    return via->name;
+    return via->headerBase.name;
 }
 
 char *ViaHeaderGetTransport(struct ViaHeader *via)

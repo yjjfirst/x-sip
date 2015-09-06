@@ -1,8 +1,9 @@
 #include <string.h>
 #include <stdio.h>
-
 #include <stdlib.h>
+
 #include "RequestLine.h"
+#include "Parser.h"
 
 struct RequestLine {
     char method[16];

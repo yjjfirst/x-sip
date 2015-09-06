@@ -3,7 +3,9 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+
 #include "RequestLine.h"
+#include "Parser.h"
 }
 
 TEST_GROUP(RequestLineTestGroup)
