@@ -28,6 +28,12 @@ TEST_GROUP(RequestLineTestGroup)
         strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0");
         Parse(InviteRequestLineString, InviteRequestLine, GetRequestLinePattern());
     }
+
+    void teardown()
+    {
+        DestoryRequestLine(RegisterRequestLine);
+        DestoryRequestLine(InviteRequestLine);
+    }
 };
 
 TEST(RequestLineTestGroup, RegisterMethodTest)

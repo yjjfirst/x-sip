@@ -71,8 +71,7 @@ void ParseHeader(char *headerString, struct Message *message)
 
 int ParseMessage(char *string, struct Message *message)
 {
-    char *rawMessage = strdup (string);
-    char *line = strtok(rawMessage, "\r\n");
+    char *line = strtok(string, "\r\n");
     
     ParseRequestLine(line, message);
     line = strtok(NULL, "\r\n");
@@ -81,7 +80,6 @@ int ParseMessage(char *string, struct Message *message)
         line = strtok(NULL, "\r\n");
     }
     
-    free (rawMessage);
     return 0;
 }
 
@@ -97,10 +95,28 @@ struct Message *CreateMessage ()
     return message;
 }
 
+void MessageDestoryHeaders(struct Message *message)
+{
+    int length = get_list_len(message->headers);
+    int i = 0;
+    struct Header *header = NULL;
+
+    for (i = 0 ; i < length; i++) {        
+        header = (struct Header *) get_data_at(message->headers, i);
+        if (strcmp (header->name, "Via") == 0) {
+            DestoryViaHeader((struct ViaHeader *) header);
+        }
+        else if (strcmp (header->name, "Max-Forwards") == 0) {
+            DestoryMaxForwardsHeader((struct MaxForwardsHeader *)header);
+        }
+    }
+}
+
 void DestoryMessage (struct Message **message) 
 { 
     if ((*message) != ((void *)0)) {
         DestoryRequestLine((*message)->request);
+        MessageDestoryHeaders(*message);
         destroy_list(&(*message)->headers, NULL);
         free(*message);
         *message = NULL;

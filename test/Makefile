@@ -15,6 +15,8 @@ all:AllTests
 TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeader.o ViaHeaderTest.o MaxForwardsTest.o \
 	CallIDHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o MessagesTest.o
 
+CPPFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
+
 %.o:%.cpp
 	$(CXX) -MMD -c -o $@ $< $(CPPFLAGS)
 %.o:%.c

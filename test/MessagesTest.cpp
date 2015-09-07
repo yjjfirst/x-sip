@@ -70,6 +70,7 @@ TEST(MessageTestGroup, MaxForwardsParseTest)
     
     STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(m));
     CHECK_EQUAL(70, MaxForwardsGetMaxForwards(m));
+    
     DestoryMessage(&message);    
 
 }
