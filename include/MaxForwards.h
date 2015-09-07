@@ -1,7 +1,6 @@
-#include "Parser.h"
 struct MaxForwardsHeader;
 
-struct ParsePattern *GetMaxForwardPattern();
+struct ParsePattern *GetMaxForwardsPattern();
 struct MaxForwardsHeader *CreateMaxForwardsHeader();
 void DestoryMaxForwardsHeader(struct MaxForwardsHeader *maxForward);
 

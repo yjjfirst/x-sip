@@ -2,6 +2,7 @@
 
 #include "Header.h"
 #include "MaxForwards.h"
+#include "Parser.h"
 
 struct MaxForwardsHeader {
     struct Header headerBase;
@@ -38,7 +39,7 @@ int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
     return m->maxForwards;
 }
 
-struct ParsePattern *GetMaxForwardPattern()
+struct ParsePattern *GetMaxForwardsPattern()
 {
     return MaxForwardsPattern;
 }

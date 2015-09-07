@@ -8,6 +8,7 @@ extern "C" {
 #include "Parser.h"
 #include "Messages.h"
 #include "ViaHeader.h"
+#include "MaxForwards.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -54,7 +55,23 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
     struct ViaHeader *via = (struct ViaHeader*)header;
 
     STRCMP_EQUAL("Via", ViaHeaderGetName(via));
+    STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
+    STRCMP_EQUAL("200.201.202.203:5060", ViaHeaderGetUri(via));
+    STRCMP_EQUAL("branch=z9hG4bKus19", ViaHeaderGetParameters(via));
     DestoryMessage(&message);    
+}
+
+TEST(MessageTestGroup, MaxForwardsParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct MaxForwardsHeader *m = (struct MaxForwardsHeader *)MessageGetHeader("Max-Forwards", message);
+    
+    STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(m));
+    CHECK_EQUAL(70, MaxForwardsGetMaxForwards(m));
+    DestoryMessage(&message);    
+
 }
 
 TEST(MessageTestGroup, ExtractHeaderNameTest)
