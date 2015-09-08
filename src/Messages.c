@@ -14,6 +14,17 @@ struct Message {
     t_list *headers;
 };
 
+struct HeaderParser {
+    char name[HEADER_NAME_MAX_LENGTH];
+    struct Header * (*headerParser)(char *headerString);
+    void (*headerDestroyer)(struct Header *header);
+};
+
+struct HeaderParser HeaderParsers[] = {
+    {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader},
+    {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader},
+};
+
 void ExtractHeaderName(char *header, char *name)
 {
     char *end = strchr (header, COLON);
@@ -41,7 +52,7 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
 
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
-        if (strcmp (name, header->name) == 0) {
+        if (strcmp (name, HeaderGetName(header)) == 0) {
             break;
         }
     }
@@ -52,20 +63,13 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
 void ParseHeader(char *headerString, struct Message *message)
 {
     char name[32] = {0};
+    int i = 0;
     
     ExtractHeaderName(headerString, name);
 
-    if (strcmp (name, "Via") == 0) {
-        struct ViaHeader *via =  CreateViaHeader();
-        struct ParsePattern *viaPattern = GetViaPattern();
-        Parse(headerString, via, viaPattern);
-        put_in_list(&message->headers, (void*) via);
-    } 
-    else if (strcmp(name, "Max-Forwards") == 0) {
-        struct MaxForwardsHeader *maxForwards = CreateMaxForwardsHeader();
-        struct ParsePattern *maxForwardsPattern = GetMaxForwardsPattern();
-        Parse(headerString, maxForwards, maxForwardsPattern);
-        put_in_list(&message->headers, (void *) maxForwards);
+    for ( ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
+        if (strcmp (HeaderParsers[i].name , name) == 0)
+            put_in_list(&message->headers, (void*) HeaderParsers[i].headerParser(headerString));
     }
 }
 
@@ -95,20 +99,26 @@ struct Message *CreateMessage ()
     return message;
 }
 
+void DestoryOneHeader(struct Header *header)
+{
+    int i;
+
+    for (i = 0 ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
+        if (strcmp (HeaderParsers[i].name, header->name) == 0) {
+            HeaderParsers[i].headerDestroyer(header);
+        }
+    }
+}
+
 void MessageDestoryHeaders(struct Message *message)
 {
     int length = get_list_len(message->headers);
-    int i = 0;
+    int i ;
     struct Header *header = NULL;
 
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
-        if (strcmp (header->name, "Via") == 0) {
-            DestoryViaHeader((struct ViaHeader *) header);
-        }
-        else if (strcmp (header->name, "Max-Forwards") == 0) {
-            DestoryMaxForwardsHeader((struct MaxForwardsHeader *)header);
-        }
+        DestoryOneHeader(header);
     }
 }
 

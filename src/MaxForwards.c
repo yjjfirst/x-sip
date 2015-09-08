@@ -16,18 +16,15 @@ struct ParsePattern MaxForwardsPattern[] = {
 };
 
 
-struct MaxForwardsHeader *CreateMaxForwardsHeader()
+struct Header *ParseMaxForwardsHeader(char *string)
 {
-    struct MaxForwardsHeader *m = (struct MaxForwardsHeader *) calloc(1, sizeof(struct MaxForwardsHeader));
-    return m;
+    struct MaxForwardsHeader *maxForwards = CreateMaxForwardsHeader();
+    struct ParsePattern *maxForwardsPattern = GetMaxForwardsPattern();
+    Parse(string, maxForwards, maxForwardsPattern);
+    
+    return (struct Header *)maxForwards;
 }
 
-void DestoryMaxForwardsHeader(struct MaxForwardsHeader *m)
-{
-    if (m != NULL) {
-        free(m);
-    }
-}
 
 char *MaxForwardsGetName(struct MaxForwardsHeader *m)
 {
@@ -42,4 +39,17 @@ int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
 struct ParsePattern *GetMaxForwardsPattern()
 {
     return MaxForwardsPattern;
+}
+
+struct MaxForwardsHeader *CreateMaxForwardsHeader()
+{
+    struct MaxForwardsHeader *m = (struct MaxForwardsHeader *) calloc(1, sizeof(struct MaxForwardsHeader));
+    return m;
+}
+
+void DestoryMaxForwardsHeader(struct Header *m)
+{
+    if (m != NULL) {
+        free(m);
+    }
 }

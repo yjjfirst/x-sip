@@ -43,13 +43,22 @@ char *ViaHeaderGetParameters(struct ViaHeader *via)
     return via->parameters;
 }
 
+struct Header *ParseViaHeader(char *string) 
+{
+    struct ViaHeader *via =  CreateViaHeader();
+    struct ParsePattern *viaPattern = GetViaPattern();
+    Parse(string, via, viaPattern);
+    
+    return (struct Header *)via; 
+}
+
 struct ViaHeader *CreateViaHeader()
 {
     struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
     return via;
 }
 
-void DestoryViaHeader(struct ViaHeader *via)
+void DestoryViaHeader(struct Header *via)
 {
     if (via != NULL) {
         free(via);

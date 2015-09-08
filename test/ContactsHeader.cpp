@@ -2,16 +2,16 @@
 
 extern "C" {
 #include "Contacts.h"
-#include "strings.h"
+#include "Parser.h"
 }
 
 TEST_GROUP(ToTestGroup)
 {
 };
 
-TEST(ToTestGroup, ToHeaderParseTest)
+TEST(ToTestGroup, ContactHeaderParseTest)
 {
-    struct ToHeader *toHeader = CreateContactsHeader();
+    struct ContactHeader *toHeader = CreateContactsHeader();
 
     char toString[]= "To:Martin Yang<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
 
@@ -24,9 +24,9 @@ TEST(ToTestGroup, ToHeaderParseTest)
     DestoryContactsHeader(toHeader);
 }
 
-TEST(ToTestGroup, ToHeaderWithSpaceParseTest)
+TEST(ToTestGroup, ContactHeaderWithSpaceParseTest)
 {
-    struct ToHeader *toHeader = CreateContactsHeader();
+    struct ContactHeader *toHeader = CreateContactsHeader();
     char toString[]= "To:  Martin Yang  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetContactsHeaderPattern(toString));    
@@ -38,9 +38,9 @@ TEST(ToTestGroup, ToHeaderWithSpaceParseTest)
     DestoryContactsHeader(toHeader);
 }
 
-TEST(ToTestGroup, ToHeaderQuotedDisplayNameParseTest)
+TEST(ToTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 {
-    struct ToHeader *toHeader = CreateContactsHeader();
+    struct ContactHeader *toHeader = CreateContactsHeader();
     char toString[]= "To:  \"Martin Yang\"  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetContactsHeaderPattern(toString));    
@@ -52,9 +52,9 @@ TEST(ToTestGroup, ToHeaderQuotedDisplayNameParseTest)
     DestoryContactsHeader(toHeader);
 }
 
-TEST(ToTestGroup, ToHeaderNoDisplayNameParseTest)
+TEST(ToTestGroup, ContactHeaderNoDisplayNameParseTest)
 {
-    struct ToHeader *toHeader = CreateContactsHeader();
+    struct ContactHeader *toHeader = CreateContactsHeader();
     char toString[]= "To:sip:Martin.Yang@cs.columbia.edu;tag=287447";
 
     Parse((char *)toString, toHeader, GetContactsHeaderPattern(toString));    
@@ -69,7 +69,7 @@ TEST(ToTestGroup, ToHeaderNoDisplayNameParseTest)
 
 TEST(ToTestGroup, ContactParseTest)
 {
-    struct ToHeader *contact = CreateContactsHeader();
+    struct ContactHeader *contact = CreateContactsHeader();
     char contactString[] = "Contact:<sip:alice@pc33.atlanta.com>";
    
     Parse((char*) contactString, contact, GetContactsHeaderPattern(contactString));

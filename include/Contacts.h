@@ -1,13 +1,11 @@
-#include "Parser.h"
-
-struct ToHeader;
+struct ContactHeader;
 
 struct ParsePattern *GetContactsHeaderPattern(char *header);
-struct ToHeader *CreateContactsHeader();
-void DestoryContactsHeader(struct ToHeader *to);
+struct ContactHeader *CreateContactsHeader();
+void DestoryContactsHeader(struct ContactHeader *to);
 
-char *ContactsHeaderGetName(struct ToHeader *toHeader);
-char *ContactsHeaderGetDisplayName(struct ToHeader *toHeader);
-char *ContactsHeaderGetUri(struct ToHeader *toHeader);
-char *ContactsHeaderGetParameters(struct ToHeader *toHeader);
+char *ContactsHeaderGetName(struct ContactHeader *toHeader);
+char *ContactsHeaderGetDisplayName(struct ContactHeader *toHeader);
+char *ContactsHeaderGetUri(struct ContactHeader *toHeader);
+char *ContactsHeaderGetParameters(struct ContactHeader *toHeader);
 

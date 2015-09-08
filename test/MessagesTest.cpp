@@ -9,6 +9,7 @@ extern "C" {
 #include "Messages.h"
 #include "ViaHeader.h"
 #include "MaxForwards.h"
+#include "Contacts.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -73,6 +74,17 @@ TEST(MessageTestGroup, MaxForwardsParseTest)
     
     DestoryMessage(&message);    
 
+}
+
+TEST(MessageTestGroup, ToParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
+    STRCMP_EQUAL("To", ContactsHeaderGetName(to));
+
+    DestoryMessage(&message);
 }
 
 TEST(MessageTestGroup, ExtractHeaderNameTest)

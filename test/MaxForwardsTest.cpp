@@ -19,5 +19,5 @@ TEST(MaxForwardsTestGroup, MaxForwardsParseTest)
     STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(maxForwards));
     CHECK_EQUAL(69, MaxForwardsGetMaxForwards(maxForwards));
 
-    DestoryMaxForwardsHeader(maxForwards);
+    DestoryMaxForwardsHeader((struct Header *)maxForwards);
 }

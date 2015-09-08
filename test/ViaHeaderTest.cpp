@@ -21,5 +21,5 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
     STRCMP_EQUAL ("erlang.bell-telephone.com:5060", ViaHeaderGetUri(via));
     STRCMP_EQUAL ("branch=z9hG4bK87", ViaHeaderGetParameters(via));
 
-    DestoryViaHeader(via);
+    DestoryViaHeader((struct Header *)via);
 } 
