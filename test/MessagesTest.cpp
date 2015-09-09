@@ -10,6 +10,9 @@ extern "C" {
 #include "ViaHeader.h"
 #include "MaxForwards.h"
 #include "Contacts.h"
+#include "CallIDHeader.h"
+#include "CSeqHeader.h"
+#include "ContentLength.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -110,6 +113,41 @@ TEST(MessageTestGroup, ContactParseTest)
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
     STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
     STRCMP_EQUAL("sip:werner.heisenberg@200.201.202.203", ContactsHeaderGetUri(contact));
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, CallIdParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader("Call-ID", message);
+    STRCMP_EQUAL("Call-ID", CallIDHeaderGetName(id));
+    DestoryMessage(&message);
+} 
+
+TEST(MessageTestGroup, CSeqParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader("CSeq", message);
+    STRCMP_EQUAL("CSeq", CSeqHeaderGetName(c));
+    CHECK_EQUAL(1, CSeqHeaderGetSeq(c));
+    STRCMP_EQUAL("REGISTER", CSeqHeaderGetMethod(c));
+
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, ContentLengthParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct ContentLengthHeader *c = (struct ContentLengthHeader *) MessageGetHeader("Content-Length", message);
+    STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
+    CHECK_EQUAL(0, ContentLengthGetLength(c));
+
     DestoryMessage(&message);
 }
 

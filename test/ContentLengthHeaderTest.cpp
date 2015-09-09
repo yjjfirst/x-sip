@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include "Parser.h"
 #include "ContentLength.h"
 };
 
@@ -16,5 +17,5 @@ TEST(ContentLengthHeaderTestGroup, ContentLengthHeaderParseTest)
     Parse(header, c, GetContentLengthParsePattern());
     STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
     CHECK_EQUAL(1024, ContentLengthGetLength(c));
-    DestoryContentLengthHeader(c);
+    DestoryContentLengthHeader((struct Header *)c);
 }

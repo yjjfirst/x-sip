@@ -2,6 +2,7 @@
 
 extern "C" {
 #include "CallIDHeader.h"
+#include "Parser.h"
 }
 
 TEST_GROUP(CALLIDHeaderTestGroup)
@@ -16,5 +17,5 @@ TEST(CALLIDHeaderTestGroup, CALLIDHeaderParseTest)
     Parse(callidString, id, GetCallIDPattern());
     STRCMP_EQUAL("Call-ID", CallIDHeaderGetName(id));
     STRCMP_EQUAL("843E@TTT.COM", CallIDHeaderGetID(id));
-    DestoryCallIDHeader(id);
+    DestoryCallIDHeader((struct Header *)id);
 }

@@ -2,13 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Header.h"
 #include "Parser.h"
 #include "Messages.h"
 #include "ViaHeader.h"
 #include "MaxForwards.h"
 #include "Contacts.h"
+#include "CallIDHeader.h"
+#include "CSeqHeader.h"
+#include "ContentLength.h"
+
 #include "utils/list/include/list.h"
-#include "Header.h"
 
 struct Message {
     struct RequestLine *request;
@@ -27,6 +31,9 @@ struct HeaderParser HeaderParsers[] = {
     {HEADER_NAME_TO, ParseContactsHeader, DestoryContactsHeader},
     {HEADER_NAME_FROM, ParseContactsHeader, DestoryContactsHeader},
     {HEADER_NAME_CONTACT, ParseContactsHeader, DestoryContactsHeader},
+    {HEADER_NAME_CALLID, ParseCallIDHeader, DestoryCallIDHeader},
+    {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader},
+    {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader},
 };
 
 void ExtractHeaderName(char *header, char *name)

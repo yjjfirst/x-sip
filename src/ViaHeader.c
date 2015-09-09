@@ -13,7 +13,7 @@ struct ViaHeader {
 struct ParsePattern ViaHeaderPattern []= {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement},
-    {"*", SPACE, SEMICOLON, 0, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
+    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
     {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0, 0},
 };

@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include "Parser.h"
 #include "CSeqHeader.h"
 }
 
@@ -18,5 +19,5 @@ TEST(CSeqTestGroup, CSeqParseTest)
     CHECK_EQUAL(1826, CSeqHeaderGetSeq(c));
     STRCMP_EQUAL("REGISTER", CSeqHeaderGetMethod(c));
 
-    DestoryCSeqHeader(c);
+    DestoryCSeqHeader((struct Header *)c);
 }

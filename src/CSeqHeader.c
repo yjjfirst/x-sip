@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "Header.h"
+#include "Parser.h"
 #include "CSeqHeader.h"
 
 struct CSeqHeader 
@@ -23,7 +24,15 @@ struct ParsePattern *GetCSeqParsePattern()
 }
 
 DEFINE_CREATER(struct CSeqHeader, CreateCSeqHeader);
-DEFINE_DESTROYER(struct CSeqHeader, DestoryCSeqHeader);
+DEFINE_DESTROYER(struct Header, DestoryCSeqHeader);
+
+struct Header *ParseCSeqHeader(char *string)
+{
+    struct CSeqHeader *c = CreateCSeqHeader();
+    Parse(string, c, GetCSeqParsePattern());
+
+    return (struct Header *)c;
+}
 
 char *CSeqHeaderGetName(struct CSeqHeader *c)
 {

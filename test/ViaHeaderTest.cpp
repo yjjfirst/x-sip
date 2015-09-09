@@ -23,3 +23,16 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
 
     DestoryViaHeader((struct Header *)via);
 } 
+
+TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
+{
+    struct ViaHeader *via = CreateViaHeader();
+    char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060";
+
+    Parse(header, via, GetViaPattern());
+    STRCMP_EQUAL ("Via", ViaHeaderGetName(via));
+    STRCMP_EQUAL ("SIP/2.0/UDP", ViaHeaderGetTransport(via));
+    STRCMP_EQUAL ("erlang.bell-telephone.com:5060", ViaHeaderGetUri(via));
+
+    DestoryViaHeader((struct Header *)via);
+} 

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "Header.h"
+#include "Parser.h"
 #include "ContentLength.h"
 
 struct ContentLengthHeader 
@@ -21,7 +22,15 @@ struct ParsePattern *GetContentLengthParsePattern()
 }
 
 DEFINE_CREATER(struct ContentLengthHeader, CreateContentLengthHeader)
-DEFINE_DESTROYER(struct ContentLengthHeader, DestoryContentLengthHeader)
+DEFINE_DESTROYER(struct Header, DestoryContentLengthHeader)
+
+struct Header *ParseContentLength(char *string)
+{
+    struct ContentLengthHeader *c = CreateContentLengthHeader();
+    Parse(string, c, GetContentLengthParsePattern());
+
+    return (struct Header *)c;
+}
 
 char *ContentLengthGetName(struct ContentLengthHeader *c)
 {

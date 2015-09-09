@@ -1,10 +1,9 @@
-#include "Parser.h"
-
 struct CSeqHeader;
 
 struct ParsePattern *GetCSeqParsePattern();
 struct CSeqHeader *CreateCSeqHeader();
-void DestoryCSeqHeader(struct CSeqHeader *c);
+void DestoryCSeqHeader(struct Header *c);
+struct Header *ParseCSeqHeader(char *string);
 
 char *CSeqHeaderGetName(struct CSeqHeader *c);
 int CSeqHeaderGetSeq(struct CSeqHeader *c);

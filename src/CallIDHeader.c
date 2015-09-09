@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Header.h"
+#include "Parser.h"
 #include "CallIDHeader.h"
 
 struct CallIDHeader {
@@ -16,7 +17,15 @@ struct ParsePattern CallIdParsePattern[] = {
 };
 
 DEFINE_CREATER(struct CallIDHeader, CreateCallIDHeader)
-DEFINE_DESTROYER(struct CallIDHeader, DestoryCallIDHeader)
+DEFINE_DESTROYER(struct Header, DestoryCallIDHeader)
+
+struct Header *ParseCallIDHeader(char *string)
+{
+    struct CallIDHeader *id = CreateCallIDHeader();
+    Parse(string, id, GetCallIDPattern());
+
+    return (struct Header *) id;
+}
 
 char *CallIDHeaderGetName(struct CallIDHeader *id)
 {
