@@ -57,9 +57,10 @@ char *FindEndSeparator(char *header, struct ParsePattern *pattern)
     if (pattern->endSeparator == ANY)
         return NextSeparator(header);
 
-    if (*format == '*')
-        return strchr(header, pattern->endSeparator);
-
+    if (*format == '*') {
+        char *end =  strchr(header, pattern->endSeparator);
+        return end;
+    }
     for ( ; *format != 0; format++) {
         header =  strchr (header, *format);        
     }

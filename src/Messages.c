@@ -6,6 +6,7 @@
 #include "Messages.h"
 #include "ViaHeader.h"
 #include "MaxForwards.h"
+#include "Contacts.h"
 #include "utils/list/include/list.h"
 #include "Header.h"
 
@@ -23,6 +24,9 @@ struct HeaderParser {
 struct HeaderParser HeaderParsers[] = {
     {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader},
     {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader},
+    {HEADER_NAME_TO, ParseContactsHeader, DestoryContactsHeader},
+    {HEADER_NAME_FROM, ParseContactsHeader, DestoryContactsHeader},
+    {HEADER_NAME_CONTACT, ParseContactsHeader, DestoryContactsHeader},
 };
 
 void ExtractHeaderName(char *header, char *name)

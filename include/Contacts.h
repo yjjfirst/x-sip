@@ -2,7 +2,8 @@ struct ContactHeader;
 
 struct ParsePattern *GetContactsHeaderPattern(char *header);
 struct ContactHeader *CreateContactsHeader();
-void DestoryContactsHeader(struct ContactHeader *to);
+void DestoryContactsHeader(struct Header *to);
+struct Header *ParseContactsHeader(char *string);
 
 char *ContactsHeaderGetName(struct ContactHeader *toHeader);
 char *ContactsHeaderGetDisplayName(struct ContactHeader *toHeader);

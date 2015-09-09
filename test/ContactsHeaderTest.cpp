@@ -21,7 +21,7 @@ TEST(ToTestGroup, ContactHeaderParseTest)
     STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ContactsHeaderGetUri(toHeader));
     STRCMP_EQUAL("tag=287447", ContactsHeaderGetParameters(toHeader));
     
-    DestoryContactsHeader(toHeader);
+    DestoryContactsHeader((struct Header *)toHeader);
 }
 
 TEST(ToTestGroup, ContactHeaderWithSpaceParseTest)
@@ -35,7 +35,7 @@ TEST(ToTestGroup, ContactHeaderWithSpaceParseTest)
     STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ContactsHeaderGetUri(toHeader));
     STRCMP_EQUAL("tag=287447", ContactsHeaderGetParameters(toHeader));
     
-    DestoryContactsHeader(toHeader);
+    DestoryContactsHeader((struct Header *)toHeader);
 }
 
 TEST(ToTestGroup, ContactHeaderQuotedDisplayNameParseTest)
@@ -49,7 +49,7 @@ TEST(ToTestGroup, ContactHeaderQuotedDisplayNameParseTest)
     STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ContactsHeaderGetUri(toHeader));
     STRCMP_EQUAL("tag=287447", ContactsHeaderGetParameters(toHeader));
     
-    DestoryContactsHeader(toHeader);
+    DestoryContactsHeader((struct Header *)toHeader);
 }
 
 TEST(ToTestGroup, ContactHeaderNoDisplayNameParseTest)
@@ -63,7 +63,7 @@ TEST(ToTestGroup, ContactHeaderNoDisplayNameParseTest)
     STRCMP_EQUAL("sip:Martin.Yang@cs.columbia.edu", ContactsHeaderGetUri(toHeader));
     STRCMP_EQUAL("tag=287447", ContactsHeaderGetParameters(toHeader));
     
-    DestoryContactsHeader(toHeader);
+    DestoryContactsHeader((struct Header *)toHeader);
     
 }
 
@@ -75,5 +75,5 @@ TEST(ToTestGroup, ContactParseTest)
     Parse((char*) contactString, contact, GetContactsHeaderPattern(contactString));
     STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
     STRCMP_EQUAL("sip:alice@pc33.atlanta.com", ContactsHeaderGetUri(contact));
-    DestoryContactsHeader(contact);
+    DestoryContactsHeader((struct Header *)contact);
 }

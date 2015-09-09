@@ -62,6 +62,13 @@ struct ParsePattern *GetContactsHeaderPattern(char *header)
     
     return pattern;
 }
+struct Header *ParseContactsHeader(char *string)
+{
+    struct ContactHeader *header = CreateContactsHeader();
+    Parse(string, header, GetContactsHeaderPattern(string));
+    
+    return header;
+}
 
 char *ContactsHeaderGetName(struct ContactHeader *toHeader)
 {
@@ -89,7 +96,7 @@ struct ContactHeader *CreateContactsHeader()
     return to;
 }
 
-void DestoryContactsHeader(struct ContactHeader *to)
+void DestoryContactsHeader(struct Header *to)
 {
     if (to != NULL) {
         free(to);

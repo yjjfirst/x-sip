@@ -25,7 +25,7 @@ TEST_GROUP(MessageTestGroup)
      From: Werner Heisenberg <sip:werner.heisenberg@munich.de> ;tag=3431 \r\n \
      Call-ID: 23@200.201.202.203 \r\n                                   \
      CSeq: 1 REGISTER \r\n                                              \
-     Contact: sip:werner.heisenberg@200.201.202.203 \r\n                \
+     Contact:sip:werner.heisenberg@200.201.202.203 \r\n                \
      Content-Length: 0 \r\n");
     }
 };
@@ -83,7 +83,33 @@ TEST(MessageTestGroup, ToParseTest)
 
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
     STRCMP_EQUAL("To", ContactsHeaderGetName(to));
+    STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(to));
+    STRCMP_EQUAL("sip:werner.heisenberg@munich.de", ContactsHeaderGetUri(to));
+    DestoryMessage(&message);
+}
 
+TEST(MessageTestGroup, FromParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", message);
+    STRCMP_EQUAL("From", ContactsHeaderGetName(from));
+    STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(from));
+    STRCMP_EQUAL("sip:werner.heisenberg@munich.de", ContactsHeaderGetUri(from));
+    STRCMP_EQUAL("tag=3431", ContactsHeaderGetParameters(from));
+    DestoryMessage(&message);
+
+}
+
+TEST(MessageTestGroup, ContactParseTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
+    STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
+    STRCMP_EQUAL("sip:werner.heisenberg@200.201.202.203", ContactsHeaderGetUri(contact));
     DestoryMessage(&message);
 }
 
