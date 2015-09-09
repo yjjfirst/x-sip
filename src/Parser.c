@@ -36,7 +36,6 @@ char *NextSeparator (char *header)
     int tokenCount = sizeof(tokens) / sizeof (char);
     char *pos = header;
 
-    //printf("%s\n", header);
     for (; *pos != 0; pos ++) {
         for (i = 0; i < tokenCount; i ++) {
             if (*pos == tokens[i]) {
@@ -58,9 +57,14 @@ char *FindEndSeparator(char *header, struct ParsePattern *pattern)
         return NextSeparator(header);
 
     if (*format == '*') {
-        char *end =  strchr(header, pattern->endSeparator);
+        char *end = strchr(header, pattern->endSeparator);
+        if (end == NULL && pattern->mandatory) {
+            end = header + strlen (header);            
+        }
+        
         return end;
     }
+
     for ( ; *format != 0; format++) {
         header =  strchr (header, *format);        
     }
@@ -124,7 +128,7 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
             strncpy(value, start , curr - start);
         }
 
-        if (!pattern->placeholder) {
+        if (pattern->Parse != NULL) {
             pattern->Parse(value, target + pattern->offset);
         }
 

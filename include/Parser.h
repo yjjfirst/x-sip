@@ -14,7 +14,7 @@ struct ParsePattern {
     char *format;
     char startSeparator;
     char endSeparator;
-    int  placeholder;
+    int  mandatory;
     unsigned long offset;
     int (*Parse)(char *header, void *target);
 };

@@ -17,25 +17,25 @@ struct ParsePattern ContactsHeaderPattern[] = {
     { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement},
     { "*", COLON, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader, displayName), ParseStringElement},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseStringElement},
-    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseStringElement},
+    { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL},
     { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
     { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement},
-    { "*", COLON, QUOTE, 1, 0, ParseStringElement},
+    { "*", COLON, QUOTE, 0, 0, NULL},
     { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseStringElement},
-    { "*", QUOTE, LEFT_ANGLE, 1, 0, ParseStringElement},
+    { "*", QUOTE, LEFT_ANGLE, 0, 0, NULL},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseStringElement},
-    { "*", RIGHT_ANGLE, SEMICOLON, 1, 0, ParseStringElement},
+    { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL},
     { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseStringElement},
     {NULL, 0, 0, 0}
 };
 
 struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
     { "*",  EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement},
-    { "*",  COLON, SEMICOLON, 0, OFFSETOF(struct ContactHeader, uri), ParseStringElement},
+    { "*",  COLON, SEMICOLON, 1, OFFSETOF(struct ContactHeader, uri), ParseStringElement},
     { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseStringElement},
     {NULL, 0, 0, 0}
 };
@@ -43,19 +43,22 @@ struct ParsePattern ContactsHeaderNoDisplayNamePattern[] = {
 struct ParsePattern *GetContactsHeaderPattern(char *header)
 {  
     struct ParsePattern *pattern = NULL;
-    char *token = NextSeparator(header);
+    char *token;
 
-    token ++;
+    while (*header == SPACE) header ++;
+    token = NextSeparator(header) + 1;
     while (*token == SPACE) token ++;
     
+
     if (strncmp(token, "sip:", 4) == 0) {
         pattern = ContactsHeaderNoDisplayNamePattern;
         return pattern;
     }
 
     token = NextSeparator(token);
-    if (*token == QUOTE)        
+    if (*token == QUOTE)  {      
         pattern = ContactsHeaderWithQuotedDisplayNamePattern;
+    }
     else {
         pattern = ContactsHeaderPattern;
     }
@@ -67,7 +70,7 @@ struct Header *ParseContactsHeader(char *string)
     struct ContactHeader *header = CreateContactsHeader();
     Parse(string, header, GetContactsHeaderPattern(string));
     
-    return header;
+    return (struct Header *)header;
 }
 
 char *ContactsHeaderGetName(struct ContactHeader *toHeader)
