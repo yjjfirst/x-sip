@@ -75,22 +75,22 @@ char *FindEndSeparator(char *header, struct ParsePattern *pattern)
 
 char *FindNextComponent(char *header, struct ParsePattern *pattern)
 {
-    char *next = NULL;
+    char *end = NULL;
 
     if (pattern->startSeparator == EMPTY) {
-        next = strchr(header, pattern->endSeparator);
-        return next;
+        end = strchr(header, pattern->endSeparator);
+        return end;
     }
         
     if (pattern->startSeparator == header[0]) {
-        next = FindEndSeparator (header + 1, pattern);
-        if (next == NULL) next = header;
+        end = FindEndSeparator (header + 1, pattern);
+        if (end == NULL) end = header;
     }
     else {
-        next = header;
+        end = header;
     }
 
-    return next;
+    return end;
 }
 
 char *SkipLeadingSeparator(char *header, char *position) 
@@ -105,35 +105,46 @@ char *SkipLeadingSeparator(char *header, char *position)
     return start;
 } 
 
+#define MAX_ELEMENT_LENGTH 1024
 int Parse(char *header, void* target, struct ParsePattern *pattern)
 {
-    char *curr;
+
+    char *end;
     char *position;
-    char value[128];
+    char value[MAX_ELEMENT_LENGTH];
     char *start = NULL;
+    int length;
     
     if (pattern == NULL) {
         return -1;
     }
     
     while (*header == SPACE) header ++;
-    curr = position = header;
+    end = position = header;
 
     for ( ; pattern->format != NULL;  pattern++) {            
-        curr = FindNextComponent(position, pattern);
+        end = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
         start = SkipLeadingSeparator(header, position);
 
-        if (curr - start >= 0) {         
-            strncpy(value, start , curr - start);
+        length = end - start;
+        if (length > 0 && length < MAX_ELEMENT_LENGTH) {         
+            strncpy(value, start, length);
         }
 
+        if (pattern->Validate != NULL) {
+            if (pattern->Validate(value) == -1) {
+                return -1;
+            }
+        }
         if (pattern->Parse != NULL) {
             pattern->Parse(value, target + pattern->offset);
         }
 
-        position = curr;
+        position = end;
     }
 
     return 0;
 }
+
+#undef MAX_ELEMENT_LENGTH

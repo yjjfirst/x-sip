@@ -55,3 +55,12 @@ TEST(RequestLineTestGroup, RegisterURIParseTest)
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("192.168.2.89", UriGetHost(uri));
 }
+
+TEST(RequestLineTestGroup, LongMethodParseTest)
+{
+    char string[] = "REGISTER90123456789 sip:192.168.2.89 SIP/2.0";
+    struct RequestLine *r = CreateRequestLine();
+
+    CHECK_EQUAL(-1, Parse(string, r, GetRequestLinePattern()));
+    DestoryRequestLine(r);
+}

@@ -17,6 +17,7 @@ struct ParsePattern {
     int  mandatory;
     unsigned long offset;
     int (*Parse)(char *header, void *target);
+    int (*Validate)(char *value);
 };
 
 #define OFFSETOF(type, field)  ((unsigned long) &(((type *) 0)->field))

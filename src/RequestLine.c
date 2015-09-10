@@ -5,8 +5,10 @@
 #include "RequestLine.h"
 #include "Parser.h"
 
+#define METHOD_MAX_LENGTH 16
+
 struct RequestLine {
-    char method[16];
+    char method[METHOD_MAX_LENGTH];
     struct URI *requestUri;
     char sipVersion[16];
 };
@@ -21,8 +23,15 @@ static int ParseURI(char *header, void *target)
     return 0;
 }
 
+int RequestLineMethodValidate(char *method)
+{
+    if (strcmp(method, "REGISTER") == 0 || strcmp(method, "INVITE") == 0)
+        return 0;
+    return -1;
+}
+
 struct ParsePattern RequestLinePattern[] = {
-    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement},
+    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement, RequestLineMethodValidate},
     {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0}
