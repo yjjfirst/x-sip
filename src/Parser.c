@@ -132,8 +132,8 @@ int Parse(char *header, void* target, struct ParsePattern *pattern)
             strncpy(value, start, length);
         }
 
-        if (pattern->Validate != NULL) {
-            if (pattern->Validate(value) == -1) {
+        if (pattern->Legal != NULL) {
+            if (pattern->Legal(value) == 0) {
                 return -1;
             }
         }

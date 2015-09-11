@@ -64,3 +64,34 @@ TEST(RequestLineTestGroup, LongMethodParseTest)
     CHECK_EQUAL(-1, Parse(string, r, GetRequestLinePattern()));
     DestoryRequestLine(r);
 }
+
+TEST(RequestLineTestGroup, CreateRequestLineTest)
+{
+    struct RequestLine *r = CreateRequestLine();
+
+    RequestLineSetMethod(r, (char *)"REGISTER");
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(r));
+    
+    RequestLineSetMethod(r, (char *)"INVITE");
+    STRCMP_EQUAL("INVITE", RequestLineGetMethod(r));
+
+    DestoryRequestLine(r);
+}
+
+TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
+{
+    struct RequestLine *r = CreateRequestLine();
+    RequestLineSetMethod(r, (char *)"aaaaaaa");
+
+    STRCMP_EQUAL("", RequestLineGetMethod(r));
+    DestoryRequestLine(r);
+}
+
+TEST(RequestLineTestGroup, RequestLineSetSipVersion)
+{
+    struct RequestLine *r = CreateRequestLine();
+
+    RequestLineSetSipVersion(r, (char *)"SIP/2.0");
+    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
+    DestoryRequestLine(r);
+}

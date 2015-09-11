@@ -27,4 +27,4 @@ clean:
 	-@rm -f *.o
 	-@rm -f *.a
 -include $(SRCS:%.c=%.d)
-
+-include ../make.common

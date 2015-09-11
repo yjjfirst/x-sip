@@ -151,6 +151,14 @@ TEST(MessageTestGroup, ContentLengthParseTest)
     DestoryMessage(&message);
 }
 
+TEST(MessageTestGroup, CreateMessageTest)
+{
+    struct Message *message = CreateMessage();
+
+    
+    DestoryMessage(&message);
+}
+
 TEST(MessageTestGroup, ExtractHeaderNameTest)
 {
     char header[] = "Via: SIP/2.0/UDP 200.201.202.203:5060;branch=z9hG4bKus19";

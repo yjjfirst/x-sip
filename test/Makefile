@@ -32,3 +32,4 @@ clean:
 
 -include $(TEST_SRCS:%.cpp=%.d)
 -include $(PRODUCT_SRCS:%.c=%.d)
+-include ../make.common

@@ -11,11 +11,19 @@
 #include "CallIDHeader.h"
 #include "CSeqHeader.h"
 #include "ContentLength.h"
-
 #include "utils/list/include/list.h"
 
+struct StatueLine {
+    char sipVersion[16];
+    int statusCode;
+    char reasonPhrase[64];
+};
+
 struct Message {
-    struct RequestLine *request;
+    union {
+        struct RequestLine *request;
+        struct StatueLine *statue;
+    } rr;
     t_list *headers;
 };
 
@@ -52,7 +60,7 @@ void ParseRequestLine(char *string, struct Message *message)
     struct RequestLine *requestLine = CreateRequestLine();
 
     Parse(string, requestLine, GetRequestLinePattern()); 
-    message->request = requestLine;
+    message->rr.request = requestLine;
 }
 
 struct Header *MessageGetHeader(const char *name, struct Message *message)
@@ -100,7 +108,7 @@ int ParseMessage(char *string, struct Message *message)
 
 struct RequestLine *MessageGetRequest(struct Message *message)
 {
-    return message->request;
+    return message->rr.request;
 }
 
 struct Message *CreateMessage () 
@@ -136,7 +144,7 @@ void MessageDestoryHeaders(struct Message *message)
 void DestoryMessage (struct Message **message) 
 { 
     if ((*message) != ((void *)0)) {
-        DestoryRequestLine((*message)->request);
+        DestoryRequestLine((*message)->rr.request);
         MessageDestoryHeaders(*message);
         destroy_list(&(*message)->headers, NULL);
         free(*message);
