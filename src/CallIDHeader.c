@@ -10,7 +10,7 @@ struct CallIDHeader {
     char id[64];
 };
 
-struct ParsePattern CallIdParsePattern[] = {
+struct HeaderPattern CallIdHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0},
@@ -37,8 +37,8 @@ char *CallIDHeaderGetID(struct CallIDHeader *id)
     return id->id;
 }
 
-struct ParsePattern *GetCallIDPattern()
+struct HeaderPattern *GetCallIDPattern()
 {
-    return CallIdParsePattern;
+    return CallIdHeaderPattern;
 }
 

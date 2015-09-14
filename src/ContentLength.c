@@ -10,15 +10,15 @@ struct ContentLengthHeader
     int length;
 };
 
-struct ParsePattern ContentLengthParsePattern[] = {
+struct HeaderPattern ContentLengthHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ContentLengthHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct ContentLengthHeader, length), ParseIntegerElement},
     {NULL, 0, 0, 0, 0, 0},
 };
 
-struct ParsePattern *GetContentLengthParsePattern()
+struct HeaderPattern *GetContentLengthHeaderPattern()
 {
-    return ContentLengthParsePattern;
+    return ContentLengthHeaderPattern;
 }
 
 DEFINE_CREATER(struct ContentLengthHeader, CreateContentLengthHeader)
@@ -27,7 +27,7 @@ DEFINE_DESTROYER(struct Header, DestoryContentLengthHeader)
 struct Header *ParseContentLength(char *string)
 {
     struct ContentLengthHeader *c = CreateContentLengthHeader();
-    Parse(string, c, GetContentLengthParsePattern());
+    Parse(string, c, GetContentLengthHeaderPattern());
 
     return (struct Header *)c;
 }

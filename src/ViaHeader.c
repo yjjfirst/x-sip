@@ -10,7 +10,7 @@ struct ViaHeader {
     char parameters[128];
 };
 
-struct ParsePattern ViaHeaderPattern []= {
+struct HeaderPattern ViaHeaderPattern []= {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement},
     {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
@@ -18,7 +18,7 @@ struct ParsePattern ViaHeaderPattern []= {
     {NULL, 0, 0, 0, 0},
 };
 
-struct ParsePattern *GetViaPattern()
+struct HeaderPattern *GetViaPattern()
 {
     return ViaHeaderPattern;
 }
@@ -46,7 +46,7 @@ char *ViaHeaderGetParameters(struct ViaHeader *via)
 struct Header *ParseViaHeader(char *string) 
 {
     struct ViaHeader *via =  CreateViaHeader();
-    struct ParsePattern *viaPattern = GetViaPattern();
+    struct HeaderPattern *viaPattern = GetViaPattern();
     Parse(string, via, viaPattern);
     
     return (struct Header *)via; 

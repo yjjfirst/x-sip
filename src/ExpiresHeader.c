@@ -9,13 +9,13 @@ struct ExpiresHeader
     int expires;
 };
 
-struct ParsePattern ExpiresHeaderPattern[] = {
+struct HeaderPattern ExpiresHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, headerBase), ParseStringElement},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct ExpiresHeader, expires), ParseIntegerElement},
     {NULL, 0, 0, 0, 0, 0},
 };
 
-struct ParsePattern *GetExpiresPattern()
+struct HeaderPattern *GetExpiresPattern()
 {
     return ExpiresHeaderPattern;
 }

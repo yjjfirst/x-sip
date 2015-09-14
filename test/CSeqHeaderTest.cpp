@@ -14,7 +14,7 @@ TEST(CSeqTestGroup, CSeqParseTest)
     struct CSeqHeader *c = CreateCSeqHeader(); 
     char header[] = "CSeq : 1826 REGISTER";
 
-    Parse(header, c, GetCSeqParsePattern());
+    Parse(header, c, GetCSeqHeaderPattern());
     STRCMP_EQUAL("CSeq", CSeqHeaderGetName(c));
     CHECK_EQUAL(1826, CSeqHeaderGetSeq(c));
     STRCMP_EQUAL("REGISTER", CSeqHeaderGetMethod(c));

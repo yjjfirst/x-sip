@@ -2,7 +2,7 @@ struct ContentLengthHeader;
 
 struct ContentLengthHeader *CreateContentLengthHeader();
 void DestoryContentLengthHeader(struct Header *header);
-struct ParsePattern *GetContentLengthParsePattern();
+struct HeaderPattern *GetContentLengthHeaderPattern();
 struct Header *ParseContentLength();
 
 int ContentLengthGetLength(struct ContentLengthHeader *c);

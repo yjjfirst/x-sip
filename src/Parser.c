@@ -47,7 +47,7 @@ char *NextSeparator (char *header)
     return header + strlen(header);
 }
 
-char *FindEndSeparator(char *header, struct ParsePattern *pattern)
+char *FindEndSeparator(char *header, struct HeaderPattern *pattern)
 {
     char *format = pattern->format;
 
@@ -73,7 +73,7 @@ char *FindEndSeparator(char *header, struct ParsePattern *pattern)
     return strchr(header, pattern->endSeparator);
 }
 
-char *FindNextComponent(char *header, struct ParsePattern *pattern)
+char *FindNextComponent(char *header, struct HeaderPattern *pattern)
 {
     char *end = NULL;
 
@@ -106,7 +106,7 @@ char *SkipLeadingSeparator(char *header, char *position)
 } 
 
 #define MAX_ELEMENT_LENGTH 1024
-int Parse(char *header, void* target, struct ParsePattern *pattern)
+int Parse(char *header, void* target, struct HeaderPattern *pattern)
 {
 
     char *end;

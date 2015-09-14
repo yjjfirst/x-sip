@@ -1,7 +1,7 @@
 struct ViaHeader;
 struct Header;
 
-struct ParsePattern *GetViaPattern();
+struct HeaderPattern *GetViaPattern();
 struct ViaHeader *CreateViaHeader();
 void DestoryViaHeader(struct Header *via);
 struct Header *ParseViaHeader(char *string);

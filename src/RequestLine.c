@@ -4,6 +4,7 @@
 
 #include "RequestLine.h"
 #include "Parser.h"
+#include "Header.h"
 
 #define METHOD_MAX_LENGTH 16
 #define SIP_VERSION_LENGTH 8
@@ -16,7 +17,7 @@ struct RequestLine {
 
 static int ParseURI(char *header, void *target)
 {
-    struct ParsePattern *pattern = GetURIParsePattern(header);
+    struct HeaderPattern *pattern = GetURIHeaderPattern(header);
     struct URI **uri = target;
 
     Parse(header, *uri, pattern);
@@ -38,14 +39,14 @@ int RequestLineSipVersionLegal(char *version)
     return 0;
 }
 
-struct ParsePattern RequestLinePattern[] = {
+struct HeaderPattern RequestLinePattern[] = {
     {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement, RequestLineMethodLegal},
     {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0}
 };
 
-struct ParsePattern *GetRequestLinePattern ()
+struct HeaderPattern *GetRequestLinePattern ()
 {
     return RequestLinePattern;
 }
@@ -80,9 +81,25 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version)
     return 0;
 }
 
+int RequestLineSetUri(struct RequestLine *r, struct URI *u)
+{
+    DestoryUri(r->requestUri);
+    r->requestUri = u;
+
+    return 0;
+}
+
 struct URI *RequestLineGetUri(struct RequestLine *r)
 {
     return r->requestUri;
+}
+
+void RequestLine2String(struct RequestLine *r, char *string)
+{
+    char uri[HEADER_MAX_LENGTH] = {0};
+    
+    Uri2String(r->requestUri, uri);
+    snprintf(string, HEADER_MAX_LENGTH, "%s %s %s", r->method, uri, r->sipVersion);
 }
 
 struct RequestLine *CreateRequestLine()

@@ -87,7 +87,7 @@ TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
     DestoryRequestLine(r);
 }
 
-TEST(RequestLineTestGroup, RequestLineSetSipVersion)
+TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 {
     struct RequestLine *r = CreateRequestLine();
 
@@ -95,3 +95,35 @@ TEST(RequestLineTestGroup, RequestLineSetSipVersion)
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
     DestoryRequestLine(r);
 }
+
+TEST(RequestLineTestGroup, RequestLineSetUriTest)
+{
+    struct RequestLine *r = CreateRequestLine();
+    struct URI *u = CreateUri();
+    char URIString[] = "sips:peter@192.168.10.62:5060";
+    
+    Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
+    RequestLineSetUri(r, u);
+
+    DestoryRequestLine(r);
+}
+
+TEST(RequestLineTestGroup, RequestLine2StringTest)
+{
+    struct RequestLine *r = CreateRequestLine();
+    struct URI *u = CreateUri();
+    char string[256] = {0};
+    
+    RequestLineSetMethod(r, (char *)"INVITE");
+    RequestLineSetSipVersion(r, (char *)"SIP/2.0");
+
+    char URIString[] = "sips:peter@192.168.10.62:5060";    
+    Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
+    RequestLineSetUri(r, u);
+
+    RequestLine2String(r, string);
+    STRCMP_EQUAL("INVITE sips:peter@192.168.10.62:5060 SIP/2.0", string);
+
+    DestoryRequestLine(r);
+}
+

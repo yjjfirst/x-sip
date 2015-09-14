@@ -1,6 +1,6 @@
 struct MaxForwardsHeader;
 
-struct ParsePattern *GetMaxForwardsPattern();
+struct HeaderPattern *GetMaxForwardsPattern();
 struct MaxForwardsHeader *CreateMaxForwardsHeader();
 void DestoryMaxForwardsHeader(struct Header *maxForward);
 struct Header *ParseMaxForwardsHeader(char *string);

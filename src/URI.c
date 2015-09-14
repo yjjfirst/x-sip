@@ -13,7 +13,7 @@ struct URI {
     char headers[128];
 };
 
-struct ParsePattern URIParsePattern[] = {
+struct HeaderPattern URIHeaderPattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
     { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement},
     { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
@@ -24,7 +24,7 @@ struct ParsePattern URIParsePattern[] = {
 
 };
 
-struct ParsePattern URINoUserParsePattern[] = {
+struct HeaderPattern URINoUserHeaderPattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement},
@@ -65,18 +65,23 @@ struct URI *CreateUri()
     return uri;
 }
 
+void Uri2String(struct URI *uri, char *string)
+{
+    strcpy(string, "sips:peter@192.168.10.62:5060");
+}
+
 void DestoryUri(struct URI *uri)
 {
     free (uri);
 }
 
-struct ParsePattern *GetURIParsePattern (char *header)
+struct HeaderPattern *GetURIHeaderPattern (char *header)
 {
     if (strchr(header, '@') == NULL) {
-        return URINoUserParsePattern;
+        return URINoUserHeaderPattern;
     }
     else { 
-        return URIParsePattern;
+        return URIHeaderPattern;
     }
 }
 

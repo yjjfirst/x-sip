@@ -2,7 +2,7 @@
 
 struct RequestLine;
 
-struct ParsePattern *GetRequestLinePattern();   
+struct HeaderPattern *GetRequestLinePattern();   
 void DestoryRequestLine(struct RequestLine *requestLine);
 struct RequestLine *CreateRequestLine();
 
@@ -12,3 +12,6 @@ struct URI *RequestLineGetUri(struct RequestLine *r);
 
 int RequestLineSetMethod(struct RequestLine *r, char *method);
 int RequestLineSetSipVersion(struct RequestLine *r, char *version);
+int RequestLineSetUri(struct RequestLine *r, struct URI *u);
+
+void RequestLine2String(struct RequestLine *r, char *string);

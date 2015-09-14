@@ -11,14 +11,14 @@ struct CSeqHeader
     char method[16];
 };
 
-struct ParsePattern CSeqHeaderPattern[] = {
+struct HeaderPattern CSeqHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseStringElement},
     {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseIntegerElement},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0},
 };
 
-struct ParsePattern *GetCSeqParsePattern()
+struct HeaderPattern *GetCSeqHeaderPattern()
 {
     return CSeqHeaderPattern;
 }
@@ -29,7 +29,7 @@ DEFINE_DESTROYER(struct Header, DestoryCSeqHeader);
 struct Header *ParseCSeqHeader(char *string)
 {
     struct CSeqHeader *c = CreateCSeqHeader();
-    Parse(string, c, GetCSeqParsePattern());
+    Parse(string, c, GetCSeqHeaderPattern());
 
     return (struct Header *)c;
 }

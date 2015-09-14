@@ -1,6 +1,6 @@
 struct CSeqHeader;
 
-struct ParsePattern *GetCSeqParsePattern();
+struct HeaderPattern *GetCSeqHeaderPattern();
 struct CSeqHeader *CreateCSeqHeader();
 void DestoryCSeqHeader(struct Header *c);
 struct Header *ParseCSeqHeader(char *string);

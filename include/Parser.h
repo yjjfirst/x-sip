@@ -10,7 +10,7 @@
 #define EMPTY       0x00
 #define ANY         0x7F
 
-struct ParsePattern {
+struct HeaderPattern {
     char *format;
     char startSeparator;
     char endSeparator;
@@ -35,7 +35,7 @@ struct ParsePattern {
             free(header);                       \
     }           
 
-int Parse(char *header, void *target, struct ParsePattern *pattern);
+int Parse(char *header, void *target, struct HeaderPattern *pattern);
 char *NextSeparator(char *header);
 int ParseStringElement(char *value, void *target);
 int ParseIntegerElement(char *value, void *target);

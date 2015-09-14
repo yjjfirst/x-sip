@@ -8,6 +8,8 @@
 #define HEADER_NAME_CONTENT_LENGTH "Content-Length"
 
 #define HEADER_NAME_MAX_LENGTH 32
+#define HEADER_MAX_LENGTH 256
+
 struct Header {
     char name[HEADER_NAME_MAX_LENGTH];
 };
