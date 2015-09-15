@@ -41,7 +41,7 @@ int RequestLineSipVersionLegal(char *version)
 
 struct HeaderPattern RequestLinePattern[] = {
     {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement, RequestLineMethodLegal},
-    {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI},
+    {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI, NULL, Uri2String},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseStringElement},
     {NULL, 0, 0, 0, 0, 0}
 };
@@ -98,7 +98,7 @@ void RequestLine2String(struct RequestLine *r, char *string)
 {
     char uri[HEADER_MAX_LENGTH] = {0};
     
-    Uri2String(r->requestUri, uri);
+    Uri2String(uri, r->requestUri);
     snprintf(string, HEADER_MAX_LENGTH, "%s %s %s", r->method, uri, r->sipVersion);
 }
 

@@ -120,3 +120,14 @@ TEST(URITestGroup, URIParseNoParameterTest)
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com", UriGetHost(uri));
 }
+
+TEST(URITestGroup, URI2StringTest)
+{
+    char URIString[] = "sip:alice:secretword@atlanta.com?subject=project";
+    char result[128] = {0};
+
+    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    Uri2String(result, uri);
+    
+    STRCMP_EQUAL(URIString, result);
+}

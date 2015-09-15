@@ -106,7 +106,7 @@ char *SkipLeadingSeparator(char *header, char *position)
 } 
 
 #define MAX_ELEMENT_LENGTH 1024
-int Parse(char *header, void* target, struct HeaderPattern *pattern)
+int Parse(char *string, void* target, struct HeaderPattern *pattern)
 {
 
     char *end;
@@ -119,26 +119,25 @@ int Parse(char *header, void* target, struct HeaderPattern *pattern)
         return -1;
     }
     
-    while (*header == SPACE) header ++;
-    end = position = header;
+    while (*string == SPACE) string ++;
+    end = position = string;
 
     for ( ; pattern->format != NULL;  pattern++) {            
         end = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
-        start = SkipLeadingSeparator(header, position);
+        start = SkipLeadingSeparator(string, position);
 
         length = end - start;
         if (length > 0 && length < MAX_ELEMENT_LENGTH) {         
             strncpy(value, start, length);
         }
 
-        if (pattern->Legal != NULL) {
-            if (pattern->Legal(value) == 0) {
+        if (pattern->legal != NULL && pattern->legal(value) == 0) {
                 return -1;
-            }
         }
-        if (pattern->Parse != NULL) {
-            pattern->Parse(value, target + pattern->offset);
+
+        if (pattern->parse != NULL) {
+            pattern->parse(value, target + pattern->offset);
         }
 
         position = end;
@@ -148,3 +147,28 @@ int Parse(char *header, void* target, struct HeaderPattern *pattern)
 }
 
 #undef MAX_ELEMENT_LENGTH
+
+char *StringElement2String(char *pos, void *element, struct HeaderPattern *p)
+{
+    strcpy(pos, element);    
+    return pos + strlen(element);
+}
+
+char *ToString (char *string, void *header, struct HeaderPattern *pattern)
+{
+    char *pos = string;
+    char *element = NULL;
+    struct HeaderPattern *p = pattern;
+
+    for (; p->format != NULL; p++) {
+        element = (char *)header + p->offset;        
+        if (p->startSeparator != EMPTY && strlen(element) != 0) {
+            *pos = p->startSeparator;
+            pos ++;
+        }
+
+        pos = StringElement2String(pos, element, p);
+    }
+    
+    return pos;
+}

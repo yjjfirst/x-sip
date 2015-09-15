@@ -16,8 +16,9 @@ struct HeaderPattern {
     char endSeparator;
     int  mandatory;
     unsigned long offset;
-    int (*Parse)(char *header, void *target);
-    int (*Legal)(char *value);
+    int (*parse)(char *header, void *target);
+    int (*legal)(char *value);
+    char *(*toString)(char *string, void *element);
 };
 
 #define OFFSETOF(type, field)  ((unsigned long) &(((type *) 0)->field))
@@ -35,7 +36,9 @@ struct HeaderPattern {
             free(header);                       \
     }           
 
-int Parse(char *header, void *target, struct HeaderPattern *pattern);
+int Parse(char *string, void *target, struct HeaderPattern *pattern);
+char *ToString(char *string, void *header, struct HeaderPattern *pattern);
 char *NextSeparator(char *header);
 int ParseStringElement(char *value, void *target);
 int ParseIntegerElement(char *value, void *target);
+char *StringElement2String(char *pos, void *element, struct HeaderPattern *p);

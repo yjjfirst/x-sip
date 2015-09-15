@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "URI.h"
 #include "Parser.h"
@@ -14,12 +15,12 @@ struct URI {
 };
 
 struct HeaderPattern URIHeaderPattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
-    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement},
-    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL},
+    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement, NULL},
+    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement, NULL},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement, NULL},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement, NULL},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement, NULL},
     {NULL, 0, 0, 0, 0}
 
 };
@@ -65,9 +66,12 @@ struct URI *CreateUri()
     return uri;
 }
 
-void Uri2String(struct URI *uri, char *string)
+
+
+char *Uri2String(char *string, void *uri)
 {
-    strcpy(string, "sips:peter@192.168.10.62:5060");
+    struct HeaderPattern *pattern = URIHeaderPattern;
+    return ToString(string, uri, pattern);
 }
 
 void DestoryUri(struct URI *uri)

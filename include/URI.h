@@ -12,4 +12,4 @@ char *UriGetParameters(struct URI *uri);
 char *UriGetHeaders(struct URI *uri);
 
 
-void Uri2String(struct URI *uri, char *string);
+char *Uri2String(char *string, void *uri);
