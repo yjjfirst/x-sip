@@ -15,12 +15,12 @@ struct URI {
 };
 
 struct HeaderPattern URIHeaderPattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL},
-    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement, NULL},
-    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement, NULL},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement, NULL},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement, NULL},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement, NULL},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL,StringElement2String},
+    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement, NULL,StringElement2String},
+    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement, NULL,StringElement2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement, NULL,StringElement2String},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement, NULL,StringElement2String},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement, NULL,StringElement2String},
     {NULL, 0, 0, 0, 0}
 
 };
@@ -66,12 +66,17 @@ struct URI *CreateUri()
     return uri;
 }
 
-
-
-char *Uri2String(char *string, void *uri)
+char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p)
 {
     struct HeaderPattern *pattern = URIHeaderPattern;
     return ToString(string, uri, pattern);
+}
+
+char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
+{
+    struct HeaderPattern *pattern = URIHeaderPattern;
+    struct URI **u = uri;
+    return ToString(string, *u, pattern);
 }
 
 void DestoryUri(struct URI *uri)

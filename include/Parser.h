@@ -18,7 +18,7 @@ struct HeaderPattern {
     unsigned long offset;
     int (*parse)(char *header, void *target);
     int (*legal)(char *value);
-    char *(*toString)(char *string, void *element);
+    char *(*toString)(char *string, void *element, struct HeaderPattern *p);
 };
 
 #define OFFSETOF(type, field)  ((unsigned long) &(((type *) 0)->field))

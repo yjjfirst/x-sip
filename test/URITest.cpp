@@ -127,7 +127,7 @@ TEST(URITestGroup, URI2StringTest)
     char result[128] = {0};
 
     Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
-    Uri2String(result, uri);
+    Uri2StringExt(result, uri, GetURIHeaderPattern(URIString));
     
     STRCMP_EQUAL(URIString, result);
 }

@@ -11,5 +11,5 @@ char *UriGetPort(struct URI *uri);
 char *UriGetParameters(struct URI *uri);
 char *UriGetHeaders(struct URI *uri);
 
-
-char *Uri2String(char *string, void *uri);
+char *Uri2String(char *string, void *uri, struct HeaderPattern *p);
+char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p);

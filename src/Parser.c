@@ -166,9 +166,8 @@ char *ToString (char *string, void *header, struct HeaderPattern *pattern)
             *pos = p->startSeparator;
             pos ++;
         }
-
-        pos = StringElement2String(pos, element, p);
+        pos = p->toString(pos, element, p);
     }
-    
+
     return pos;
 }
