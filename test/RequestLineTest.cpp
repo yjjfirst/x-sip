@@ -121,7 +121,7 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
     RequestLineSetUri(r, u);
 
-    RequestLine2String(r, string);
+    RequestLine2String(string, r);
     STRCMP_EQUAL("INVITE sips:peter@192.168.10.62:5060 SIP/2.0", string);
 
     DestoryRequestLine(r);

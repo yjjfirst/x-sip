@@ -14,4 +14,4 @@ int RequestLineSetMethod(struct RequestLine *r, char *method);
 int RequestLineSetSipVersion(struct RequestLine *r, char *version);
 int RequestLineSetUri(struct RequestLine *r, struct URI *u);
 
-void RequestLine2String(struct RequestLine *r, char *string);
+void RequestLine2String(char *string, struct RequestLine *r);

@@ -10,3 +10,4 @@ char *ContactsHeaderGetDisplayName(struct ContactHeader *toHeader);
 char *ContactsHeaderGetUri(struct ContactHeader *toHeader);
 char *ContactsHeaderGetParameters(struct ContactHeader *toHeader);
 
+void ContactsHeader2String(char *result, struct ContactHeader *contact);

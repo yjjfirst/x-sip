@@ -150,8 +150,12 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
 
 char *StringElement2String(char *pos, void *element, struct HeaderPattern *p)
 {
-    strcpy(pos, element);    
-    return pos + strlen(element);
+    if (p->parse != NULL) {
+        strcpy(pos, element);    
+        return pos + strlen(element);
+    } else {
+        return pos;
+    }
 }
 
 char *ToString (char *string, void *header, struct HeaderPattern *pattern)
@@ -168,6 +172,7 @@ char *ToString (char *string, void *header, struct HeaderPattern *pattern)
         }
         pos = p->toString(pos, element, p);
     }
-
+    
+    
     return pos;
 }

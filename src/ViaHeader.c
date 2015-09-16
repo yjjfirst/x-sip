@@ -11,10 +11,10 @@ struct ViaHeader {
 };
 
 struct HeaderPattern ViaHeaderPattern []= {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement},
-    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement},
-    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseStringElement},
-    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement, NULL, StringElement2String},
+    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement, NULL, StringElement2String},
+    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseStringElement, NULL, StringElement2String},
+    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement, NULL, StringElement2String},
     {NULL, 0, 0, 0, 0},
 };
 
@@ -50,6 +50,11 @@ struct Header *ParseViaHeader(char *string)
     Parse(string, via, viaPattern);
     
     return (struct Header *)via; 
+}
+
+void ViaHeader2String(char *result, struct ViaHeader *via)
+{
+    ToString(result, via, GetViaPattern());
 }
 
 struct ViaHeader *CreateViaHeader()
