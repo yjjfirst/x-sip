@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "Header.h"
 #include "Parser.h"
@@ -12,9 +14,9 @@ struct CSeqHeader
 };
 
 struct HeaderPattern CSeqHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseStringElement},
-    {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseIntegerElement},
-    {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseStringElement, NULL, StringElement2String},
+    {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseIntegerElement, NULL, IntegerElement2String},
+    {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseStringElement, NULL, StringElement2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 
@@ -45,4 +47,9 @@ int CSeqHeaderGetSeq(struct CSeqHeader *c)
 char *CSeqHeaderGetMethod(struct CSeqHeader *c)
 {
     return c->method;
+}
+
+void CSeq2String(char *result, struct CSeqHeader *c)
+{
+    ToString(result, c, GetCSeqHeaderPattern());
 }
