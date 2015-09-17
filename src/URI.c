@@ -76,6 +76,12 @@ char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 {
     struct HeaderPattern *pattern = URIHeaderPattern;
     struct URI **u = uri;
+    
+    if (p->startSeparator != EMPTY) {
+        *string = p->startSeparator;
+        string ++;
+    }
+    
     return ToString(string, *u, pattern);
 }
 

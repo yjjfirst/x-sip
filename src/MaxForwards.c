@@ -10,8 +10,8 @@ struct MaxForwardsHeader {
 };
 
 struct HeaderPattern MaxForwardsPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, headerBase), ParseStringElement},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct MaxForwardsHeader, maxForwards), ParseIntegerElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct MaxForwardsHeader, headerBase), ParseStringElement, NULL, StringElement2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct MaxForwardsHeader, maxForwards), ParseIntegerElement, NULL, IntegerElement2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 
@@ -39,6 +39,11 @@ int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
 struct HeaderPattern *GetMaxForwardsPattern()
 {
     return MaxForwardsPattern;
+}
+
+void MaxForwards2String(char *result, struct MaxForwardsHeader *m)
+{
+    ToString(result, m, GetMaxForwardsPattern());
 }
 
 struct MaxForwardsHeader *CreateMaxForwardsHeader()

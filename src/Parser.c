@@ -148,14 +148,35 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
 
 #undef MAX_ELEMENT_LENGTH
 
+
 char *StringElement2String(char *pos, void *element, struct HeaderPattern *p)
 {
+    if (p->startSeparator != EMPTY && strlen(element) != 0) {
+        *pos = p->startSeparator;
+        pos ++;
+    }
+
     if (p->parse != NULL) {
         strcpy(pos, element);    
         return pos + strlen(element);
     } else {
         return pos;
     }
+}
+
+char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p)
+{
+    int *value = element;
+
+    if (p->startSeparator != EMPTY) {
+        *pos = p->startSeparator;
+        pos ++;
+    }
+    
+    if (p->parse != NULL) {
+        pos = pos + sprintf(pos, "%d", *value);
+    }
+    return pos;
 }
 
 char *ToString (char *string, void *header, struct HeaderPattern *pattern)
@@ -166,13 +187,8 @@ char *ToString (char *string, void *header, struct HeaderPattern *pattern)
 
     for (; p->format != NULL; p++) {
         element = (char *)header + p->offset;        
-        if (p->startSeparator != EMPTY && strlen(element) != 0) {
-            *pos = p->startSeparator;
-            pos ++;
-        }
         pos = p->toString(pos, element, p);
     }
-    
     
     return pos;
 }

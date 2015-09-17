@@ -42,3 +42,4 @@ char *NextSeparator(char *header);
 int ParseStringElement(char *value, void *target);
 int ParseIntegerElement(char *value, void *target);
 char *StringElement2String(char *pos, void *element, struct HeaderPattern *p);
+char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p);

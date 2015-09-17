@@ -21,3 +21,18 @@ TEST(MaxForwardsTestGroup, MaxForwardsParseTest)
 
     DestoryMaxForwardsHeader((struct Header *)maxForwards);
 }
+
+TEST(MaxForwardsTestGroup, MaxForwards2StringTest)
+{
+    struct MaxForwardsHeader *maxForwards = CreateMaxForwardsHeader();
+    char maxForwardsString[] = "Max-Forwards:69";
+    char result[64] = {0};
+
+    Parse(maxForwardsString, maxForwards, GetMaxForwardsPattern());
+    MaxForwards2String(result, maxForwards);
+    STRCMP_EQUAL(maxForwardsString, result);
+
+    DestoryMaxForwardsHeader((struct Header *)maxForwards);
+}
+
+
