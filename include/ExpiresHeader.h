@@ -8,3 +8,5 @@ struct HeaderPattern *GetExpiresPattern();
 
 char *ExpiresHeaderGetName(struct ExpiresHeader *e);
 int ExpiresHeaderGetExpires(struct ExpiresHeader *e);
+
+void ExpiresHeader2String(char *result, struct ExpiresHeader *e);

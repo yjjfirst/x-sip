@@ -11,8 +11,8 @@ struct ContentLengthHeader
 };
 
 struct HeaderPattern ContentLengthHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ContentLengthHeader, headerBase), ParseStringElement},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct ContentLengthHeader, length), ParseIntegerElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ContentLengthHeader, headerBase), ParseStringElement, NULL, StringElement2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct ContentLengthHeader, length), ParseIntegerElement, NULL, IntegerElement2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 
@@ -40,4 +40,9 @@ char *ContentLengthGetName(struct ContentLengthHeader *c)
 int ContentLengthGetLength(struct ContentLengthHeader *c)
 {
     return c->length;
+}
+
+void ContentLengthHeader2String(char *result, struct ContentLengthHeader *c)
+{
+    ToString(result, c, GetContentLengthHeaderPattern());
 }

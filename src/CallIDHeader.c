@@ -11,8 +11,8 @@ struct CallIDHeader {
 };
 
 struct HeaderPattern CallIdHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseStringElement},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseStringElement},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseStringElement, NULL, StringElement2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseStringElement, NULL, StringElement2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 
@@ -35,6 +35,11 @@ char *CallIDHeaderGetName(struct CallIDHeader *id)
 char *CallIDHeaderGetID(struct CallIDHeader *id)
 {
     return id->id;
+}
+
+void CallIDHeader2String(char *result, struct CallIDHeader *id)
+{
+    ToString(result, id, GetCallIDPattern());
 }
 
 struct HeaderPattern *GetCallIDPattern()

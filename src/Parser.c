@@ -187,7 +187,8 @@ char *ToString (char *string, void *header, struct HeaderPattern *pattern)
 
     for (; p->format != NULL; p++) {
         element = (char *)header + p->offset;        
-        pos = p->toString(pos, element, p);
+        if (p->toString != NULL)
+            pos = p->toString(pos, element, p);
     }
     
     return pos;
