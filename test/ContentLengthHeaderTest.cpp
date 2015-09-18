@@ -27,7 +27,7 @@ TEST(ContentLengthHeaderTestGroup, ContentLengthHeader2StringTest)
     char result[128] = {0};
 
     Parse(header, c, GetContentLengthHeaderPattern());
-    ContentLengthHeader2String(result, c);
+    ContentLengthHeader2String(result, (struct Header *)c);
     STRCMP_EQUAL(header, result);
 
     DestoryContentLengthHeader((struct Header *)c);

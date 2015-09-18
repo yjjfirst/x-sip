@@ -11,4 +11,4 @@ char *ViaHeaderGetTransport(struct ViaHeader *via);
 char *ViaHeaderGetName(struct ViaHeader *via);
 char *ViaHeaderGetParameters(struct ViaHeader *via);
 
-void ViaHeader2String(char *result, struct ViaHeader *via);
+void ViaHeader2String(char *result, struct Header *via);

@@ -28,7 +28,7 @@ TEST(CallIDHeaderTestGroup, CallIDHeader2StringTest)
     char result[128] = {0};
 
     Parse(callidString, id, GetCallIDPattern());
-    CallIDHeader2String(result, id);
+    CallIDHeader2String(result, (struct Header *)id);
     STRCMP_EQUAL(callidString, result);
 
     DestoryCallIDHeader((struct Header *)id);

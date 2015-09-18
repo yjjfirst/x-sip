@@ -85,7 +85,7 @@ TEST(ToTestGroup, Contact2StringTest)
     char result[128] = {0};
 
     Parse((char*) contactString, contact, GetContactsHeaderPattern(contactString));
-    ContactsHeader2String(result, contact);
+    ContactsHeader2String(result,(struct Header *) contact);
     STRCMP_EQUAL("Contact:<sip:alice@pc33.atlanta.com>", result);
 
     DestoryContactsHeader((struct Header *)contact);
@@ -98,7 +98,7 @@ TEST(ToTestGroup, ContactWithQuotedDisplayName2StringTest)
     char result[128] = {0};
 
     Parse((char *)toString, toHeader, GetContactsHeaderPattern(toString));    
-    ContactsHeader2String(result, toHeader);
+    ContactsHeader2String(result, (struct Header *)toHeader);
     STRCMP_EQUAL(toString, result);
     
     DestoryContactsHeader((struct Header *)toHeader);

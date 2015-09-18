@@ -41,7 +41,7 @@ struct HeaderPattern *GetMaxForwardsPattern()
     return MaxForwardsPattern;
 }
 
-void MaxForwards2String(char *result, struct MaxForwardsHeader *m)
+void MaxForwards2String(char *result, struct Header *m)
 {
     ToString(result, m, GetMaxForwardsPattern());
 }

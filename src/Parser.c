@@ -105,7 +105,7 @@ char *SkipLeadingSeparator(char *header, char *position)
     return start;
 } 
 
-#define MAX_ELEMENT_LENGTH 1024
+#define MAX_ELEMENT_LENGTH 256
 int Parse(char *string, void* target, struct HeaderPattern *pattern)
 {
 
@@ -176,6 +176,7 @@ char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p)
     if (p->parse != NULL) {
         pos = pos + sprintf(pos, "%d", *value);
     }
+
     return pos;
 }
 

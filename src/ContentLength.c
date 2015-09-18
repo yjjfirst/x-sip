@@ -42,7 +42,7 @@ int ContentLengthGetLength(struct ContentLengthHeader *c)
     return c->length;
 }
 
-void ContentLengthHeader2String(char *result, struct ContentLengthHeader *c)
+void ContentLengthHeader2String(char *result, struct Header *c)
 {
     ToString(result, c, GetContentLengthHeaderPattern());
 }

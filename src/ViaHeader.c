@@ -52,7 +52,7 @@ struct Header *ParseViaHeader(char *string)
     return (struct Header *)via; 
 }
 
-void ViaHeader2String(char *result, struct ViaHeader *via)
+void ViaHeader2String(char *result, struct Header *via)
 {
     ToString(result, via, GetViaPattern());
 }

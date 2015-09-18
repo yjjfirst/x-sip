@@ -29,7 +29,7 @@ TEST(MaxForwardsTestGroup, MaxForwards2StringTest)
     char result[64] = {0};
 
     Parse(maxForwardsString, maxForwards, GetMaxForwardsPattern());
-    MaxForwards2String(result, maxForwards);
+    MaxForwards2String(result,(struct Header *) maxForwards);
     STRCMP_EQUAL(maxForwardsString, result);
 
     DestoryMaxForwardsHeader((struct Header *)maxForwards);

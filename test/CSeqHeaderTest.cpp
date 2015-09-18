@@ -29,7 +29,7 @@ TEST(CSeqTestGroup, CSeq2StringTest)
     char result[128] = {0};
 
     Parse(header, c, GetCSeqHeaderPattern());
-    CSeq2String(result, c);
+    CSeq2String(result,(struct Header *) c);
     STRCMP_EQUAL(header, result);
 
     DestoryCSeqHeader((struct Header *)c);

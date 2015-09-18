@@ -136,7 +136,7 @@ char *ContactsHeaderGetParameters(struct ContactHeader *toHeader)
     return toHeader->parameters;
 }
 
-void ContactsHeader2String(char *result, struct ContactHeader *contacts)
+void ContactsHeader2String(char *result, struct Header *contacts)
 {
     ToString(result, contacts, ContactsHeaderWithQuotedDisplayNamePattern);
 }

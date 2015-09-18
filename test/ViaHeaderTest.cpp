@@ -44,7 +44,7 @@ TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
     char result[128] = {0};
 
     Parse(header, via, GetViaPattern());
-    ViaHeader2String(result, via);
+    ViaHeader2String(result, (struct Header *)via);
 
     STRCMP_EQUAL("Via:SIP/2.0/UDP erlang.bell-telephone.com:5060", result);
 
