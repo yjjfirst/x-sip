@@ -49,7 +49,7 @@ char *CSeqHeaderGetMethod(struct CSeqHeader *c)
     return c->method;
 }
 
-void CSeq2String(char *result, struct Header *c)
+char *CSeq2String(char *result, struct Header *c)
 {
-    ToString(result, c, GetCSeqHeaderPattern());
+    return ToString(result, c, GetCSeqHeaderPattern());
 }

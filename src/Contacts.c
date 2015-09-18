@@ -136,9 +136,9 @@ char *ContactsHeaderGetParameters(struct ContactHeader *toHeader)
     return toHeader->parameters;
 }
 
-void ContactsHeader2String(char *result, struct Header *contacts)
+char *ContactsHeader2String(char *result, struct Header *contacts)
 {
-    ToString(result, contacts, ContactsHeaderWithQuotedDisplayNamePattern);
+    return ToString(result, contacts, ContactsHeaderWithQuotedDisplayNamePattern);
 }
 
 struct ContactHeader *CreateContactsHeader()

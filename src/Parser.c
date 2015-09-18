@@ -171,8 +171,8 @@ char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p)
     if (p->startSeparator != EMPTY) {
         *pos = p->startSeparator;
         pos ++;
-    }
-    
+    } 
+   
     if (p->parse != NULL) {
         pos = pos + sprintf(pos, "%d", *value);
     }

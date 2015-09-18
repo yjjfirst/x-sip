@@ -37,9 +37,9 @@ char *CallIDHeaderGetID(struct CallIDHeader *id)
     return id->id;
 }
 
-void CallIDHeader2String(char *result, struct Header *id)
+char *CallIDHeader2String(char *result, struct Header *id)
 {
-    ToString(result, id, GetCallIDPattern());
+    return ToString(result, id, GetCallIDPattern());
 }
 
 struct HeaderPattern *GetCallIDPattern()

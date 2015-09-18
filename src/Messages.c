@@ -33,7 +33,7 @@ struct HeaderParser {
     char name[HEADER_NAME_MAX_LENGTH];
     struct Header * (*headerParser)(char *headerString);
     void (*headerDestroyer)(struct Header *header);
-    void (*toString)(char *result, struct Header *header);
+    char *(*toString)(char *result, struct Header *header);
 };
 
 struct HeaderParser HeaderParsers[] = {
@@ -44,7 +44,7 @@ struct HeaderParser HeaderParsers[] = {
     {HEADER_NAME_CONTACT, ParseContactsHeader, DestoryContactsHeader, ContactsHeader2String},
     {HEADER_NAME_CALLID, ParseCallIDHeader, DestoryCallIDHeader, CallIDHeader2String},
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
-    {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLength2String},
+    {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLengthHeader2String},
 };
 
 void ExtractHeaderName(char *header, char *name)
@@ -124,15 +124,34 @@ struct Message *CreateMessage ()
     return message;
 }
 
+
+char *Header2String(char *result, struct Header *header)
+{
+    int i = 0;
+    
+    for ( ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
+        if (strcmp (HeaderParsers[i].name , HeaderGetName(header)) == 0)
+            return HeaderParsers[i].toString(result, header);        
+    }
+
+    return result;
+}
+
 void Message2String(char *result, struct Message *message)
 {
     int length = get_list_len(message->headers);
     int i = 0;
     struct Header *header = NULL;
+    char *p = result;
+    
+    p = RequestLine2String(p, MessageGetRequest(message));
+    
 
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
-        header++;
+        p = Header2String(p, header);
+        *p ++ = '\r';
+        *p ++ = '\n';
     }
 
     return ;

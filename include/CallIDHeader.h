@@ -8,4 +8,4 @@ struct Header *ParseCallIDHeader(char *string);
 char *CallIDHeaderGetID(struct CallIDHeader *id);
 char *CallIDHeaderGetName(struct CallIDHeader *id);
 
-void CallIDHeader2String(char *result, struct Header *id);
+char *CallIDHeader2String(char *result, struct Header *id);

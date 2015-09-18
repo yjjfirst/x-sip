@@ -94,9 +94,9 @@ struct URI *RequestLineGetUri(struct RequestLine *r)
     return r->requestUri;
 }
 
-void RequestLine2String(char *string, struct RequestLine *r)
+char *RequestLine2String(char *string, struct RequestLine *r)
 {
-    ToString(string, r, GetRequestLinePattern());
+    return ToString(string, r, GetRequestLinePattern());
 }
 
 struct RequestLine *CreateRequestLine()
