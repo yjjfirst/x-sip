@@ -121,15 +121,29 @@ TEST(URITestGroup, URIParseNoParameterTest)
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com", UriGetHost(uri));
 }
+TEST(URITestGroup, AnotherURI2StringTest)
+{
+    char s[] = "sip:registrar.munich.de";
+    char result[128] = {0};
+    
+    Parse((char *)s, uri, GetURIHeaderPattern(s));
+    Uri2StringExt(result, uri, GetURIHeaderPattern(s));
+    
+    STRCMP_EQUAL(s, result);
+}
 
 TEST(URITestGroup, URI2StringTest)
 {
-    char URIString[] = "sip:alact@atlanta.com?subject=project";
+    char URIString[] = "sip:atlanta.com?subject=project";
     char result[128] = {0};
 
     Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+
     Uri2StringExt(result, uri, GetURIHeaderPattern(URIString));
-    
+    STRCMP_EQUAL("sip", UriGetScheme(uri));
+    STRCMP_EQUAL("", UriGetUser(uri));
+    STRCMP_EQUAL("atlanta.com",UriGetHost(uri));
+    STRCMP_EQUAL("subject=project",UriGetHeaders(uri));
     STRCMP_EQUAL(URIString, result);
 }
 

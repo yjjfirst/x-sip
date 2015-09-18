@@ -26,11 +26,11 @@ struct HeaderPattern URIHeaderPattern[] = {
 };
 
 struct HeaderPattern URINoUserHeaderPattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseStringElement},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement},
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL,StringElement2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseStringElement,NULL,StringElement2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement,NULL,StringElement2String},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement,NULL,StringElement2String},
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement,NULL,StringElement2String},
     {NULL, 0, 0, 0, 0}
 
 };
@@ -81,10 +81,12 @@ struct HeaderPattern *GetURIHeaderPattern (char *header)
 
 struct HeaderPattern *GetURIHeaderPattern42String(struct URI *uri)
 {
-    if (strcmp ("", UriGetUser(uri)) == 0)
+    if (strcmp ("", UriGetUser(uri)) == 0) {
         return URINoUserHeaderPattern;
-    else
+    }
+    else {
         return URIHeaderPattern;
+    }
 }
 
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p)

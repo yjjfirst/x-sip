@@ -146,7 +146,6 @@ void Message2String(char *result, struct Message *message)
     
     p = RequestLine2String(p, MessageGetRequest(message));
     
-
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
         p = Header2String(p, header);

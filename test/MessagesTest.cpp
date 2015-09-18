@@ -166,7 +166,7 @@ TEST(MessageTestGroup, Message2StringTest)
 
     ParseMessage(messageString, message);
     Message2String(result, message);
-    //STRCMP_EQUAL(messageString, result);
+    STRCMP_EQUAL(messageString, result);
 
     DestoryMessage(&message);
 }

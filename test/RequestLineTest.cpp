@@ -117,12 +117,12 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     RequestLineSetMethod(r, (char *)"INVITE");
     RequestLineSetSipVersion(r, (char *)"SIP/2.0");
 
-    char URIString[] = "sips:peter@192.168.10.62:5060";    
+    char URIString[] = "sips:192.168.10.62:5060";    
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
     RequestLineSetUri(r, u);
 
     RequestLine2String(string, r);
-    STRCMP_EQUAL("INVITE sips:peter@192.168.10.62:5060 SIP/2.0", string);
+    STRCMP_EQUAL("INVITE sips:192.168.10.62:5060 SIP/2.0", string);
 
     DestoryRequestLine(r);
 }
