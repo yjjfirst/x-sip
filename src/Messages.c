@@ -29,14 +29,14 @@ struct Message {
     t_list *headers;
 };
 
-struct HeaderParser {
+struct HeaderOperation {
     char name[HEADER_NAME_MAX_LENGTH];
     struct Header * (*headerParser)(char *headerString);
     void (*headerDestroyer)(struct Header *header);
     char *(*toString)(char *result, struct Header *header);
 };
 
-struct HeaderParser HeaderParsers[] = {
+struct HeaderOperation HeaderOperations[] = {
     {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader, ViaHeader2String},
     {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader,MaxForwards2String},
     {HEADER_NAME_TO, ParseContactsHeader, DestoryContactsHeader,ContactsHeader2String},
@@ -46,6 +46,11 @@ struct HeaderParser HeaderParsers[] = {
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
     {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLengthHeader2String},
 };
+
+int CountHeaderOperations()
+{
+    return sizeof(HeaderOperations)/sizeof(struct HeaderOperation);    
+}
 
 void ExtractHeaderName(char *header, char *name)
 {
@@ -89,9 +94,9 @@ void ParseHeader(char *headerString, struct Message *message)
     
     ExtractHeaderName(headerString, name);
 
-    for ( ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
-        if (strcmp (HeaderParsers[i].name , name) == 0)
-            put_in_list(&message->headers, (void*) HeaderParsers[i].headerParser(headerString));
+    for ( ; i < CountHeaderOperations(); i++) {
+        if (strcmp (HeaderOperations[i].name , name) == 0)
+            put_in_list(&message->headers, (void*) HeaderOperations[i].headerParser(headerString));
     }
 }
 
@@ -124,14 +129,13 @@ struct Message *CreateMessage ()
     return message;
 }
 
-
 char *Header2String(char *result, struct Header *header)
 {
     int i = 0;
     
-    for ( ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
-        if (strcmp (HeaderParsers[i].name , HeaderGetName(header)) == 0)
-            return HeaderParsers[i].toString(result, header);        
+    for ( ; i < CountHeaderOperations(); i++) {
+        if (strcmp (HeaderOperations[i].name , HeaderGetName(header)) == 0)
+            return HeaderOperations[i].toString(result, header);        
     }
 
     return result;
@@ -160,9 +164,9 @@ void DestoryOneHeader(struct Header *header)
 {
     int i;
 
-    for (i = 0 ; i < sizeof(HeaderParsers)/sizeof(struct HeaderParser); i++) {
-        if (strcmp (HeaderParsers[i].name, header->name) == 0) {
-            HeaderParsers[i].headerDestroyer(header);
+    for (i = 0 ; i < CountHeaderOperations(); i++) {
+        if (strcmp (HeaderOperations[i].name, header->name) == 0) {
+            HeaderOperations[i].headerDestroyer(header);
         }
     }
 }
