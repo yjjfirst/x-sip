@@ -120,7 +120,10 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     char URIString[] = "sips:192.168.10.62:5060";    
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
     RequestLineSetUri(r, u);
-
+    STRCMP_EQUAL("", UriGetUser(u));
+    STRCMP_EQUAL("192.168.10.62", UriGetHost(u));
+    STRCMP_EQUAL("5060", UriGetPort(u));
+    
     RequestLine2String(string, r);
     STRCMP_EQUAL("INVITE sips:192.168.10.62:5060 SIP/2.0", string);
 

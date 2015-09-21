@@ -24,11 +24,11 @@ TEST_GROUP(MessageTestGroup)
 REGISTER sip:registrar.munich.de SIP/2.0\r\n\
 Via:SIP/2.0/UDP 200.201.202.203:5060;branch=z9hG4bKus19\r\n\
 Max-Forwards:70\r\n\
-To:Werner Heisenberg <sip:werner.heisenberg@munich.de>\r\n\
-From:Werner Heisenberg <sip:werner.heisenberg@munich.de>;tag=3431\r\n\
+To:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>\r\n\
+From:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>;tag=3431\r\n\
 Call-ID:23@200.201.202.203\r\n\
 CSeq:1 REGISTER\r\n\
-Contact:sip:werner.heisenberg@200.201.202.203\r\n\
+Contact:<sip:werner.heisenberg@200.201.202.203>\r\n\
 Content-Length:0\r\n");
     }
 };

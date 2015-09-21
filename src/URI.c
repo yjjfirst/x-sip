@@ -79,9 +79,9 @@ struct HeaderPattern *GetURIHeaderPattern (char *header)
         return URIHeaderPattern;
 }
 
-struct HeaderPattern *GetURIHeaderPattern42String(struct URI *uri)
+struct HeaderPattern *GetURIHeaderPattern42String(struct URI **uri)
 {
-    if (strcmp ("", UriGetUser(uri)) == 0) {
+    if (strcmp ("", UriGetUser(*uri)) == 0) {
         return URINoUserHeaderPattern;
     }
     else {
@@ -104,7 +104,7 @@ char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 
 char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p)
 {
-    struct HeaderPattern *pattern = GetURIHeaderPattern42String(uri);
+    struct HeaderPattern *pattern = GetURIHeaderPattern42String((struct URI **)&uri);
     return ToString(string, uri, pattern);
 }
 
