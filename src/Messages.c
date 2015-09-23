@@ -15,12 +15,6 @@
 
 #define MAX_MESSAGE_LENGTH 2048
 
-struct StatueLine {
-    char sipVersion[16];
-    int statusCode;
-    char reasonPhrase[64];
-};
-
 struct Message {
     union {
         struct RequestLine *request;

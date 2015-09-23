@@ -8,7 +8,7 @@ CPPFLAGS += -include ../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros
 .PYONY: all clean
 
 OBJS = Parser.o RequestLine.o URI.o Contacts.o ViaHeader.o MaxForwards.o CallIDHeader.o ContentLength.o ExpiresHeader.o \
-       CSeqHeader.o Messages.o
+       StatusLine.o CSeqHeader.o Messages.o
 
 SRCS = $(OBJS:%o=%c)
 %.o:%.c
