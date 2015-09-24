@@ -63,11 +63,9 @@ char *RequestLineGetMethod (struct RequestLine *r)
 
 int RequestLineSetMethod (struct RequestLine *r, char *method)
 {
-    if (RequestLineMethodLegal(method) != 1)
-        return -1;
+    struct HeaderPattern *p = &RequestLinePattern[0];
 
-    bzero(r->method, sizeof(r->method));
-    strncpy(r->method, method, sizeof(r->method) - 1);
+    Write2Target(r, method, p);        
     return 0;
 }
 
@@ -78,11 +76,9 @@ char *RequestLineGetSipVersion(struct RequestLine *r)
 
 int RequestLineSetSipVersion(struct RequestLine *r, char *version)
 {
-    if (!RequestLineSipVersionLegal(version))
-        return -1;
-    
-    bzero(r->sipVersion, sizeof(r->sipVersion));
-    strncpy(r->sipVersion, version, sizeof(r->sipVersion) - 1);
+    struct HeaderPattern *p = &RequestLinePattern[2];
+
+    Write2Target(r, version, p);        
     return 0;
 }
 

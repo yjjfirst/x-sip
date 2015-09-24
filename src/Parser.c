@@ -8,7 +8,9 @@ int ParseStringElement(char *value, void *target)
 {
     char *start = value;
     char length = strlen(value);
-    char *end = value + length - 1;
+    char *end = start + length - 1;
+    char *stringTarget = target;
+    int  realLength;
     
     if (length == 0) {
         strcpy(target, "");
@@ -25,7 +27,10 @@ int ParseStringElement(char *value, void *target)
 
     while (*end == SPACE) end--;
 
-    strncpy(target, start, end - start + 1);
+    realLength = end - start + 1;
+    strncpy(stringTarget, start, realLength);
+    *(stringTarget  + realLength ) = 0;
+    
     return 0;
 }
 
@@ -111,8 +116,20 @@ char *SkipLeadingSeparator(char *header, char *position)
         start = position + 1;
     
     return start;
-} 
+}
+ 
+int Write2Target(void* target, char *value, struct HeaderPattern *pattern)
+{
+    if (pattern->legal != NULL && pattern->legal(value) == 0) {
+        return -1;
+    }
 
+    if (pattern->parse != NULL) {
+        pattern->parse(value, target + pattern->offset);
+    }
+
+    return 0;
+}
 #define MAX_ELEMENT_LENGTH 256
 int Parse(char *string, void* target, struct HeaderPattern *pattern)
 {
@@ -131,22 +148,19 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
     end = position = string;
 
     for ( ; pattern->format != NULL;  pattern++) {            
-        end = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
+
+        end = FindNextComponent(position, pattern);
         start = SkipLeadingSeparator(string, position);
         length = end - start;
+
         if (length > 0 && length < MAX_ELEMENT_LENGTH) {         
             strncpy(value, start, length);
         }
-
-        if (pattern->legal != NULL && pattern->legal(value) == 0) {
-                return -1;
+        
+        if (Write2Target(target, value, pattern) == -1) {
+            return -1;
         }
-
-        if (pattern->parse != NULL) {
-            pattern->parse(value, target + pattern->offset);
-        }
-
         position = end;
     }
 
