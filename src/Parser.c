@@ -11,10 +11,18 @@ int ParseStringElement(char *value, void *target)
     char *end = value + length - 1;
     
     if (length == 0) {
-        strcpy(target, value);
+        strcpy(target, "");
         return 0;
+    }    
+
+    while (*start == SPACE) {
+        start ++;
+        if (start >= end) {
+            strcpy(target, "");
+            return 0;
+        }
     }
-    while (*start == SPACE) start ++;
+
     while (*end == SPACE) end--;
 
     strncpy(target, start, end - start + 1);
@@ -76,7 +84,7 @@ char *FindEndSeparator(char *header, struct HeaderPattern *pattern)
 char *FindNextComponent(char *header, struct HeaderPattern *pattern)
 {
     char *end = NULL;
-
+    
     if (pattern->startSeparator == EMPTY) {
         end = strchr(header, pattern->endSeparator);
         return end;
@@ -126,7 +134,6 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
         end = FindNextComponent(position, pattern);
         bzero(value, sizeof(value));
         start = SkipLeadingSeparator(string, position);
-
         length = end - start;
         if (length > 0 && length < MAX_ELEMENT_LENGTH) {         
             strncpy(value, start, length);

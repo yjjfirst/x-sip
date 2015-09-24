@@ -11,15 +11,23 @@
 #include "CallIDHeader.h"
 #include "CSeqHeader.h"
 #include "ContentLength.h"
+#include "StatusLine.h"
 #include "utils/list/include/list.h"
 
 #define MAX_MESSAGE_LENGTH 2048
+#define SIP_VERSION "SIP/2.0"
+
+enum MESSAGE_TYPE {
+    MESSAGE_TYPE_REQUEST,
+    MESSAGE_TYPE_RESPONSE
+};
 
 struct Message {
     union {
         struct RequestLine *request;
-        struct StatueLine *statue;
+        struct StatusLine *status;
     } rr;
+    enum MESSAGE_TYPE type;
     t_list *headers;
 };
 
@@ -57,14 +65,31 @@ void ExtractHeaderName(char *header, char *name)
     strncpy(name, header, end - header + 1);
 }
 
-void ParseRequestLine(char *string, struct Message *message)
+enum MESSAGE_TYPE ParseMessageType(char *line)
+{
+    if (strncmp(line, SIP_VERSION, strlen(SIP_VERSION)) == 0){
+        return MESSAGE_TYPE_RESPONSE;
+    } else {
+        return MESSAGE_TYPE_REQUEST;
+    }
+}
+
+void MessageParseRequestLine(char *string, struct Message *message)
 {
     struct RequestLine *requestLine = CreateRequestLine();
 
-    Parse(string, requestLine, GetRequestLinePattern()); 
+    ParseRequestLine(string, requestLine); 
     message->rr.request = requestLine;
 }
 
+void MessageParseStatusLine(char *string, struct Message *message)
+{
+    struct StatusLine *statusLine = CreateStatusLine();
+
+    ParseStatusLine(string, statusLine);
+    message->rr.status = statusLine;
+
+}
 struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
     int length = get_list_len(message->headers);
@@ -101,7 +126,15 @@ int ParseMessage(char *string, struct Message *message)
     strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
     char *line = strtok(localString, "\r\n");
     
-    ParseRequestLine(line, message);
+    if (ParseMessageType(line) == MESSAGE_TYPE_REQUEST) {
+        message->type = MESSAGE_TYPE_REQUEST;
+        MessageParseRequestLine(line, message);
+    }
+    else {
+        message->type = MESSAGE_TYPE_RESPONSE;
+        MessageParseStatusLine(line, message);
+    }
+    
     line = strtok(NULL, "\r\n");
     while(line) {
         ParseHeader(line, message);
@@ -114,6 +147,11 @@ int ParseMessage(char *string, struct Message *message)
 struct RequestLine *MessageGetRequest(struct Message *message)
 {
     return message->rr.request;
+}
+
+struct StatusLine *MessageGetStatus(struct Message *message)
+{
+    return message->rr.status;
 }
 
 struct Message *CreateMessage () 
@@ -142,8 +180,12 @@ void Message2String(char *result, struct Message *message)
     struct Header *header = NULL;
     char *p = result;
     
-    p = RequestLine2String(p, MessageGetRequest(message));
-    
+    if (message->type == MESSAGE_TYPE_REQUEST) {
+        p = RequestLine2String(p, MessageGetRequest(message));
+    } else {
+        p = StatusLine2String(p, MessageGetStatus(message));
+    }
+
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
         p = Header2String(p, header);
@@ -180,7 +222,10 @@ void MessageDestoryHeaders(struct Message *message)
 void DestoryMessage (struct Message **message) 
 { 
     if ((*message) != ((void *)0)) {
-        DestoryRequestLine((*message)->rr.request);
+        if ((*message)->type == MESSAGE_TYPE_REQUEST) 
+            DestoryRequestLine((*message)->rr.request);
+        else
+            DestoryStatusLine((*message)->rr.status);
         MessageDestoryHeaders(*message);
         destroy_list(&(*message)->headers, NULL);
         free(*message);

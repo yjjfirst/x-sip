@@ -15,3 +15,4 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version);
 int RequestLineSetUri(struct RequestLine *r, struct URI *u);
 
 char *RequestLine2String(char *string, struct RequestLine *r);
+void ParseRequestLine(char *string, struct RequestLine *r);

@@ -91,7 +91,6 @@ struct HeaderPattern *GetContactsHeaderPattern(char *header)
     while (*header == SPACE) header ++;
     token = NextSeparator(header) + 1;
     while (*token == SPACE) token ++;
-    
 
     if (strncmp(token, "sip:", 4) == 0) {
         pattern = ContactsHeaderNoDisplayNamePattern;
@@ -99,7 +98,7 @@ struct HeaderPattern *GetContactsHeaderPattern(char *header)
     }
 
     token = NextSeparator(token);
-    if (*token == QUOTE)  {      
+    if (*token == QUOTE)  {
         pattern = ContactsHeaderWithQuotedDisplayNamePattern;
     }
     else {

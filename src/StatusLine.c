@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "Parser.h"
 #include "StatusLine.h"
 
@@ -36,4 +38,9 @@ int StatusLineGetStatusCode(struct StatusLine *s)
 char *StatusLineGetReasonPhrase(struct StatusLine *s)
 {
     return s->reasonPhrase;
+}
+
+char *StatusLine2String(char *result, struct StatusLine *s)
+{
+    return ToString(result, s, StatusLinePattern);
 }

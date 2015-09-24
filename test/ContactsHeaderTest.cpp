@@ -103,3 +103,12 @@ TEST(ToTestGroup, ContactWithQuotedDisplayName2StringTest)
     
     DestoryContactsHeader((struct Header *)toHeader);
 }
+
+TEST(ToTestGroup, ContactStartWithSpaceParseTest)
+{
+    struct ContactHeader *toHeader = CreateContactsHeader();
+    char contactString[] = "Contact: <sip:bob@192.0.2.4>";
+
+    Parse((char *)contactString, toHeader, GetContactsHeaderPattern(contactString));
+    DestoryContactsHeader((struct Header *)toHeader);    
+}

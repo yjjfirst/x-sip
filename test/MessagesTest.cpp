@@ -13,6 +13,7 @@ extern "C" {
 #include "CallIDHeader.h"
 #include "CSeqHeader.h"
 #include "ContentLength.h"
+#include "StatusLine.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -178,4 +179,49 @@ TEST(MessageTestGroup, ExtractHeaderNameTest)
 
     ExtractHeaderName(header, name);
     STRCMP_EQUAL("Via", name);
+}
+
+TEST(MessageTestGroup, ResponseMessageParseTest)
+{
+    struct Message *message = CreateMessage();
+    char string[] = "\
+SIP/2.0 180 Ringing\r\n\
+Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
+To:Bob <sip:bob@biloxi.com>;tag=a6c85cf\r\n\
+From:Alice <sip:alice@atlanta.com>;tag=1928301774\r\n\
+Call-ID:a84b4c76e66710\r\n\
+Contact:<sip:bob@192.0.2.4>\r\n\
+CSeq:314159 INVITE\r\n\
+Content-Length:0\r\n";
+
+    ParseMessage(string, message);
+    StatusLine *s = MessageGetStatus(message);
+    
+    STRCMP_EQUAL("SIP/2.0", StatusLineGetSipVersion(s));
+    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
+    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
+
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, ResponseMessage2StringTest)
+{
+    struct Message *message = CreateMessage();
+    char string[] = "\
+SIP/2.0 180 Ringing\r\n\
+Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
+To:\"Bob\"<sip:bob@biloxi.com>;tag=a6c85cf\r\n\
+From:\"Alice\"<sip:alice@atlanta.com>;tag=1928301774\r\n\
+Call-ID:a84b4c76e66710\r\n\
+Contact:<sip:bob@192.0.2.4>\r\n\
+CSeq:314159 INVITE\r\n\
+Content-Length:0\r\n";
+    char result[1024] = {0};
+
+    ParseMessage(string, message);
+    Message2String(result, message);
+    STRCMP_EQUAL(string,result);
+
+    DestoryMessage(&message);
+
 }

@@ -46,6 +46,11 @@ struct HeaderPattern RequestLinePattern[] = {
     {NULL, 0, 0, 0, 0, 0}
 };
 
+void ParseRequestLine(char *string, struct RequestLine *r)
+{
+    Parse(string, r, GetRequestLinePattern());
+}
+
 struct HeaderPattern *GetRequestLinePattern ()
 {
     return RequestLinePattern;
