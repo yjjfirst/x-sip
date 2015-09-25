@@ -120,7 +120,7 @@ char *SkipLeadingSeparator(char *header, char *position)
  
 int Write2Target(void* target, char *value, struct HeaderPattern *pattern)
 {
-    if (pattern->legal != NULL && pattern->legal(value) == 0) {
+    if (pattern->legal != NULL && pattern->legal(value) == FALSE) {
         return -1;
     }
 

@@ -21,7 +21,7 @@ CPPFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacr
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)
 
-AllTests: $(TESTSUITE_OBJS) ../src/libsip.a 
+AllTests: $(TESTSUITE_OBJS) ../sip/libsip.a 
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LD_LIBRARIES) 
 
 clean:

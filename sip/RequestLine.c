@@ -28,15 +28,15 @@ static int ParseURI(char *header, void *target)
 int RequestLineMethodLegal(char *method)
 {
     if (strcmp(method, "REGISTER") == 0 || strcmp(method, "INVITE") == 0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
 int RequestLineSipVersionLegal(char *version)
 {
     if (strcmp (version, "SIP/2.0") == 0)
-        return 1;
-    return 0;
+        return TRUE;
+    return FALSE;
 }
 
 struct HeaderPattern RequestLinePattern[] = {

@@ -10,6 +10,8 @@
 #define EMPTY       0x00
 #define ANY         0x7F
 
+#define TRUE 1
+#define FALSE 0
 struct HeaderPattern {
     char *format;
     char startSeparator;
