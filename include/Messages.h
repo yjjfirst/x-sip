@@ -1,4 +1,5 @@
 #include "RequestLine.h"
+#define MAX_MESSAGE_LENGTH 2048
 
 struct Message;
 

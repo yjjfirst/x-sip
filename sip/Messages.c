@@ -154,13 +154,6 @@ struct StatusLine *MessageGetStatus(struct Message *message)
     return message->rr.status;
 }
 
-struct Message *CreateMessage () 
-{ 
-    struct Message *message = (struct Message *)calloc(1,sizeof (struct Message));
-    put_in_list (&message->headers, "");
-    return message;
-}
-
 char *Header2String(char *result, struct Header *header)
 {
     int i = 0;
@@ -194,6 +187,13 @@ void Message2String(char *result, struct Message *message)
     }
 
     return ;
+}
+
+struct Message *CreateMessage () 
+{ 
+    struct Message *message = (struct Message *)calloc(1,sizeof (struct Message));
+    put_in_list (&message->headers, "");
+    return message;
 }
 
 void DestoryOneHeader(struct Header *header)
