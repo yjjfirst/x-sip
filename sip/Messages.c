@@ -191,7 +191,7 @@ void Message2String(char *result, struct Message *message)
 
 struct Message *CreateMessage () 
 { 
-    struct Message *message = (struct Message *)calloc(1,sizeof (struct Message));
+    struct Message *message = calloc(1,sizeof (struct Message));
     put_in_list (&message->headers, "");
     return message;
 }

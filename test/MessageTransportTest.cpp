@@ -3,40 +3,51 @@
 
 extern "C" {
 #include <string.h>
-#include "Messages.h"
 #include "MessageTransport.h"
 }
 
-TEST_GROUP(MessageTransportTestGroup)
-{
-    void teardown() {
-        mock().clear();
-    }
-};
+char Message4ReceivingTest[] = "Receiving test string";
 
 int ReceiveMessageMock(char *message)
 {
-    strcpy(message, "asdf");
+    strcpy(message, Message4ReceivingTest);
     mock().actualCall("ReceiveMessageMock");
     return 0;
 }
 
 int SendMessageMock(char *message)
 {
+    mock().actualCall("SendMessageMock").withStringParameter("message",message);
     return 0;
 }
-void InitMessageTransport()
+
+TEST_GROUP(MessageTransportTestGroup)
 {
-    AddMessageTransport((char *)"Mock", SendMessageMock, ReceiveMessageMock);
-}
+
+    void setup() {
+        AddMessageTransporter((char *)"Mock", SendMessageMock, ReceiveMessageMock);
+    }
+    void teardown() {
+        RemoveMessageTransporter((char *)"Mock");
+        mock().clear();
+    }
+};
 
 TEST(MessageTransportTestGroup, ReceiveMessageTest)
 {
-    char message[36] = {0};
+    char message[64] = {0};
 
-    InitMessageTransport();
     mock().expectOneCall("ReceiveMessageMock");
     ReceiveMessage(message);
-    STRCMP_EQUAL("asdf", message);
+    STRCMP_EQUAL(Message4ReceivingTest, message);
+    mock().checkExpectations();
+}
+
+TEST(MessageTransportTestGroup, SendMessageTest)
+{
+    char message[32] = "Sending test string";
+
+    mock().expectOneCall("SendMessageMock").withStringParameter("message", message);
+    SendMessage(message);
     mock().checkExpectations();
 }
