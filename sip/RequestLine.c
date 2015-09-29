@@ -46,14 +46,14 @@ struct HeaderPattern RequestLinePattern[] = {
     {NULL, 0, 0, 0, 0, 0}
 };
 
-void ParseRequestLine(char *string, struct RequestLine *r)
-{
-    Parse(string, r, GetRequestLinePattern());
-}
-
 struct HeaderPattern *GetRequestLinePattern ()
 {
     return RequestLinePattern;
+}
+
+int ParseRequestLine(char *string, struct RequestLine *r)
+{
+    return Parse(string, r, GetRequestLinePattern());
 }
 
 char *RequestLineGetMethod (struct RequestLine *r)
@@ -98,6 +98,16 @@ struct URI *RequestLineGetUri(struct RequestLine *r)
 char *RequestLine2String(char *string, struct RequestLine *r)
 {
     return ToString(string, r, GetRequestLinePattern());
+}
+
+struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
+{
+    struct RequestLine *r = CreateEmptyRequestLine();
+    RequestLineSetMethod(r, "REGISTER");
+    RequestLineSetUri(r, u);
+    RequestLineSetSipVersion(r, "SIP/2.0");
+
+    return r;
 }
 
 struct RequestLine *CreateEmptyRequestLine()

@@ -189,11 +189,14 @@ char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p)
 {
     int *value = element;
 
+    if (*value == 0 && !p->mandatory)
+        return pos;
+
     if (p->startSeparator != EMPTY) {
         *pos = p->startSeparator;
         pos ++;
-    } 
-   
+    }     
+
     if (p->parse != NULL) {
         pos = pos + sprintf(pos, "%d", *value);
     }
@@ -208,8 +211,8 @@ char *ToString (char *string, void *header, struct HeaderPattern *pattern)
     struct HeaderPattern *p = pattern;
 
     for (; p->format != NULL; p++) {
-        element = (char *)header + p->offset;        
-        if (p->toString != NULL)
+        element = (char *)header + p->offset;
+        if (p->toString != NULL )
             pos = p->toString(pos, element, p);
     }
     

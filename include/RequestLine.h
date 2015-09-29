@@ -1,10 +1,27 @@
 #include "URI.h"
 
+typedef enum {
+    INVITE,
+    ACK,
+    OPTIONS,
+    BYE,
+    CANCEL,
+    REGISTER,
+    INFO,
+    PRACK,
+    SUBSCRIBE,
+    NOTIFY,
+    UPDATE,
+    MESSAGE,
+    REFER,
+    PUBLISH,
+} SIP_METHOD;
+
 struct RequestLine;
 
-struct HeaderPattern *GetRequestLinePattern();   
 void DestoryRequestLine(struct RequestLine *requestLine);
 struct RequestLine *CreateEmptyRequestLine();
+struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u);
 
 char *RequestLineGetMethod (struct RequestLine *r);
 char *RequestLineGetSipVersion(struct RequestLine *r);
@@ -15,4 +32,13 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version);
 int RequestLineSetUri(struct RequestLine *r, struct URI *u);
 
 char *RequestLine2String(char *string, struct RequestLine *r);
-void ParseRequestLine(char *string, struct RequestLine *r);
+int ParseRequestLine(char *string, struct RequestLine *r);
+
+
+
+
+
+
+
+
+

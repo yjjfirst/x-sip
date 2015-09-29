@@ -9,7 +9,7 @@ struct URI {
     char scheme[8];
     char user[32];
     char host[32];
-    char port[8];
+    int  port;
     char parameters[128];
     char headers[128];
 };
@@ -18,21 +18,20 @@ struct HeaderPattern URIHeaderPattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL,StringElement2String},
     { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseStringElement, NULL,StringElement2String},
     { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseStringElement, NULL,StringElement2String},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement, NULL,StringElement2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseIntegerElement, NULL,IntegerElement2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement, NULL,StringElement2String},
     { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement, NULL,StringElement2String},
-    {NULL, 0, 0, 0, 0}
+    {NULL}
 
 };
 
 struct HeaderPattern URINoUserHeaderPattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseStringElement,NULL,StringElement2String},
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseStringElement,NULL,StringElement2String},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseStringElement,NULL,StringElement2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseIntegerElement,NULL,IntegerElement2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseStringElement,NULL,StringElement2String},
     { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseStringElement,NULL,StringElement2String},
-    {NULL, 0, 0, 0, 0}
-
+    {NULL}
 };
 
 char *UriGetScheme(struct URI *uri)
@@ -47,7 +46,7 @@ char *UriGetHost(struct URI *uri)
 {
     return uri->host;
 }
-char *UriGetPort(struct URI *uri)
+int UriGetPort(struct URI *uri)
 {
     return uri->port;
 }

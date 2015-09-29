@@ -23,10 +23,11 @@ TEST_GROUP(RequestLineTestGroup)
         InviteRequestLine = CreateEmptyRequestLine();
         
         strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
-        Parse(RegisterRequestLineString, RegisterRequestLine, GetRequestLinePattern());
+
+        ParseRequestLine(RegisterRequestLineString, RegisterRequestLine);
 
         strcpy(InviteRequestLineString, "INVITE sip:7170@iptel.org SIP/1.0");
-        Parse(InviteRequestLineString, InviteRequestLine, GetRequestLinePattern());
+        ParseRequestLine(InviteRequestLineString, InviteRequestLine);
     }
 
     void teardown()
@@ -50,7 +51,7 @@ TEST(RequestLineTestGroup, RegisterSIP_VersionTest)
 
 TEST(RequestLineTestGroup, RegisterURIParseTest)
 {
-    URI *uri = RequestLineGetUri(RegisterRequestLine);
+    struct URI *uri = RequestLineGetUri(RegisterRequestLine);
 
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("192.168.2.89", UriGetHost(uri));
@@ -61,7 +62,7 @@ TEST(RequestLineTestGroup, LongMethodParseTest)
     char string[] = "REGISTER90123456789 sip:192.168.2.89 SIP/2.0";
     struct RequestLine *r = CreateEmptyRequestLine();
 
-    CHECK_EQUAL(-1, Parse(string, r, GetRequestLinePattern()));
+    CHECK_EQUAL(-1, ParseRequestLine(string, r));
     DestoryRequestLine(r);
 }
 
@@ -105,6 +106,11 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
     RequestLineSetUri(r, u);
 
+    u = RequestLineGetUri(r);
+    STRCMP_EQUAL("sips", UriGetScheme(u));
+    STRCMP_EQUAL("peter", UriGetUser(u));
+    STRCMP_EQUAL("192.168.10.62", UriGetHost(u));
+    CHECK_EQUAL(5060, UriGetPort(u));
     DestoryRequestLine(r);
 }
 
@@ -122,11 +128,40 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     RequestLineSetUri(r, u);
     STRCMP_EQUAL("", UriGetUser(u));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(u));
-    STRCMP_EQUAL("5060", UriGetPort(u));
+    CHECK_EQUAL(5060, UriGetPort(u));
     
     RequestLine2String(string, r);
     STRCMP_EQUAL("INVITE sips:192.168.10.62:5060 SIP/2.0", string);
 
     DestoryRequestLine(r);
 }
+
+TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
+{
+    SIP_METHOD m = REGISTER;
+    char URIString[] = "sip:registrar.biloxi.com";
+    struct URI *u = CreateUri();
+    struct RequestLine *r = NULL;
+
+    Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
+    r = CreateRequestLine(m, u); 
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(r));
+    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
+    
+    u = RequestLineGetUri(r);
+    STRCMP_EQUAL("sip", UriGetScheme(u));
+    STRCMP_EQUAL("registrar.biloxi.com", UriGetHost(u));
+    CHECK_EQUAL(0, UriGetPort(u));
+
+    DestoryRequestLine(r);
+}
+
+
+
+
+
+
+
+
+
 
