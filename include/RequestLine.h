@@ -4,7 +4,7 @@ struct RequestLine;
 
 struct HeaderPattern *GetRequestLinePattern();   
 void DestoryRequestLine(struct RequestLine *requestLine);
-struct RequestLine *CreateRequestLine();
+struct RequestLine *CreateEmptyRequestLine();
 
 char *RequestLineGetMethod (struct RequestLine *r);
 char *RequestLineGetSipVersion(struct RequestLine *r);

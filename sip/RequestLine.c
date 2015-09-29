@@ -65,7 +65,7 @@ int RequestLineSetMethod (struct RequestLine *r, char *method)
 {
     struct HeaderPattern *p = &RequestLinePattern[0];
 
-    Write2Target(r, method, p);        
+    Copy2Target(r, method, p);        
     return 0;
 }
 
@@ -78,7 +78,7 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version)
 {
     struct HeaderPattern *p = &RequestLinePattern[2];
 
-    Write2Target(r, version, p);        
+    Copy2Target(r, version, p);        
     return 0;
 }
 
@@ -100,9 +100,9 @@ char *RequestLine2String(char *string, struct RequestLine *r)
     return ToString(string, r, GetRequestLinePattern());
 }
 
-struct RequestLine *CreateRequestLine()
+struct RequestLine *CreateEmptyRequestLine()
 {
-    struct RequestLine *requestLine = (struct RequestLine *)calloc (1, sizeof(struct RequestLine));
+    struct RequestLine *requestLine = calloc (1, sizeof(struct RequestLine));
     requestLine->requestUri = CreateUri();
     return requestLine;
 }

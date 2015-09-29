@@ -118,7 +118,7 @@ char *SkipLeadingSeparator(char *header, char *position)
     return start;
 }
  
-int Write2Target(void* target, char *value, struct HeaderPattern *pattern)
+int Copy2Target(void* target, char *value, struct HeaderPattern *pattern)
 {
     if (pattern->legal != NULL && pattern->legal(value) == FALSE) {
         return -1;
@@ -158,7 +158,7 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
             strncpy(value, start, length);
         }
         
-        if (Write2Target(target, value, pattern) == -1) {
+        if (Copy2Target(target, value, pattern) == -1) {
             return -1;
         }
         position = end;

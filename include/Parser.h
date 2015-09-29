@@ -45,4 +45,4 @@ int ParseStringElement(char *value, void *target);
 int ParseIntegerElement(char *value, void *target);
 char *StringElement2String(char *pos, void *element, struct HeaderPattern *p);
 char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p);
-int Write2Target(void* target, char *value, struct HeaderPattern *pattern);
+int Copy2Target(void* target, char *value, struct HeaderPattern *pattern);

@@ -76,7 +76,7 @@ enum MESSAGE_TYPE ParseMessageType(char *line)
 
 void MessageParseRequestLine(char *string, struct Message *message)
 {
-    struct RequestLine *requestLine = CreateRequestLine();
+    struct RequestLine *requestLine = CreateEmptyRequestLine();
 
     ParseRequestLine(string, requestLine); 
     message->rr.request = requestLine;

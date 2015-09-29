@@ -19,8 +19,8 @@ TEST_GROUP(RequestLineTestGroup)
 
     void setup()
     {
-        RegisterRequestLine = CreateRequestLine();
-        InviteRequestLine = CreateRequestLine();
+        RegisterRequestLine = CreateEmptyRequestLine();
+        InviteRequestLine = CreateEmptyRequestLine();
         
         strcpy(RegisterRequestLineString, "REGISTER sip:192.168.2.89 SIP/2.0");
         Parse(RegisterRequestLineString, RegisterRequestLine, GetRequestLinePattern());
@@ -59,7 +59,7 @@ TEST(RequestLineTestGroup, RegisterURIParseTest)
 TEST(RequestLineTestGroup, LongMethodParseTest)
 {
     char string[] = "REGISTER90123456789 sip:192.168.2.89 SIP/2.0";
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
 
     CHECK_EQUAL(-1, Parse(string, r, GetRequestLinePattern()));
     DestoryRequestLine(r);
@@ -67,7 +67,7 @@ TEST(RequestLineTestGroup, LongMethodParseTest)
 
 TEST(RequestLineTestGroup, CreateRequestLineTest)
 {
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
 
     RequestLineSetMethod(r, (char *)"REGISTER");
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(r));
@@ -80,7 +80,7 @@ TEST(RequestLineTestGroup, CreateRequestLineTest)
 
 TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
 {
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
     RequestLineSetMethod(r, (char *)"aaaaaaa");
 
     STRCMP_EQUAL("", RequestLineGetMethod(r));
@@ -89,7 +89,7 @@ TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
 
 TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 {
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
 
     RequestLineSetSipVersion(r, (char *)"SIP/2.0");
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
@@ -98,7 +98,7 @@ TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 
 TEST(RequestLineTestGroup, RequestLineSetUriTest)
 {
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
     struct URI *u = CreateUri();
     char URIString[] = "sips:peter@192.168.10.62:5060";
     
@@ -110,7 +110,7 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
 
 TEST(RequestLineTestGroup, RequestLine2StringTest)
 {
-    struct RequestLine *r = CreateRequestLine();
+    struct RequestLine *r = CreateEmptyRequestLine();
     struct URI *u = CreateUri();
     char string[256] = {0};
     
