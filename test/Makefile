@@ -11,7 +11,7 @@ all:AllTests
 
 TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeaderTest.o ViaHeaderTest.o MaxForwardsTest.o\
 	CallIDHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o MessagesTest.o \
-	StatusLineTest.o MessageTransportTest.o 
+	StatusLineTest.o MessageBuilderTest.o MessageTransportTest.o 
 
 TEST_SRCS = $(TESTSUITE_OBJS:%.o=%.cpp)
 

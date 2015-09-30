@@ -38,30 +38,74 @@ char *UriGetScheme(struct URI *uri)
 {
     return uri->scheme;
 }
+
 char *UriGetUser(struct URI *uri)
 {
     return uri->user;
 }
+
 char *UriGetHost(struct URI *uri)
 {
     return uri->host;
 }
+
 int UriGetPort(struct URI *uri)
 {
     return uri->port;
 }
+
 char *UriGetParameters(struct URI *uri)
 {
     return uri->parameters;
 }
+
 char *UriGetHeaders(struct URI *uri)
 {
     return uri->headers;
 }
 
+void UriSetScheme(struct URI *uri, char *scheme)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[0];
+    Copy2Target(uri, scheme, p);
+}
+void UriSetUser(struct URI *uri, char *user)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[1];
+    Copy2Target(uri, user, p);
+
+}
+
+void UriSetHost(struct URI *uri, char *host)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[2];
+    Copy2Target(uri, host, p);
+}
+
+void UriSetPort(struct URI *uri, int port)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[3];
+    char userString[8] = {0};
+
+    snprintf(userString,sizeof(userString) - 1, "%d",port); 
+    Copy2Target(uri, userString, p);
+}
+
+void UriSetParameters(struct URI *uri,char *paramater)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[4];
+    Copy2Target(uri, paramater, p);
+}
+
+void UriSetHeaders(struct URI *uri, char *headers)
+{
+    struct HeaderPattern *p = &URIHeaderPattern[5];
+    Copy2Target(uri, headers, p);
+}
+
 struct URI *CreateUri()
 {
-    struct URI *uri = (struct URI *)calloc(1, sizeof (struct URI));
+    struct URI *uri = calloc(1, sizeof (struct URI));
     return uri;
 }
 
@@ -106,5 +150,3 @@ char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p)
     struct HeaderPattern *pattern = GetURIHeaderPattern42String((struct URI **)&uri);
     return ToString(string, uri, pattern);
 }
-
-
