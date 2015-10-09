@@ -2,6 +2,8 @@ struct URI;
 
 void DestoryUri(struct URI *uri);
 struct URI *CreateUri();
+struct URI *UriDup(struct URI *uri);
+int ParseURI(char *header, void *target);
 
 struct HeaderPattern *GetURIHeaderPattern (char *header);
 
@@ -18,7 +20,6 @@ void UriSetHost(struct URI *uri, char *host);
 void UriSetHeaders(struct URI *uri, char *headers);
 void UriSetParameters(struct URI *uri,char *paramater);
 void UriSetPort(struct URI *uri, int port);
-
 
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p);
 char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p);

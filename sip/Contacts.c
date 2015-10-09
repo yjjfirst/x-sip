@@ -5,11 +5,12 @@
 #include "Header.h"
 #include "Parser.h"
 #include "Contacts.h"
+#include "URI.h"
 
 struct ContactHeader {
     struct Header headerBase;
     char displayName[32];
-    char uri[128];
+    struct URI *uri;
     char parameters[128];
 };
 
@@ -41,9 +42,9 @@ struct HeaderPattern ContactsHeaderPattern[] = {
         RIGHT_ANGLE,
         0, 
         OFFSETOF(struct ContactHeader, uri), 
-        ParseStringElement, 
+        ParseURI, 
         NULL, 
-        StringElement2String },
+        Uri2String },
     { 
         "*", 
         RIGHT_ANGLE, 
@@ -70,7 +71,7 @@ struct HeaderPattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
     { "*", COLON, QUOTE, 0, 0, NULL, NULL, StringElement2String},
     { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseStringElement, NULL, StringElement2String},
     { "*", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, StringElement2String},
-    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseStringElement, NULL, StringElement2String},
+    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
     { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, StringElement2String},
     { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseStringElement, NULL, StringElement2String},
     {NULL}
@@ -78,7 +79,7 @@ struct HeaderPattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
 
 struct HeaderPattern ContactsHeaderNoDisplayNamePattern[] = {
     { "*",  EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement, NULL, StringElement2String},
-    { "*",  COLON, SEMICOLON, 1, OFFSETOF(struct ContactHeader, uri), ParseStringElement, NULL, StringElement2String},
+    { "*",  COLON, SEMICOLON, 1, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
     { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseStringElement, NULL, StringElement2String},
     {NULL}
 };
@@ -137,9 +138,16 @@ void ContactsHeaderSetDisplayName(struct ContactHeader *header, char *name)
     Copy2Target(header, name, p);
 }
 
-char *ContactsHeaderGetUri(struct ContactHeader *toHeader)
+struct URI *ContactsHeaderGetUri(struct ContactHeader *header)
 {
-    return toHeader->uri;
+    return header->uri;
+}
+
+void ContactsHeaderSetUri(struct ContactHeader *header, struct URI *uri)
+{
+    if (header->uri != NULL)
+        free(header->uri);
+    header->uri = uri;
 }
 
 char *ContactsHeaderGetParameters(struct ContactHeader *toHeader)
@@ -155,12 +163,16 @@ char *ContactsHeader2String(char *result, struct Header *contacts)
 struct ContactHeader *CreateContactsHeader()
 {
     struct ContactHeader *to = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
+    to->uri = CreateUri();
     return to;
 }
 
 void DestoryContactsHeader(struct Header *to)
 {
-    if (to != NULL) {
-        free(to);
+
+    struct ContactHeader *header = (struct ContactHeader *)to;
+    if (header != NULL) {
+        DestoryUri(header->uri);
+        free(header);
     }
 }

@@ -34,6 +34,16 @@ struct HeaderPattern URINoUserHeaderPattern[] = {
     {NULL}
 };
 
+int ParseURI(char *header, void *target)
+{
+    struct HeaderPattern *pattern = GetURIHeaderPattern(header);
+    struct URI **uri = target;
+
+    Parse(header, *uri, pattern);
+    
+    return 0;
+}
+
 char *UriGetScheme(struct URI *uri)
 {
     return uri->scheme;
@@ -109,6 +119,13 @@ struct URI *CreateUri()
     return uri;
 }
 
+struct URI *UriDup(struct URI *uri)
+{
+    struct URI *dupUri = CreateUri();
+    
+    memcpy(dupUri, uri, sizeof (struct URI));
+    return dupUri;
+}
 void DestoryUri(struct URI *uri)
 {
     free (uri);

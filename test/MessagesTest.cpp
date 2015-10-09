@@ -32,6 +32,14 @@ CSeq:1 REGISTER\r\n\
 Contact:<sip:werner.heisenberg@200.201.202.203>\r\n\
 Content-Length:0\r\n");
     }
+    
+    void UriCheck(struct ContactHeader *header)
+    {
+        struct URI *uri = ContactsHeaderGetUri(header);
+        STRCMP_EQUAL("sip", UriGetScheme(uri));
+        STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
+        STRCMP_EQUAL("munich.de", UriGetHost(uri));
+    }
 };
 
 TEST(MessageTestGroup, RegisterRequestLineParseTest)
@@ -89,7 +97,8 @@ TEST(MessageTestGroup, ToParseTest)
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
     STRCMP_EQUAL("To", ContactsHeaderGetName(to));
     STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(to));
-    STRCMP_EQUAL("sip:werner.heisenberg@munich.de", ContactsHeaderGetUri(to));
+    UriCheck(to);
+
     DestoryMessage(&message);
 }
 
@@ -101,8 +110,9 @@ TEST(MessageTestGroup, FromParseTest)
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", message);
     STRCMP_EQUAL("From", ContactsHeaderGetName(from));
     STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(from));
-    STRCMP_EQUAL("sip:werner.heisenberg@munich.de", ContactsHeaderGetUri(from));
+    UriCheck(from);
     STRCMP_EQUAL("tag=3431", ContactsHeaderGetParameters(from));
+
     DestoryMessage(&message);
 
 }
@@ -114,7 +124,12 @@ TEST(MessageTestGroup, ContactParseTest)
 
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
     STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
-    STRCMP_EQUAL("sip:werner.heisenberg@200.201.202.203", ContactsHeaderGetUri(contact));
+
+    struct URI *uri = ContactsHeaderGetUri(contact);
+    STRCMP_EQUAL("sip", UriGetScheme(uri));
+    STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
+    STRCMP_EQUAL("200.201.202.203", UriGetHost(uri));
+
     DestoryMessage(&message);
 }
 

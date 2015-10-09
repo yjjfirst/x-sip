@@ -171,3 +171,34 @@ TEST(URITestGroup, URIFieldSetTest)
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
     CHECK_EQUAL(5061, UriGetPort(uri));
 }
+
+TEST(URITestGroup, URIDupTest)
+{
+    UriSetScheme(uri, (char *)"sips");
+    UriSetUser(uri, (char *)"Martin");
+    UriSetHost(uri, (char *)"192.168.10.62");
+    UriSetHeaders(uri, (char *)"subject=project");
+    UriSetParameters(uri, (char *)"transport=udp");
+    UriSetPort(uri, 5061);
+
+    struct URI *dupUri = UriDup(uri);
+
+    STRCMP_EQUAL("sips", UriGetScheme(dupUri));
+    STRCMP_EQUAL("Martin", UriGetUser(dupUri));
+    STRCMP_EQUAL("192.168.10.62", UriGetHost(dupUri));
+    STRCMP_EQUAL("transport=udp", UriGetParameters(dupUri));
+    STRCMP_EQUAL("subject=project", UriGetHeaders(dupUri));
+    CHECK_EQUAL(5061, UriGetPort(dupUri));
+
+    DestoryUri(dupUri);
+}
+
+
+
+
+
+
+
+
+
+

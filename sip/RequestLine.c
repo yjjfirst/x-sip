@@ -15,16 +15,6 @@ struct RequestLine {
     char sipVersion[SIP_VERSION_LENGTH];
 };
 
-static int ParseURI(char *header, void *target)
-{
-    struct HeaderPattern *pattern = GetURIHeaderPattern(header);
-    struct URI **uri = target;
-
-    Parse(header, *uri, pattern);
-    
-    return 0;
-}
-
 int RequestLineMethodLegal(char *method)
 {
     if (strcmp(method, "REGISTER") == 0 || strcmp(method, "INVITE") == 0)
