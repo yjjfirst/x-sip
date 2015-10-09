@@ -90,6 +90,12 @@ void MessageParseStatusLine(char *string, struct Message *message)
     message->rr.status = statusLine;
 
 }
+
+void MessageAddHeader(struct Message *message, struct Header *header)
+{
+    put_in_list(&message->headers, header);
+}
+
 struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
     int length = get_list_len(message->headers);
@@ -147,6 +153,11 @@ int ParseMessage(char *string, struct Message *message)
 struct RequestLine *MessageGetRequest(struct Message *message)
 {
     return message->rr.request;
+}
+
+void MessageSetRequest(struct Message *message, struct RequestLine *rl)
+{
+    message->rr.request = rl;
 }
 
 struct StatusLine *MessageGetStatus(struct Message *message)

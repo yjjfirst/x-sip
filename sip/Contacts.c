@@ -115,6 +115,12 @@ struct Header *ParseContactsHeader(char *string)
     return (struct Header *)header;
 }
 
+void ContactsHeaderSetName(struct ContactHeader *header, char *name)
+{
+    struct HeaderPattern *p = &ContactsHeaderPattern[0];
+    Copy2Target(header, name, p);
+}
+
 char *ContactsHeaderGetName(struct ContactHeader *toHeader)
 {
     return toHeader->headerBase.name;
@@ -123,6 +129,12 @@ char *ContactsHeaderGetName(struct ContactHeader *toHeader)
 char *ContactsHeaderGetDisplayName(struct ContactHeader *toHeader)
 {
     return toHeader->displayName;
+}
+
+void ContactsHeaderSetDisplayName(struct ContactHeader *header, char *name)
+{
+    struct HeaderPattern *p = &ContactsHeaderPattern[1];
+    Copy2Target(header, name, p);
 }
 
 char *ContactsHeaderGetUri(struct ContactHeader *toHeader)
