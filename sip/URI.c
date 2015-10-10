@@ -113,15 +113,26 @@ void UriSetHeaders(struct URI *uri, char *headers)
     Copy2Target(uri, headers, p);
 }
 
-struct URI *CreateUri()
+struct URI *CreateEmptyUri()
 {
     struct URI *uri = calloc(1, sizeof (struct URI));
     return uri;
 }
 
+struct URI *CreateUri(char *scheme, char *user, char *host, int port)
+{
+    struct URI *uri = CreateEmptyUri();
+    UriSetScheme(uri, scheme);
+    UriSetUser(uri, user);
+    UriSetHost(uri, host);
+    UriSetPort(uri, port);
+
+    return uri;
+}
+
 struct URI *UriDup(struct URI *uri)
 {
-    struct URI *dupUri = CreateUri();
+    struct URI *dupUri = CreateEmptyUri();
     
     memcpy(dupUri, uri, sizeof (struct URI));
     return dupUri;

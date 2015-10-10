@@ -12,7 +12,7 @@ TEST_GROUP(ViaHeaderTestGroup)
 
 TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
 {
-    struct ViaHeader *via = CreateViaHeader();
+    struct ViaHeader *via = CreateEmptyViaHeader();
     char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
 
     Parse(header, via, GetViaPattern());
@@ -26,7 +26,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
 
 TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
 {
-    struct ViaHeader *via = CreateViaHeader();
+    struct ViaHeader *via = CreateEmptyViaHeader();
     char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060";
 
     Parse(header, via, GetViaPattern());
@@ -39,7 +39,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
 
 TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
 {
-    struct ViaHeader *via = CreateViaHeader();
+    struct ViaHeader *via = CreateEmptyViaHeader();
     char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060";
     char result[128] = {0};
 

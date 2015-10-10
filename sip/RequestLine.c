@@ -103,7 +103,7 @@ struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
 struct RequestLine *CreateEmptyRequestLine()
 {
     struct RequestLine *requestLine = calloc (1, sizeof(struct RequestLine));
-    requestLine->requestUri = CreateUri();
+    requestLine->requestUri = CreateEmptyUri();
     return requestLine;
 }
 

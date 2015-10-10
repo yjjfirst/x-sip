@@ -14,7 +14,7 @@ TEST_GROUP(URITestGroup)
     struct URI *uri;
     void setup()
     {
-        uri = CreateUri();
+        uri = CreateEmptyUri();
     }
 
     void teardown()

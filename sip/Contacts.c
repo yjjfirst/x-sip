@@ -163,7 +163,7 @@ char *ContactsHeader2String(char *result, struct Header *contacts)
 struct ContactHeader *CreateContactsHeader()
 {
     struct ContactHeader *to = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
-    to->uri = CreateUri();
+    to->uri = CreateEmptyUri();
     return to;
 }
 

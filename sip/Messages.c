@@ -102,9 +102,10 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
     int i = 0;
     struct Header *header = NULL;
 
-    for (i = 0 ; i < length; i++) {        
-        header = (struct Header *) get_data_at(message->headers, i);
-        if (strcmp (name, HeaderGetName(header)) == 0) {
+    for (i = 0 ; i < length; i++) {
+        struct Header *h = (struct Header *) get_data_at(message->headers, i);
+        if (strcmp (name, HeaderGetName(h)) == 0) {
+            header = h;
             break;
         }
     }

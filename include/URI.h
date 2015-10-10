@@ -1,7 +1,8 @@
 struct URI;
 
 void DestoryUri(struct URI *uri);
-struct URI *CreateUri();
+struct URI *CreateEmptyUri();
+struct URI *CreateUri(char *scheme, char *user, char *host, int port);
 struct URI *UriDup(struct URI *uri);
 int ParseURI(char *header, void *target);
 

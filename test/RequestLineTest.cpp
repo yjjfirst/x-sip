@@ -100,7 +100,7 @@ TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 TEST(RequestLineTestGroup, RequestLineSetUriTest)
 {
     struct RequestLine *r = CreateEmptyRequestLine();
-    struct URI *u = CreateUri();
+    struct URI *u = CreateEmptyUri();
     char URIString[] = "sips:peter@192.168.10.62:5060";
     
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
@@ -117,7 +117,7 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
 TEST(RequestLineTestGroup, RequestLine2StringTest)
 {
     struct RequestLine *r = CreateEmptyRequestLine();
-    struct URI *u = CreateUri();
+    struct URI *u = CreateEmptyUri();
     char string[256] = {0};
     
     RequestLineSetMethod(r, (char *)"INVITE");
@@ -138,9 +138,9 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
 
 TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
 {
-    SIP_METHOD m = REGISTER;
+    SIP_METHOD m = SIP_METHOD_REGISTER;
     char URIString[] = "sip:registrar.biloxi.com";
-    struct URI *u = CreateUri();
+    struct URI *u = CreateEmptyUri();
     struct RequestLine *r = NULL;
 
     Parse((char *)URIString, u, GetURIHeaderPattern(URIString));
