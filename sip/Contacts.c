@@ -24,18 +24,18 @@ struct HeaderPattern ContactsHeaderPattern[] = {
         .endSeparator =  COLON,
         .mandatory = 0,
         .offset = OFFSETOF(struct ContactHeader, headerBase),
-        .parse = ParseStringElement,
+        .parse = ParseString,
         .legal = NULL,
-        .toString = StringElement2String },
+        .toString = String2String },
     { 
         .format ="*", 
         .startSeparator = COLON, 
         .endSeparator = LEFT_ANGLE,
         .mandatory = 0, 
         .offset = OFFSETOF(struct ContactHeader, displayName), 
-        .parse = ParseStringElement, 
+        .parse = ParseString, 
         .legal = NULL, 
-        .toString = StringElement2String },
+        .toString = String2String },
     { 
         "*", 
         LEFT_ANGLE, 
@@ -53,34 +53,34 @@ struct HeaderPattern ContactsHeaderPattern[] = {
         0, 
         NULL, 
         NULL, 
-        StringElement2String },
+        String2String },
     { 
         "*", 
         SEMICOLON, 
         EMPTY, 
         0, 
         OFFSETOF(struct ContactHeader, parameters), 
-        ParseStringElement, 
+        ParseString, 
         NULL, 
-        StringElement2String },
+        String2String },
     {NULL}
 };
 
 struct HeaderPattern ContactsHeaderWithQuotedDisplayNamePattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement, NULL, StringElement2String},
-    { "*", COLON, QUOTE, 0, 0, NULL, NULL, StringElement2String},
-    { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseStringElement, NULL, StringElement2String},
-    { "*", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, StringElement2String},
+    { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String},
+    { "*", COLON, QUOTE, 0, 0, NULL, NULL, String2String},
+    { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseString, NULL, String2String},
+    { "*", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
-    { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, StringElement2String},
-    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseStringElement, NULL, StringElement2String},
+    { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String},
+    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseString, NULL, String2String},
     {NULL}
 };
 
 struct HeaderPattern ContactsHeaderNoDisplayNamePattern[] = {
-    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseStringElement, NULL, StringElement2String},
+    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String},
     { "*",  COLON, SEMICOLON, 1, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
-    { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseStringElement, NULL, StringElement2String},
+    { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String},
     {NULL}
 };
 
@@ -162,15 +162,16 @@ char *ContactsHeader2String(char *result, struct Header *contacts)
 
 struct ContactHeader *CreateContactsHeader()
 {
-    struct ContactHeader *to = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
-    to->uri = CreateEmptyUri();
-    return to;
+    struct ContactHeader *header = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
+    
+    header->uri = CreateEmptyUri();
+    return header;
 }
 
-void DestoryContactsHeader(struct Header *to)
+void DestoryContactsHeader(struct Header *h)
 {
 
-    struct ContactHeader *header = (struct ContactHeader *)to;
+    struct ContactHeader *header = (struct ContactHeader *)h;
     if (header != NULL) {
         DestoryUri(header->uri);
         free(header);

@@ -41,8 +41,8 @@ struct HeaderPattern {
 int Parse(char *string, void *target, struct HeaderPattern *pattern);
 char *ToString(char *string, void *header, struct HeaderPattern *pattern);
 char *NextSeparator(char *header);
-int ParseStringElement(char *value, void *target);
-int ParseIntegerElement(char *value, void *target);
-char *StringElement2String(char *pos, void *element, struct HeaderPattern *p);
-char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p);
+int ParseString(char *value, void *target);
+int ParseInteger(char *value, void *target);
+char *String2String(char *pos, void *element, struct HeaderPattern *p);
+char *Integer2String(char *pos, void *element, struct HeaderPattern *p);
 int Copy2Target(void* target, char *value, struct HeaderPattern *pattern);

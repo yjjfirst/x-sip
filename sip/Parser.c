@@ -4,7 +4,7 @@
 
 #include "Parser.h"
 
-int ParseStringElement(char *value, void *target)
+int ParseString(char *value, void *target)
 {
     char *start = value;
     char length = strlen(value);
@@ -34,7 +34,7 @@ int ParseStringElement(char *value, void *target)
     return 0;
 }
 
-int ParseIntegerElement(char *value, void *target)
+int ParseInteger(char *value, void *target)
 {
     int *t = (int *) target;
     *t = atoi(value);
@@ -170,7 +170,7 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
 #undef MAX_ELEMENT_LENGTH
 
 
-char *StringElement2String(char *pos, void *element, struct HeaderPattern *p)
+char *String2String(char *pos, void *element, struct HeaderPattern *p)
 {
     if (p->startSeparator != EMPTY && strlen(element) != 0) {
         *pos = p->startSeparator;
@@ -185,7 +185,7 @@ char *StringElement2String(char *pos, void *element, struct HeaderPattern *p)
     }
 }
 
-char *IntegerElement2String(char *pos, void *element, struct HeaderPattern *p)
+char *Integer2String(char *pos, void *element, struct HeaderPattern *p)
 {
     int *value = element;
 

@@ -11,8 +11,8 @@ struct CallIDHeader {
 };
 
 struct HeaderPattern CallIdHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseStringElement, NULL, StringElement2String},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseStringElement, NULL, StringElement2String},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIDHeader, headerBase), ParseString, NULL, String2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIDHeader, id), ParseString, NULL, String2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 

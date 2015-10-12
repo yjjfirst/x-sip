@@ -18,7 +18,7 @@ struct HeaderPattern URIHeaderPattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String},
     { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseString, NULL,String2String},
     { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseString, NULL,String2String},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger, NULL,Integer2String},
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger, NULL,Integero2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseString, NULL,String2String},
     { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString, NULL,String2String},
     {NULL}

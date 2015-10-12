@@ -30,9 +30,9 @@ int RequestLineSipVersionLegal(char *version)
 }
 
 struct HeaderPattern RequestLinePattern[] = {
-    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseStringElement, RequestLineMethodLegal, StringElement2String},
+    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseString, RequestLineMethodLegal, String2String},
     {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI, NULL, Uri2String},
-    {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseStringElement, NULL,StringElement2String},
+    {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseString, NULL,String2String},
     {NULL, 0, 0, 0, 0, 0}
 };
 

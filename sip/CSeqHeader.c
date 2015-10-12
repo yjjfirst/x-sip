@@ -14,9 +14,9 @@ struct CSeqHeader
 };
 
 struct HeaderPattern CSeqHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseStringElement, NULL, StringElement2String},
-    {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseIntegerElement, NULL, IntegerElement2String},
-    {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseStringElement, NULL, StringElement2String},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseString, NULL, String2String},
+    {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseInteger, NULL, Integer2String},
+    {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseString, NULL, String2String},
     {NULL, 0, 0, 0, 0, 0},
 };
 

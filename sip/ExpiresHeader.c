@@ -11,8 +11,8 @@ struct ExpiresHeader
 };
 
 struct HeaderPattern ExpiresHeaderPattern[] = {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, headerBase), ParseStringElement, NULL, StringElement2String},
-    {"*", COLON, EMPTY, 0, OFFSETOF(struct ExpiresHeader, expires), ParseIntegerElement, NULL, IntegerElement2String},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, headerBase), ParseString, NULL, String2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct ExpiresHeader, expires), ParseInteger, NULL, Integer2String},
     {NULL, 0, 0, 0, 0, 0},
         };
 

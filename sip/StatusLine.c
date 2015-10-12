@@ -10,9 +10,9 @@ struct StatusLine {
 };
 
 struct HeaderPattern StatusLinePattern[] = {
-    {"*", EMPTY, SPACE, 0, OFFSETOF(struct StatusLine, sipVersion), ParseStringElement, NULL, StringElement2String},
-    {"*", SPACE, SPACE, 0, OFFSETOF(struct StatusLine, statusCode), ParseIntegerElement, NULL, IntegerElement2String},
-    {"*", SPACE, EMPTY, 0, OFFSETOF(struct StatusLine, reasonPhrase), ParseStringElement, NULL,StringElement2String},
+    {"*", EMPTY, SPACE, 0, OFFSETOF(struct StatusLine, sipVersion), ParseString, NULL, String2String},
+    {"*", SPACE, SPACE, 0, OFFSETOF(struct StatusLine, statusCode), ParseInteger, NULL, Integer2String},
+    {"*", SPACE, EMPTY, 0, OFFSETOF(struct StatusLine, reasonPhrase), ParseString, NULL,String2String},
     {NULL, 0, 0, 0, 0, 0}
 
 };

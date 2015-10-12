@@ -11,10 +11,10 @@ struct ViaHeader {
 };
 
 struct HeaderPattern ViaHeaderPattern []= {
-    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseStringElement, NULL, StringElement2String},
-    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseStringElement, NULL, StringElement2String},
-    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseStringElement, NULL, StringElement2String},
-    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseStringElement, NULL, StringElement2String},
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseString, NULL, String2String},
+    {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseString, NULL, String2String},
+    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseString, NULL, String2String},
+    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseString, NULL, String2String},
     {NULL, 0, 0, 0, 0},
 };
 
