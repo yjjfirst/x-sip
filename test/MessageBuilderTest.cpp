@@ -10,6 +10,7 @@ extern "C" {
 #include "CSeqHeader.h"
 #include "ExpiresHeader.h"
 #include "ContentLength.h"
+#include "Header.h"
 }
 
 char user[] = "Martin Yang";
@@ -41,8 +42,8 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
 {
-    struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", m);
-    STRCMP_EQUAL("From", ContactsHeaderGetName(from));
+    struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_FROM, m);
+    STRCMP_EQUAL(HEADER_NAME_FROM, ContactsHeaderGetName(from));
     STRCMP_EQUAL("Martin Yang", ContactsHeaderGetDisplayName(from));
 
     struct URI *uri = ContactsHeaderGetUri(from);
@@ -52,8 +53,8 @@ TEST(MessageBuilderTestGroup, FromHeaderTest)
 
 TEST(MessageBuilderTestGroup, ToHeaderTest)
 {
-    struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", m);
-    STRCMP_EQUAL("To", ContactsHeaderGetName(to));
+    struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_TO, m);
+    STRCMP_EQUAL(HEADER_NAME_TO, ContactsHeaderGetName(to));
     STRCMP_EQUAL("Martin Yang", ContactsHeaderGetDisplayName(to));
 
     struct URI *uri = ContactsHeaderGetUri(to);
@@ -63,52 +64,52 @@ TEST(MessageBuilderTestGroup, ToHeaderTest)
 
 TEST(MessageBuilderTestGroup, ViaHeaderTest)
 {
-    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader("Via", m);
+    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
-    STRCMP_EQUAL("Via", ViaHeaderGetName(via));
+    STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
     STRCMP_EQUAL("192.168.10.63", ViaHeaderGetUri(via));
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }
 
 TEST(MessageBuilderTestGroup, ContactHeaderTest)
 {
-    struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", m);
+    struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_CONTACT, m);
 
-    STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
+    STRCMP_EQUAL(HEADER_NAME_CONTACT, ContactsHeaderGetName(contact));
 }
 
 TEST(MessageBuilderTestGroup, MaxForwardHeaderTest)
 {
-    struct MaxForwardsHeader *mf = (struct MaxForwardsHeader *) MessageGetHeader("Max-Forwards", m);
+    struct MaxForwardsHeader *mf = (struct MaxForwardsHeader *) MessageGetHeader(HEADER_NAME_MAX_FORWARDS, m);
     
-    STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(mf));
+    STRCMP_EQUAL(HEADER_NAME_MAX_FORWARDS, MaxForwardsGetName(mf));
 }
 
 
 TEST(MessageBuilderTestGroup, CallIDHeaderTest)
 {
-    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader("Call-ID", m);
+    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader(HEADER_NAME_CALLID, m);
 
-    STRCMP_EQUAL("Call-ID", CallIDHeaderGetName(id));
+    STRCMP_EQUAL(HEADER_NAME_CALLID, CallIDHeaderGetName(id));
 }
 
 TEST(MessageBuilderTestGroup, CSeqHeaerTest)
 {
-    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader("CSeq", m);
+    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m);
     
-    STRCMP_EQUAL("CSeq", CSeqHeaderGetName(cseq));
+    STRCMP_EQUAL(HEADER_NAME_CSEQ, CSeqHeaderGetName(cseq));
 }
 
 TEST(MessageBuilderTestGroup, ExpiresHeaderTest)
 {
-    struct ExpiresHeader *e = (struct ExpiresHeader *) MessageGetHeader("Expires", m);
+    struct ExpiresHeader *e = (struct ExpiresHeader *) MessageGetHeader(HEADER_NAME_EXPIRES, m);
     
-    STRCMP_EQUAL("Expires", ExpiresHeaderGetName(e));
+    STRCMP_EQUAL(HEADER_NAME_EXPIRES, ExpiresHeaderGetName(e));
 }
 
 TEST(MessageBuilderTestGroup, ContentLengthTest)
 {
-    struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader("Content-Length", m);
+    struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, m);
 
-    STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
+    STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthGetName(c));
 }
