@@ -5,6 +5,11 @@ extern "C" {
 #include "Messages.h"
 #include "Contacts.h"
 #include "ViaHeader.h"
+#include "MaxForwards.h"
+#include "CallIDHeader.h"
+#include "CSeqHeader.h"
+#include "ExpiresHeader.h"
+#include "ContentLength.h"
 }
 
 char user[] = "Martin Yang";
@@ -70,4 +75,40 @@ TEST(MessageBuilderTestGroup, ContactHeaderTest)
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", m);
 
     STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
+}
+
+TEST(MessageBuilderTestGroup, MaxForwardHeaderTest)
+{
+    struct MaxForwardsHeader *mf = (struct MaxForwardsHeader *) MessageGetHeader("Max-Forwards", m);
+    
+    STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(mf));
+}
+
+
+TEST(MessageBuilderTestGroup, CallIDHeaderTest)
+{
+    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader("Call-ID", m);
+
+    STRCMP_EQUAL("Call-ID", CallIDHeaderGetName(id));
+}
+
+TEST(MessageBuilderTestGroup, CSeqHeaerTest)
+{
+    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader("CSeq", m);
+    
+    STRCMP_EQUAL("CSeq", CSeqHeaderGetName(cseq));
+}
+
+TEST(MessageBuilderTestGroup, ExpiresHeaderTest)
+{
+    struct ExpiresHeader *e = (struct ExpiresHeader *) MessageGetHeader("Expires", m);
+    
+    STRCMP_EQUAL("Expires", ExpiresHeaderGetName(e));
+}
+
+TEST(MessageBuilderTestGroup, ContentLengthTest)
+{
+    struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader("Content-Length", m);
+
+    STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
 }

@@ -25,8 +25,18 @@ struct HeaderPattern *GetCSeqHeaderPattern()
     return CSeqHeaderPattern;
 }
 
-DEFINE_CREATER(struct CSeqHeader, CreateCSeqHeader);
 DEFINE_DESTROYER(struct Header, DestoryCSeqHeader);
+
+struct CSeqHeader *CreateCSeqHeader () 
+{ 
+    struct CSeqHeader *cseq = NULL;
+    struct HeaderPattern *p = &CSeqHeaderPattern[0];    
+
+    cseq = (struct CSeqHeader *)calloc(1,sizeof (struct CSeqHeader));
+    Copy2Target(cseq, "CSeq", p);
+
+    return cseq;
+}
 
 struct Header *ParseCSeqHeader(char *string)
 {

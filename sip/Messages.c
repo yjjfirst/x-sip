@@ -12,6 +12,7 @@
 #include "CSeqHeader.h"
 #include "ContentLength.h"
 #include "StatusLine.h"
+#include "ExpiresHeader.h"
 #include "utils/list/include/list.h"
 
 #define MAX_MESSAGE_LENGTH 2048
@@ -47,6 +48,7 @@ struct HeaderOperation HeaderOperations[] = {
     {HEADER_NAME_CALLID, ParseCallIDHeader, DestoryCallIDHeader, CallIDHeader2String},
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
     {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLengthHeader2String},
+    {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},
 };
 
 int CountHeaderOperations()

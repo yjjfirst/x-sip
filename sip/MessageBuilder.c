@@ -1,6 +1,11 @@
 #include "Messages.h"
 #include "Contacts.h"
 #include "ViaHeader.h"
+#include "MaxForwards.h"
+#include "CallIDHeader.h"
+#include "CSeqHeader.h"
+#include "ExpiresHeader.h"
+#include "ContentLength.h"
 
 void AddRequestLine(struct Message *m, char *user, char *host, int port)
 {
@@ -48,6 +53,40 @@ void AddContactHeader(struct Message *m, char *usr, char *host, int port)
     MessageAddHeader(m, (struct Header *)contact);
 }
 
+void AddMaxForwardsHeader(struct Message *m)
+{
+    struct MaxForwardsHeader *mf = CreateMaxForwardsHeader();
+    MessageAddHeader(m, (struct Header *)mf);
+}
+
+void AddCallIdHeader(struct Message *m)
+{
+    struct CallIDHeader *id = CreateCallIDHeader();
+    
+    MessageAddHeader(m, (struct Header *)id);
+}
+
+void AddCSeqHeader(struct Message *m)
+{
+    struct CSeqHeader *cseq = CreateCSeqHeader();
+
+    MessageAddHeader(m, (struct Header *)cseq);
+}
+
+void AddExpiresHeader(struct Message *m)
+{
+    struct ExpiresHeader *e = CreateExpiresHeader();
+    
+    MessageAddHeader(m, (struct Header *)e);
+}
+
+void AddContentLengthHeader(struct Message *m)
+{
+    struct ContentLengthHeader *c = CreateContentLengthHeader();
+
+    MessageAddHeader(m, (struct Header *)c);
+}
+
 struct Message *BuildRegisterMessage(char *user, char *host)
 {
     struct Message *m = CreateMessage();
@@ -57,6 +96,10 @@ struct Message *BuildRegisterMessage(char *user, char *host)
     AddToHeader(m, user, host, 5060);
     AddViaHeader(m,"192.168.10.63");
     AddContactHeader(m, user, host, 5060);
- 
+    AddMaxForwardsHeader(m);
+    AddCallIdHeader(m);
+    AddCSeqHeader(m);
+    AddExpiresHeader(m);
+    AddContentLengthHeader(m);
     return m;
 }

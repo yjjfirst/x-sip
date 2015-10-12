@@ -6,6 +6,7 @@
 #define HEADER_NAME_CALLID "Call-ID"
 #define HEADER_NAME_CSEQ "CSeq"
 #define HEADER_NAME_CONTENT_LENGTH "Content-Length"
+#define HEADER_NAME_EXPIRES "Expires"
 
 #define HEADER_NAME_MAX_LENGTH 32
 #define HEADER_MAX_LENGTH 256

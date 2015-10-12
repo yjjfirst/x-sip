@@ -2,6 +2,7 @@
 
 #include "Header.h"
 #include "ExpiresHeader.h"
+#include "Parser.h"
 
 struct ExpiresHeader 
 {
@@ -13,15 +14,33 @@ struct HeaderPattern ExpiresHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ExpiresHeader, headerBase), ParseStringElement, NULL, StringElement2String},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct ExpiresHeader, expires), ParseIntegerElement, NULL, IntegerElement2String},
     {NULL, 0, 0, 0, 0, 0},
-};
+        };
 
 struct HeaderPattern *GetExpiresPattern()
 {
     return ExpiresHeaderPattern;
 }
+
+struct Header *ParseExpiresHeader(char *string)
+{
+    return NULL;
+}
    
-DEFINE_CREATER(struct ExpiresHeader, CreateExpiresHeader)
-DEFINE_DESTROYER(struct ExpiresHeader, DestoryExpiresHeader)
+void DestoryExpiresHeader (struct Header *header)
+{
+    free(header);
+}
+
+struct ExpiresHeader *CreateExpiresHeader () 
+{ 
+    struct ExpiresHeader *e = NULL;
+    struct HeaderPattern *p = &ExpiresHeaderPattern[0];
+
+    e = (struct ExpiresHeader *)calloc(1,sizeof (struct ExpiresHeader)); 
+    Copy2Target(e, "Expires", p);
+
+    return e;
+}
 
 char *ExpiresHeaderGetName(struct ExpiresHeader *e)
 {
@@ -33,7 +52,7 @@ int ExpiresHeaderGetExpires(struct ExpiresHeader *e)
     return e->expires;
 }
 
-void ExpiresHeader2String(char *result, struct ExpiresHeader *e)
+char *ExpiresHeader2String(char *result, struct Header *e)
 {
-    ToString(result, e, GetExpiresPattern());
+    return ToString(result, e, GetExpiresPattern());
 }

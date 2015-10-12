@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include "Parser.h"
 #include "ExpiresHeader.h"
 }
 
@@ -16,7 +17,7 @@ TEST(ExpiresHeaderTestGroup, ExpiresHeaderParseTest)
     Parse(string, e, GetExpiresPattern());
     STRCMP_EQUAL("Expires", ExpiresHeaderGetName(e));
     CHECK_EQUAL(7200, ExpiresHeaderGetExpires(e));
-    DestoryExpiresHeader(e);
+    DestoryExpiresHeader((struct Header *)e);
 }
 
 TEST(ExpiresHeaderTestGroup, ExpiresHeader2String)
@@ -26,7 +27,7 @@ TEST(ExpiresHeaderTestGroup, ExpiresHeader2String)
     char result[128] = {0};
 
     Parse(string, e, GetExpiresPattern());
-    ExpiresHeader2String(result, e);
+    ExpiresHeader2String(result, (struct Header *)e);
 
-    DestoryExpiresHeader(e);
+    DestoryExpiresHeader((struct Header *)e);
 }

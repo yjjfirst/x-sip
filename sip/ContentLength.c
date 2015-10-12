@@ -21,8 +21,18 @@ struct HeaderPattern *GetContentLengthHeaderPattern()
     return ContentLengthHeaderPattern;
 }
 
-DEFINE_CREATER(struct ContentLengthHeader, CreateContentLengthHeader)
 DEFINE_DESTROYER(struct Header, DestoryContentLengthHeader)
+
+struct ContentLengthHeader *CreateContentLengthHeader ()
+{ 
+    struct ContentLengthHeader *c = NULL;
+    struct HeaderPattern *p = &ContentLengthHeaderPattern[0];
+
+    c = (struct ContentLengthHeader *)calloc(1,sizeof (struct ContentLengthHeader));
+    Copy2Target(c, "Content-Length", p);
+
+    return c;
+}
 
 struct Header *ParseContentLength(char *string)
 {

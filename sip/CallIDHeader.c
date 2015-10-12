@@ -16,8 +16,18 @@ struct HeaderPattern CallIdHeaderPattern[] = {
     {NULL, 0, 0, 0, 0, 0},
 };
 
-DEFINE_CREATER(struct CallIDHeader, CreateCallIDHeader)
 DEFINE_DESTROYER(struct Header, DestoryCallIDHeader)
+
+struct CallIDHeader *CreateCallIDHeader () 
+{ 
+    struct CallIDHeader *header = NULL;
+    struct HeaderPattern *p = &CallIdHeaderPattern[0];
+
+    header = (struct CallIDHeader *)calloc(1,sizeof (struct CallIDHeader)); 
+    Copy2Target(header, "Call-ID", p);
+    
+    return header;
+}
 
 struct Header *ParseCallIDHeader(char *string)
 {
@@ -32,9 +42,22 @@ char *CallIDHeaderGetName(struct CallIDHeader *id)
     return id->headerBase.name;
 }
 
+void CallIDHeaderSetName(struct CallIDHeader *id)
+{
+    struct HeaderPattern *p = &CallIdHeaderPattern[0];
+    
+    Copy2Target(id, "Call-ID", p);
+}
+
 char *CallIDHeaderGetID(struct CallIDHeader *id)
 {
     return id->id;
+}
+
+void CallIDHeaderSetID(struct CallIDHeader *id)
+{
+    struct HeaderPattern *p = &CallIdHeaderPattern[1];
+    Copy2Target(id, "1234567890", p);
 }
 
 char *CallIDHeader2String(char *result, struct Header *id)

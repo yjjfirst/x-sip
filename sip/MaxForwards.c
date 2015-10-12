@@ -31,9 +31,24 @@ char *MaxForwardsGetName(struct MaxForwardsHeader *m)
     return m->headerBase.name;
 }
 
+void MaxForwardsSetName(struct MaxForwardsHeader *m)
+{
+    struct HeaderPattern *p = &MaxForwardsPattern[0];
+
+    Copy2Target(m, "Max-Forwards", p);
+}
+
 int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
 {
     return m->maxForwards;
+}
+
+void MaxForwardsSetMaxForwards(struct MaxForwardsHeader *m)
+{
+    struct HeaderPattern *p = &MaxForwardsPattern[1];
+    int maxForwards = 70;
+
+    Copy2Target(m, (void *)&maxForwards, p);
 }
 
 struct HeaderPattern *GetMaxForwardsPattern()
@@ -49,6 +64,8 @@ char *MaxForwards2String(char *result, struct Header *m)
 struct MaxForwardsHeader *CreateMaxForwardsHeader()
 {
     struct MaxForwardsHeader *m = (struct MaxForwardsHeader *) calloc(1, sizeof(struct MaxForwardsHeader));
+    MaxForwardsSetName(m);
+    MaxForwardsSetMaxForwards(m);
     return m;
 }
 
