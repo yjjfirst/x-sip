@@ -2,7 +2,7 @@
 
 #include "Header.h"
 #include "Parser.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 
 struct ContentLengthHeader 
 {

@@ -8,11 +8,11 @@ extern "C" {
 #include "Parser.h"
 #include "Messages.h"
 #include "ViaHeader.h"
-#include "MaxForwards.h"
-#include "Contacts.h"
-#include "CallIDHeader.h"
+#include "MaxForwardsHeader.h"
+#include "ContactHeader.h"
+#include "CallIdHeader.h"
 #include "CSeqHeader.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 #include "StatusLine.h"
 }
 
@@ -35,7 +35,7 @@ Content-Length:0\r\n");
     
     void UriCheck(struct ContactHeader *header)
     {
-        struct URI *uri = ContactsHeaderGetUri(header);
+        struct URI *uri = ContactHeaderGetUri(header);
         STRCMP_EQUAL("sip", UriGetScheme(uri));
         STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
         STRCMP_EQUAL("munich.de", UriGetHost(uri));
@@ -95,8 +95,8 @@ TEST(MessageTestGroup, ToParseTest)
     ParseMessage(messageString, message);
 
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
-    STRCMP_EQUAL("To", ContactsHeaderGetName(to));
-    STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(to));
+    STRCMP_EQUAL("To", ContactHeaderGetName(to));
+    STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(to));
     UriCheck(to);
 
     DestoryMessage(&message);
@@ -108,10 +108,10 @@ TEST(MessageTestGroup, FromParseTest)
     ParseMessage(messageString, message);
 
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", message);
-    STRCMP_EQUAL("From", ContactsHeaderGetName(from));
-    STRCMP_EQUAL("Werner Heisenberg", ContactsHeaderGetDisplayName(from));
+    STRCMP_EQUAL("From", ContactHeaderGetName(from));
+    STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(from));
     UriCheck(from);
-    STRCMP_EQUAL("tag=3431", ContactsHeaderGetParameters(from));
+    STRCMP_EQUAL("tag=3431", ContactHeaderGetParameters(from));
 
     DestoryMessage(&message);
 
@@ -123,9 +123,9 @@ TEST(MessageTestGroup, ContactParseTest)
     ParseMessage(messageString, message);
 
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
-    STRCMP_EQUAL("Contact", ContactsHeaderGetName(contact));
+    STRCMP_EQUAL("Contact", ContactHeaderGetName(contact));
 
-    struct URI *uri = ContactsHeaderGetUri(contact);
+    struct URI *uri = ContactHeaderGetUri(contact);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
     STRCMP_EQUAL("200.201.202.203", UriGetHost(uri));
@@ -138,8 +138,8 @@ TEST(MessageTestGroup, CallIdParseTest)
     struct Message *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader("Call-ID", message);
-    STRCMP_EQUAL("Call-ID", CallIDHeaderGetName(id));
+    struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader("Call-ID", message);
+    STRCMP_EQUAL("Call-ID", CallIdHeaderGetName(id));
     DestoryMessage(&message);
 } 
 

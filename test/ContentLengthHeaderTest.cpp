@@ -2,7 +2,7 @@
 
 extern "C" {
 #include "Parser.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 };
 
 TEST_GROUP(ContentLengthHeaderTestGroup)

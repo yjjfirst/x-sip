@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "Header.h"
-#include "MaxForwards.h"
+#include "MaxForwardsHeader.h"
 #include "Parser.h"
 
 struct MaxForwardsHeader {

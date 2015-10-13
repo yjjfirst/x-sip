@@ -1,11 +1,11 @@
 #include "Messages.h"
-#include "Contacts.h"
+#include "ContactHeader.h"
 #include "ViaHeader.h"
-#include "MaxForwards.h"
-#include "CallIDHeader.h"
+#include "MaxForwardsHeader.h"
+#include "CallIdHeader.h"
 #include "CSeqHeader.h"
 #include "ExpiresHeader.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 
 void AddRequestLine(struct Message *m, char *user, char *host, int port)
 {
@@ -24,32 +24,32 @@ void AddViaHeader(struct Message *m, char *uri)
 void AddFromHeader(struct Message *m, char *user, char *host, int port)
 {
     struct URI *uri = CreateUri("sip", user, host, port);
-    struct ContactHeader *from = CreateContactsHeader();
+    struct ContactHeader *from = CreateContactHeader();
 
-    ContactsHeaderSetName(from, "From");
-    ContactsHeaderSetDisplayName(from, "Martin Yang");
-    ContactsHeaderSetUri(from, uri);
+    ContactHeaderSetName(from, "From");
+    ContactHeaderSetDisplayName(from, "Martin Yang");
+    ContactHeaderSetUri(from, uri);
     MessageAddHeader(m, (struct Header *)from);
 }
 
 void AddToHeader(struct Message *m, char *user, char *host, int port)
 {
     struct URI *uri = CreateUri("sip", user, host, port);
-    struct ContactHeader *to = CreateContactsHeader();
+    struct ContactHeader *to = CreateContactHeader();
 
-    ContactsHeaderSetName(to, "To");
-    ContactsHeaderSetDisplayName(to, "Martin Yang");
-    ContactsHeaderSetUri(to, uri);
+    ContactHeaderSetName(to, "To");
+    ContactHeaderSetDisplayName(to, "Martin Yang");
+    ContactHeaderSetUri(to, uri);
     MessageAddHeader(m, (struct Header *)to);
 }
 
 void AddContactHeader(struct Message *m, char *usr, char *host, int port)
 {
     struct URI *uri = CreateUri("sip", usr, host, port);
-    struct ContactHeader *contact = CreateContactsHeader();
+    struct ContactHeader *contact = CreateContactHeader();
 
-    ContactsHeaderSetName(contact, "Contact");
-    ContactsHeaderSetUri(contact, uri);
+    ContactHeaderSetName(contact, "Contact");
+    ContactHeaderSetUri(contact, uri);
     MessageAddHeader(m, (struct Header *)contact);
 }
 
@@ -61,7 +61,7 @@ void AddMaxForwardsHeader(struct Message *m)
 
 void AddCallIdHeader(struct Message *m)
 {
-    struct CallIDHeader *id = CreateCallIDHeader();
+    struct CallIdHeader *id = CreateCallIdHeader();
     
     MessageAddHeader(m, (struct Header *)id);
 }

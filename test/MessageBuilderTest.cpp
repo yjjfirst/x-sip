@@ -3,13 +3,13 @@
 extern "C" {
 #include "MessageBuilder.h"
 #include "Messages.h"
-#include "Contacts.h"
+#include "ContactHeader.h"
 #include "ViaHeader.h"
-#include "MaxForwards.h"
-#include "CallIDHeader.h"
+#include "MaxForwardsHeader.h"
+#include "CallIdHeader.h"
 #include "CSeqHeader.h"
 #include "ExpiresHeader.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 #include "Header.h"
 }
 
@@ -43,10 +43,10 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
 TEST(MessageBuilderTestGroup, FromHeaderTest)
 {
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_FROM, m);
-    STRCMP_EQUAL(HEADER_NAME_FROM, ContactsHeaderGetName(from));
-    STRCMP_EQUAL("Martin Yang", ContactsHeaderGetDisplayName(from));
+    STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
+    STRCMP_EQUAL("Martin Yang", ContactHeaderGetDisplayName(from));
 
-    struct URI *uri = ContactsHeaderGetUri(from);
+    struct URI *uri = ContactHeaderGetUri(from);
     STRCMP_EQUAL("Martin Yang", UriGetUser(uri));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
 }
@@ -54,10 +54,10 @@ TEST(MessageBuilderTestGroup, FromHeaderTest)
 TEST(MessageBuilderTestGroup, ToHeaderTest)
 {
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_TO, m);
-    STRCMP_EQUAL(HEADER_NAME_TO, ContactsHeaderGetName(to));
-    STRCMP_EQUAL("Martin Yang", ContactsHeaderGetDisplayName(to));
+    STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
+    STRCMP_EQUAL("Martin Yang", ContactHeaderGetDisplayName(to));
 
-    struct URI *uri = ContactsHeaderGetUri(to);
+    struct URI *uri = ContactHeaderGetUri(to);
     STRCMP_EQUAL("Martin Yang", UriGetUser(uri));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
 }
@@ -75,7 +75,7 @@ TEST(MessageBuilderTestGroup, ContactHeaderTest)
 {
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_CONTACT, m);
 
-    STRCMP_EQUAL(HEADER_NAME_CONTACT, ContactsHeaderGetName(contact));
+    STRCMP_EQUAL(HEADER_NAME_CONTACT, ContactHeaderGetName(contact));
 }
 
 TEST(MessageBuilderTestGroup, MaxForwardHeaderTest)
@@ -86,11 +86,11 @@ TEST(MessageBuilderTestGroup, MaxForwardHeaderTest)
 }
 
 
-TEST(MessageBuilderTestGroup, CallIDHeaderTest)
+TEST(MessageBuilderTestGroup, CallIdHeaderTest)
 {
-    struct CallIDHeader *id = (struct CallIDHeader *) MessageGetHeader(HEADER_NAME_CALLID, m);
+    struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader(HEADER_NAME_CALLID, m);
 
-    STRCMP_EQUAL(HEADER_NAME_CALLID, CallIDHeaderGetName(id));
+    STRCMP_EQUAL(HEADER_NAME_CALLID, CallIdHeaderGetName(id));
 }
 
 TEST(MessageBuilderTestGroup, CSeqHeaerTest)

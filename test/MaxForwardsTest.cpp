@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
-#include "MaxForwards.h"
+#include "MaxForwardsHeader.h"
 #include "Parser.h"
 }
 

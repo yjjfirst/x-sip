@@ -6,11 +6,11 @@
 #include "Parser.h"
 #include "Messages.h"
 #include "ViaHeader.h"
-#include "MaxForwards.h"
-#include "Contacts.h"
-#include "CallIDHeader.h"
+#include "MaxForwardsHeader.h"
+#include "ContactHeader.h"
+#include "CallIdHeader.h"
 #include "CSeqHeader.h"
-#include "ContentLength.h"
+#include "ContentLengthHeader.h"
 #include "StatusLine.h"
 #include "ExpiresHeader.h"
 #include "utils/list/include/list.h"
@@ -42,10 +42,10 @@ struct HeaderOperation {
 struct HeaderOperation HeaderOperations[] = {
     {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader, ViaHeader2String},
     {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader,MaxForwards2String},
-    {HEADER_NAME_TO, ParseContactsHeader, DestoryContactsHeader,ContactsHeader2String},
-    {HEADER_NAME_FROM, ParseContactsHeader, DestoryContactsHeader, ContactsHeader2String},
-    {HEADER_NAME_CONTACT, ParseContactsHeader, DestoryContactsHeader, ContactsHeader2String},
-    {HEADER_NAME_CALLID, ParseCallIDHeader, DestoryCallIDHeader, CallIDHeader2String},
+    {HEADER_NAME_TO, ParseContactHeader, DestoryContactHeader,ContactHeader2String},
+    {HEADER_NAME_FROM, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
+    {HEADER_NAME_CONTACT, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
+    {HEADER_NAME_CALLID, ParseCallIdHeader, DestoryCallIdHeader, CallIdHeader2String},
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
     {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLengthHeader2String},
     {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},

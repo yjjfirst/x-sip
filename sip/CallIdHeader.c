@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "Header.h"
+#include "Parser.h"
+#include "CallIdHeader.h"
+
+struct CallIdHeader {
+    struct Header headerBase;
+    char id[64];
+};
+
+struct HeaderPattern CallIdHeaderPattern[] = {
+    {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIdHeader, headerBase), ParseString, NULL, String2String},
+    {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIdHeader, id), ParseString, NULL, String2String},
+    {NULL, 0, 0, 0, 0, 0},
+};
+
+DEFINE_DESTROYER(struct Header, DestoryCallIdHeader)
+
+struct CallIdHeader *CreateCallIdHeader () 
+{ 
+    struct CallIdHeader *header = NULL;
+    struct HeaderPattern *p = &CallIdHeaderPattern[0];
+
+    header = (struct CallIdHeader *)calloc(1,sizeof (struct CallIdHeader)); 
+    Copy2Target(header, "Call-ID", p);
+    
+    return header;
+}
+
+struct Header *ParseCallIdHeader(char *string)
+{
+    struct CallIdHeader *id = CreateCallIdHeader();
+    Parse(string, id, GetCallIdPattern());
+
+    return (struct Header *) id;
+}
+
+char *CallIdHeaderGetName(struct CallIdHeader *id)
+{
+    return id->headerBase.name;
+}
+
+void CallIdHeaderSetName(struct CallIdHeader *id)
+{
+    struct HeaderPattern *p = &CallIdHeaderPattern[0];
+    
+    Copy2Target(id, "Call-ID", p);
+}
+
+char *CallIdHeaderGetID(struct CallIdHeader *id)
+{
+    return id->id;
+}
+
+void CallIdHeaderSetID(struct CallIdHeader *id)
+{
+    struct HeaderPattern *p = &CallIdHeaderPattern[1];
+    Copy2Target(id, "1234567890", p);
+}
+
+char *CallIdHeader2String(char *result, struct Header *id)
+{
+    return ToString(result, id, GetCallIdPattern());
+}
+
+struct HeaderPattern *GetCallIdPattern()
+{
+    return CallIdHeaderPattern;
+}
+
