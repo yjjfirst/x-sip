@@ -29,7 +29,7 @@ struct ContentLengthHeader *CreateContentLengthHeader ()
     struct HeaderPattern *p = &ContentLengthHeaderPattern[0];
 
     c = (struct ContentLengthHeader *)calloc(1,sizeof (struct ContentLengthHeader));
-    Copy2Target(c, "Content-Length", p);
+    Copy2Target(c, HEADER_NAME_CONTENT_LENGTH, p);
 
     return c;
 }

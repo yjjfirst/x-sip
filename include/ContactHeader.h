@@ -3,6 +3,8 @@ struct ContactHeader;
 
 struct HeaderPattern *GetContactHeaderPattern(char *header);
 struct ContactHeader *CreateContactHeader();
+struct ContactHeader *CreateToHeader();
+struct ContactHeader *CreateFromHeader();
 void DestoryContactHeader(struct Header *to);
 struct Header *ParseContactHeader(char *string);
 
@@ -11,7 +13,6 @@ char *ContactHeaderGetDisplayName(struct ContactHeader *Header);
 struct URI *ContactHeaderGetUri(struct ContactHeader *Header);
 char *ContactHeaderGetParameters(struct ContactHeader *Header);
 
-void ContactHeaderSetName(struct ContactHeader *header, char *name);
 void ContactHeaderSetDisplayName(struct ContactHeader *header, char *displayName);
 void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri);
 

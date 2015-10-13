@@ -68,6 +68,7 @@ struct HeaderPattern *GetContactHeaderPattern(char *header)
     
     return pattern;
 }
+
 struct Header *ParseContactHeader(char *string)
 {
     struct ContactHeader *header = CreateContactHeader();
@@ -120,12 +121,37 @@ char *ContactHeader2String(char *result, struct Header *contact)
     return ToString(result, contact, ContactHeaderWithQuotedDisplayNamePattern);
 }
 
-struct ContactHeader *CreateContactHeader()
+struct ContactHeader *CreateEmptyContactHeader()
 {
     struct ContactHeader *header = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
     
     header->uri = CreateEmptyUri();
     return header;
+
+}
+
+struct ContactHeader *CreateContactHeader()
+{
+    struct ContactHeader *c = CreateEmptyContactHeader();
+    ContactHeaderSetName(c, HEADER_NAME_CONTACT);
+
+    return c;
+}
+
+struct ContactHeader *CreateToHeader()
+{
+    struct ContactHeader *to = CreateEmptyContactHeader();
+    ContactHeaderSetName(to, HEADER_NAME_TO);
+
+    return to;
+}
+
+struct ContactHeader *CreateFromHeader()
+{
+    struct ContactHeader *from = CreateEmptyContactHeader();
+    ContactHeaderSetName(from, HEADER_NAME_FROM);
+
+    return from;
 }
 
 void DestoryContactHeader(struct Header *h)

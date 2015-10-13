@@ -24,9 +24,8 @@ void AddViaHeader(struct Message *m, char *uri)
 void AddFromHeader(struct Message *m, char *user, char *host, int port)
 {
     struct URI *uri = CreateUri("sip", user, host, port);
-    struct ContactHeader *from = CreateContactHeader();
+    struct ContactHeader *from = CreateFromHeader();
 
-    ContactHeaderSetName(from, "From");
     ContactHeaderSetDisplayName(from, "Martin Yang");
     ContactHeaderSetUri(from, uri);
     MessageAddHeader(m, (struct Header *)from);
@@ -35,9 +34,8 @@ void AddFromHeader(struct Message *m, char *user, char *host, int port)
 void AddToHeader(struct Message *m, char *user, char *host, int port)
 {
     struct URI *uri = CreateUri("sip", user, host, port);
-    struct ContactHeader *to = CreateContactHeader();
+    struct ContactHeader *to = CreateToHeader();
 
-    ContactHeaderSetName(to, "To");
     ContactHeaderSetDisplayName(to, "Martin Yang");
     ContactHeaderSetUri(to, uri);
     MessageAddHeader(m, (struct Header *)to);
@@ -48,7 +46,6 @@ void AddContactHeader(struct Message *m, char *usr, char *host, int port)
     struct URI *uri = CreateUri("sip", usr, host, port);
     struct ContactHeader *contact = CreateContactHeader();
 
-    ContactHeaderSetName(contact, "Contact");
     ContactHeaderSetUri(contact, uri);
     MessageAddHeader(m, (struct Header *)contact);
 }

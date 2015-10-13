@@ -129,3 +129,31 @@ TEST(ToTestGroup, ContactStartWithSpaceParseTest)
     Parse((char *)contactString, toHeader, GetContactHeaderPattern(contactString));
     DestoryContactHeader((struct Header *)toHeader);    
 }
+
+TEST(ToTestGroup, CreateToHeaderTest)
+{
+    struct ContactHeader *toHeader = CreateToHeader();
+
+    STRCMP_EQUAL("To", ContactHeaderGetName(toHeader));
+
+    DestoryContactHeader( (struct Header *)toHeader);
+}
+
+TEST(ToTestGroup, CreateFromHeaderTest)
+{
+    struct ContactHeader *from = CreateFromHeader();
+
+    STRCMP_EQUAL("From", ContactHeaderGetName(from));
+
+    DestoryContactHeader( (struct Header *)from);
+
+}
+
+TEST(ToTestGroup, CreateContactHeaderTest)
+{
+    struct ContactHeader *c = CreateContactHeader();
+
+    STRCMP_EQUAL("Contact", ContactHeaderGetName(c));
+
+    DestoryContactHeader( (struct Header *)c);
+}

@@ -35,7 +35,7 @@ void MaxForwardsSetName(struct MaxForwardsHeader *m)
 {
     struct HeaderPattern *p = &MaxForwardsPattern[0];
 
-    Copy2Target(m, "Max-Forwards", p);
+    Copy2Target(m,HEADER_NAME_MAX_FORWARDS, p);
 }
 
 int MaxForwardsGetMaxForwards(struct MaxForwardsHeader *m)
