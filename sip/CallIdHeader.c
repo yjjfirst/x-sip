@@ -63,6 +63,7 @@ struct CallIdHeader *CreateCallIdHeader ()
 
     header = (struct CallIdHeader *)calloc(1,sizeof (struct CallIdHeader)); 
     CallIdHeaderSetName(header);
+    CallIdHeaderSetID(header);
     return header;
 }
 

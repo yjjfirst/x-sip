@@ -113,3 +113,12 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 
     STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthGetName(c));
 }
+
+TEST(MessageBuilderTestGroup, ToStringTest)
+{
+    char result[2048] = {0};
+
+    Message2String(result, m);
+
+    STRCMP_EQUAL("", result)
+}

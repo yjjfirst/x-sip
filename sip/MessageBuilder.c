@@ -72,7 +72,7 @@ void AddCSeqHeader(struct Message *m)
 
 void AddExpiresHeader(struct Message *m)
 {
-    struct ExpiresHeader *e = CreateExpiresHeader();
+    struct ExpiresHeader *e = CreateExpiresHeader(7200);
     
     MessageAddHeader(m, (struct Header *)e);
 }

@@ -48,7 +48,7 @@ void MaxForwardsSetMaxForwards(struct MaxForwardsHeader *m)
     struct HeaderPattern *p = &MaxForwardsPattern[1];
     int maxForwards = 70;
 
-    Copy2Target(m, (void *)&maxForwards, p);
+    SetIntegerField(maxForwards, (void *)m, p);
 }
 
 struct HeaderPattern *GetMaxForwardsPattern()

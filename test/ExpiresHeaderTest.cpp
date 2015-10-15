@@ -11,8 +11,10 @@ TEST_GROUP(ExpiresHeaderTestGroup)
 
 TEST(ExpiresHeaderTestGroup, ExpiresHeaderParseTest)
 {
-    struct ExpiresHeader *e = CreateExpiresHeader();
+    struct ExpiresHeader *e = CreateExpiresHeader(7777);
     char string[] = "Expires : 7200";
+
+    CHECK_EQUAL(7777, ExpiresHeaderGetExpires(e));
 
     Parse(string, e, GetExpiresPattern());
     STRCMP_EQUAL("Expires", ExpiresHeaderGetName(e));
@@ -22,7 +24,7 @@ TEST(ExpiresHeaderTestGroup, ExpiresHeaderParseTest)
 
 TEST(ExpiresHeaderTestGroup, ExpiresHeader2String)
 {
-    struct ExpiresHeader *e = CreateExpiresHeader();
+    struct ExpiresHeader *e = CreateExpiresHeader(0);
     char string[] = "Expires:7200";
     char result[128] = {0};
 

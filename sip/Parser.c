@@ -38,8 +38,17 @@ int ParseInteger(char *value, void *target)
 {
     int *t = (int *) target;
     *t = atoi(value);
-    
+
     return 0;
+}
+
+void SetIntegerField(int value,  void *header, struct HeaderPattern *p)
+{
+    char stringValue[32] = {0};
+
+    sprintf(stringValue, "%d", value);
+    Copy2Target(header, (void *)stringValue, p);
+
 }
 
 char *NextSeparator (char *header)

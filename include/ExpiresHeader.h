@@ -1,6 +1,6 @@
 struct ExpiresHeader;
 
-struct ExpiresHeader *CreateExpiresHeader();
+struct ExpiresHeader *CreateExpiresHeader(int expires);
 void DestoryExpiresHeader(struct Header *e);
 struct HeaderPattern *GetExpiresPattern();
 
