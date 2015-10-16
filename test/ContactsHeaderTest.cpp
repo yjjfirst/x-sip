@@ -1,9 +1,11 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include <stdio.h>
+
+#include "URI.h"
 #include "ContactHeader.h"
 #include "Parser.h"
-#include "stdio.h"
 }
 
 TEST_GROUP(ToTestGroup)

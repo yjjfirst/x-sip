@@ -116,9 +116,19 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 
 TEST(MessageBuilderTestGroup, ToStringTest)
 {
+    char expected[2048] = "REGISTER sip:Martin Yang@192.168.10.62:5060 SIP/2.0\r\n\
+From:\"Martin Yang\"<sip:Martin Yang@192.168.10.62:5060>\r\n\
+To:\"Martin Yang\"<sip:Martin Yang@192.168.10.62:5060>\r\n\
+Via:SIP/2.0/UDP 192.168.10.63\r\n\
+Contact:<sip:Martin Yang@192.168.10.62:5060>\r\n\
+Max-Forwards:70\r\n\
+Call-ID:1234567890\r\n\
+CSeq:1826 REGISTER\r\n\
+Expires:7200\r\n\
+Content-Length:0\r\n";
     char result[2048] = {0};
 
     Message2String(result, m);
 
-    STRCMP_EQUAL("", result)
+    STRCMP_EQUAL(expected, result)
 }

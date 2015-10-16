@@ -1,3 +1,6 @@
+#define URI_SCHEME_SIP "sip"
+#define URI_SCHEME_SIPS "sips"
+
 struct URI;
 
 void DestoryUri(struct URI *uri);

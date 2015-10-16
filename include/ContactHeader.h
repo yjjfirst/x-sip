@@ -1,4 +1,3 @@
-#include "URI.h"
 struct ContactHeader;
 
 struct HeaderPattern *GetContactHeaderPattern(char *header);

@@ -6,10 +6,11 @@
 #include "CSeqHeader.h"
 #include "ExpiresHeader.h"
 #include "ContentLengthHeader.h"
+#include "URI.h"
 
 void AddRequestLine(struct Message *m, char *user, char *host, int port)
 {
-    struct URI *uri = CreateUri("sip", user, host, port);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, host, port);
     struct RequestLine  *r = CreateRequestLine(SIP_METHOD_REGISTER, uri);
     MessageSetRequest(m, r);
 }
@@ -23,7 +24,7 @@ void AddViaHeader(struct Message *m, char *uri)
 
 void AddFromHeader(struct Message *m, char *user, char *host, int port)
 {
-    struct URI *uri = CreateUri("sip", user, host, port);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, host, port);
     struct ContactHeader *from = CreateFromHeader();
 
     ContactHeaderSetDisplayName(from, "Martin Yang");
@@ -33,7 +34,7 @@ void AddFromHeader(struct Message *m, char *user, char *host, int port)
 
 void AddToHeader(struct Message *m, char *user, char *host, int port)
 {
-    struct URI *uri = CreateUri("sip", user, host, port);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, host, port);
     struct ContactHeader *to = CreateToHeader();
 
     ContactHeaderSetDisplayName(to, "Martin Yang");
@@ -43,7 +44,7 @@ void AddToHeader(struct Message *m, char *user, char *host, int port)
 
 void AddContactHeader(struct Message *m, char *usr, char *host, int port)
 {
-    struct URI *uri = CreateUri("sip", usr, host, port);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, usr, host, port);
     struct ContactHeader *contact = CreateContactHeader();
 
     ContactHeaderSetUri(contact, uri);
