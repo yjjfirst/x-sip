@@ -34,6 +34,14 @@ struct HeaderPattern URINoUserHeaderPattern[] = {
     {NULL}
 };
 
+struct HeaderPattern *GetURIHeaderPattern (char *header)
+{
+    if (strchr(header, '@') == NULL)
+        return URINoUserHeaderPattern;
+    else 
+        return URIHeaderPattern;
+}
+
 int ParseURI(char *header, void *target)
 {
     struct HeaderPattern *pattern = GetURIHeaderPattern(header);
@@ -142,14 +150,6 @@ void DestoryUri(struct URI *uri)
     free (uri);
 }
 
-struct HeaderPattern *GetURIHeaderPattern (char *header)
-{
-    if (strchr(header, '@') == NULL)
-        return URINoUserHeaderPattern;
-    else 
-        return URIHeaderPattern;
-}
-
 struct HeaderPattern *GetURIHeaderPattern42String(struct URI **uri)
 {
     if (strcmp ("", UriGetUser(*uri)) == 0) {
@@ -173,7 +173,7 @@ char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
     return ToString(string, *u, pattern);
 }
 
-char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p)
+char *Uri2StringExt(char *string, void *uri)
 {
     struct HeaderPattern *pattern = GetURIHeaderPattern42String((struct URI **)&uri);
     return ToString(string, uri, pattern);

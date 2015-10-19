@@ -2,14 +2,13 @@
 #define URI_SCHEME_SIPS "sips"
 
 struct URI;
+struct HeaderPattern;
 
 void DestoryUri(struct URI *uri);
 struct URI *CreateEmptyUri();
 struct URI *CreateUri(char *scheme, char *user, char *host, int port);
 struct URI *UriDup(struct URI *uri);
 int ParseURI(char *header, void *target);
-
-struct HeaderPattern *GetURIHeaderPattern (char *header);
 
 char *UriGetScheme(struct URI *uri);
 char *UriGetUser(struct URI *uri);
@@ -26,7 +25,7 @@ void UriSetParameters(struct URI *uri,char *paramater);
 void UriSetPort(struct URI *uri, int port);
 
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p);
-char *Uri2StringExt(char *string, void *uri, struct HeaderPattern *p);
+char *Uri2StringExt(char *string, void *uri);
 
 
 

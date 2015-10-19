@@ -27,7 +27,7 @@ TEST(URITestGroup, URISchemeSIPParseTest)
 {
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
  
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
 }
 
@@ -35,7 +35,7 @@ TEST(URITestGroup, URISchemeSIPSParseTest)
 {
     char URIString[] = "sips:peter@192.168.10.62:5060";
 
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("sips", UriGetScheme(uri));
 }
 
@@ -43,7 +43,7 @@ TEST(URITestGroup, URIUserParseTest)
 {
     char URIString[] = "sips:peter@192.168.10.62:5060";
 
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("peter", UriGetUser(uri));
 }
 
@@ -51,7 +51,7 @@ TEST(URITestGroup, URIEmptyUserParseTest)
 {
     char URIString[] = "sips:192.168.10.62:5060";
 
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("", UriGetUser(uri));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
     CHECK_EQUAL(5060, UriGetPort(uri));
@@ -60,7 +60,7 @@ TEST(URITestGroup, URIEmptyUserParseTest)
 TEST(URITestGroup, URIHostParseTest)
 {
     char URIString[] = "sips:peter@192.168.10.62:5060";
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
     STRCMP_EQUAL("peter", UriGetUser(uri));
 }
@@ -68,7 +68,7 @@ TEST(URITestGroup, URIHostParseTest)
 TEST(URITestGroup, URIHostParseNoPortTest)
 {
     char URIString[] = "sips:peter@192.168.10.62";
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
 
 }
@@ -76,7 +76,7 @@ TEST(URITestGroup, URIHostParseNoPortTest)
 TEST(URITestGroup, URIPortParseTest)
 {
     char URIString[] = "sips:peter@192.168.10.62:5060;transport=tcp?subject=project";
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     CHECK_EQUAL(5060, UriGetPort(uri));
 }
 
@@ -84,7 +84,7 @@ TEST(URITestGroup, URIParameterParseTest)
 {
     char URIString[] = "sip:alice:secretword@atlanta.com:5060;transport=tcp?subject=project";
  
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
 }
 
@@ -92,7 +92,7 @@ TEST(URITestGroup, URIParseTest)
 {
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
  
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
     STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
@@ -102,7 +102,7 @@ TEST(URITestGroup, URIParseNoHeaderTest)
 {
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp";
  
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
@@ -114,7 +114,7 @@ TEST(URITestGroup, URIParseNoParameterTest)
 {
     char URIString[] = "sip:alice:secretword@atlanta.com?subject=project";
  
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
@@ -126,8 +126,8 @@ TEST(URITestGroup, AnotherURI2StringTest)
     char s[] = "sip:registrar.munich.de";
     char result[128] = {0};
     
-    Parse((char *)s, uri, GetURIHeaderPattern(s));
-    Uri2StringExt(result, uri, GetURIHeaderPattern(s));
+    ParseURI((char *)s, &uri);
+    Uri2StringExt(result, uri);
     
     STRCMP_EQUAL(s, result);
 }
@@ -137,9 +137,9 @@ TEST(URITestGroup, URI2StringTest)
     char URIString[] = "sip:atlanta.com?subject=project";
     char result[128] = {0};
 
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
 
-    Uri2StringExt(result, uri, GetURIHeaderPattern(URIString));
+    Uri2StringExt(result, uri);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com",UriGetHost(uri));
@@ -151,7 +151,7 @@ TEST(URITestGroup, URINoUserParseTest)
 {
     char URIString[] = "sip:registrar.munich.de";
 
-    Parse((char *)URIString, uri, GetURIHeaderPattern(URIString));
+    ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("", UriGetUser(uri));
 }
 
