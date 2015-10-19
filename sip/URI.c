@@ -5,6 +5,8 @@
 #include "URI.h"
 #include "Parser.h"
 
+#define URI_MAX_ELEMENT 6
+
 struct URI {
     char scheme[8];
     char user[32];
@@ -14,40 +16,105 @@ struct URI {
     char headers[128];
 };
 
-struct HeaderPattern URIHeaderPattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String},
+struct HeaderPattern UserHostPattern[] = {
     { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseString, NULL,String2String},
     { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseString, NULL,String2String},
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger, NULL,Integer2String},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseString, NULL,String2String},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString, NULL,String2String},
-    {NULL}
-
 };
 
-struct HeaderPattern URINoUserHeaderPattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String},
+struct HeaderPattern HostPattern[] = {
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseString,NULL,String2String},
+};
+
+struct HeaderPattern URISchemePattern[] = {
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String},
+};
+
+struct HeaderPattern URIRemainPattern[] = {
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger,NULL,Integer2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseString,NULL,String2String},
     { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString,NULL,String2String},
-    {NULL}
 };
 
-struct HeaderPattern *GetURIHeaderPattern (char *header)
+struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
+
+int HasUser4Parse(void *h)
 {
-    if (strchr(header, '@') == NULL)
-        return URINoUserHeaderPattern;
-    else 
-        return URIHeaderPattern;
+    char *header = (char *)h;
+    
+    if (strchr(header, '@') != NULL)
+        return TRUE;
+
+    return FALSE;
 }
 
-int ParseURI(char *header, void *target)
+int HasUser42String(void *u)
 {
-    struct HeaderPattern *pattern = GetURIHeaderPattern(header);
+    struct URI **uri = (struct URI **)(u);
+
+    if (strcmp("", UriGetUser(*uri)) == 0)
+        return FALSE;
+
+    return TRUE;
+}
+
+struct HeaderPattern *AddSchemePattern(struct HeaderPattern *pos)
+{
+    memcpy(pos, URISchemePattern, sizeof(URISchemePattern));
+    pos += sizeof(URISchemePattern)/sizeof(struct HeaderPattern);
+
+    return pos;
+}
+
+struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser)
+{
+    if (hasUser == TRUE){
+        memcpy(pos, UserHostPattern, sizeof(UserHostPattern));
+        pos += sizeof(UserHostPattern)/sizeof(struct HeaderPattern);
+    } else {
+        memcpy(pos, HostPattern, sizeof(HostPattern));
+        pos += sizeof(HostPattern)/sizeof(struct HeaderPattern);
+    }
+
+    return pos;
+}
+
+struct HeaderPattern *AddRemainPattern(struct HeaderPattern *pos)
+{
+    memcpy(pos, URIRemainPattern, sizeof(URIRemainPattern));
+    pos += sizeof(URIRemainPattern)/sizeof(struct HeaderPattern);
+
+    return pos;
+}
+
+struct HeaderPattern *GetURIPattern (void *uri, int (*hasUser)(void *cond))
+{
+    struct HeaderPattern *next = URIPattern;
+    int has = hasUser(uri);
+    
+    next = AddSchemePattern(next);
+    next = AddUserHostPattern(next, has);
+    next = AddRemainPattern(next);    
+    next->format = NULL;
+
+    return URIPattern;
+}
+
+struct HeaderPattern *GetURIPattern4Parse(char *string)
+{
+    return GetURIPattern((void *)string, HasUser4Parse);
+}
+
+struct HeaderPattern *GetURIPattern42String(struct URI **uri)
+{
+    return GetURIPattern((void *)uri, HasUser42String);
+}
+
+int ParseURI(char *string, void *target)
+{
+    struct HeaderPattern *pattern = GetURIPattern4Parse(string);
     struct URI **uri = target;
 
-    Parse(header, *uri, pattern);
+    Parse(string, *uri, pattern);
     
     return 0;
 }
@@ -84,25 +151,25 @@ char *UriGetHeaders(struct URI *uri)
 
 void UriSetScheme(struct URI *uri, char *scheme)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[0];
+    struct HeaderPattern *p = &URISchemePattern[0];
     Copy2Target(uri, scheme, p);
 }
 void UriSetUser(struct URI *uri, char *user)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[1];
+    struct HeaderPattern *p = &UserHostPattern[0];
     Copy2Target(uri, user, p);
 
 }
 
 void UriSetHost(struct URI *uri, char *host)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[2];
+    struct HeaderPattern *p = &UserHostPattern[1];
     Copy2Target(uri, host, p);
 }
 
 void UriSetPort(struct URI *uri, int port)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[3];
+    struct HeaderPattern *p = &URIRemainPattern[0];
     char userString[8] = {0};
 
     snprintf(userString,sizeof(userString) - 1, "%d",port); 
@@ -111,13 +178,13 @@ void UriSetPort(struct URI *uri, int port)
 
 void UriSetParameters(struct URI *uri,char *paramater)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[4];
+    struct HeaderPattern *p = &URIRemainPattern[1];
     Copy2Target(uri, paramater, p);
 }
 
 void UriSetHeaders(struct URI *uri, char *headers)
 {
-    struct HeaderPattern *p = &URIHeaderPattern[5];
+    struct HeaderPattern *p = &URIRemainPattern[2];
     Copy2Target(uri, headers, p);
 }
 
@@ -150,19 +217,9 @@ void DestoryUri(struct URI *uri)
     free (uri);
 }
 
-struct HeaderPattern *GetURIHeaderPattern42String(struct URI **uri)
-{
-    if (strcmp ("", UriGetUser(*uri)) == 0) {
-        return URINoUserHeaderPattern;
-    }
-    else {
-        return URIHeaderPattern;
-    }
-}
-
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 {
-    struct HeaderPattern *pattern = GetURIHeaderPattern42String(uri);
+    struct HeaderPattern *pattern = GetURIPattern42String(uri);
     struct URI **u = uri;
     
     if (p->startSeparator != EMPTY) {
@@ -175,6 +232,6 @@ char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 
 char *Uri2StringExt(char *string, void *uri)
 {
-    struct HeaderPattern *pattern = GetURIHeaderPattern42String((struct URI **)&uri);
+    struct HeaderPattern *pattern = GetURIPattern42String((struct URI **)&uri);
     return ToString(string, uri, pattern);
 }
