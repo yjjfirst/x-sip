@@ -40,7 +40,7 @@ struct ExpiresHeader *CreateExpiresHeader (int expires)
     e = (struct ExpiresHeader *)calloc(1,sizeof (struct ExpiresHeader)); 
     Copy2Target(e, HEADER_NAME_EXPIRES, p);
 
-    SetIntegerField(expires, (void *)e, &ExpiresHeaderPattern[1]);
+    SetIntegerField((void *)e, expires, &ExpiresHeaderPattern[1]);
 
     return e;
 }

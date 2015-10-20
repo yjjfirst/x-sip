@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "Parser.h"
+#include "URI.h"
 
 int ParseString(char *value, void *target)
 {
@@ -42,7 +43,7 @@ int ParseInteger(char *value, void *target)
     return 0;
 }
 
-void SetIntegerField(int value,  void *header, struct HeaderPattern *p)
+void SetIntegerField(void *header, int value, struct HeaderPattern *p)
 {
     char stringValue[32] = {0};
 
@@ -126,19 +127,21 @@ char *SkipLeadingSeparator(char *header, char *position)
     
     return start;
 }
- 
+
+
 int Copy2Target(void* target, char *value, struct HeaderPattern *pattern)
 {
     if (pattern->legal != NULL && pattern->legal(value) == FALSE) {
         return -1;
     }
-
+    
     if (pattern->parse != NULL) {
         pattern->parse(value, target + pattern->offset);
     }
 
     return 0;
 }
+
 #define MAX_ELEMENT_LENGTH 256
 int Parse(char *string, void* target, struct HeaderPattern *pattern)
 {
@@ -185,9 +188,9 @@ char *String2String(char *pos, void *element, struct HeaderPattern *p)
         *pos = p->startSeparator;
         pos ++;
     }
-
+    
     if (p->parse != NULL) {
-        strcpy(pos, element);    
+        strcpy(pos, element);
         return pos + strlen(element);
     } else {
         return pos;

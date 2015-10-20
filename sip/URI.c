@@ -163,24 +163,22 @@ void UriSetScheme(struct URI *uri, char *scheme)
 
 void UriSetUser(struct URI *uri, char *user)
 {
-    struct HeaderPattern *p = &UserPattern[0];
+    struct HeaderPattern *p = UserPattern;
     Copy2Target(uri, user, p);
 
 }
 
 void UriSetHost(struct URI *uri, char *host)
 {
-    struct HeaderPattern *p = &HostPattern[0];
+    struct HeaderPattern *p = HostPattern;
     Copy2Target(uri, host, p);
 }
 
 void UriSetPort(struct URI *uri, int port)
 {
     struct HeaderPattern *p = &URIRemainPattern[0];
-    char userString[8] = {0};
 
-    snprintf(userString,sizeof(userString) - 1, "%d",port); 
-    Copy2Target(uri, userString, p);
+    SetIntegerField(uri, port, p);
 }
 
 void UriSetParameters(struct URI *uri,char *paramater)

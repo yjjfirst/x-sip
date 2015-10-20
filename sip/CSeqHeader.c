@@ -17,7 +17,7 @@ struct HeaderPattern CSeqHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct CSeqHeader, headerBase),ParseString, NULL, String2String},
     {"*", COLON, SPACE, 0, OFFSETOF(struct CSeqHeader, seq), ParseInteger, NULL, Integer2String},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct CSeqHeader, method), ParseString, NULL, String2String},
-    {NULL, 0, 0, 0, 0, 0},
+    {NULL},
 };
 
 struct HeaderPattern *GetCSeqHeaderPattern()
@@ -49,7 +49,7 @@ void CSeqHeaderSetSeq(struct CSeqHeader *c)
 {
     int seq = 1826;
 
-    SetIntegerField(seq, (void *)c , &CSeqHeaderPattern[1]);
+    SetIntegerField((void *)c , seq, &CSeqHeaderPattern[1]);
 }
 
 char *CSeqHeaderGetMethod(struct CSeqHeader *c)

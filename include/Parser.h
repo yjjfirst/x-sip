@@ -46,4 +46,4 @@ int ParseInteger(char *value, void *target);
 char *String2String(char *pos, void *element, struct HeaderPattern *p);
 char *Integer2String(char *pos, void *element, struct HeaderPattern *p);
 int Copy2Target(void* target, char *value, struct HeaderPattern *pattern);
-void SetIntegerField(int value,  void *header, struct HeaderPattern *p);
+void SetIntegerField(void *header, int value, struct HeaderPattern *p);
