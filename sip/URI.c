@@ -16,9 +16,8 @@ struct URI {
     char headers[128];
 };
 
-struct HeaderPattern UserHostPattern[] = {
+struct HeaderPattern UserPattern[] = {
     { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseString, NULL,String2String},
-    { "*",  AT,         ANY, 0, OFFSETOF(struct URI, host), ParseString, NULL,String2String},
 };
 
 struct HeaderPattern HostPattern[] = {
@@ -57,10 +56,12 @@ int HasUser42String(void *u)
     return TRUE;
 }
 
+#define COUNT_ELEMENT(pattern) (sizeof(pattern)/sizeof(struct HeaderPattern)) 
+
 struct HeaderPattern *AddSchemePattern(struct HeaderPattern *pos)
 {
     memcpy(pos, URISchemePattern, sizeof(URISchemePattern));
-    pos += sizeof(URISchemePattern)/sizeof(struct HeaderPattern);
+    pos += COUNT_ELEMENT(URISchemePattern);
 
     return pos;
 }
@@ -68,11 +69,16 @@ struct HeaderPattern *AddSchemePattern(struct HeaderPattern *pos)
 struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser)
 {
     if (hasUser == TRUE){
-        memcpy(pos, UserHostPattern, sizeof(UserHostPattern));
-        pos += sizeof(UserHostPattern)/sizeof(struct HeaderPattern);
-    } else {
+        memcpy(pos, UserPattern, sizeof(UserPattern));
+        pos += COUNT_ELEMENT(UserPattern);
+
+        HostPattern[0].startSeparator = AT;
         memcpy(pos, HostPattern, sizeof(HostPattern));
         pos += sizeof(HostPattern)/sizeof(struct HeaderPattern);
+    } else {
+        HostPattern[0].startSeparator = COLON;
+        memcpy(pos, HostPattern, sizeof(HostPattern));
+        pos += COUNT_ELEMENT(HostPattern);
     }
 
     return pos;
@@ -81,7 +87,7 @@ struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser)
 struct HeaderPattern *AddRemainPattern(struct HeaderPattern *pos)
 {
     memcpy(pos, URIRemainPattern, sizeof(URIRemainPattern));
-    pos += sizeof(URIRemainPattern)/sizeof(struct HeaderPattern);
+    pos += COUNT_ELEMENT(URIRemainPattern);
 
     return pos;
 }
@@ -154,16 +160,17 @@ void UriSetScheme(struct URI *uri, char *scheme)
     struct HeaderPattern *p = &URISchemePattern[0];
     Copy2Target(uri, scheme, p);
 }
+
 void UriSetUser(struct URI *uri, char *user)
 {
-    struct HeaderPattern *p = &UserHostPattern[0];
+    struct HeaderPattern *p = &UserPattern[0];
     Copy2Target(uri, user, p);
 
 }
 
 void UriSetHost(struct URI *uri, char *host)
 {
-    struct HeaderPattern *p = &UserHostPattern[1];
+    struct HeaderPattern *p = &HostPattern[0];
     Copy2Target(uri, host, p);
 }
 
