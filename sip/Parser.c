@@ -79,7 +79,7 @@ char *FindEndSeparator(char *header, struct HeaderPattern *pattern)
     if (pattern->endSeparator == ANY)
         return NextSeparator(header);
 
-    if (*format == '*') {
+    if (format[0] == PATTERN_FORMAT_ANY) {
         char *end = strchr(header, pattern->endSeparator);
         if (end == NULL && pattern->mandatory) {
             end = header + strlen (header);            
@@ -189,7 +189,7 @@ char *String2String(char *pos, void *element, struct HeaderPattern *p)
         pos ++;
     }
     
-    if (p->parse != NULL) {
+    if (p->format[1] != PATTERN_FORMAT_PLACE_HOLDER) {
         strcpy(pos, element);
         return pos + strlen(element);
     } else {
@@ -209,7 +209,7 @@ char *Integer2String(char *pos, void *element, struct HeaderPattern *p)
         pos ++;
     }     
 
-    if (p->parse != NULL) {
+    if (p->format[1] != PATTERN_FORMAT_PLACE_HOLDER) {
         pos = pos + sprintf(pos, "%d", *value);
     }
 

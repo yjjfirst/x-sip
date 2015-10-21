@@ -21,18 +21,18 @@ struct HeaderPattern ContactHeaderPattern[] = {
     {"*",EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String },
     {"*",COLON, LEFT_ANGLE, 0,OFFSETOF(struct ContactHeader, displayName),ParseString, NULL, String2String },
     {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String },
-    {"*",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String },
+    {"*^",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String },
     {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String },
     {NULL}
 };
 
 struct HeaderPattern ContactHeaderWithQuotedDisplayNamePattern[] = {
     { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String},
-    { "*", COLON, QUOTE, 0, 0, NULL, NULL, String2String},
+    { "*^", COLON, QUOTE, 0, 0, NULL, NULL, String2String},
     { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseString, NULL, String2String},
-    { "*", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String},
+    { "*^", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String},
     { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
-    { "*", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String},
+    { "*^", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String},
     { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseString, NULL, String2String},
     {NULL}
 };
