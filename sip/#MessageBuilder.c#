@@ -97,7 +97,7 @@ struct Message *BuildRegisterMessage()
     AddCallIdHeader(m);
     AddCSeqHeader(m);
     AddContactHeader(m);
-    AddMaxForwardsHeader(m);
+    AddMaxForwardsHeader(m)o;
     AddExpiresHeader(m);
     AddContentLengthHeader(m);
     return m;

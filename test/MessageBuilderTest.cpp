@@ -13,15 +13,13 @@ extern "C" {
 #include "Header.h"
 }
 
-char user[] = "Martin Yang";
-char host[] = "192.168.10.62";
 
 TEST_GROUP(MessageBuilderTestGroup)
 {
     struct Message *m;
     void setup()
     {
-        m = BuildRegisterMessage(user, host);
+        m = BuildRegisterMessage();
     }
 
     void teardown()
@@ -37,29 +35,29 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     struct URI *uri = RequestLineGetUri(rl);
     
     STRCMP_EQUAL("sip", UriGetScheme(uri));
-    STRCMP_EQUAL(host, UriGetHost(uri));
+    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
 {
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_FROM, m);
     STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
-    STRCMP_EQUAL("Martin Yang", ContactHeaderGetDisplayName(from));
+    STRCMP_EQUAL(USER_NAME, ContactHeaderGetDisplayName(from));
 
     struct URI *uri = ContactHeaderGetUri(from);
-    STRCMP_EQUAL("Martin Yang", UriGetUser(uri));
-    STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
+    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
+    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ToHeaderTest)
 {
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_TO, m);
     STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
-    STRCMP_EQUAL("Martin Yang", ContactHeaderGetDisplayName(to));
+    STRCMP_EQUAL(USER_NAME, ContactHeaderGetDisplayName(to));
 
     struct URI *uri = ContactHeaderGetUri(to);
-    STRCMP_EQUAL("Martin Yang", UriGetUser(uri));
-    STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
+    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
+    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ViaHeaderTest)
@@ -67,7 +65,7 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
-    STRCMP_EQUAL("192.168.10.63", ViaHeaderGetUri(via));
+    STRCMP_EQUAL(LOCAL_IPADDR, ViaHeaderGetUri(via));
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }
 
@@ -116,16 +114,18 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 
 TEST(MessageBuilderTestGroup, ToStringTest)
 {
-    char expected[2048] = "REGISTER sip:Martin Yang@192.168.10.62:5060 SIP/2.0\r\n\
-From:\"Martin Yang\"<sip:Martin Yang@192.168.10.62:5060>\r\n\
-To:\"Martin Yang\"<sip:Martin Yang@192.168.10.62:5060>\r\n\
-Via:SIP/2.0/UDP 192.168.10.63\r\n\
-Contact:<sip:Martin Yang@192.168.10.62:5060>\r\n\
+    char expected[2048] ="\
+REGISTER sip:192.168.10.62 SIP/2.0\r\n\
+Via:SIP/2.0/UDP 192.168.10.1:5060;rport;branch=z9hG4bK1500504766\r\n\
+From:<sip:88001@192.168.10.62>;tag=1069855717\r\n\
+To:<sip:88001@192.168.10.62>\r\n\
+Call-ID:1626200011\r\n\
+CSeq:1 REGISTER\r\n\
+Contact:<sip:88001@192.168.10.1;line=6c451db26592505>\r\n\
 Max-Forwards:70\r\n\
-Call-ID:1234567890\r\n\
-CSeq:1826 REGISTER\r\n\
-Expires:7200\r\n\
-Content-Length:0\r\n";
+Expires:3600\r\n\
+Content-Length:0";
+
     char result[2048] = {0};
 
     Message2String(result, m);
