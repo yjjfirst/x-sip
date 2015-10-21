@@ -2,18 +2,19 @@
 #include "ViaHeader.h"
 #include "Header.h"
 #include "Parser.h"
+#include "URI.h"
 
 struct ViaHeader {
     struct Header headerBase;
     char transport[32];
-    char uri[128];
+    struct URI *uri;
     char parameters[128];
 };
 
 struct HeaderPattern ViaHeaderPattern []= {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseString, NULL, String2String},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseString, NULL, String2String},
-    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseString, NULL, String2String},
+    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseURI, NULL, Uri2String},
     {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseString, NULL, String2String},
     {NULL, 0, 0, 0, 0},
 };
@@ -45,15 +46,16 @@ void ViaHeaderSetTransport(struct ViaHeader *via, char *t)
     Copy2Target(via, t, p);
 }
 
-char *ViaHeaderGetUri(struct ViaHeader *via)
+struct URI *ViaHeaderGetUri(struct ViaHeader *via)
 {
     return via->uri;
 }
 
-void ViaHeaderSetUri(struct ViaHeader *via, char *uri)
+void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri)
 {
-    struct HeaderPattern *p = &ViaHeaderPattern[2];
-    Copy2Target(via, uri, p);
+    if (via->uri != NULL)
+        free(via->uri);
+    via->uri = uri;
 }
 
 char *ViaHeaderGetParameters(struct ViaHeader *via)
@@ -78,10 +80,12 @@ char *ViaHeader2String(char *result, struct Header *via)
 struct ViaHeader *CreateEmptyViaHeader()
 {
     struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
+    
+    via->uri = CreateEmptyUri();
     return via;
 }
 
-struct ViaHeader *CreateViaHeader(char *uri)
+struct ViaHeader *CreateViaHeader(struct URI *uri)
 {
     struct ViaHeader *via = CreateEmptyViaHeader();
     
@@ -94,7 +98,9 @@ struct ViaHeader *CreateViaHeader(char *uri)
 
 void DestoryViaHeader(struct Header *via)
 {
-    if (via != NULL) {
-        free(via);
+    struct ViaHeader *v = (struct ViaHeader *)via;
+    if (v != NULL) {
+        DestoryUri(v->uri);
+        free(v);
     }
 }

@@ -36,6 +36,26 @@ struct HeaderPattern URIRemainPattern[] = {
 
 struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
 
+int HasScheme4Parse(void *s)
+{
+    char *string = (char *)s;
+    
+    if (strncmp("sip:", string, 4) == 0 || strncmp("sips:", string, 5) == 0)
+        return TRUE;
+
+    return FALSE;
+}
+
+int HasScheme42String(void *u)
+{
+    struct URI **uri = (struct URI **)(u);
+
+    if (strlen(UriGetScheme(*uri)) != 0)
+        return TRUE;
+        
+    return FALSE;
+}
+
 int HasUser4Parse(void *h)
 {
     char *header = (char *)h;
@@ -50,7 +70,7 @@ int HasUser42String(void *u)
 {
     struct URI **uri = (struct URI **)(u);
 
-    if (strcmp("", UriGetUser(*uri)) == 0)
+    if (strcmp("", UriGetUser(*uri)) == 0 )
         return FALSE;
 
     return TRUE;
@@ -66,7 +86,7 @@ struct HeaderPattern *AddSchemePattern(struct HeaderPattern *pos)
     return pos;
 }
 
-struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser)
+struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser, int hasScheme)
 {
     if (hasUser == TRUE){
         memcpy(pos, UserPattern, sizeof(UserPattern));
@@ -76,7 +96,11 @@ struct HeaderPattern *AddUserHostPattern(struct HeaderPattern *pos, int hasUser)
         memcpy(pos, HostPattern, sizeof(HostPattern));
         pos += sizeof(HostPattern)/sizeof(struct HeaderPattern);
     } else {
-        HostPattern[0].startSeparator = COLON;
+        if (hasScheme == TRUE)
+            HostPattern[0].startSeparator = COLON;
+        else
+            HostPattern[0].startSeparator = EMPTY;
+
         memcpy(pos, HostPattern, sizeof(HostPattern));
         pos += COUNT_ELEMENT(HostPattern);
     }
@@ -92,13 +116,15 @@ struct HeaderPattern *AddRemainPattern(struct HeaderPattern *pos)
     return pos;
 }
 
-struct HeaderPattern *GetURIPattern (void *uri, int (*hasUser)(void *cond))
+struct HeaderPattern *GetURIPattern (void *uri, int (*hasUser)(void *cond), int (*hasScheme)(void *cond))
 {
     struct HeaderPattern *next = URIPattern;
     int has = hasUser(uri);
+    int scheme = hasScheme(uri);
     
-    next = AddSchemePattern(next);
-    next = AddUserHostPattern(next, has);
+    if (scheme) 
+        next = AddSchemePattern(next);
+    next = AddUserHostPattern(next, has, scheme);
     next = AddRemainPattern(next);    
     next->format = NULL;
 
@@ -107,12 +133,12 @@ struct HeaderPattern *GetURIPattern (void *uri, int (*hasUser)(void *cond))
 
 struct HeaderPattern *GetURIPattern4Parse(char *string)
 {
-    return GetURIPattern((void *)string, HasUser4Parse);
+    return GetURIPattern((void *)string, HasUser4Parse, HasScheme4Parse);
 }
 
 struct HeaderPattern *GetURIPattern42String(struct URI **uri)
 {
-    return GetURIPattern((void *)uri, HasUser42String);
+    return GetURIPattern((void *)uri, HasUser42String, HasScheme42String);
 }
 
 int ParseURI(char *string, void *target)

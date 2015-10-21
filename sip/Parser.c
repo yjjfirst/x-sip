@@ -75,7 +75,7 @@ char *FindEndSeparator(char *header, struct HeaderPattern *pattern)
     char *format = pattern->format;
 
     while (*header == SPACE) header ++;
-
+    
     if (pattern->endSeparator == ANY)
         return NextSeparator(header);
 
@@ -100,8 +100,9 @@ char *FindNextComponent(char *header, struct HeaderPattern *pattern)
 {
     char *end = NULL;
     
+    if (header == NULL) return header;
     if (pattern->startSeparator == EMPTY) {
-        end = strchr(header, pattern->endSeparator);
+        end = FindEndSeparator(header, pattern);
         return end;
     }
         
@@ -161,18 +162,18 @@ int Parse(char *string, void* target, struct HeaderPattern *pattern)
 
     for ( ; pattern->format != NULL;  pattern++) {            
         bzero(value, sizeof(value));
-
+        
         end = FindNextComponent(position, pattern);
         start = SkipLeadingSeparator(string, position);
         length = end - start;
-
         if (length > 0 && length < MAX_ELEMENT_LENGTH) {         
             strncpy(value, start, length);
         }
-        
+
         if (Copy2Target(target, value, pattern) == -1) {
             return -1;
         }
+        
         position = end;
     }
 

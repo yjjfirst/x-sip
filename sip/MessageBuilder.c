@@ -18,7 +18,8 @@ void AddRequestLine(struct Message *m)
 
 void AddViaHeader(struct Message *m)
 {
-    struct ViaHeader *via = CreateViaHeader(LOCAL_IPADDR);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, "", LOCAL_IPADDR, LOCAL_IPPORT);
+    struct ViaHeader *via = CreateViaHeader(uri);
     
     MessageAddHeader(m, (struct Header *)via);
 }
@@ -102,3 +103,4 @@ struct Message *BuildRegisterMessage()
     AddContentLengthHeader(m);
     return m;
 }
+

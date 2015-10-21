@@ -70,7 +70,8 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
 
     STRCMP_EQUAL("Via", ViaHeaderGetName(via));
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
-    STRCMP_EQUAL("200.201.202.203:5060", ViaHeaderGetUri(via));
+    STRCMP_EQUAL("200.201.202.203", UriGetHost(ViaHeaderGetUri(via)));
+    CHECK_EQUAL(5060, UriGetPort(ViaHeaderGetUri(via)));
     STRCMP_EQUAL("branch=z9hG4bKus19", ViaHeaderGetParameters(via));
     DestoryMessage(&message);    
 }

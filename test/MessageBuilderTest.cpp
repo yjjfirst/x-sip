@@ -65,7 +65,8 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
-    STRCMP_EQUAL(LOCAL_IPADDR, ViaHeaderGetUri(via));
+    STRCMP_EQUAL(LOCAL_IPADDR, UriGetHost(ViaHeaderGetUri(via)));
+
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }
 
