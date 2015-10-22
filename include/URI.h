@@ -26,13 +26,3 @@ void UriSetPort(struct URI *uri, int port);
 
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p);
 char *Uri2StringExt(char *string, void *uri);
-
-
-
-
-
-
-
-
-
-

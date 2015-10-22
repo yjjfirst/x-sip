@@ -14,5 +14,6 @@ char *ContactHeaderGetParameters(struct ContactHeader *Header);
 
 void ContactHeaderSetDisplayName(struct ContactHeader *header, char *displayName);
 void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri);
+void ContactHeaderSetParameters(struct ContactHeader *header, char *p);
 
 char *ContactHeader2String(char *result, struct Header *contact);

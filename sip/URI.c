@@ -17,30 +17,31 @@ struct URI {
 };
 
 struct HeaderPattern UserPattern[] = {
-    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseString, NULL,String2String},
-};
-
+    { "*",  COLON,      AT,    0, OFFSETOF(struct URI, user), ParseString, NULL,String2String}};
 struct HeaderPattern HostPattern[] = {
-    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseString,NULL,String2String},
-};
-
+    { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, host), ParseString,NULL,String2String}};
 struct HeaderPattern URISchemePattern[] = {
-    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String},
-};
-
+    { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String}};
 struct HeaderPattern URIRemainPattern[] = {
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger,NULL,Integer2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseString,NULL,String2String},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString,NULL,String2String},
-};
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString,NULL,String2String}};
 
 struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
+
+int IsSipOrSipsScheme(char *uri)
+{
+    if (strncmp(URI_SCHEME_SIP, uri, strlen(URI_SCHEME_SIP)) == 0 
+        || strncmp(URI_SCHEME_SIPS, uri, strlen(URI_SCHEME_SIPS)) == 0)
+        return TRUE;
+    return FALSE;        
+}
 
 int HasScheme4Parse(void *s)
 {
     char *string = (char *)s;
     
-    if (strncmp("sip:", string, 4) == 0 || strncmp("sips:", string, 5) == 0)
+    if (IsSipOrSipsScheme(string))
         return TRUE;
 
     return FALSE;

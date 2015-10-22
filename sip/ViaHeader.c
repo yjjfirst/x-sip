@@ -63,6 +63,12 @@ char *ViaHeaderGetParameters(struct ViaHeader *via)
     return via->parameters;
 }
 
+void ViaHeaderSetParameters(struct ViaHeader *via, char *parameters)
+{
+    struct HeaderPattern *p = &ViaHeaderPattern[3];
+    Copy2Target(via, parameters, p);
+}
+
 struct Header *ParseViaHeader(char *string) 
 {
     struct ViaHeader *via =  CreateEmptyViaHeader();

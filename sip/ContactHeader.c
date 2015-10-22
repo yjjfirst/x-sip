@@ -14,35 +14,76 @@ struct ContactHeader {
     char parameters[128];
 };
 
-struct HeaderPattern ContactName = {
-};
+struct HeaderPattern ContactNamePattern[] = {
+    {"*",EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String }};
+struct HeaderPattern DisplayNamePattern[] = {
+    {"*",COLON, LEFT_ANGLE, 0,OFFSETOF(struct ContactHeader, displayName),ParseString, NULL, String2String }};
+struct HeaderPattern UriPattern[] = {
+    {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String }};
+struct HeaderPattern ParameterPattern[] = {
+    {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String }};
+struct HeaderPattern PlaceholderUriParameter[] = {
+    {"*^",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String }};
+struct HeaderPattern PlaceholderNameDisplayname[] = {
+    { "*^", COLON, QUOTE, 0, 0, NULL, NULL, String2String}};
+struct HeaderPattern PlaceholderDisplaynameUri[] = {
+    { "*^", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String}};
+struct HeaderPattern ContactPatternFinal[8];
 
-struct HeaderPattern ContactHeaderPattern[] = {
-    {"*",EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String },
-    {"*",COLON, LEFT_ANGLE, 0,OFFSETOF(struct ContactHeader, displayName),ParseString, NULL, String2String },
-    {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String },
-    {"*^",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String },
-    {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String },
-    {NULL}
-};
+struct HeaderPattern *BuildQuotedDisplayNamePattern()
+{
+    int size = sizeof(struct HeaderPattern);
+    
+    bzero(ContactPatternFinal, sizeof(ContactPatternFinal));
+    memcpy(&ContactPatternFinal[0], ContactNamePattern, size);
+    memcpy(&ContactPatternFinal[1], PlaceholderNameDisplayname, size);
 
-struct HeaderPattern ContactHeaderWithQuotedDisplayNamePattern[] = {
-    { "*", EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String},
-    { "*^", COLON, QUOTE, 0, 0, NULL, NULL, String2String},
-    { "*", QUOTE, QUOTE, 0, OFFSETOF(struct ContactHeader, displayName), ParseString, NULL, String2String},
-    { "*^", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String},
-    { "*", LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
-    { "*^", RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String},
-    { "*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters), ParseString, NULL, String2String},
-    {NULL}
-};
+    memcpy(&ContactPatternFinal[2], DisplayNamePattern, size);
+    ContactPatternFinal[2].startSeparator = QUOTE;
+    ContactPatternFinal[2].endSeparator = QUOTE;
 
-struct HeaderPattern ContactHeaderNoDisplayNamePattern[] = {
-    { "*",  EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String},
-    { "*",  COLON, SEMICOLON, 1, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String},
-    { "*",  SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String},
-    {NULL}
-};
+    memcpy(&ContactPatternFinal[3], PlaceholderDisplaynameUri, size);
+
+    memcpy(&ContactPatternFinal[4], UriPattern, size);
+    memcpy(&ContactPatternFinal[5], PlaceholderUriParameter, size);
+    memcpy(&ContactPatternFinal[6], ParameterPattern, size);
+    
+    return ContactPatternFinal;
+
+}
+
+struct HeaderPattern *BuildContactPattern()
+{
+    int size = sizeof(struct HeaderPattern);
+    
+    bzero(ContactPatternFinal, sizeof(ContactPatternFinal));
+    memcpy(&ContactPatternFinal[0], ContactNamePattern, size);
+    memcpy(&ContactPatternFinal[1], DisplayNamePattern, size);
+    memcpy(&ContactPatternFinal[2], UriPattern, size);
+    memcpy(&ContactPatternFinal[3], PlaceholderUriParameter, size);
+    memcpy(&ContactPatternFinal[4], ParameterPattern, size);
+
+    return ContactPatternFinal;
+}
+
+struct HeaderPattern *BuildNoDisplayNamePattern()
+{
+    int size = sizeof (struct HeaderPattern);
+
+    bzero(ContactPatternFinal, sizeof(ContactPatternFinal));
+
+    memcpy(&ContactPatternFinal[0], ContactNamePattern, size);
+
+    memcpy(&ContactPatternFinal[1], UriPattern, size);
+    ContactPatternFinal[1].startSeparator = COLON;
+    ContactPatternFinal[1].endSeparator = SEMICOLON;
+    ContactPatternFinal[1].mandatory = 1;
+
+
+    memcpy(&ContactPatternFinal[2], ParameterPattern, size);
+
+    return ContactPatternFinal;
+}
 
 struct HeaderPattern *GetContactHeaderPattern(char *header)
 {  
@@ -54,16 +95,16 @@ struct HeaderPattern *GetContactHeaderPattern(char *header)
     while (*token == SPACE) token ++;
 
     if (strncmp(token, "sip:", 4) == 0) {
-        pattern = ContactHeaderNoDisplayNamePattern;
+        pattern = BuildNoDisplayNamePattern();
         return pattern;
     }
 
     token = NextSeparator(token);
     if (*token == QUOTE)  {
-        pattern = ContactHeaderWithQuotedDisplayNamePattern;
+        pattern = BuildQuotedDisplayNamePattern();
     }
     else {
-        pattern = ContactHeaderPattern;
+        pattern = BuildContactPattern();
     }
     
     return pattern;
@@ -79,7 +120,7 @@ struct Header *ParseContactHeader(char *string)
 
 void ContactHeaderSetName(struct ContactHeader *header, char *name)
 {
-    struct HeaderPattern *p = &ContactHeaderPattern[0];
+    struct HeaderPattern *p = ContactNamePattern;
     Copy2Target(header, name, p);
 }
 
@@ -95,7 +136,7 @@ char *ContactHeaderGetDisplayName(struct ContactHeader *toHeader)
 
 void ContactHeaderSetDisplayName(struct ContactHeader *header, char *name)
 {
-    struct HeaderPattern *p = &ContactHeaderPattern[1];
+    struct HeaderPattern *p = DisplayNamePattern;
     Copy2Target(header, name, p);
 }
 
@@ -116,9 +157,15 @@ char *ContactHeaderGetParameters(struct ContactHeader *toHeader)
     return toHeader->parameters;
 }
 
+void ContactHeaderSetParameters(struct ContactHeader *header, char *parameters)
+{
+    struct HeaderPattern *p = ParameterPattern;
+    Copy2Target(header, parameters, p);
+}
+
 char *ContactHeader2String(char *result, struct Header *contact)
 {
-    return ToString(result, contact, ContactHeaderWithQuotedDisplayNamePattern);
+    return ToString(result, contact, BuildQuotedDisplayNamePattern());
 }
 
 struct ContactHeader *CreateEmptyContactHeader()

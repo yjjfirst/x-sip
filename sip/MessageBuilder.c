@@ -18,8 +18,9 @@ void AddRequestLine(struct Message *m)
 
 void AddViaHeader(struct Message *m)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, "", LOCAL_IPADDR, LOCAL_IPPORT);
+    struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_IPPORT);
     struct ViaHeader *via = CreateViaHeader(uri);
+    ViaHeaderSetParameters(via, "rport;branch=z9hG4bK1500504766");
     
     MessageAddHeader(m, (struct Header *)via);
 }
@@ -29,7 +30,7 @@ void AddFromHeader(struct Message *m )
     struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, PROXY_IPADDR, 0);
     struct ContactHeader *from = CreateFromHeader();
 
-    ContactHeaderSetDisplayName(from, USER_NAME);
+    ContactHeaderSetParameters(from, "tag=1069855717");
     ContactHeaderSetUri(from, uri);
     MessageAddHeader(m, (struct Header *)from);
 }
@@ -39,7 +40,6 @@ void AddToHeader(struct Message *m)
     struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, PROXY_IPADDR, 0);
     struct ContactHeader *to = CreateToHeader();
 
-    ContactHeaderSetDisplayName(to, USER_NAME);
     ContactHeaderSetUri(to, uri);
     MessageAddHeader(m, (struct Header *)to);
 }

@@ -42,7 +42,6 @@ TEST(MessageBuilderTestGroup, FromHeaderTest)
 {
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_FROM, m);
     STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
-    STRCMP_EQUAL(USER_NAME, ContactHeaderGetDisplayName(from));
 
     struct URI *uri = ContactHeaderGetUri(from);
     STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
@@ -53,7 +52,6 @@ TEST(MessageBuilderTestGroup, ToHeaderTest)
 {
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader(HEADER_NAME_TO, m);
     STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
-    STRCMP_EQUAL(USER_NAME, ContactHeaderGetDisplayName(to));
 
     struct URI *uri = ContactHeaderGetUri(to);
     STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
