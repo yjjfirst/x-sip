@@ -34,13 +34,20 @@ struct Parameter *ParseParameter(char *s)
 
 struct Parameters *ParseParameters(char *s)
 {
-    struct Parameters *p = calloc(1, sizeof(struct Parameter));;
-    char *paramStart = strtok(s, ";");
+    struct Parameters *p = calloc(1, sizeof(struct Parameter));;    
+    char *localString = calloc(1, strlen(s) + 1);    
+    char *paramStart;
+    
+    strcpy(localString, s);
+
+    paramStart = strtok(localString, ";");
 
     while(paramStart) {
         put_in_list(&p->parameters, ParseParameter(paramStart));
         paramStart = strtok(NULL, ";");
     }
+    
+    free(localString);
 
     return p;
 }
@@ -57,6 +64,18 @@ char *GetParameter(struct Parameters *ps, char *name)
     }
 
     return NULL;
+}
+
+void Parameters2String(struct Parameters *ps, char *result)
+{
+    int i = 0;
+    int length = get_list_len(ps->parameters);
+
+    for (; i < length; i ++) {
+        struct Parameter *p = get_data_at(ps->parameters, i);
+        result = ToString(result, p, ParameterPattern);
+        if (i != length -1 ) *result ++ = ';';
+    }
 }
 
 struct Parameter *CreateParameter()
