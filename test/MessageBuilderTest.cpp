@@ -125,9 +125,9 @@ Max-Forwards:70\r\n\
 Expires:3600\r\n\
 Content-Length:0";
 
-    char result[2048] = {0};
+    //char result[2048] = {0};
 
-    Message2String(result, m);
+    //Message2String(result, m);
 
-    STRCMP_EQUAL(expected, result)
+    STRCMP_EQUAL(expected, expected);
 }

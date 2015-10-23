@@ -14,17 +14,17 @@ struct ContactHeader {
     char parameters[128];
 };
 
-struct HeaderPattern ContactNamePattern[] = {
+static struct HeaderPattern ContactNamePattern[] = {
     {"*",EMPTY, COLON, 0, OFFSETOF(struct ContactHeader, headerBase), ParseString, NULL, String2String }};
-struct HeaderPattern DisplayNamePattern[] = {
+static struct HeaderPattern DisplayNamePattern[] = {
     {"*",COLON, LEFT_ANGLE, 0,OFFSETOF(struct ContactHeader, displayName),ParseString, NULL, String2String }};
-struct HeaderPattern UriPattern[] = {
+static struct HeaderPattern UriPattern[] = {
     {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String }};
-struct HeaderPattern ParameterPattern[] = {
+static struct HeaderPattern ParameterPattern[] = {
     {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String }};
-struct HeaderPattern PlaceholderUriParameter[] = {
+static struct HeaderPattern PlaceholderUriParameter[] = {
     {"*^",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String }};
-struct HeaderPattern PlaceholderNameDisplayname[] = {
+static struct HeaderPattern PlaceholderNameDisplayname[] = {
     { "*^", COLON, QUOTE, 0, 0, NULL, NULL, String2String}};
 struct HeaderPattern PlaceholderDisplaynameUri[] = {
     { "*^", QUOTE, LEFT_ANGLE, 0, OFFSETOF(struct ContactHeader,displayName), NULL, NULL, String2String}};
@@ -94,7 +94,7 @@ struct HeaderPattern *GetContactHeaderPattern(char *header)
     token = NextSeparator(header) + 1;
     while (*token == SPACE) token ++;
 
-    if (strncmp(token, "sip:", 4) == 0) {
+    if (strncmp(token, URI_SCHEME_SIP, strlen(URI_SCHEME_SIP)) == 0) {
         pattern = BuildNoDisplayNamePattern();
         return pattern;
     }
