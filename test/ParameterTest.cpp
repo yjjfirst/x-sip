@@ -16,7 +16,7 @@ TEST(ParameterTestGroup, OneParameterTest)
 {
     char p[] = "branch=123456789";
 
-    ParseParameters(p, params);
+    ParseParametersExt(p, params);
     
     STRCMP_EQUAL("123456789",GetParameter(params, (char *)"branch"));
     POINTERS_EQUAL(NULL, GetParameter(params, (char *)"subject"));
@@ -28,7 +28,7 @@ TEST(ParameterTestGroup, AnotherOneParameterTest)
 {
     char p[] = "subject=test";
 
-    ParseParameters(p, params);
+    ParseParametersExt(p, params);
     
     STRCMP_EQUAL("test",GetParameter(params, (char *)"subject"));
 
@@ -39,7 +39,7 @@ TEST(ParameterTestGroup, TwoParametersParseTest)
 {
     char p[]="subject=test;branch=123456789";
     
-    ParseParameters(p, params);
+    ParseParametersExt(p, params);
     STRCMP_EQUAL("test", GetParameter(params, (char*)"subject"));
     STRCMP_EQUAL("123456789", GetParameter(params, (char*)"branch"));
     POINTERS_EQUAL(NULL, GetParameter(params, (char*)"NoExistParameter"));
@@ -51,7 +51,7 @@ TEST(ParameterTestGroup, NoValueParameterParseTest)
 {
     char p[]="subject=test;branch=123456789;rport;protocol=tcp;tport;transport=5060";
     
-    ParseParameters(p, params);
+    ParseParametersExt(p, params);
     STRCMP_EQUAL("test", GetParameter(params, (char*)"subject"));
     STRCMP_EQUAL("123456789", GetParameter(params, (char*)"branch"));
     POINTERS_EQUAL(NULL, GetParameter(params, (char*)"NoExistParameter"));
@@ -69,9 +69,9 @@ TEST(ParameterTestGroup, ToStringTest)
     char p[]="subject=test;branch=123456789;rport;protocol=tcp;tport;transport=5060";
     char result[128] = {0};
 
-    ParseParameters(p, params);
+    ParseParametersExt(p, params);
     
-    Parameters2String(result, params, NULL);
+    Parameters2StringExt(result, params, NULL);
     STRCMP_EQUAL(p, result);
 
     DestoryParameters(params);

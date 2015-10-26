@@ -32,7 +32,7 @@ struct Parameter *ParseParameter(char *s)
     return p;
 }
 
-int ParseParameters(char *s, void *target)
+int ParseParametersExt(char *s, void *target)
 {
     struct Parameters *p = (struct Parameters *)target;    
     char *localString = calloc(1, strlen(s) + 1);    
@@ -50,7 +50,18 @@ int ParseParameters(char *s, void *target)
     free(localString);
 
     return 0;
+
 }
+
+int ParseParameters(char *s, void *target)
+{
+    struct Parameters **p = target;
+
+    ParseParameters(s, *p);
+
+    return 0;
+}
+
 
 char *GetParameter(struct Parameters *ps, char *name)
 {
@@ -66,7 +77,14 @@ char *GetParameter(struct Parameters *ps, char *name)
     return NULL;
 }
 
-char *Parameters2String(char *pos, void *ps, struct HeaderPattern *pattern)
+char *Parameters2String(char *pos, void *ps, struct HeaderPattern *p)
+{
+    struct Parameters **params = ps;
+    
+    return ToString(pos, *params, p);
+}
+
+char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
 {
     int i = 0;
     struct Parameters *params = (struct Parameters *)ps;
