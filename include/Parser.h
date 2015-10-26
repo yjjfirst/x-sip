@@ -9,6 +9,7 @@
 #define QUOTE       0x22
 #define EMPTY       0x00
 #define ANY         0x7F
+#define EQUAL       '='
 
 #define PATTERN_FORMAT_ANY '*'
 #define PATTERN_FORMAT_PLACE_HOLDER '^'

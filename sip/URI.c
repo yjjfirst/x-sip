@@ -4,6 +4,7 @@
 
 #include "URI.h"
 #include "Parser.h"
+#include "Parameter.h"
 
 #define URI_MAX_ELEMENT 6
 

@@ -19,8 +19,8 @@ struct Parameter {
 };
 
 static struct HeaderPattern ParameterPattern[] = {
-    {"*", EMPTY, '=', 1, OFFSETOF(struct Parameter, name), ParseString, NULL, String2String},
-    {"*", '=', EMPTY, 0, OFFSETOF(struct Parameter,value), ParseString, NULL, String2String},
+    {"*", EMPTY, EQUAL, 1, OFFSETOF(struct Parameter, name), ParseString, NULL, String2String},
+    {"*", EQUAL, EMPTY, 0, OFFSETOF(struct Parameter,value), ParseString, NULL, String2String},
     {NULL},
 };
 
@@ -32,9 +32,9 @@ struct Parameter *ParseParameter(char *s)
     return p;
 }
 
-struct Parameters *ParseParameters(char *s)
+int ParseParameters(char *s, void *target)
 {
-    struct Parameters *p = calloc(1, sizeof(struct Parameter));;    
+    struct Parameters *p = (struct Parameters *)target;    
     char *localString = calloc(1, strlen(s) + 1);    
     char *paramStart;
     
@@ -49,7 +49,7 @@ struct Parameters *ParseParameters(char *s)
     
     free(localString);
 
-    return p;
+    return 0;
 }
 
 char *GetParameter(struct Parameters *ps, char *name)
@@ -66,16 +66,19 @@ char *GetParameter(struct Parameters *ps, char *name)
     return NULL;
 }
 
-void Parameters2String(struct Parameters *ps, char *result)
+char *Parameters2String(char *pos, void *ps, struct HeaderPattern *pattern)
 {
     int i = 0;
-    int length = get_list_len(ps->parameters);
+    struct Parameters *params = (struct Parameters *)ps;
+    int length = get_list_len(params->parameters);
 
     for (; i < length; i ++) {
-        struct Parameter *p = get_data_at(ps->parameters, i);
-        result = ToString(result, p, ParameterPattern);
-        if (i != length -1 ) *result ++ = ';';
+        struct Parameter *p = get_data_at(params->parameters, i);
+        pos = ToString(pos, p, ParameterPattern);
+        if (i != length - 1 ) *pos ++ = ';';
     }
+
+    return pos;
 }
 
 struct Parameter *CreateParameter()
@@ -87,6 +90,11 @@ void DestoryParameter(struct Parameter *p)
 {
     if (p != NULL)
         free(p);
+}
+
+struct Parameters *CreateParameters()
+{
+    return calloc(1, sizeof(struct Parameters));
 }
 
 void DestoryParameters(struct Parameters *ps)
