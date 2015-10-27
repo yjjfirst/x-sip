@@ -131,9 +131,10 @@ void ParseHeader(char *headerString, struct Message *message)
 int ParseMessage(char *string, struct Message *message)
 {
     char localString[MAX_MESSAGE_LENGTH] = {0};
+    char *save_ptr = NULL;
 
     strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
-    char *line = strtok(localString, "\r\n");
+    char *line = strtok_r(localString, "\r\n", &save_ptr);
     
     if (ParseMessageType(line) == MESSAGE_TYPE_REQUEST) {
         message->type = MESSAGE_TYPE_REQUEST;
@@ -144,10 +145,10 @@ int ParseMessage(char *string, struct Message *message)
         MessageParseStatusLine(line, message);
     }
     
-    line = strtok(NULL, "\r\n");
+    line = strtok_r(NULL, "\r\n", &save_ptr);
     while(line) {
         ParseHeader(line, message);
-        line = strtok(NULL, "\r\n");
+        line = strtok_r(NULL, "\r\n", &save_ptr);
     }
     
     return 0;

@@ -5,6 +5,7 @@ extern "C" {
 #include "Parser.h"
 #include "ViaHeader.h"
 #include "URI.h"
+#include "Parameter.h"
 }
 
 TEST_GROUP(ViaHeaderTestGroup)
@@ -24,8 +25,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
     STRCMP_EQUAL("erlang.bell-telephone.com", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
 
-    STRCMP_EQUAL ("branch=z9hG4bK87", ViaHeaderGetParameters(via));
-
+    STRCMP_EQUAL("z9hG4bK87",ViaHeaderGetParameter(via, (char *)"branch"));
     DestoryViaHeader((struct Header *)via);
 } 
 

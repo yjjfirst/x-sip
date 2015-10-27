@@ -66,7 +66,7 @@ TEST(ParameterTestGroup, NoValueParameterParseTest)
 
 TEST(ParameterTestGroup, ToStringTest)
 {
-    char p[]="subject=test;branch=123456789;rport;protocol=tcp;tport;transport=5060";
+    char p[]=";subject=test;branch=123456789;rport;protocol=tcp;tport;transport=5060";
     char result[128] = {0};
 
     ParseParametersExt(p, params);

@@ -37,14 +37,15 @@ int ParseParametersExt(char *s, void *target)
     struct Parameters *p = (struct Parameters *)target;    
     char *localString = calloc(1, strlen(s) + 1);    
     char *paramStart;
-    
+    char *save_ptr = NULL;
+   
     strcpy(localString, s);
 
-    paramStart = strtok(localString, ";");
+    paramStart = strtok_r(localString, ";", &save_ptr);
 
     while(paramStart) {
         put_in_list(&p->parameters, ParseParameter(paramStart));
-        paramStart = strtok(NULL, ";");
+        paramStart = strtok_r(NULL, ";", &save_ptr);
     }
     
     free(localString);
@@ -57,7 +58,7 @@ int ParseParameters(char *s, void *target)
 {
     struct Parameters **p = target;
 
-    ParseParameters(s, *p);
+    ParseParametersExt(s, *p);
 
     return 0;
 }
@@ -81,7 +82,7 @@ char *Parameters2String(char *pos, void *ps, struct HeaderPattern *p)
 {
     struct Parameters **params = ps;
     
-    return ToString(pos, *params, p);
+    return Parameters2StringExt(pos, *params, p);
 }
 
 char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
@@ -92,8 +93,8 @@ char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
 
     for (; i < length; i ++) {
         struct Parameter *p = get_data_at(params->parameters, i);
+        *pos ++ = ';';
         pos = ToString(pos, p, ParameterPattern);
-        if (i != length - 1 ) *pos ++ = ';';
     }
 
     return pos;

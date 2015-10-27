@@ -3,19 +3,20 @@
 #include "Header.h"
 #include "Parser.h"
 #include "URI.h"
+#include "Parameter.h"
 
 struct ViaHeader {
     struct Header headerBase;
     char transport[32];
     struct URI *uri;
-    char parameters[128];
+    struct Parameters *parameters;
 };
 
 struct HeaderPattern ViaHeaderPattern []= {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseString, NULL, String2String},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseString, NULL, String2String},
     {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseURI, NULL, Uri2String},
-    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseString, NULL, String2String},
+    {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseParameters, NULL, Parameters2String},
     {NULL, 0, 0, 0, 0},
 };
 
@@ -58,15 +59,16 @@ void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri)
     via->uri = uri;
 }
 
-char *ViaHeaderGetParameters(struct ViaHeader *via)
+char *ViaHeaderGetParameter(struct ViaHeader *via, char *name)
 {
-    return via->parameters;
+    return GetParameter(via->parameters, name);
 }
 
-void ViaHeaderSetParameters(struct ViaHeader *via, char *parameters)
+void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters)
 {
-    struct HeaderPattern *p = &ViaHeaderPattern[3];
-    Copy2Target(via, parameters, p);
+    if (via->parameters != NULL)
+        free(via->parameters);
+    via->parameters = parameters;
 }
 
 struct Header *ParseViaHeader(char *string) 
@@ -86,8 +88,10 @@ char *ViaHeader2String(char *result, struct Header *via)
 struct ViaHeader *CreateEmptyViaHeader()
 {
     struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
-    
+    struct Parameters *p = CreateParameters();
+
     via->uri = CreateEmptyUri();
+    via->parameters = p;
     return via;
 }
 
@@ -107,6 +111,7 @@ void DestoryViaHeader(struct Header *via)
     struct ViaHeader *v = (struct ViaHeader *)via;
     if (v != NULL) {
         DestoryUri(v->uri);
+        DestoryParameters(v->parameters);
         free(v);
     }
 }
