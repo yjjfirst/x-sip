@@ -6,7 +6,7 @@ extern "C" {
 
 #include "URI.h"
 #include "Parser.h"
-
+#include "Parameter.h"
 }
 
 TEST_GROUP(URITestGroup)
@@ -85,7 +85,7 @@ TEST(URITestGroup, URIParameterParseTest)
     char URIString[] = "sip:alice:secretword@atlanta.com:5060;transport=tcp?subject=project";
  
     ParseURI((char *)URIString, &uri);
-    STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
+    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
 }
 
 TEST(URITestGroup, URIParseTest)
@@ -94,7 +94,7 @@ TEST(URITestGroup, URIParseTest)
  
     ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
-    STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
+    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
 }
 
@@ -103,11 +103,11 @@ TEST(URITestGroup, URIParseNoHeaderTest)
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp";
  
     ParseURI((char *)URIString, &uri);
-    STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
+    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com", UriGetHost(uri));
-    STRCMP_EQUAL("transport=tcp", UriGetParameters(uri));
+
 }
 
 TEST(URITestGroup, URIParseNoParameterTest)
@@ -161,44 +161,17 @@ TEST(URITestGroup, URIFieldSetTest)
     UriSetUser(uri, (char *)"Martin");
     UriSetHost(uri, (char *)"192.168.10.62");
     UriSetHeaders(uri, (char *)"subject=project");
-    UriSetParameters(uri, (char *)"transport=udp");
+    
+    struct Parameters *ps = CreateParameters();
+    ParseParametersExt((char *)"transport=udp", ps);
+    UriSetParameters(uri, ps);
+
     UriSetPort(uri, 5061);
 
     STRCMP_EQUAL("sips", UriGetScheme(uri));
     STRCMP_EQUAL("Martin", UriGetUser(uri));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
-    STRCMP_EQUAL("transport=udp", UriGetParameters(uri));
+    STRCMP_EQUAL("udp", UriGetParameters(uri,(char *)"transport"));
     STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
     CHECK_EQUAL(5061, UriGetPort(uri));
 }
-
-TEST(URITestGroup, URIDupTest)
-{
-    UriSetScheme(uri, (char *)"sips");
-    UriSetUser(uri, (char *)"Martin");
-    UriSetHost(uri, (char *)"192.168.10.62");
-    UriSetHeaders(uri, (char *)"subject=project");
-    UriSetParameters(uri, (char *)"transport=udp");
-    UriSetPort(uri, 5061);
-
-    struct URI *dupUri = UriDup(uri);
-
-    STRCMP_EQUAL("sips", UriGetScheme(dupUri));
-    STRCMP_EQUAL("Martin", UriGetUser(dupUri));
-    STRCMP_EQUAL("192.168.10.62", UriGetHost(dupUri));
-    STRCMP_EQUAL("transport=udp", UriGetParameters(dupUri));
-    STRCMP_EQUAL("subject=project", UriGetHeaders(dupUri));
-    CHECK_EQUAL(5061, UriGetPort(dupUri));
-
-    DestoryUri(dupUri);
-}
-
-
-
-
-
-
-
-
-
-

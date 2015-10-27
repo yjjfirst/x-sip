@@ -32,6 +32,9 @@ struct Parameter *ParseParameter(char *s)
     return p;
 }
 
+/*
+ * Only call this function when parse parameters stand alone.
+ */
 int ParseParametersExt(char *s, void *target)
 {
     struct Parameters *p = (struct Parameters *)target;    
@@ -54,6 +57,9 @@ int ParseParametersExt(char *s, void *target)
 
 }
 
+/* 
+ * Only call this function when parameters embedded in other sturcture 
+ */
 int ParseParameters(char *s, void *target)
 {
     struct Parameters **p = target;

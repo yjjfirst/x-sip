@@ -148,7 +148,7 @@ struct URI *ContactHeaderGetUri(struct ContactHeader *header)
 void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri)
 {
     if (header->uri != NULL)
-        free(header->uri);
+        DestoryUri(header->uri);
     header->uri = uri;
 }
 

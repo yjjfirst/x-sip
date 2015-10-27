@@ -55,7 +55,7 @@ struct URI *ViaHeaderGetUri(struct ViaHeader *via)
 void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri)
 {
     if (via->uri != NULL)
-        free(via->uri);
+        DestoryUri(via->uri);
     via->uri = uri;
 }
 

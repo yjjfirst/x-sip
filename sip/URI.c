@@ -13,7 +13,7 @@ struct URI {
     char user[32];
     char host[32];
     int  port;
-    char parameters[128];
+    struct Parameters *parameters;
     char headers[128];
 };
 
@@ -25,7 +25,7 @@ struct HeaderPattern URISchemePattern[] = {
     { "*",  EMPTY,      COLON, 0, OFFSETOF(struct URI, scheme), ParseString,NULL,String2String}};
 struct HeaderPattern URIRemainPattern[] = {
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger,NULL,Integer2String},
-    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseString,NULL,String2String},
+    { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseParameters, NULL,Parameters2String},
     { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString,NULL,String2String}};
 
 struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
@@ -173,9 +173,9 @@ int UriGetPort(struct URI *uri)
     return uri->port;
 }
 
-char *UriGetParameters(struct URI *uri)
+char *UriGetParameters(struct URI *uri, char *name)
 {
-    return uri->parameters;
+    return GetParameter(uri->parameters, name);
 }
 
 char *UriGetHeaders(struct URI *uri)
@@ -209,10 +209,13 @@ void UriSetPort(struct URI *uri, int port)
     SetIntegerField(uri, port, p);
 }
 
-void UriSetParameters(struct URI *uri,char *paramater)
+void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 {
-    struct HeaderPattern *p = &URIRemainPattern[1];
-    Copy2Target(uri, paramater, p);
+    if (uri->parameters != NULL)
+        DestoryParameters(uri->parameters);
+
+    uri->parameters = paramaters;
+
 }
 
 void UriSetHeaders(struct URI *uri, char *headers)
@@ -224,6 +227,9 @@ void UriSetHeaders(struct URI *uri, char *headers)
 struct URI *CreateEmptyUri()
 {
     struct URI *uri = calloc(1, sizeof (struct URI));
+    struct Parameters *ps = CreateParameters();
+    uri->parameters = ps;
+    
     return uri;
 }
 
@@ -238,15 +244,9 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
     return uri;
 }
 
-struct URI *UriDup(struct URI *uri)
-{
-    struct URI *dupUri = CreateEmptyUri();
-    
-    memcpy(dupUri, uri, sizeof (struct URI));
-    return dupUri;
-}
 void DestoryUri(struct URI *uri)
 {
+    DestoryParameters(uri->parameters);
     free (uri);
 }
 
