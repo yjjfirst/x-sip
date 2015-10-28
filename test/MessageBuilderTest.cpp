@@ -122,12 +122,12 @@ Call-ID:1626200011\r\n\
 CSeq:1 REGISTER\r\n\
 Contact:<sip:88001@192.168.10.1;line=6c451db26592505>\r\n\
 Max-Forwards:70\r\n\
-Expires:3600\r\n\
-Content-Length:0";
+Expires:7200\r\n\
+Content-Length:0\r\n";
 
-    //char result[2048] = {0};
+    char result[2048] = {0};
 
-    //Message2String(result, m);
+    Message2String(result, m);
 
-    STRCMP_EQUAL(expected, expected);
+    STRCMP_EQUAL(expected, result);
 }

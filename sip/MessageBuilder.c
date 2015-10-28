@@ -51,6 +51,7 @@ void AddToHeader(struct Message *m)
 void AddContactHeader(struct Message *m)
 {
     struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, LOCAL_IPADDR, 0);
+    UriAddParameter(uri, "line", "6c451db26592505");
     struct ContactHeader *contact = CreateContactHeader();
 
     ContactHeaderSetUri(contact, uri);

@@ -218,6 +218,11 @@ void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 
 }
 
+void UriAddParameter(struct URI *uri, char *name, char *value)
+{
+    AddParameter(uri->parameters, name, value);
+}
+
 void UriSetHeaders(struct URI *uri, struct Parameters *headers)
 {
     if (uri->headers != NULL)

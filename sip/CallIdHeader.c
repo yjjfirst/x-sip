@@ -44,7 +44,7 @@ char *CallIdHeaderGetID(struct CallIdHeader *id)
 void CallIdHeaderSetID(struct CallIdHeader *id)
 {
     struct HeaderPattern *p = &CallIdHeaderPattern[1];
-    Copy2Target(id, "1234567890", p);
+    Copy2Target(id, "1626200011", p);
 }
 
 char *CallIdHeader2String(char *result, struct Header *id)

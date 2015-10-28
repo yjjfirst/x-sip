@@ -47,7 +47,7 @@ int CSeqHeaderGetSeq(struct CSeqHeader *c)
 
 void CSeqHeaderSetSeq(struct CSeqHeader *c)
 {
-    int seq = 1826;
+    int seq = 1;
 
     SetIntegerField((void *)c , seq, &CSeqHeaderPattern[1]);
 }
