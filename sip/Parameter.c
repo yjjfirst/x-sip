@@ -69,6 +69,16 @@ int ParseParameters(char *s, void *target)
     return 0;
 }
 
+int AddParameter(struct Parameters *ps, char *name, char *value)
+{
+    struct Parameter *p = CreateParameter();
+
+    Copy2Target(p, name, &ParameterPattern[0]);
+    Copy2Target(p, value,&ParameterPattern[1]);
+    put_in_list(&ps->parameters, p);
+
+    return 0;
+}
 
 char *GetParameter(struct Parameters *ps, char *name)
 {
@@ -99,7 +109,11 @@ char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
 
     for (; i < length; i ++) {
         struct Parameter *p = get_data_at(params->parameters, i);
-        *pos ++ = ';';
+
+        if (i == 0 && pattern != NULL)
+            *pos++ = pattern->startSeparator;
+        else
+            *pos ++ = SEMICOLON;
         pos = ToString(pos, p, ParameterPattern);
     }
 

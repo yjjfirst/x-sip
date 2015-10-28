@@ -14,7 +14,7 @@ struct URI {
     char host[32];
     int  port;
     struct Parameters *parameters;
-    char headers[128];
+    struct Parameters *headers;
 };
 
 struct HeaderPattern UserPattern[] = {
@@ -26,7 +26,7 @@ struct HeaderPattern URISchemePattern[] = {
 struct HeaderPattern URIRemainPattern[] = {
     { "*",  COLON,      ANY, 0, OFFSETOF(struct URI, port), ParseInteger,NULL,Integer2String},
     { "*",  SEMICOLON, ANY, 0, OFFSETOF(struct URI, parameters), ParseParameters, NULL,Parameters2String},
-    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseString,NULL,String2String}};
+    { "*",  QUESTION,   ANY,0, OFFSETOF(struct URI, headers), ParseParameters ,NULL,Parameters2String}};
 
 struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
 
@@ -173,14 +173,14 @@ int UriGetPort(struct URI *uri)
     return uri->port;
 }
 
-char *UriGetParameters(struct URI *uri, char *name)
+char *UriGetParameter(struct URI *uri, char *name)
 {
     return GetParameter(uri->parameters, name);
 }
 
-char *UriGetHeaders(struct URI *uri)
+char  *UriGetHeader(struct URI *uri, char *name)
 {
-    return uri->headers;
+    return GetParameter(uri->headers, name);
 }
 
 void UriSetScheme(struct URI *uri, char *scheme)
@@ -218,17 +218,21 @@ void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 
 }
 
-void UriSetHeaders(struct URI *uri, char *headers)
+void UriSetHeaders(struct URI *uri, struct Parameters *headers)
 {
-    struct HeaderPattern *p = &URIRemainPattern[2];
-    Copy2Target(uri, headers, p);
+    if (uri->headers != NULL)
+        DestoryParameters(uri->headers);
+
+    uri->headers = headers;
 }
 
 struct URI *CreateEmptyUri()
 {
     struct URI *uri = calloc(1, sizeof (struct URI));
     struct Parameters *ps = CreateParameters();
+    struct Parameters *hs = CreateParameters();
     uri->parameters = ps;
+    uri->headers = hs; 
     
     return uri;
 }
@@ -247,6 +251,7 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
 void DestoryUri(struct URI *uri)
 {
     DestoryParameters(uri->parameters);
+    DestoryParameters(uri->headers);
     free (uri);
 }
 

@@ -85,7 +85,7 @@ TEST(URITestGroup, URIParameterParseTest)
     char URIString[] = "sip:alice:secretword@atlanta.com:5060;transport=tcp?subject=project";
  
     ParseURI((char *)URIString, &uri);
-    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
+    STRCMP_EQUAL("tcp", UriGetParameter(uri, (char *)"transport"));
 }
 
 TEST(URITestGroup, URIParseTest)
@@ -93,9 +93,9 @@ TEST(URITestGroup, URIParseTest)
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
  
     ParseURI((char *)URIString, &uri);
-    STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
-    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
-    STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
+    STRCMP_EQUAL("project", UriGetHeader(uri, (char *)"subject"));
+    STRCMP_EQUAL("tcp", UriGetParameter(uri, (char *)"transport"));
+    STRCMP_EQUAL("project", UriGetHeader(uri, (char *)"subject"));
 }
 
 TEST(URITestGroup, URIParseNoHeaderTest)
@@ -103,7 +103,7 @@ TEST(URITestGroup, URIParseNoHeaderTest)
     char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp";
  
     ParseURI((char *)URIString, &uri);
-    STRCMP_EQUAL("tcp", UriGetParameters(uri, (char *)"transport"));
+    STRCMP_EQUAL("tcp", UriGetParameter(uri, (char *)"transport"));
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com", UriGetHost(uri));
@@ -116,7 +116,7 @@ TEST(URITestGroup, URIParseNoParameterTest)
  
     ParseURI((char *)URIString, &uri);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
-    STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
+    STRCMP_EQUAL("project", UriGetHeader(uri, (char *)"subject"));
     STRCMP_EQUAL("alice:secretword", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com", UriGetHost(uri));
 }
@@ -143,7 +143,7 @@ TEST(URITestGroup, URI2StringTest)
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("", UriGetUser(uri));
     STRCMP_EQUAL("atlanta.com",UriGetHost(uri));
-    STRCMP_EQUAL("subject=project",UriGetHeaders(uri));
+    STRCMP_EQUAL("project",UriGetHeader(uri, (char *)"subject"));
     STRCMP_EQUAL(URIString, result);
 }
 
@@ -160,7 +160,10 @@ TEST(URITestGroup, URIFieldSetTest)
     UriSetScheme(uri, (char *)"sips");
     UriSetUser(uri, (char *)"Martin");
     UriSetHost(uri, (char *)"192.168.10.62");
-    UriSetHeaders(uri, (char *)"subject=project");
+
+    struct Parameters *hs = CreateParameters();
+    AddParameter(hs, (char *)"subject", (char *)"project");
+    UriSetHeaders(uri, hs);
     
     struct Parameters *ps = CreateParameters();
     ParseParametersExt((char *)"transport=udp", ps);
@@ -171,7 +174,7 @@ TEST(URITestGroup, URIFieldSetTest)
     STRCMP_EQUAL("sips", UriGetScheme(uri));
     STRCMP_EQUAL("Martin", UriGetUser(uri));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(uri));
-    STRCMP_EQUAL("udp", UriGetParameters(uri,(char *)"transport"));
-    STRCMP_EQUAL("subject=project", UriGetHeaders(uri));
+    STRCMP_EQUAL("udp", UriGetParameter(uri,(char *)"transport"));
+    STRCMP_EQUAL("project", UriGetHeader(uri,(char *)"subject"));
     CHECK_EQUAL(5061, UriGetPort(uri));
 }
