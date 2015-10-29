@@ -34,7 +34,7 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     struct RequestLine *rl = MessageGetRequest(m);
     struct URI *uri = RequestLineGetUri(rl);
     
-    STRCMP_EQUAL("sip", UriGetScheme(uri));
+    STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
     STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
 }
 
