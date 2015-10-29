@@ -1,34 +1,23 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <string.h>
 #include "MessageTransport.h"
 }
 
-char Message4ReceivingTest[] = "Receiving test string";
+static char Message4ReceivingTest[] = "Receiving test string";
 
-int ReceiveMessageMock(char *message)
-{
-    strcpy(message, Message4ReceivingTest);
-    mock().actualCall("ReceiveMessageMock");
-    return 0;
-}
-
-int SendMessageMock(char *message)
-{
-    mock().actualCall("SendMessageMock").withStringParameter("message",message);
-    return 0;
-}
 
 TEST_GROUP(MessageTransportTestGroup)
 {
 
     void setup() {
-        AddMessageTransporter((char *)"Mock", SendMessageMock, ReceiveMessageMock);
+        InitTransportMock();
     }
     void teardown() {
-        RemoveMessageTransporter((char *)"Mock");
+        CleanupTransportMock();
         mock().clear();
     }
 };

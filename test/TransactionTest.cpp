@@ -17,3 +17,8 @@ TEST(TransactionTestGroup, TransactionInitTest)
 
     DestoryTransaction(t);
 }
+
+TEST(TransactionTestGroup, TransactionFirstRequestTest)
+{
+
+}

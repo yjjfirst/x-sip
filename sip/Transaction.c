@@ -1,15 +1,25 @@
 #include "Transaction.h"
+#include "MessageBuilder.h"
+
+struct Transaction {
+    enum TransactionState state;
+};
+
+enum TransactionState TransactionGetState(struct Transaction *t)
+{
+    return t->state;
+}
 
 struct Transaction *CreateTransaction()
 {
-    return NULL;
+    struct Transaction *t;
+
+    t = calloc(1, sizeof (struct Transaction));
+    t->state = TRANSACTION_STATE_TRYING;
+    return t;
 }
 
 void DestoryTransaction(struct Transaction *t)
 {
-}
-
-enum TransactionState TransactionGetState(struct Transaction *t)
-{
-    return TRANSACTION_STATE_TRYING;
+    free(t);
 }

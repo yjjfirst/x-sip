@@ -1,0 +1,2 @@
+void InitTransportMock();
+void CleanupTransportMock();
