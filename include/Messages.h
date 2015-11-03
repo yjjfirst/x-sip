@@ -1,6 +1,7 @@
 #include "RequestLine.h"
 
 struct Message;
+#define MAX_MESSAGE_LENGTH 2048
 
 int ParseMessage(char *string, struct Message *message);
 struct Message *CreateMessage();

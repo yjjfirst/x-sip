@@ -15,7 +15,6 @@
 #include "ExpiresHeader.h"
 #include "utils/list/include/list.h"
 
-#define MAX_MESSAGE_LENGTH 2048
 #define SIP_VERSION "SIP/2.0"
 
 enum MESSAGE_TYPE {
