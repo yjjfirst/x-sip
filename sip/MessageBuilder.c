@@ -73,7 +73,7 @@ void AddCallIdHeader(struct Message *m)
 
 void AddCSeqHeader(struct Message *m)
 {
-    struct CSeqHeader *cseq = CreateCSeqHeader();
+    struct CSeqHeader *cseq = CreateCSeqHeader(1, SIP_METHOD_NAME_REGISTER);
 
     MessageAddHeader(m, (struct Header *)cseq);
 }

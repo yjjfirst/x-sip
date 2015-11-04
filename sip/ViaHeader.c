@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include <string.h>
+
 #include "ViaHeader.h"
 #include "Header.h"
 #include "Parser.h"
@@ -23,6 +25,12 @@ struct HeaderPattern ViaHeaderPattern []= {
 struct HeaderPattern *GetViaPattern()
 {
     return ViaHeaderPattern;
+}
+
+BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+{
+    return !strcmp (ViaHeaderGetParameter(via1, "branch"), 
+                    ViaHeaderGetParameter(via2, "branch"));
 }
 
 char *ViaHeaderGetName(struct ViaHeader *via)

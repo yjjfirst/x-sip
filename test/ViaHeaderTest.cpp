@@ -65,3 +65,38 @@ TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
 
     DestoryViaHeader((struct Header *)via);
 }
+
+TEST(ViaHeaderTestGroup, UnMatchedBranchTest)
+{
+    struct ViaHeader *via1 = CreateEmptyViaHeader();
+    struct ViaHeader *via2 = CreateEmptyViaHeader();
+
+    char header1[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=asdfcdz9hG4bK87";
+    char header2[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+
+    Parse(header1, via1, GetViaPattern());
+    Parse(header2, via2, GetViaPattern());
+
+    CHECK_FALSE(ViaBranchMatched(via1, via2));
+
+    DestoryViaHeader((struct Header *)via1);
+    DestoryViaHeader((struct Header *)via2);
+
+}
+
+TEST(ViaHeaderTestGroup, MatchedBranchTest)
+{
+    struct ViaHeader *via1 = CreateEmptyViaHeader();
+    struct ViaHeader *via2 = CreateEmptyViaHeader();
+
+    char header1[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+    char header2[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+
+    Parse(header1, via1, GetViaPattern());
+    Parse(header2, via2, GetViaPattern());
+
+    CHECK_TRUE(ViaBranchMatched(via1, via2));
+
+    DestoryViaHeader((struct Header *)via1);
+    DestoryViaHeader((struct Header *)via2);
+}

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "Bool.h"
+#include "Method.h"
 #include "RequestLine.h"
 #include "Parser.h"
 #include "Header.h"
@@ -18,7 +19,8 @@ struct RequestLine {
 
 BOOL RequestLineMethodLegal(char *method)
 {
-    if (strcmp(method, "REGISTER") == 0 || strcmp(method, "INVITE") == 0)
+    if (strcmp(method, SIP_METHOD_NAME_REGISTER) == 0 
+        || strcmp(method, SIP_METHOD_NAME_INVITE) == 0)
         return TRUE;
     return FALSE;
 }

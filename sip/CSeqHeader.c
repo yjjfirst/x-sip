@@ -29,7 +29,7 @@ DEFINE_DESTROYER(struct Header, DestoryCSeqHeader);
 
 struct Header *ParseCSeqHeader(char *string)
 {
-    struct CSeqHeader *c = CreateCSeqHeader();
+    struct CSeqHeader *c = CreateCSeqHeader(0, SIP_METHOD_NAME_NONE);
     Parse(string, c, GetCSeqHeaderPattern());
 
     return (struct Header *)c;
@@ -45,10 +45,8 @@ int CSeqHeaderGetSeq(struct CSeqHeader *c)
     return c->seq;
 }
 
-void CSeqHeaderSetSeq(struct CSeqHeader *c)
+void CSeqHeaderSetSeq(struct CSeqHeader *c, int seq)
 {
-    int seq = 1;
-
     SetIntegerField((void *)c , seq, &CSeqHeaderPattern[1]);
 }
 
@@ -57,9 +55,9 @@ char *CSeqHeaderGetMethod(struct CSeqHeader *c)
     return c->method;
 }
 
-void CSeqHeaderSetMethod(struct CSeqHeader *c)
+void CSeqHeaderSetMethod(struct CSeqHeader *c, char *method)
 {
-    Copy2Target(c, "REGISTER", &CSeqHeaderPattern[2]);
+    Copy2Target(c, method, &CSeqHeaderPattern[2]);
 }
 
 char *CSeq2String(char *result, struct Header *c)
@@ -67,15 +65,20 @@ char *CSeq2String(char *result, struct Header *c)
     return ToString(result, c, GetCSeqHeaderPattern());
 }
 
-struct CSeqHeader *CreateCSeqHeader () 
+struct CSeqHeader *CreateCSeqHeader (int seq, char *method) 
 { 
     struct CSeqHeader *cseq = NULL;
     struct HeaderPattern *p = &CSeqHeaderPattern[0];    
 
     cseq = (struct CSeqHeader *)calloc(1,sizeof (struct CSeqHeader));
     Copy2Target(cseq, "CSeq", p);
-    CSeqHeaderSetSeq(cseq);
-    CSeqHeaderSetMethod(cseq);
+    CSeqHeaderSetSeq(cseq, seq);
+    CSeqHeaderSetMethod(cseq, method);
 
     return cseq;
+}
+
+BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
+{
+    return !strcmp (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
 }

@@ -1,3 +1,5 @@
+#include "Bool.h"
+
 struct ViaHeader;
 struct Header;
 struct URI;
@@ -18,3 +20,4 @@ void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri);
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters);
 
 char *ViaHeader2String(char *result, struct Header *via);
+BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2);
