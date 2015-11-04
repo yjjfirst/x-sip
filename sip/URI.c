@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "Bool.h"
 #include "URI.h"
 #include "Parser.h"
 #include "Parameter.h"
@@ -30,7 +31,7 @@ struct HeaderPattern URIRemainPattern[] = {
 
 struct HeaderPattern URIPattern[URI_MAX_ELEMENT + 1];
 
-int IsSipOrSipsScheme(char *uri)
+BOOL IsSipOrSipsScheme(char *uri)
 {
     if (strncmp(URI_SCHEME_SIP, uri, strlen(URI_SCHEME_SIP)) == 0 
         || strncmp(URI_SCHEME_SIPS, uri, strlen(URI_SCHEME_SIPS)) == 0)
@@ -38,7 +39,7 @@ int IsSipOrSipsScheme(char *uri)
     return FALSE;        
 }
 
-int HasScheme4Parse(void *s)
+BOOL HasScheme4Parse(void *s)
 {
     char *string = (char *)s;
     
@@ -48,7 +49,7 @@ int HasScheme4Parse(void *s)
     return FALSE;
 }
 
-int HasScheme42String(void *u)
+BOOL HasScheme42String(void *u)
 {
     struct URI **uri = (struct URI **)(u);
 
@@ -58,7 +59,7 @@ int HasScheme42String(void *u)
     return FALSE;
 }
 
-int HasUser4Parse(void *h)
+BOOL HasUser4Parse(void *h)
 {
     char *header = (char *)h;
     
@@ -68,7 +69,7 @@ int HasUser4Parse(void *h)
     return FALSE;
 }
 
-int HasUser42String(void *u)
+BOOL HasUser42String(void *u)
 {
     struct URI **uri = (struct URI **)(u);
 

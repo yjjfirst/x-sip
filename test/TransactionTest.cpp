@@ -16,12 +16,13 @@ From: <sip:88001@192.168.10.62>;tag=1225432999\r\n\
 To: <sip:88001@192.168.10.62>;tag=as1d07559a\r\n\
 Call-ID: 1222971951\r\n\
 CSeq: 1 REGISTER\r\n\
-Expires: 3600\r\n\
+Expires:3600\r\n\
 Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
 Content-Length: 0\r\n";
 
 int TransactionReceiveMessageMock(char *message)
 {
+    strcpy(message, OKMessage);
     return 0;
 }
 
@@ -32,43 +33,44 @@ int TransactionSendMessageMock(char *message)
 
 TEST_GROUP(TransactionTestGroup)
 {
+    struct Message *m;
+    struct Transaction *t;
+    enum TransactionState s;
+
+
     void setup()
     {
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
         InitTransactionLayer();
+
+        m = BuildRegisterMessage();
+        t = CreateTransaction(m);
+        s = TransactionGetState(t);
+
     }
     
     void teardown()
     {
         RemoveMessageTransporter((char *)"TRANS");
+
+        DestoryMessage(&m);
+        DestoryTransaction(&t);
     }
 };
 
 TEST(TransactionTestGroup, TransactionInitTest)
 {
-    struct Message *m = BuildRegisterMessage();
-    struct Transaction *t = CreateTransaction(m);
-    enum TransactionState s = TransactionGetState(t);
-    
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
-
-    DestoryMessage(&m);
-    DestoryTransaction(&t);
 }
 
 TEST(TransactionTestGroup, Receive200OKTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *m = BuildRegisterMessage();
-    struct Transaction *t = CreateTransaction(m);
-    enum TransactionState s = TransactionGetState(t);
 
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
     ReceiveMessage(string); 
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
-    
-    DestoryMessage(&m);
-    DestoryTransaction(&t);
 }
+

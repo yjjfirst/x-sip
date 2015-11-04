@@ -14,8 +14,6 @@
 #define PATTERN_FORMAT_ANY '*'
 #define PATTERN_FORMAT_PLACE_HOLDER '^'
 
-#define TRUE 1
-#define FALSE 0
 struct HeaderPattern {
     char *format;
     char startSeparator;

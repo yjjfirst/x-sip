@@ -4,6 +4,7 @@
 
 #include "Parser.h"
 #include "URI.h"
+#include "Bool.h"
 
 int ParseString(char *value, void *target)
 {

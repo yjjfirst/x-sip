@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Bool.h"
 #include "RequestLine.h"
 #include "Parser.h"
 #include "Header.h"
@@ -15,14 +16,14 @@ struct RequestLine {
     char sipVersion[SIP_VERSION_LENGTH];
 };
 
-int RequestLineMethodLegal(char *method)
+BOOL RequestLineMethodLegal(char *method)
 {
     if (strcmp(method, "REGISTER") == 0 || strcmp(method, "INVITE") == 0)
         return TRUE;
     return FALSE;
 }
 
-int RequestLineSipVersionLegal(char *version)
+BOOL RequestLineSipVersionLegal(char *version)
 {
     if (strcmp (version, "SIP/2.0") == 0)
         return TRUE;

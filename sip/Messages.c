@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "Header.h"
 #include "Parser.h"
@@ -186,7 +187,9 @@ void Message2String(char *result, struct Message *message)
     int i = 0;
     struct Header *header = NULL;
     char *p = result;
-    
+
+    assert(message != NULL);
+    assert(result != NULL);
     if (message->type == MESSAGE_TYPE_REQUEST) {
         p = RequestLine2String(p, MessageGetRequest(message));
     } else {
@@ -214,9 +217,11 @@ void DestoryOneHeader(struct Header *header)
 {
     int i;
 
+    assert(header != NULL);
     for (i = 0 ; i < CountHeaderOperations(); i++) {
         if (strcmp (HeaderOperations[i].name, header->name) == 0) {
             HeaderOperations[i].headerDestroyer(header);
+            return;
         }
     }
 }
@@ -227,6 +232,7 @@ void MessageDestoryHeaders(struct Message *message)
     int i ;
     struct Header *header = NULL;
 
+    assert(message != NULL);
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(message->headers, i);
         DestoryOneHeader(header);
@@ -235,6 +241,8 @@ void MessageDestoryHeaders(struct Message *message)
 
 void DestoryMessage (struct Message **message) 
 { 
+    assert(message != NULL);
+
     if ((*message) != ((void *)0)) {
         if ((*message)->type == MESSAGE_TYPE_REQUEST) 
             DestoryRequestLine((*message)->rr.request);

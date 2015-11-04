@@ -24,7 +24,9 @@ struct HeaderPattern *GetExpiresPattern()
 
 struct Header *ParseExpiresHeader(char *string)
 {
-    return NULL;
+    struct ExpiresHeader *e = CreateExpiresHeader(0);
+    Parse(string, e, GetExpiresPattern());
+    return (struct Header *)e;
 }
    
 void DestoryExpiresHeader (struct Header *header)
