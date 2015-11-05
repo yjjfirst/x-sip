@@ -72,10 +72,15 @@ char *ViaHeaderGetParameter(struct ViaHeader *via, char *name)
     return GetParameter(via->parameters, name);
 }
 
+struct Parameters *ViaHeaderGetParameters(struct ViaHeader *via)
+{
+    return via->parameters;
+}
+
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters)
 {
     if (via->parameters != NULL)
-        free(via->parameters);
+        DestoryParameters(via->parameters);
     via->parameters = parameters;
 }
 

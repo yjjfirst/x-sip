@@ -9,6 +9,16 @@
 #include "ContentLengthHeader.h"
 #include "URI.h"
 #include "Parameter.h"
+#include "Header.h"
+
+void MessageAddViaParameter(struct Message *message, char *name, char *value)
+{
+    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
+    struct Parameters *p = ViaHeaderGetParameters(via);
+
+    AddParameter(p, name, value);
+}
+
 
 void AddRequestLine(struct Message *m)
 {
@@ -21,10 +31,6 @@ void AddViaHeader(struct Message *m)
 {
     struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_IPPORT);
     struct ViaHeader *via = CreateViaHeader(uri);
-    struct Parameters *p = CreateParameters();
-
-    ParseParametersExt("rport;branch=z9hG4bK1500504766", p);
-    ViaHeaderSetParameters(via, p);
     
     MessageAddHeader(m, (struct Header *)via);
 }

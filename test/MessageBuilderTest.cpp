@@ -11,6 +11,7 @@ extern "C" {
 #include "ExpiresHeader.h"
 #include "ContentLengthHeader.h"
 #include "Header.h"
+#include "Parameter.h"
 }
 
 
@@ -62,8 +63,13 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
+    MessageAddViaParameter(m, (char *)"rport", (char *)"");
+    MessageAddViaParameter(m, (char *)"branch", (char *)"z9hG4bK1491280923");
+
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
     STRCMP_EQUAL(LOCAL_IPADDR, UriGetHost(ViaHeaderGetUri(via)));
+    STRCMP_EQUAL("", ViaHeaderGetParameter(via, (char *)"rport"));
+    STRCMP_EQUAL("z9hG4bK1491280923", ViaHeaderGetParameter(via, (char *)"branch"));
 
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }
@@ -109,25 +115,4 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
     struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, m);
 
     STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthGetName(c));
-}
-
-TEST(MessageBuilderTestGroup, ToStringTest)
-{
-    char expected[2048] ="\
-REGISTER sip:192.168.10.62 SIP/2.0\r\n\
-Via:SIP/2.0/UDP 192.168.10.1:5060;rport;branch=z9hG4bK1500504766\r\n\
-From:<sip:88001@192.168.10.62>;tag=1069855717\r\n\
-To:<sip:88001@192.168.10.62>\r\n\
-Call-ID:1626200011\r\n\
-CSeq:1 REGISTER\r\n\
-Contact:<sip:88001@192.168.10.1;line=6c451db26592505>\r\n\
-Max-Forwards:70\r\n\
-Expires:7200\r\n\
-Content-Length:0\r\n";
-
-    char result[2048] = {0};
-
-    Message2String(result, m);
-
-    STRCMP_EQUAL(expected, result);
 }

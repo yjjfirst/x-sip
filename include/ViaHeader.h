@@ -15,6 +15,7 @@ struct URI *ViaHeaderGetUri(struct ViaHeader *via);
 char *ViaHeaderGetTransport(struct ViaHeader *via);
 char *ViaHeaderGetName(struct ViaHeader *via);
 char *ViaHeaderGetParameter(struct ViaHeader *via, char *name);
+struct Parameters *ViaHeaderGetParameters(struct ViaHeader *via);
 
 void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri);
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters);

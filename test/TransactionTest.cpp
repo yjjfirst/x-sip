@@ -7,6 +7,9 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "MessageTransport.h"
+#include "Header.h"
+#include "Parameter.h"
+#include "ViaHeader.h"
 }
 
 char OKMessage[] = "\
@@ -47,6 +50,8 @@ TEST_GROUP(TransactionTestGroup)
         t = CreateTransaction(m);
         s = TransactionGetState(t);
 
+        MessageAddViaParameter(m, (char *)"rport", (char *)"");
+        MessageAddViaParameter(m, (char *)"branch", (char *)"z9hG4bK1491280923");
     }
     
     void teardown()
@@ -63,7 +68,7 @@ TEST(TransactionTestGroup, TransactionInitTest)
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }
 
-TEST(TransactionTestGroup, Receive200OKTest)
+TEST(TransactionTestGroup, Receive2xxTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
 
@@ -74,3 +79,7 @@ TEST(TransactionTestGroup, Receive200OKTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
 }
 
+TEST(TransactionTestGroup, BranchNonMatchTest)
+{
+    
+}

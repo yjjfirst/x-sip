@@ -7,6 +7,9 @@
 #include "MessageTransport.h"
 #include "utils/list/include/list.h"
 #include "StatusLine.h"
+#include "Header.h"
+#include "ViaHeader.h"
+#include "CSeqHeader.h"
 
 struct Transaction {
     enum TransactionState state;
@@ -23,7 +26,10 @@ enum TransactionState TransactionGetState(struct Transaction *t)
 
 BOOL MatchResponse(struct Message *request, struct Message *response)
 {
-    return TRUE;
+    return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), 
+                            (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response))
+        && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
+                                   (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
 }
 
 int TransactionHandleMessage(char *string)
@@ -37,8 +43,8 @@ int TransactionHandleMessage(char *string)
     statusCode = StatusLineGetStatusCode(status);
     
     if (MatchResponse(Transaction->request, message)){
-    if (statusCode == 200)
-        Transaction->state = TRANSACTION_STATE_COMPLETED;
+        if (statusCode == 200)
+            Transaction->state = TRANSACTION_STATE_COMPLETED;
     }
 
     DestoryMessage(&message);
