@@ -19,6 +19,12 @@ void MessageAddViaParameter(struct Message *message, char *name, char *value)
     AddParameter(p, name, value);
 }
 
+void MessageSetCSeqMethod (struct Message *message, char *method)
+{
+    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
+
+    CSeqHeaderSetMethod(c, method);
+}
 
 void AddRequestLine(struct Message *m)
 {

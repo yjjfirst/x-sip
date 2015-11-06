@@ -10,6 +10,10 @@ TEST_GROUP(ParameterTestGroup)
     void setup(){
         params = CreateParameters();
     }
+
+    void teardown() {
+        DestoryParameters(params);
+    }
 };
 
 TEST(ParameterTestGroup, OneParameterTest)
@@ -20,8 +24,6 @@ TEST(ParameterTestGroup, OneParameterTest)
     
     STRCMP_EQUAL("123456789",GetParameter(params, (char *)"branch"));
     POINTERS_EQUAL(NULL, GetParameter(params, (char *)"subject"));
-
-    DestoryParameters(params);
 }
 
 TEST(ParameterTestGroup, AnotherOneParameterTest)
@@ -31,8 +33,6 @@ TEST(ParameterTestGroup, AnotherOneParameterTest)
     ParseParametersExt(p, params);
     
     STRCMP_EQUAL("test",GetParameter(params, (char *)"subject"));
-
-    DestoryParameters(params);
 }
 
 TEST(ParameterTestGroup, TwoParametersParseTest)
@@ -43,8 +43,6 @@ TEST(ParameterTestGroup, TwoParametersParseTest)
     STRCMP_EQUAL("test", GetParameter(params, (char*)"subject"));
     STRCMP_EQUAL("123456789", GetParameter(params, (char*)"branch"));
     POINTERS_EQUAL(NULL, GetParameter(params, (char*)"NoExistParameter"));
-
-    DestoryParameters(params);
 }
 
 TEST(ParameterTestGroup, NoValueParameterParseTest)
@@ -59,9 +57,6 @@ TEST(ParameterTestGroup, NoValueParameterParseTest)
     STRCMP_EQUAL("tcp", GetParameter(params, (char *)"protocol"));
     STRCMP_EQUAL("",GetParameter(params, (char *)"tport"));
     STRCMP_EQUAL("5060", GetParameter(params, (char *)"transport"));
-
-    DestoryParameters(params);
-
 }
 
 TEST(ParameterTestGroup, ToStringTest)
@@ -73,6 +68,22 @@ TEST(ParameterTestGroup, ToStringTest)
     
     Parameters2StringExt(result, params, NULL);
     STRCMP_EQUAL(p, result);
+}
 
-    DestoryParameters(params);
+TEST(ParameterTestGroup, AddParameterTest)
+{
+    AddParameter(params, (char *)"test1", (char *)"value1");
+    STRCMP_EQUAL("value1", GetParameter(params, (char *)"test1"));
+
+    AddParameter(params, (char *)"test2", (char *)"value2");
+    STRCMP_EQUAL("value2", GetParameter(params, (char *)"test2"));
+
+    AddParameter(params, (char *)"test3", (char *)"value3");
+    STRCMP_EQUAL("value3", GetParameter(params, (char *)"test3"));
+
+    AddParameter(params, (char *)"test3", (char *)"valuexxx");
+    STRCMP_EQUAL("valuexxx", GetParameter(params, (char *)"test3"));
+
+    AddParameter(params, (char *)"test2", (char *)"value2");
+    STRCMP_EQUAL("value2", GetParameter(params, (char *)"test2"));
 }

@@ -71,11 +71,22 @@ int ParseParameters(char *s, void *target)
 
 int AddParameter(struct Parameters *ps, char *name, char *value)
 {
-    struct Parameter *p = CreateParameter();
+    struct Parameter *p = NULL;
+    int i = 0;
+    int length = get_list_len(ps->parameters);
+
+    for ( ; i < length; i ++) {
+        if (strcmp (((struct Parameter *) get_data_at(ps->parameters, i))->name, name) == 0)
+            p = get_data_at (ps->parameters, i);
+    }
+
+    if (p == NULL) {
+        p = CreateParameter();
+        put_in_list(&ps->parameters, p);
+    }
 
     Copy2Target(p, name, &ParameterPattern[0]);
     Copy2Target(p, value,&ParameterPattern[1]);
-    put_in_list(&ps->parameters, p);
 
     return 0;
 }

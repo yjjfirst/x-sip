@@ -9,4 +9,6 @@
 struct Message;
 
 void MessageAddViaParameter(struct Message *message, char *name, char *value);
+void MessageSetCSeqMethod (struct Message *message, char *method);
+
 struct Message *BuildRegisterMessage();
