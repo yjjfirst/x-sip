@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "Bool.h"
+#include "Timer.h"
 #include "Transaction.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
@@ -10,6 +11,9 @@
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
+
+#define T1 500
+#define T2 4000
 
 struct Transaction {
     enum TransactionState state;
@@ -45,6 +49,8 @@ int TransactionHandleMessage(char *string)
     if (MatchResponse(Transaction->request, message)){
         if (statusCode == 200)
             Transaction->state = TRANSACTION_STATE_COMPLETED;
+        else if (statusCode == 100)
+            Transaction->state = TRANSACTION_STATE_PROCEEDING;
     }
 
     DestoryMessage(&message);
@@ -59,8 +65,11 @@ struct Transaction *CreateTransaction(struct Message *request)
     t = calloc(1, sizeof (struct Transaction));
     t->state = TRANSACTION_STATE_TRYING;
     t->request = request;
+
     Message2String(s, request);
     SendMessage(s);
+    //AddTimer(T1);
+
     Transaction = t;
 
     return t;

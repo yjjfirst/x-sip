@@ -2,6 +2,7 @@ struct Message;
 
 enum TransactionState {
     TRANSACTION_STATE_TRYING, 
+    TRANSACTION_STATE_PROCEEDING,
     TRANSACTION_STATE_COMPLETED,
 };
 

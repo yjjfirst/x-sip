@@ -1,0 +1,1 @@
+int AddTimer(int ms);
