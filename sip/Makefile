@@ -10,7 +10,7 @@ CPPFLAGS += -include ../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros
 OBJS = Parser.o RequestLine.o URI.o ContactHeader.o ViaHeader.o MaxForwardsHeader.o \
        CallIdHeader.o ContentLengthHeader.o ExpiresHeader.o Parameter.o\
        StatusLine.o CSeqHeader.o Messages.o MessageBuilder.o MessageTransport.o \
-       Transaction.o
+       Transaction.o Timer.o
 
 SRCS = $(OBJS:%o=%c)
 %.o:%.c

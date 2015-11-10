@@ -14,6 +14,7 @@
 
 #define T1 500
 #define T2 4000
+#define T4 5000
 
 struct Transaction {
     enum TransactionState state;
@@ -22,6 +23,12 @@ struct Transaction {
 };
 
 struct Transaction  *Transaction;
+static TransactionTimerAdder TimerAdder;
+
+void TransactionSetTimerAdder(TransactionTimerAdder adder)
+{
+    TimerAdder = adder;
+}
 
 enum TransactionState TransactionGetState(struct Transaction *t)
 {
@@ -36,6 +43,23 @@ BOOL MatchResponse(struct Message *request, struct Message *response)
                                    (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
 }
 
+void TimerKCallBack(void *t)
+{
+    struct Transaction *transaction = (struct Transaction *)t;
+    transaction->state = TRANSACTION_STATE_TERMINATED;
+}
+
+void TimerFCallback(void *t)
+{
+    struct Transaction *transaction = (struct Transaction *)t;
+    transaction->state = TRANSACTION_STATE_TERMINATED;
+}
+
+void TimerECallback(void *t)
+{
+    TimerAdder(Transaction, T1, TimerECallback);
+}
+
 int TransactionHandleMessage(char *string)
 {
     struct Message *message = CreateMessage();
@@ -47,8 +71,10 @@ int TransactionHandleMessage(char *string)
     statusCode = StatusLineGetStatusCode(status);
     
     if (MatchResponse(Transaction->request, message)){
-        if (statusCode == 200)
+        if (statusCode == 200) {
             Transaction->state = TRANSACTION_STATE_COMPLETED;
+            TimerAdder(Transaction, T4, TimerKCallBack);
+        }
         else if (statusCode == 100)
             Transaction->state = TRANSACTION_STATE_PROCEEDING;
     }
@@ -56,6 +82,7 @@ int TransactionHandleMessage(char *string)
     DestoryMessage(&message);
     return 0;
 }
+
 
 struct Transaction *CreateTransaction(struct Message *request)
 {
@@ -68,7 +95,8 @@ struct Transaction *CreateTransaction(struct Message *request)
 
     Message2String(s, request);
     SendMessage(s);
-    //AddTimer(T1);
+    TimerAdder(t, T1, TimerECallback);
+    TimerAdder(t, 64*T1, TimerFCallback);
 
     Transaction = t;
 
@@ -79,9 +107,4 @@ void DestoryTransaction(struct Transaction **t)
 {
     free(*t);
     *t = NULL;
-}
-
-void InitTransactionLayer()
-{
-    InitReceiveMessageCallback(TransactionHandleMessage);
 }
