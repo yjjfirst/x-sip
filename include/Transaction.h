@@ -16,6 +16,9 @@ enum TransactionState {
 enum TransactionEvent {
     TRANSACTION_EVENT_200OK,
     TRANSACTION_EVENT_100TRYING,
+    TRANSACTION_EVENT_TIMER_E_FIRED,
+    TRANSACTION_EVENT_TIMER_F_FIRED,
+    TRANSACTION_EVENT_TIMER_K_FIRED,
     TRANSACTION_EVENT_MAX,
 };
 
@@ -23,4 +26,4 @@ struct Transaction *CreateTransaction(struct Message *request);
 void DestoryTransaction(struct Transaction **t);
 enum TransactionState TransactionGetState(struct Transaction *t);
 int TransactionHandleMessage(char *string);
-void TransactionSetTimerAdder(TransactionTimerAdder adder);
+void TransactionSetTimer(TransactionTimerAdder adder);

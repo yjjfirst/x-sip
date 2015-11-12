@@ -6,21 +6,21 @@
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "MessageTransport.h"
-#include "utils/list/include/list.h"
 #include "StatusLine.h"
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
+#include "utils/list/include/list.h"
 
 #define TRANSACTION_ACTIONS_MAX 5
 
 struct Transaction {
     enum TransactionState state;
     struct Message *request;
-    t_list *responses; 
+    t_list *responses;
 };
 
-struct FSM_ENTRY {
+struct FSM_STATE_ENTRY {
     enum TransactionEvent event;
     enum TransactionState nextState;
     TransactionAction actions[TRANSACTION_ACTIONS_MAX + 1];
@@ -28,14 +28,15 @@ struct FSM_ENTRY {
 
 struct FSM_STATE {
     enum TransactionState currState;
-    struct FSM_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
+    struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
 };
-
 
 struct Transaction  *Transaction;
 static TransactionTimerAdder TimerAdder;
 
-void TransactionSetTimerAdder(TransactionTimerAdder adder)
+void RunFSM(struct Transaction *t, enum TransactionEvent event);
+
+void TransactionSetTimer(TransactionTimerAdder adder)
 {
     TimerAdder = adder;
 }
@@ -47,7 +48,7 @@ enum TransactionState TransactionGetState(struct Transaction *t)
 
 BOOL MatchResponse(struct Message *request, struct Message *response)
 {
-    return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), 
+    return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
                             (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response))
         && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
                                    (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
@@ -55,17 +56,20 @@ BOOL MatchResponse(struct Message *request, struct Message *response)
 
 void TimerKCallBack(void *t)
 {
-    struct Transaction *transaction = (struct Transaction *)t;
-    transaction->state = TRANSACTION_STATE_TERMINATED;
+    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_K_FIRED);
 }
 
 void TimerFCallback(void *t)
 {
-    struct Transaction *transaction = (struct Transaction *)t;
-    transaction->state = TRANSACTION_STATE_TERMINATED;
+    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_F_FIRED);
 }
 
 void TimerECallback(void *t)
+{
+    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_E_FIRED);
+}
+
+void AddTimerE(struct Transaction *t)
 {
     TimerAdder(Transaction, T1, TimerECallback);
 }
@@ -116,27 +120,20 @@ void DestoryTransaction(struct Transaction **t)
 }
 
 struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
-    {TRANSACTION_STATE_TRYING,{ {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,
-                                 {AddTimerK}},
-                                
-                                {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,
-                                 {NULL}},
-                                
-                                {-1}}
-     
-    },
-
-    {TRANSACTION_STATE_PROCEEDING,{ {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,
-                                     {AddTimerK}},
-                                    
-                                    {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,
-                                     {NULL}},
-
-                                    {-1}}
-
-    },
-
-    
+    {TRANSACTION_STATE_TRYING,{
+            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
+            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{AddTimerE}},
+            {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+            {-1}}},
+    {TRANSACTION_STATE_PROCEEDING,{
+            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
+            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{AddTimerE}},
+            {-1}}},
+    {TRANSACTION_STATE_COMPLETED,{
+            {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
+            {-1}}},
     {-1},
 };
 
@@ -144,32 +141,32 @@ struct FSM_STATE *LocateFSMState(struct Transaction *t)
 {
     int i = 0;
     struct FSM_STATE *fsmState = NULL;
-    
+
     for (; TransactionFSM[i].currState != -1; i ++) {
         if (t->state == TransactionFSM[i].currState)
             fsmState = &TransactionFSM[i];
     }
-    
+
     return fsmState;
 }
 
-void InvokeActions(struct Transaction *t, struct FSM_ENTRY *e)
+void InvokeActions(struct Transaction *t, struct FSM_STATE_ENTRY *e)
 {
     int j;
 
     for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
         if(e->actions[j] != NULL)
             e->actions[j](t);
-    }        
+    }
 }
 
 void RunFSM(struct Transaction *t, enum TransactionEvent event)
 {
     int i = 0;
-    struct FSM_ENTRY *entrys = NULL;
-    struct FSM_STATE *fsmState = LocateFSMState(t);        
+    struct FSM_STATE_ENTRY *entrys = NULL;
+    struct FSM_STATE *fsmState = LocateFSMState(t);
     if (fsmState == NULL) return;
-    
+
     entrys = fsmState->entrys;
     for ( i = 0; entrys[i].event != -1; i++) {
         if (entrys[i].event == event) {
@@ -188,7 +185,7 @@ int TransactionHandleMessage(char *string)
     ParseMessage(string, message);
     status = MessageGetStatus(message);
     statusCode = StatusLineGetStatusCode(status);
-    
+
     if (MatchResponse(Transaction->request, message)){
         if (statusCode == 200) {
             RunFSM(Transaction, TRANSACTION_EVENT_200OK);
