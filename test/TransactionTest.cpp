@@ -82,8 +82,8 @@ TEST_GROUP(TransactionTestGroup)
 
     void setup()
     {
-        mock().expectOneCall("AddTimer").withIntParameter("ms", 500);
-        mock().expectOneCall("AddTimer").withIntParameter("ms", 64*500);
+        mock().expectOneCall("AddTimer").withIntParameter("ms", T1);
+        mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
 
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
         InitReceiveMessageCallback(TransactionHandleMessage);
@@ -100,10 +100,7 @@ TEST_GROUP(TransactionTestGroup)
     void teardown()
     {
         RemoveMessageTransporter((char *)"TRANS");
-
-        DestoryMessage(&m);
         DestoryTransaction(&t);
-
         mock().clear();
     }
 };
@@ -131,7 +128,7 @@ TEST(TransactionTestGroup, Receive1xxTest)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
 
     Response = OK200;
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 5000);    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     ReceiveMessage(string);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
@@ -144,7 +141,7 @@ TEST(TransactionTestGroup, Receive2xxTest)
     char string[MAX_MESSAGE_LENGTH] = {0};
 
     Response = OK200;
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 5000);    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
 
@@ -176,7 +173,7 @@ TEST(TransactionTestGroup, CSeqMethodNonMatchTest)
 
 TEST(TransactionTestGroup, TryingTimeETest)
 {
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 500);    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T1);    
 
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     TimerCallbackFunc(Transaction);
@@ -196,7 +193,7 @@ TEST(TransactionTestGroup, ProceedingTimeETest)
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
 
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 500);    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T1);    
     TimerCallbackFunc(Transaction);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
     mock().checkExpectations();
@@ -217,7 +214,7 @@ TEST(TransactionTestGroup, TimerKTest)
 
     Response = OK200;
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 5000);    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
 
     ReceiveMessage(string); 
     s = TransactionGetState(t);

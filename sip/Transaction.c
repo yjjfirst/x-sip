@@ -12,15 +12,25 @@
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
 
-#define T1 500
-#define T2 4000
-#define T4 5000
+#define TRANSACTION_ACTIONS_MAX 5
 
 struct Transaction {
     enum TransactionState state;
     struct Message *request;
     t_list *responses; 
 };
+
+struct FSM_ENTRY {
+    enum TransactionEvent event;
+    enum TransactionState nextState;
+    TransactionAction actions[TRANSACTION_ACTIONS_MAX + 1];
+};
+
+struct FSM_STATE {
+    enum TransactionState currState;
+    struct FSM_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
+};
+
 
 struct Transaction  *Transaction;
 static TransactionTimerAdder TimerAdder;
@@ -60,29 +70,10 @@ void TimerECallback(void *t)
     TimerAdder(Transaction, T1, TimerECallback);
 }
 
-int TransactionHandleMessage(char *string)
+void AddTimerK(struct Transaction *t)
 {
-    struct Message *message = CreateMessage();
-    struct StatusLine *status = NULL;
-    int statusCode = 0;
-
-    ParseMessage(string, message);
-    status = MessageGetStatus(message);
-    statusCode = StatusLineGetStatusCode(status);
-    
-    if (MatchResponse(Transaction->request, message)){
-        if (statusCode == 200) {
-            Transaction->state = TRANSACTION_STATE_COMPLETED;
-            TimerAdder(Transaction, T4, TimerKCallBack);
-        }
-        else if (statusCode == 100)
-            Transaction->state = TRANSACTION_STATE_PROCEEDING;
-    }
-
-    DestoryMessage(&message);
-    return 0;
+    TimerAdder(Transaction, T4, TimerKCallBack);
 }
-
 
 struct Transaction *CreateTransaction(struct Message *request)
 {
@@ -103,8 +94,110 @@ struct Transaction *CreateTransaction(struct Message *request)
     return t;
 }
 
+void DestoryResponseMessage(struct Transaction *t)
+{
+    int length = get_list_len(t->responses);
+    int i = 0;
+
+    for (; i < length; i ++) {
+        struct Message *message = get_data_at(t->responses, i);
+        DestoryMessage(&message);
+    }
+}
+
 void DestoryTransaction(struct Transaction **t)
 {
-    free(*t);
-    *t = NULL;
+    if ( *t != NULL) {
+        DestoryMessage(&(*t)->request);
+        DestoryResponseMessage(*t);
+        free(*t);
+        *t = NULL;
+    }
+}
+
+struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
+    {TRANSACTION_STATE_TRYING,{ {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,
+                                 {AddTimerK}},
+                                
+                                {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,
+                                 {NULL}},
+                                
+                                {-1}}
+     
+    },
+
+    {TRANSACTION_STATE_PROCEEDING,{ {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,
+                                     {AddTimerK}},
+                                    
+                                    {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,
+                                     {NULL}},
+
+                                    {-1}}
+
+    },
+
+    
+    {-1},
+};
+
+struct FSM_STATE *LocateFSMState(struct Transaction *t)
+{
+    int i = 0;
+    struct FSM_STATE *fsmState = NULL;
+    
+    for (; TransactionFSM[i].currState != -1; i ++) {
+        if (t->state == TransactionFSM[i].currState)
+            fsmState = &TransactionFSM[i];
+    }
+    
+    return fsmState;
+}
+
+void InvokeActions(struct Transaction *t, struct FSM_ENTRY *e)
+{
+    int j;
+
+    for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
+        if(e->actions[j] != NULL)
+            e->actions[j](t);
+    }        
+}
+
+void RunFSM(struct Transaction *t, enum TransactionEvent event)
+{
+    int i = 0;
+    struct FSM_ENTRY *entrys = NULL;
+    struct FSM_STATE *fsmState = LocateFSMState(t);        
+    if (fsmState == NULL) return;
+    
+    entrys = fsmState->entrys;
+    for ( i = 0; entrys[i].event != -1; i++) {
+        if (entrys[i].event == event) {
+            t->state = entrys[i].nextState;
+            InvokeActions(t, &entrys[i]);
+        }
+    }
+}
+
+int TransactionHandleMessage(char *string)
+{
+    struct Message *message = CreateMessage();
+    struct StatusLine *status = NULL;
+    int statusCode = 0;
+
+    ParseMessage(string, message);
+    status = MessageGetStatus(message);
+    statusCode = StatusLineGetStatusCode(status);
+    
+    if (MatchResponse(Transaction->request, message)){
+        if (statusCode == 200) {
+            RunFSM(Transaction, TRANSACTION_EVENT_200OK);
+        }
+        else if (statusCode == 100) {
+            RunFSM(Transaction, TRANSACTION_EVENT_100TRYING);
+        }
+    }
+
+    put_in_list(&Transaction->responses, message);
+    return 0;
 }
