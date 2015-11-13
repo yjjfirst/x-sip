@@ -18,6 +18,7 @@ struct Transaction {
     enum TransactionState state;
     struct Message *request;
     t_list *responses;
+    int timerEFiredCount;
 };
 
 struct FSM_STATE_ENTRY {
@@ -69,9 +70,25 @@ void TimerECallback(void *t)
     RunFSM(Transaction, TRANSACTION_EVENT_TIMER_E_FIRED);
 }
 
-void AddTimerE(struct Transaction *t)
+void ResetTimerEFiredCount(struct Transaction *t)
 {
-    TimerAdder(Transaction, T1, TimerECallback);
+    t->timerEFiredCount = 0;
+}
+
+void IncTimerEFiredCount(struct Transaction *t)
+{
+    if (T1<<t->timerEFiredCount <= T4)
+        t->timerEFiredCount ++;
+}
+
+void AddTimerE(struct Transaction *t)
+{    
+    int interval = T1<<t->timerEFiredCount;
+    
+    if (interval > T4)
+        interval = T4;
+    
+    TimerAdder(Transaction, interval, TimerECallback);
 }
 
 void AddTimerK(struct Transaction *t)
@@ -122,14 +139,14 @@ void DestoryTransaction(struct Transaction **t)
 struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
     {TRANSACTION_STATE_TRYING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
-            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
-            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{AddTimerE}},
+            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{IncTimerEFiredCount,AddTimerE}},
             {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
             {-1}}},
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
-            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{AddTimerE}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{IncTimerEFiredCount,AddTimerE}},
             {-1}}},
     {TRANSACTION_STATE_COMPLETED,{
             {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
