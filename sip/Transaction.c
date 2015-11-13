@@ -96,17 +96,30 @@ void AddTimerK(struct Transaction *t)
     TimerAdder(Transaction, T4, TimerKCallBack);
 }
 
-struct Transaction *CreateTransaction(struct Message *request)
+void SendRequestMessage(struct Transaction *t)
+{
+    char s[MAX_MESSAGE_LENGTH] = {0};
+    Message2String(s, t->request);
+    SendMessage(s);
+}
+
+struct Transaction *CallocTransaction(struct Message *request)
 {
     struct Transaction *t;
-    char s[MAX_MESSAGE_LENGTH] = {0};
 
     t = calloc(1, sizeof (struct Transaction));
     t->state = TRANSACTION_STATE_TRYING;
     t->request = request;
 
-    Message2String(s, request);
-    SendMessage(s);
+    return t;
+}
+
+struct Transaction *CreateTransaction(struct Message *request)
+{
+    struct Transaction *t;
+
+    t = CallocTransaction(request);
+    SendRequestMessage(t);
     TimerAdder(t, T1, TimerECallback);
     TimerAdder(t, 64*T1, TimerFCallback);
 
@@ -140,13 +153,19 @@ struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
     {TRANSACTION_STATE_TRYING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
-            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{IncTimerEFiredCount,AddTimerE}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{
+                    IncTimerEFiredCount,
+                    AddTimerE,
+                    SendRequestMessage}},
             {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
             {-1}}},
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
-            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{IncTimerEFiredCount,AddTimerE}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{
+                    IncTimerEFiredCount,
+                    AddTimerE,
+                    SendRequestMessage}},
             {-1}}},
     {TRANSACTION_STATE_COMPLETED,{
             {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
@@ -172,8 +191,7 @@ void InvokeActions(struct Transaction *t, struct FSM_STATE_ENTRY *e)
     int j;
 
     for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
-        if(e->actions[j] != NULL)
-            e->actions[j](t);
+        if(e->actions[j] != NULL) e->actions[j](t);
     }
 }
 
