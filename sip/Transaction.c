@@ -120,8 +120,11 @@ struct Transaction *CreateTransaction(struct Message *request)
 
     t = CallocTransaction(request);
     SendRequestMessage(t);
-    TimerAdder(t, T1, TimerECallback);
-    TimerAdder(t, 64*T1, TimerFCallback);
+
+    if (TimerAdder != NULL) {
+        TimerAdder(t, T1, TimerECallback);    
+        TimerAdder(t, 64*T1, TimerFCallback);
+    }
 
     Transaction = t;
 

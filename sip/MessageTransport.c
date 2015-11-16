@@ -55,5 +55,6 @@ void ReceiveMessage(char *message)
 
 void SendMessage(char *message)
 {
-    GetTransporterAt(0)->sender(message);
+    if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->sender != NULL)
+        GetTransporterAt(0)->sender(message);
 }
