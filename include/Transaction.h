@@ -24,6 +24,9 @@ enum TransactionEvent {
 
 struct Transaction *CreateTransaction(struct Message *request);
 void DestoryTransaction(struct Transaction **t);
-enum TransactionState TransactionGetState(struct Transaction *t);
-int TransactionHandleMessage(char *string);
 void TransactionSetTimer(TransactionTimerAdder adder);
+
+enum TransactionState TransactionGetState(struct Transaction *t);
+struct Message * TransactionGetRequest(struct Transaction *t);
+void TransactionAddResponse(struct Transaction *t, struct Message *message);
+void RunFSM(struct Transaction *t, enum TransactionEvent event);

@@ -14,6 +14,7 @@ extern "C" {
 #include "Parameter.h"
 #include "ViaHeader.h"
 #include "Method.h"
+#include "TransactionManager.h"
 }
 
 enum Response {
@@ -21,7 +22,7 @@ enum Response {
     RINGING180,
 };
 
-char OKMessage[] = "\
+static char OKMessage[] = "\
 SIP/2.0 200 OK\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5060\r\n\
 From: <sip:88001@192.168.10.62>;tag=1225432999\r\n\
@@ -32,7 +33,7 @@ Expires:3600\r\n\
 Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
 Content-Length: 0\r\n";
 
-char TryingMessage[] = "\
+static char TryingMessage[] = "\
 SIP/2.0 100 Trying\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5060\r\n\
 From: <sip:88001@192.168.10.62>;tag=1225432999\r\n\
@@ -43,7 +44,7 @@ Expires:3600\r\n\
 Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
 Content-Length: 0\r\n";
 
-enum Response Response;
+static enum Response Response;
 static TimerCallback TimerECallbackFunc;
 static TimerCallback TimerFCallbackFunc;
 static TimerCallback TimerKCallbackFunc;
@@ -80,6 +81,7 @@ TEST_GROUP(TransactionTestGroup)
     struct Message *m;
     struct Transaction *t;
     enum TransactionState s;
+    struct TransactionManager *manager;
 
     void setup()
     {
@@ -87,14 +89,14 @@ TEST_GROUP(TransactionTestGroup)
         mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
         mock().expectOneCall("TransactionSendMessageMock");
 
-
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
-        InitReceiveMessageCallback(TransactionHandleMessage);
         TransactionSetTimer(AddTimer);
 
         m = BuildRegisterMessage();
-        t = CreateTransaction(m);
+        manager = GetTransactionManager();
+        t = manager->CreateTransaction(m);
         s = TransactionGetState(t);
+        InitReceiveMessageCallback(MessageReceived);
 
         MessageAddViaParameter(m, (char *)"rport", (char *)"");
         MessageAddViaParameter(m, (char *)"branch", (char *)"z9hG4bK1491280923");
@@ -103,7 +105,7 @@ TEST_GROUP(TransactionTestGroup)
     void teardown()
     {
         RemoveMessageTransporter((char *)"TRANS");
-        DestoryTransaction(&t);
+        DestoryTransactionManager(&manager);
         mock().clear();
     }
 };
@@ -135,8 +137,6 @@ TEST(TransactionTestGroup, Receive1xxTest)
     ReceiveMessage(string);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
-
-
 }
 
 TEST(TransactionTestGroup, Receive2xxTest)
@@ -147,31 +147,9 @@ TEST(TransactionTestGroup, Receive2xxTest)
     mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
-
     ReceiveMessage(string);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
-}
-
-TEST(TransactionTestGroup, BranchNonMatchTest)
-{
-    char string[MAX_MESSAGE_LENGTH] = {0};
-
-    MessageAddViaParameter(m, (char *)"branch", (char *)"z9hG4bK1491280924");
-
-    ReceiveMessage(string);
-    s = TransactionGetState(t);
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
-}
-
-TEST(TransactionTestGroup, CSeqMethodNonMatchTest)
-{
-    char string[MAX_MESSAGE_LENGTH] = {0};
-
-    MessageSetCSeqMethod(m, (char *)SIP_METHOD_NAME_INVITE);
-    ReceiveMessage(string);
-    s = TransactionGetState(t);
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }
 
 TEST(TransactionTestGroup, TryingTimeETest)

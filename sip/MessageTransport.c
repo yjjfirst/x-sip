@@ -47,10 +47,17 @@ struct MessageTransporter *GetTransporterAt(int pos)
     return  (struct MessageTransporter *)get_data_at(MessageTransports, pos);
 }
 
-void ReceiveMessage(char *message)
+BOOL ReceiveMessage(char *message)
 {
-    GetTransporterAt(0)->receiver(message);
-    ReceiveMessageCallback(message);
+    if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->receiver != NULL) {
+        GetTransporterAt(0)->receiver(message);
+    }
+
+    if (ReceiveMessageCallback != NULL) {
+        return ReceiveMessageCallback(message);
+    }
+
+    return FALSE;
 }
 
 void SendMessage(char *message)

@@ -111,7 +111,7 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
             break;
         }
     }
-
+    
     return header;
 }
 

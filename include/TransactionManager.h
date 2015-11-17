@@ -11,3 +11,4 @@ struct TransactionManager {
 
 struct TransactionManager *GetTransactionManager();
 void DestoryTransactionManager(struct TransactionManager **manager);
+int MessageReceived(char *string);

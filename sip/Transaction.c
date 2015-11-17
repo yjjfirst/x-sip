@@ -42,17 +42,14 @@ void TransactionSetTimer(TransactionTimerAdder adder)
     TimerAdder = adder;
 }
 
+void TransactionAddResponse(struct Transaction *t, struct Message *message)
+{
+    put_in_list(&t->responses, message);
+}
+
 enum TransactionState TransactionGetState(struct Transaction *t)
 {
     return t->state;
-}
-
-BOOL MatchResponse(struct Message *request, struct Message *response)
-{
-    return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
-                            (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response))
-        && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
-                                   (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
 }
 
 void TimerKCallBack(void *t)
@@ -87,13 +84,14 @@ void AddTimerE(struct Transaction *t)
     
     if (interval > T4)
         interval = T4;
-    
-    TimerAdder(Transaction, interval, TimerECallback);
+    if (TimerAdder)
+        TimerAdder(Transaction, interval, TimerECallback);
 }
 
 void AddTimerK(struct Transaction *t)
 {
-    TimerAdder(Transaction, T4, TimerKCallBack);
+    if (TimerAdder)
+        TimerAdder(Transaction, T4, TimerKCallBack);
 }
 
 void SendRequestMessage(struct Transaction *t)
@@ -101,6 +99,11 @@ void SendRequestMessage(struct Transaction *t)
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, t->request);
     SendMessage(s);
+}
+
+struct Message *TransactionGetRequest(struct Transaction *t)
+{
+    return t->request;
 }
 
 struct Transaction *CallocTransaction(struct Message *request)
@@ -212,27 +215,4 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
             InvokeActions(t, &entrys[i]);
         }
     }
-}
-
-int TransactionHandleMessage(char *string)
-{
-    struct Message *message = CreateMessage();
-    struct StatusLine *status = NULL;
-    int statusCode = 0;
-
-    ParseMessage(string, message);
-    status = MessageGetStatus(message);
-    statusCode = StatusLineGetStatusCode(status);
-
-    if (MatchResponse(Transaction->request, message)){
-        if (statusCode == 200) {
-            RunFSM(Transaction, TRANSACTION_EVENT_200OK);
-        }
-        else if (statusCode == 100) {
-            RunFSM(Transaction, TRANSACTION_EVENT_100TRYING);
-        }
-    }
-
-    put_in_list(&Transaction->responses, message);
-    return 0;
 }

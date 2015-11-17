@@ -1,5 +1,7 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "ViaHeader.h"
 #include "Header.h"
@@ -29,6 +31,10 @@ struct HeaderPattern *GetViaPattern()
 
 BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
 {
+    assert(via1 != NULL && via2 != NULL);
+    assert(ViaHeaderGetParameter(via1, "branch") != NULL);
+    assert(ViaHeaderGetParameter(via2, "branch") != NULL);
+
     return !strcmp (ViaHeaderGetParameter(via1, "branch"), 
                     ViaHeaderGetParameter(via2, "branch"));
 }
