@@ -92,16 +92,16 @@ TEST(TransactionManager, NewTransaction)
     struct TransactionManager *manager = GetTransactionManager();
     struct Transaction *transaction;
 
-    transaction = manager->CreateTransaction(message);
-    CHECK_EQUAL(1, manager->CountTransaction());
+    transaction = CreateTransactionExt(message);
+    CHECK_EQUAL(1, CountTransaction());
 
     message = BuildRegisterMessage();
-    transaction = manager->CreateTransaction(message);
-    CHECK_EQUAL(2, manager->CountTransaction());
+    transaction = CreateTransactionExt(message);
+    CHECK_EQUAL(2, CountTransaction());
 
     message = BuildRegisterMessage();
-    transaction = manager->CreateTransaction(message);
-    CHECK_EQUAL(3, manager->CountTransaction());
+    transaction = CreateTransactionExt(message);
+    CHECK_EQUAL(3, CountTransaction());
 
 
     CHECK_FALSE(0 == transaction)
@@ -117,7 +117,7 @@ TEST(TransactionManager, MatchResponse)
     MessageAddViaParameter(message, (char *)"rport", (char *)"");
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280923");
 
-    manager->CreateTransaction(message);
+    CreateTransactionExt(message);
     CHECK_TRUE(ReceiveMessage(string));
 
     DestoryTransactionManager(&manager);
@@ -128,7 +128,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct Message *message = BuildRegisterMessage();
     struct TransactionManager *manager = GetTransactionManager();
-    struct Transaction *t = manager->CreateTransaction(message);
+    struct Transaction *t = CreateTransactionExt(message);
     enum TransactionState s;
 
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
@@ -144,7 +144,7 @@ TEST(TransactionManager, GetTransactionByTest)
 {
     struct Message *message = BuildRegisterMessage();
     struct TransactionManager *manager = GetTransactionManager();
-    struct Transaction *t = manager->CreateTransaction(message);
+    struct Transaction *t = CreateTransactionExt(message);
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
 

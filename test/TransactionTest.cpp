@@ -93,7 +93,7 @@ TEST_GROUP(TransactionTestGroup)
 
         m = BuildRegisterMessage();
         manager = GetTransactionManager();
-        t = manager->CreateTransaction(m);
+        t = CreateTransactionExt(m);
         s = TransactionGetState(t);
         InitReceiveMessageCallback(MessageReceived);
 

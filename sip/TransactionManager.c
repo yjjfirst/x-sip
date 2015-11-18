@@ -11,6 +11,10 @@
 #include "Transaction.h"
 #include "Messages.h"
 
+struct TransactionManager {
+    t_list *transactions;
+};
+
 static struct TransactionManager *SingletonTransactionManager;
 
 int CountTransaction()
@@ -30,8 +34,6 @@ struct TransactionManager *GetTransactionManager()
 {
     if (SingletonTransactionManager == NULL) {
         SingletonTransactionManager = calloc(1, sizeof(struct TransactionManager));
-        SingletonTransactionManager->CreateTransaction = CreateTransactionExt;
-        SingletonTransactionManager->CountTransaction = CountTransaction;
     }
 
     return SingletonTransactionManager;
