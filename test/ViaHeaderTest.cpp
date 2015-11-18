@@ -25,7 +25,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
     STRCMP_EQUAL("erlang.bell-telephone.com", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
 
-    STRCMP_EQUAL("z9hG4bK87",ViaHeaderGetParameter(via, (char *)"branch"));
+    STRCMP_EQUAL("z9hG4bK87",ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
     DestoryViaHeader((struct Header *)via);
 } 
 
@@ -99,4 +99,20 @@ TEST(ViaHeaderTestGroup, MatchedBranchTest)
 
     DestoryViaHeader((struct Header *)via1);
     DestoryViaHeader((struct Header *)via2);
+}
+
+TEST(ViaHeaderTestGroup, MatchBranchByStringTest)
+{
+    struct ViaHeader *via1 = CreateEmptyViaHeader();
+    char header1[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+    
+    Parse(header1, via1, GetViaPattern());
+
+    CHECK_TRUE(ViaBranchMatchedByString(via1, (char *)"z9hG4bK87"));
+
+    struct Parameters *ps = ViaHeaderGetParameters(via1);
+    AddParameter(ps, (char *)VIA_BRANCH_PARAMETER_NAME, (char *)"12345678");
+    CHECK_FALSE(ViaBranchMatchedByString(via1, (char *)"z9hG4bK87"));
+
+    DestoryViaHeader((struct Header *)via1);
 }

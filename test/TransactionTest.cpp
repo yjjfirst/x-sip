@@ -48,7 +48,6 @@ static enum Response Response;
 static TimerCallback TimerECallbackFunc;
 static TimerCallback TimerFCallbackFunc;
 static TimerCallback TimerKCallbackFunc;
-struct Transaction *Transaction;
 
 int TransactionReceiveMessageMock(char *message)
 {
@@ -156,37 +155,37 @@ TEST(TransactionTestGroup, TryingTimeETest)
 {
     mock().expectOneCall("AddTimer").withIntParameter("ms", 2*T1);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 
     mock().expectOneCall("AddTimer").withIntParameter("ms", 4*T1);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 
     mock().expectOneCall("AddTimer").withIntParameter("ms", 8*T1);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 
     mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 
     mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 
     mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
     mock().checkExpectations();
 }
@@ -203,14 +202,14 @@ TEST(TransactionTestGroup, ProceedingTimeETest)
 
     mock().expectOneCall("AddTimer").withIntParameter("ms",2*T1);
     mock().expectOneCall("TransactionSendMessageMock");
-    TimerECallbackFunc(Transaction);
+    TimerECallbackFunc(t);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
     mock().checkExpectations();
 }
 
 TEST(TransactionTestGroup, TimerFTest)
 {
-    TimerFCallbackFunc(Transaction);
+    TimerFCallbackFunc(t);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TERMINATED, s);
 
@@ -228,7 +227,8 @@ TEST(TransactionTestGroup, TimerKTest)
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
 
-    TimerKCallbackFunc(Transaction);
+    TimerKCallbackFunc(t);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TERMINATED, s);
 }
+

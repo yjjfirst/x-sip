@@ -32,12 +32,19 @@ struct HeaderPattern *GetViaPattern()
 BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
 {
     assert(via1 != NULL && via2 != NULL);
-    assert(ViaHeaderGetParameter(via1, "branch") != NULL);
-    assert(ViaHeaderGetParameter(via2, "branch") != NULL);
+    assert(ViaHeaderGetParameter(via1, VIA_BRANCH_PARAMETER_NAME) != NULL);
+    assert(ViaHeaderGetParameter(via2, VIA_BRANCH_PARAMETER_NAME) != NULL);
 
-    return !strcmp (ViaHeaderGetParameter(via1, "branch"), 
-                    ViaHeaderGetParameter(via2, "branch"));
+    return !strcmp (ViaHeaderGetParameter(via1, VIA_BRANCH_PARAMETER_NAME), 
+                    ViaHeaderGetParameter(via2, VIA_BRANCH_PARAMETER_NAME));
 }
+
+BOOL ViaBranchMatchedByString(struct ViaHeader *via, char *string)
+{
+    assert(via != NULL && string != NULL);
+    return !strcmp(ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME), string);
+}
+
 
 char *ViaHeaderGetName(struct ViaHeader *via)
 {

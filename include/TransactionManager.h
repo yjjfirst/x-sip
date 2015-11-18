@@ -12,3 +12,4 @@ struct TransactionManager {
 struct TransactionManager *GetTransactionManager();
 void DestoryTransactionManager(struct TransactionManager **manager);
 int MessageReceived(char *string);
+struct Transaction *GetTransactionBy(char *branch, char *seqMethod);

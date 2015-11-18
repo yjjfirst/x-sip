@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "Bool.h"
 #include "ViaHeader.h"
@@ -36,6 +37,14 @@ struct TransactionManager *GetTransactionManager()
     return SingletonTransactionManager;
 }
 
+struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
+{
+    assert(branch != NULL && seqMethod != NULL);
+    
+    return NULL;
+}
+
+
 BOOL MatchResponse(struct Message *request, struct Message *response)
 {
     return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
@@ -71,7 +80,6 @@ BOOL MessageReceived(char *string)
     statusCode = StatusLineGetStatusCode(status);
 
     if ( (t = MatchTransaction(message)) != NULL) {
-        printf("asdf");
         if (statusCode == 200) {
             RunFSM(t, TRANSACTION_EVENT_200OK);
         }

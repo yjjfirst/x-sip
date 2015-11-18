@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 #include "Header.h"
 #include "Parser.h"
@@ -80,5 +81,13 @@ struct CSeqHeader *CreateCSeqHeader (int seq, char *method)
 
 BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
 {
+    assert(c1 != NULL && c2 != NULL);
     return !strcmp (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
+}
+
+BOOL CSeqMethodMatchedByString(struct CSeqHeader *c, char *string)
+{
+    assert(c != NULL && string != NULL);
+    
+    return !strcmp(CSeqHeaderGetMethod(c), string);
 }

@@ -32,7 +32,6 @@ struct FSM_STATE {
     struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
 };
 
-struct Transaction  *Transaction;
 static TransactionTimerAdder TimerAdder;
 
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
@@ -54,17 +53,17 @@ enum TransactionState TransactionGetState(struct Transaction *t)
 
 void TimerKCallBack(void *t)
 {
-    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_K_FIRED);
+    RunFSM(t, TRANSACTION_EVENT_TIMER_K_FIRED);
 }
 
 void TimerFCallback(void *t)
 {
-    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_F_FIRED);
+    RunFSM(t, TRANSACTION_EVENT_TIMER_F_FIRED);
 }
 
 void TimerECallback(void *t)
 {
-    RunFSM(Transaction, TRANSACTION_EVENT_TIMER_E_FIRED);
+    RunFSM(t, TRANSACTION_EVENT_TIMER_E_FIRED);
 }
 
 void ResetTimerEFiredCount(struct Transaction *t)
@@ -85,13 +84,13 @@ void AddTimerE(struct Transaction *t)
     if (interval > T4)
         interval = T4;
     if (TimerAdder)
-        TimerAdder(Transaction, interval, TimerECallback);
+        TimerAdder(t, interval, TimerECallback);
 }
 
 void AddTimerK(struct Transaction *t)
 {
     if (TimerAdder)
-        TimerAdder(Transaction, T4, TimerKCallBack);
+        TimerAdder(t, T4, TimerKCallBack);
 }
 
 void SendRequestMessage(struct Transaction *t)
@@ -128,8 +127,6 @@ struct Transaction *CreateTransaction(struct Message *request)
         TimerAdder(t, T1, TimerECallback);    
         TimerAdder(t, 64*T1, TimerFCallback);
     }
-
-    Transaction = t;
 
     return t;
 }

@@ -64,12 +64,12 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
     MessageAddViaParameter(m, (char *)"rport", (char *)"");
-    MessageAddViaParameter(m, (char *)"branch", (char *)"z9hG4bK1491280923");
+    MessageAddViaParameter(m, (char *)VIA_BRANCH_PARAMETER_NAME, (char *)"z9hG4bK1491280923");
 
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
     STRCMP_EQUAL(LOCAL_IPADDR, UriGetHost(ViaHeaderGetUri(via)));
     STRCMP_EQUAL("", ViaHeaderGetParameter(via, (char *)"rport"));
-    STRCMP_EQUAL("z9hG4bK1491280923", ViaHeaderGetParameter(via, (char *)"branch"));
+    STRCMP_EQUAL("z9hG4bK1491280923", ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
 
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }

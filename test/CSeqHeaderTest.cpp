@@ -56,3 +56,16 @@ TEST(CSeqTestGroup, MethodUnMatchedTest)
     DestoryCSeqHeader((struct Header *)c1);    
     DestoryCSeqHeader((struct Header *)c2);    
 }
+
+TEST(CSeqTestGroup, MethodMatchedByString)
+{
+    struct CSeqHeader *c1 = CreateCSeqHeader(0, (char *)SIP_METHOD_NAME_REGISTER);
+
+    CHECK_TRUE(CSeqMethodMatchedByString(c1, (char *)SIP_METHOD_NAME_REGISTER));
+
+    CSeqHeaderSetMethod(c1, (char *)SIP_METHOD_NAME_INVITE);
+    CHECK_FALSE(CSeqMethodMatchedByString(c1, (char *)SIP_METHOD_NAME_REGISTER));
+
+    DestoryCSeqHeader((struct Header *)c1);    
+
+}

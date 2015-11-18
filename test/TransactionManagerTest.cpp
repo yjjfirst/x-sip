@@ -9,6 +9,7 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "MessageTransport.h"
 #include "Transaction.h"
+#include "Method.h"
 }
 
 static char OKMessage[] = "\
@@ -139,6 +140,16 @@ TEST(TransactionManager, BranchNonMatchTest)
     DestoryTransactionManager(&manager);
 }
 
+TEST(TransactionManager, GetTransactionByTest)
+{
+    struct Message *message = BuildRegisterMessage();
+    struct TransactionManager *manager = GetTransactionManager();
+    struct Transaction *t = manager->CreateTransaction(message);
+    char seqMethod[] = SIP_METHOD_NAME_REGISTER;
+    char branch[] = "z9hG4bK1491280923";
 
+    MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280923");
 
+    POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
+}

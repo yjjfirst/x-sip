@@ -15,3 +15,5 @@ char *CSeqHeaderGetMethod(struct CSeqHeader *c);
 void CSeqHeaderSetMethod(struct CSeqHeader *c, char *method);
 char *CSeq2String(char *result, struct Header *c);
 BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2);
+BOOL CSeqMethodMatchedByString(struct CSeqHeader *c, char *string);
+
