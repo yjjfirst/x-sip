@@ -37,13 +37,33 @@ struct TransactionManager *GetTransactionManager()
     return SingletonTransactionManager;
 }
 
-struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
+struct Transaction *GetTransactionByNumber(int number)
 {
-    assert(branch != NULL && seqMethod != NULL);
-    
-    return NULL;
+    return (struct Transaction *)get_data_at(SingletonTransactionManager->transactions,number);
 }
 
+BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMethod)
+{
+    struct Message *m = TransactionGetRequest(t);
+    
+    return ViaBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m), branch) 
+        && CSeqMethodMatchedByString((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m), seqMethod);
+}
+
+struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
+{
+    int i = 0;
+    int length = CountTransaction();
+    assert(branch != NULL && seqMethod != NULL);
+    
+    for (; i < length; i ++) {
+        struct Transaction *t = GetTransactionByNumber(i);
+        if (MatchTransactionByString(t, branch, seqMethod))
+            return t;
+    }
+
+    return NULL;
+}
 
 BOOL MatchResponse(struct Message *request, struct Message *response)
 {
@@ -60,7 +80,7 @@ struct Transaction *MatchTransaction(struct Message *message)
     struct Transaction *t = NULL;
     
     for (; i < length; i++) {
-        struct Transaction *tt = get_data_at(SingletonTransactionManager->transactions, i);
+        struct Transaction *tt = GetTransactionByNumber(i);
         if (MatchResponse(TransactionGetRequest(tt), message))
             t = tt;
     }
@@ -102,7 +122,7 @@ void DestoryTransactions(struct TransactionManager *manager)
     int length = CountTransaction();
     
     for ( ; i < length; i++) {
-        struct Transaction *t = get_data_at(manager->transactions, i);
+        struct Transaction *t = GetTransactionByNumber(i);
         DestoryTransaction((struct Transaction **)&t);
     }
     

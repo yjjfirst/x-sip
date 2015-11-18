@@ -152,4 +152,5 @@ TEST(TransactionManager, GetTransactionByTest)
 
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
+    DestoryTransactionManager(&manager);
 }
