@@ -1,5 +1,6 @@
 struct Message;
 struct Transaction;
+struct TransactionNotifyInterface;
 
 typedef void (*TimerCallback)(void *transaction);
 typedef void (*TransactionTimerAdder)(void *transaction, int ms, TimerCallback onTime);
@@ -30,3 +31,4 @@ enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
+void TransactionSetNotifyInterface(struct Transaction *t, struct TransactionNotifyInterface *interface);

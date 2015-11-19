@@ -8,4 +8,3 @@ int MessageReceived(char *string);
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod);
 int CountTransaction(void);
 struct Transaction *CreateTransactionExt(struct Message *message);
-

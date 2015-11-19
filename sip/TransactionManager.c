@@ -8,10 +8,12 @@
 #include "Header.h"
 #include "StatusLine.h"
 #include "TransactionManager.h"
+#include "TransactionNotifyInterface.h"
 #include "Transaction.h"
 #include "Messages.h"
 
 struct TransactionManager {
+    struct TransactionNotifyInterface *interface;
     t_list *transactions;
 };
 
@@ -25,23 +27,34 @@ int CountTransaction()
 struct Transaction *CreateTransactionExt(struct Message *message)
 {
     struct Transaction *t = CreateTransaction(message);
+    TransactionSetNotifyInterface(t, GetTransactionManager()->interface);
     put_in_list(&SingletonTransactionManager->transactions, t);
     
     return t;
 }
 
-struct TransactionManager *GetTransactionManager()
-{
-    if (SingletonTransactionManager == NULL) {
-        SingletonTransactionManager = calloc(1, sizeof(struct TransactionManager));
-    }
-
-    return SingletonTransactionManager;
-}
-
 struct Transaction *GetTransactionByNumber(int number)
 {
     return (struct Transaction *)get_data_at(SingletonTransactionManager->transactions,number);
+}
+
+void RemoveTransactionByNumber(int number)
+{
+    del_node_at(&GetTransactionManager()->transactions, number);
+}
+
+void RemoveTransaction(struct Transaction *t)
+{
+    int i = 0;
+
+    for(; i < CountTransaction(); i++) {
+        struct Transaction *tt = GetTransactionByNumber(i);
+        if (tt == t) {
+            RemoveTransactionByNumber(i);
+            DestoryTransaction(&tt);
+            break;
+        }
+    }
 }
 
 BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMethod)
@@ -139,4 +152,18 @@ void DestoryTransactionManager(struct TransactionManager **manager)
         SingletonTransactionManager = NULL;
         *manager = NULL;
     }
+}
+
+struct TransactionNotifyInterface NotifyInterface = {
+    .die = RemoveTransaction,
+};
+
+struct TransactionManager *GetTransactionManager()
+{
+    if (SingletonTransactionManager == NULL) {
+        SingletonTransactionManager = calloc(1, sizeof(struct TransactionManager));
+        SingletonTransactionManager->interface = &NotifyInterface;
+    }
+
+    return SingletonTransactionManager;
 }

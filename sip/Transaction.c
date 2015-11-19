@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 
 #include "Bool.h"
 #include "Timer.h"
@@ -10,6 +11,7 @@
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
+#include "TransactionNotifyInterface.h"
 #include "utils/list/include/list.h"
 
 #define TRANSACTION_ACTIONS_MAX 5
@@ -18,6 +20,7 @@ struct Transaction {
     enum TransactionState state;
     struct Message *request;
     t_list *responses;
+    struct TransactionNotifyInterface *interface;
     int timerEFiredCount;
 };
 
@@ -33,7 +36,6 @@ struct FSM_STATE {
 };
 
 static TransactionTimerAdder TimerAdder;
-
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
 
 void TransactionSetTimer(TransactionTimerAdder adder)
@@ -44,6 +46,11 @@ void TransactionSetTimer(TransactionTimerAdder adder)
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
 {
     put_in_list(&t->responses, message);
+}
+
+void TransactionSetNotifyInterface(struct Transaction *t, struct TransactionNotifyInterface *interface)
+{
+    t->interface = interface;
 }
 
 enum TransactionState TransactionGetState(struct Transaction *t)
@@ -58,7 +65,10 @@ void TimerKCallBack(void *t)
 
 void TimerFCallback(void *t)
 {
+    assert(((struct Transaction *)t)->interface != NULL);
+
     RunFSM(t, TRANSACTION_EVENT_TIMER_F_FIRED);
+    ((struct Transaction *)t)->interface->die(t);
 }
 
 void TimerECallback(void *t)
