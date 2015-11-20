@@ -4,7 +4,7 @@ struct TransactionNotifyInterface;
 
 typedef void (*TimerCallback)(void *transaction);
 typedef void (*TransactionTimerAdder)(void *transaction, int ms, TimerCallback onTime);
-typedef void (*TransactionAction)(struct Transaction *t);
+typedef int (*TransactionAction)(struct Transaction *t);
 
 enum TransactionState {
     TRANSACTION_STATE_TRYING, 

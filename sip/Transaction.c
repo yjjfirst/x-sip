@@ -65,10 +65,7 @@ void TimerKCallBack(void *t)
 
 void TimerFCallback(void *t)
 {
-    assert(((struct Transaction *)t)->interface != NULL);
-
     RunFSM(t, TRANSACTION_EVENT_TIMER_F_FIRED);
-    ((struct Transaction *)t)->interface->die(t);
 }
 
 void TimerECallback(void *t)
@@ -76,18 +73,21 @@ void TimerECallback(void *t)
     RunFSM(t, TRANSACTION_EVENT_TIMER_E_FIRED);
 }
 
-void ResetTimerEFiredCount(struct Transaction *t)
+int ResetTimerEFiredCount(struct Transaction *t)
 {
     t->timerEFiredCount = 0;
+    return 0;
 }
 
-void IncTimerEFiredCount(struct Transaction *t)
+int IncTimerEFiredCount(struct Transaction *t)
 {
     if (T1<<t->timerEFiredCount <= T4)
         t->timerEFiredCount ++;
+
+    return 0;
 }
 
-void AddTimerE(struct Transaction *t)
+int AddTimerE(struct Transaction *t)
 {    
     int interval = T1<<t->timerEFiredCount;
     
@@ -95,19 +95,25 @@ void AddTimerE(struct Transaction *t)
         interval = T4;
     if (TimerAdder)
         TimerAdder(t, interval, TimerECallback);
+
+    return 0;
 }
 
-void AddTimerK(struct Transaction *t)
+int AddTimerK(struct Transaction *t)
 {
     if (TimerAdder)
         TimerAdder(t, T4, TimerKCallBack);
+
+    return 0;
 }
 
-void SendRequestMessage(struct Transaction *t)
+int SendRequestMessage(struct Transaction *t)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, t->request);
     SendMessage(s);
+
+    return 0;
 }
 
 struct Message *TransactionGetRequest(struct Transaction *t)
@@ -167,18 +173,18 @@ struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
             {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{
+                    SendRequestMessage,
                     IncTimerEFiredCount,
-                    AddTimerE,
-                    SendRequestMessage}},
+                    AddTimerE}},
             {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
             {-1}}},
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
             {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_PROCEEDING,{
+                    SendRequestMessage,
                     IncTimerEFiredCount,
-                    AddTimerE,
-                    SendRequestMessage}},
+                    AddTimerE}},
             {-1}}},
     {TRANSACTION_STATE_COMPLETED,{
             {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
@@ -204,7 +210,8 @@ void InvokeActions(struct Transaction *t, struct FSM_STATE_ENTRY *e)
     int j;
 
     for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
-        if(e->actions[j] != NULL) e->actions[j](t);
+        if(e->actions[j] != NULL) 
+            if (e->actions[j](t) < 0) break;
     }
 }
 
@@ -222,4 +229,7 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
             InvokeActions(t, &entrys[i]);
         }
     }
+
+    if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
+        ((struct Transaction *)t)->interface->die(t);
 }

@@ -230,6 +230,5 @@ TEST(TransactionTestGroup, TimerKTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
 
     TimerKCallbackFunc(t);
-    s = TransactionGetState(t);
-    CHECK_EQUAL(TRANSACTION_STATE_TERMINATED, s);
+    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 }
