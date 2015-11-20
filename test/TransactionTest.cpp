@@ -60,8 +60,7 @@ int TransactionReceiveMessageMock(char *message)
 
 int TransactionSendMessageMock(char *message)
 {
-    mock().actualCall("TransactionSendMessageMock");
-    return 0;
+    return mock().actualCall("TransactionSendMessageMock").returnIntValue();
 }
 
 void AddTimer(void *p, int ms, TimerCallback onTime)
@@ -232,3 +231,35 @@ TEST(TransactionTestGroup, TimerKTest)
     TimerKCallbackFunc(t);
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 }
+
+TEST(TransactionTestGroup, SendMessageError)
+{
+    RemoveTransaction(t);
+    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T1);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
+    mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
+
+    struct Message *message = BuildRegisterMessage();
+    CreateTransactionExt(message);
+
+    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+
+    DestoryTransactionManager(&manager);
+
+}
+
+// TEST(TransactionTestGroup, ProceedingTransportError)
+// {
+//     char string[MAX_MESSAGE_LENGTH] = {0};
+
+//     Response = RINGING180;
+
+//     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
+
+//     ReceiveMessage(string);
+//     s = TransactionGetState(t);
+//     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
+//     mock().checkExpectations();
+
+// }

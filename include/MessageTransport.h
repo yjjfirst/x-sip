@@ -8,7 +8,7 @@ void AddMessageTransporter(char *name ,MessageSender s, MessageReceiver r);
 void InitReceiveMessageCallback(MessageSender h);
 void RemoveMessageTransporter(char *name);
 BOOL ReceiveMessage(char *message);
-void SendMessage(char *message);
+int SendMessage(char *message);
 
 
 

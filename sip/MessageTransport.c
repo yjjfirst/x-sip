@@ -60,8 +60,10 @@ BOOL ReceiveMessage(char *message)
     return FALSE;
 }
 
-void SendMessage(char *message)
+int SendMessage(char *message)
 {
     if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->sender != NULL)
-        GetTransporterAt(0)->sender(message);
+     return GetTransporterAt(0)->sender(message);
+
+    return 0;
 }

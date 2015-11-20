@@ -111,7 +111,11 @@ int SendRequestMessage(struct Transaction *t)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, t->request);
-    SendMessage(s);
+
+    if (SendMessage(s) < 0) {
+        RunFSM(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        return -1;
+    }
 
     return 0;
 }
@@ -137,7 +141,10 @@ struct Transaction *CreateTransaction(struct Message *request)
     struct Transaction *t;
 
     t = CallocTransaction(request);
-    SendRequestMessage(t);
+    if (SendRequestMessage(t) < 0) {
+        DestoryTransaction(&t);
+        return NULL;
+    }
 
     if (TimerAdder != NULL) {
         TimerAdder(t, T1, TimerECallback);    
@@ -177,6 +184,7 @@ struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
                     IncTimerEFiredCount,
                     AddTimerE}},
             {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
             {-1}}},
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
@@ -185,6 +193,7 @@ struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
                     SendRequestMessage,
                     IncTimerEFiredCount,
                     AddTimerE}},
+            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
             {-1}}},
     {TRANSACTION_STATE_COMPLETED,{
             {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
@@ -222,14 +231,19 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
     struct FSM_STATE *fsmState = LocateFSMState(t);
     if (fsmState == NULL) return;
 
+    assert(t != NULL);
+    
     entrys = fsmState->entrys;
     for ( i = 0; entrys[i].event != -1; i++) {
         if (entrys[i].event == event) {
             t->state = entrys[i].nextState;
             InvokeActions(t, &entrys[i]);
+            break;
         }
     }
 
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        ((struct Transaction *)t)->interface->die(t);
+        if (t != NULL && t->interface != NULL)
+            ((struct Transaction *)t)->interface->die(t);
+
 }

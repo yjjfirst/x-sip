@@ -27,9 +27,11 @@ int CountTransaction()
 struct Transaction *CreateTransactionExt(struct Message *message)
 {
     struct Transaction *t = CreateTransaction(message);
-    TransactionSetNotifyInterface(t, GetTransactionManager()->interface);
-    put_in_list(&SingletonTransactionManager->transactions, t);
-    
+    if (t != NULL) {
+        TransactionSetNotifyInterface(t, GetTransactionManager()->interface);
+        put_in_list(&SingletonTransactionManager->transactions, t);
+    }
+
     return t;
 }
 
@@ -121,7 +123,7 @@ BOOL MessageReceived(char *string)
         else if (statusCode == 100) {
             RunFSM(t, TRANSACTION_EVENT_100TRYING);
         }
-
+        
         TransactionAddResponse(t, message);
         return TRUE;
     }
