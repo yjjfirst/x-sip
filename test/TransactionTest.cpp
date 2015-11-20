@@ -249,17 +249,30 @@ TEST(TransactionTestGroup, SendMessageError)
 
 }
 
-// TEST(TransactionTestGroup, ProceedingTransportError)
-// {
-//     char string[MAX_MESSAGE_LENGTH] = {0};
+TEST(TransactionTestGroup, ProceedingTransportError)
+{
+    char string[MAX_MESSAGE_LENGTH] = {0};
 
-//     Response = RINGING180;
+    Response = RINGING180;
 
-//     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
-//     ReceiveMessage(string);
-//     s = TransactionGetState(t);
-//     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
-//     mock().checkExpectations();
+    ReceiveMessage(string);
+    s = TransactionGetState(t);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
+    
+    mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
+    TimerECallbackFunc(t);
+    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_EQUAL(0, CountTransaction());
+    mock().checkExpectations();
+}
 
-// }
+TEST(TransactionTestGroup, TryingTransportErrorTest)
+{
+    mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
+    TimerECallbackFunc(t);
+    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_EQUAL(0, CountTransaction());    
+    mock().checkExpectations();
+}
