@@ -6,6 +6,7 @@
 #include "Header.h"
 #include "Parser.h"
 #include "CSeqHeader.h"
+#include "SipMethod.h"
 
 struct CSeqHeader 
 {

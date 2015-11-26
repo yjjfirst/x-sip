@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "Bool.h"
-#include "Method.h"
 #include "RequestLine.h"
 #include "Parser.h"
 #include "Header.h"

@@ -1,4 +1,3 @@
-#include "Method.h"
 #include "Bool.h"
 
 struct CSeqHeader;

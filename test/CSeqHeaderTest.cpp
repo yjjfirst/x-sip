@@ -3,6 +3,7 @@
 extern "C" {
 #include "Parser.h"
 #include "CSeqHeader.h"
+#include "SipMethod.h"
 }
 
 TEST_GROUP(CSeqTestGroup)

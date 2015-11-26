@@ -14,7 +14,6 @@ extern "C" {
 #include "Header.h"
 #include "Parameter.h"
 #include "ViaHeader.h"
-#include "Method.h"
 #include "TransactionManager.h"
 #include "UserAgent.h"
 }

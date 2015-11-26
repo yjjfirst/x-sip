@@ -10,7 +10,6 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "MessageTransport.h"
 #include "Transaction.h"
-#include "Method.h"
 #include "UserAgent.h"
 }
 
