@@ -14,5 +14,7 @@ char *UserAgentGetRegistrar(struct UserAgent *ua);
 void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
 char *UserAgentGetAuthName(struct UserAgent *ua);
 
+void UserAgentRegister(struct UserAgent *ua);
+
 struct UserAgent *CreateUserAgent();
 void DestoryUserAgent(struct UserAgent **ua);

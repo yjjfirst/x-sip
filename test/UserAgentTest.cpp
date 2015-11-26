@@ -91,3 +91,12 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
 
     DestoryUserAgent(&ua);
 }
+
+TEST(UserAgentTestGroup, RegisterTest)
+{
+    struct UserAgent *ua = CreateUserAgent();
+
+    UserAgentRegister(ua);
+
+    DestoryUserAgent(&ua);
+}

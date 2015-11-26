@@ -36,6 +36,11 @@ DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetRegistrar, registrar);
 DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetAuthName, authName, AUTH_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetAuthName, authName);
 
+void UserAgentRegister(struct UserAgent *ua)
+{
+    
+}
+
 struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));

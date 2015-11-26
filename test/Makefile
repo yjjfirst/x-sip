@@ -2,7 +2,7 @@ CC=gcc
 CXX=g++
 
 CPPUTEST_HOME=../cpputest
-CPPFLAGS += -I$(CPPUTEST_HOME)/include -I../include -Wall -g
+CPPFLAGS += -I./ -I$(CPPUTEST_HOME)/include -I../include -Wall -g
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 .PHONY: all

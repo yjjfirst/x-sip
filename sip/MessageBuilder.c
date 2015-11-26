@@ -35,7 +35,7 @@ void AddRequestLine(struct Message *m)
 
 void AddViaHeader(struct Message *m)
 {
-    struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_IPPORT);
+    struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_PORT);
     struct ViaHeader *via = CreateViaHeader(uri);
     
     MessageAddHeader(m, (struct Header *)via);
