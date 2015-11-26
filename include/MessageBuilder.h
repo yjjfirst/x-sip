@@ -8,8 +8,9 @@
 #define USER_NAME "88001"
 
 struct Message;
+struct UserAgent;
 
 void MessageAddViaParameter(struct Message *message, char *name, char *value);
 void MessageSetCSeqMethod (struct Message *message, char *method);
 
-struct Message *BuildRegisterMessage();
+struct Message *BuildRegisterMessage(struct UserAgent *ua);

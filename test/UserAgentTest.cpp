@@ -1,8 +1,11 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include <string.h>
+
 #include "UserAgent.h"
-#include "string.h"
+#include "MessageBuilder.h"
+#include "Messages.h"
 }
 
 TEST_GROUP(UserAgentTestGroup)
@@ -92,11 +95,26 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
     DestoryUserAgent(&ua);
 }
 
-TEST(UserAgentTestGroup, RegisterTest)
+TEST(UserAgentTestGroup, BuildBindingsMessage)
 {
     struct UserAgent *ua = CreateUserAgent();
+    struct Message *message = NULL;
+    
+    UserAgentSetUserName(ua, (char *)"88001");
+    UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
+    UserAgentSetProxy(ua, (char *)"192.168.10.63");
+    
+    message = BuildRegisterMessage(ua);
 
-    UserAgentRegister(ua);
+    struct RequestLine *rl = MessageGetRequest(message);
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
+    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
 
+    struct URI *uri = RequestLineGetUri(rl);
+    STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
+    STRCMP_EQUAL("192.168.10.63", UriGetHost(uri));
+
+    DestoryMessage(&message);
     DestoryUserAgent(&ua);
 }
+

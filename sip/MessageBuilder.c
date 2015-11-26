@@ -10,6 +10,7 @@
 #include "URI.h"
 #include "Parameter.h"
 #include "Header.h"
+#include "UserAgent.h"
 
 void MessageAddViaParameter(struct Message *message, char *name, char *value)
 {
@@ -26,9 +27,9 @@ void MessageSetCSeqMethod (struct Message *message, char *method)
     CSeqHeaderSetMethod(c, method);
 }
 
-void AddRequestLine(struct Message *m)
+void AddRequestLine(struct Message *m, char *proxy)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, "", PROXY_IPADDR, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, "", proxy, 0);
     struct RequestLine  *r = CreateRequestLine(SIP_METHOD_REGISTER, uri);
     MessageSetRequest(m, r);
 }
@@ -104,11 +105,11 @@ void AddContentLengthHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)c);
 }
 
-struct Message *BuildRegisterMessage()
+struct Message *BuildRegisterMessage(struct UserAgent *ua)
 {
     struct Message *m = CreateMessage();
     
-    AddRequestLine(m);
+    AddRequestLine(m, UserAgentGetProxy(ua) );
     AddViaHeader(m);
     AddFromHeader(m);
     AddToHeader(m);
@@ -120,4 +121,3 @@ struct Message *BuildRegisterMessage()
     AddContentLengthHeader(m);
     return m;
 }
-

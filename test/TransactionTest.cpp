@@ -16,6 +16,7 @@ extern "C" {
 #include "ViaHeader.h"
 #include "Method.h"
 #include "TransactionManager.h"
+#include "UserAgent.h"
 }
 
 enum Response {
@@ -59,6 +60,7 @@ TEST_GROUP(TransactionTestGroup)
     struct Transaction *t;
     enum TransactionState s;
     struct TransactionManager *manager;
+    struct UserAgent *ua;
 
     void setup()
     {
@@ -68,8 +70,9 @@ TEST_GROUP(TransactionTestGroup)
 
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
         TransactionSetTimer(AddTimer);
+        ua = CreateUserAgent();
 
-        m = BuildRegisterMessage();
+        m = BuildRegisterMessage(ua);
         manager = GetTransactionManager();
         t = CreateTransactionExt(m);
         s = TransactionGetState(t);
@@ -83,6 +86,7 @@ TEST_GROUP(TransactionTestGroup)
     {
         RemoveMessageTransporter((char *)"TRANS");
         DestoryTransactionManager(&manager);
+        DestoryUserAgent(&ua);
         mock().clear();
     }
 };
@@ -219,13 +223,14 @@ TEST(TransactionTestGroup, SendMessageError)
     mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
     mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
 
-    struct Message *message = BuildRegisterMessage();
+    struct UserAgent *ua = CreateUserAgent();
+    struct Message *message = BuildRegisterMessage(ua);
     CreateTransactionExt(message);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 
+    DestoryUserAgent(&ua);
     DestoryTransactionManager(&manager);
-
 }
 
 TEST(TransactionTestGroup, ProceedingTransportError)

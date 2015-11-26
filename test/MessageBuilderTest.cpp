@@ -12,20 +12,25 @@ extern "C" {
 #include "ContentLengthHeader.h"
 #include "Header.h"
 #include "Parameter.h"
+#include "UserAgent.h"
 }
 
 
 TEST_GROUP(MessageBuilderTestGroup)
 {
+    struct UserAgent *ua;
     struct Message *m;
     void setup()
     {
-        m = BuildRegisterMessage();
+        ua = CreateUserAgent();
+        UserAgentSetProxy(ua, (char *)PROXY_IPADDR);
+        m = BuildRegisterMessage(ua);
     }
 
     void teardown()
     {
         DestoryMessage(&m);
+        DestoryUserAgent(&ua);
     }
 };
 
