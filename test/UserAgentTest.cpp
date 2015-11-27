@@ -3,13 +3,25 @@
 extern "C" {
 #include <string.h>
 
+#include "Header.h"
 #include "UserAgent.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
+#include "ContactHeader.h"
 }
 
 TEST_GROUP(UserAgentTestGroup)
 {
+    struct UserAgent *BuildUserAgent()
+    {
+        struct UserAgent *ua = CreateUserAgent();
+
+        UserAgentSetUserName(ua, (char *)"88002");
+        UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
+        UserAgentSetProxy(ua, (char *)"192.168.10.63");
+
+        return ua;
+    }
 };
 
 TEST(UserAgentTestGroup, CreateUserAgentTest)
@@ -95,15 +107,11 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
     DestoryUserAgent(&ua);
 }
 
-TEST(UserAgentTestGroup, BuildBindingsMessage)
+TEST(UserAgentTestGroup, BindingsRequestLineTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = BuildUserAgent();
     struct Message *message = NULL;
-    
-    UserAgentSetUserName(ua, (char *)"88001");
-    UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
-    UserAgentSetProxy(ua, (char *)"192.168.10.63");
-    
+        
     message = BuildRegisterMessage(ua);
 
     struct RequestLine *rl = MessageGetRequest(message);
@@ -118,3 +126,41 @@ TEST(UserAgentTestGroup, BuildBindingsMessage)
     DestoryUserAgent(&ua);
 }
 
+TEST(UserAgentTestGroup, BindingsToHeaderTest)
+{
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildRegisterMessage(ua);
+
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
+    struct URI *uri = ContactHeaderGetUri(to);
+
+    STRCMP_EQUAL("88002", UriGetUser(uri));
+    DestoryMessage(&message);
+    DestoryUserAgent(&ua);
+}
+
+TEST(UserAgentTestGroup, BindingsFromHeaderTest)
+{
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildRegisterMessage(ua);
+
+    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
+    struct URI *uri = ContactHeaderGetUri(from);
+
+    STRCMP_EQUAL("88002", UriGetUser(uri));
+    DestoryMessage(&message);
+    DestoryUserAgent(&ua);
+}
+
+TEST(UserAgentTestGroup, BindingsContactHeaderTest)
+{
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildRegisterMessage(ua);
+
+    struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
+    struct URI *uri = ContactHeaderGetUri(contact);
+
+    STRCMP_EQUAL("88002", UriGetUser(uri));
+    DestoryMessage(&message);
+    DestoryUserAgent(&ua);
+}

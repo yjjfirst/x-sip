@@ -42,9 +42,9 @@ void AddViaHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)via);
 }
 
-void AddFromHeader(struct Message *m )
+void AddFromHeader(struct Message *m, char *proxy, char *user )
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, PROXY_IPADDR, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
     struct ContactHeader *from = CreateFromHeader();
 
     ContactHeaderSetParameters(from, "tag=1069855717");
@@ -52,18 +52,18 @@ void AddFromHeader(struct Message *m )
     MessageAddHeader(m, (struct Header *)from);
 }
 
-void AddToHeader(struct Message *m)
+void AddToHeader(struct Message *m, char *proxy, char *user)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, PROXY_IPADDR, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
     struct ContactHeader *to = CreateToHeader();
 
     ContactHeaderSetUri(to, uri);
     MessageAddHeader(m, (struct Header *)to);
 }
 
-void AddContactHeader(struct Message *m)
+void AddContactHeader(struct Message *m, char *user)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, USER_NAME, LOCAL_IPADDR, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, LOCAL_IPADDR, 0);
     UriAddParameter(uri, "line", "6c451db26592505");
     struct ContactHeader *contact = CreateContactHeader();
 
@@ -111,11 +111,11 @@ struct Message *BuildRegisterMessage(struct UserAgent *ua)
     
     AddRequestLine(m, UserAgentGetProxy(ua) );
     AddViaHeader(m);
-    AddFromHeader(m);
-    AddToHeader(m);
+    AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
+    AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddCallIdHeader(m);
     AddCSeqHeader(m);
-    AddContactHeader(m);
+    AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);
     AddExpiresHeader(m);
     AddContentLengthHeader(m);

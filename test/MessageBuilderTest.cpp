@@ -24,6 +24,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     {
         ua = CreateUserAgent();
         UserAgentSetProxy(ua, (char *)PROXY_IPADDR);
+        UserAgentSetUserName(ua, (char *)USER_NAME);
         m = BuildRegisterMessage(ua);
     }
 
