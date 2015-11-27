@@ -17,7 +17,7 @@ struct TransactionManager {
     t_list *transactions;
 };
 
-static struct TransactionManager *SingletonTransactionManager;
+static struct TransactionManager SingletonTransactionManager;
 
 int CountTransaction()
 {
@@ -29,7 +29,7 @@ struct Transaction *CreateTransactionExt(struct Message *message)
     struct Transaction *t = CreateTransaction(message);
     if (t != NULL) {
         TransactionSetNotifyInterface(t, GetTransactionManager()->interface);
-        put_in_list(&SingletonTransactionManager->transactions, t);
+        put_in_list(&SingletonTransactionManager.transactions, t);
     }
 
     return t;
@@ -37,7 +37,7 @@ struct Transaction *CreateTransactionExt(struct Message *message)
 
 struct Transaction *GetTransactionByNumber(int number)
 {
-    return (struct Transaction *)get_data_at(SingletonTransactionManager->transactions,number);
+    return (struct Transaction *)get_data_at(SingletonTransactionManager.transactions,number);
 }
 
 void RemoveTransactionByNumber(int number)
@@ -148,12 +148,7 @@ void DestoryTransactions(struct TransactionManager *manager)
 
 void DestoryTransactionManager(struct TransactionManager **manager)
 {
-    if (*manager != NULL) {
-        DestoryTransactions(*manager);
-        free(*manager);
-        SingletonTransactionManager = NULL;
-        *manager = NULL;
-    }
+    DestoryTransactions(*manager);
 }
 
 struct TransactionNotifyInterface NotifyInterface = {
@@ -162,10 +157,6 @@ struct TransactionNotifyInterface NotifyInterface = {
 
 struct TransactionManager *GetTransactionManager()
 {
-    if (SingletonTransactionManager == NULL) {
-        SingletonTransactionManager = calloc(1, sizeof(struct TransactionManager));
-        SingletonTransactionManager->interface = &NotifyInterface;
-    }
-
-    return SingletonTransactionManager;
+    SingletonTransactionManager.interface = &NotifyInterface;
+    return &SingletonTransactionManager;
 }

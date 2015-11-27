@@ -52,7 +52,6 @@ TEST(TransactionManager, Init)
     CHECK_FALSE(manager == NULL);
 
     DestoryTransactionManager(&manager);
-    CHECK_TRUE(manager == NULL);    
 }
 
 TEST(TransactionManager, Signleton)
