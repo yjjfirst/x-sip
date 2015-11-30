@@ -15,9 +15,7 @@ extern "C" {
 #include "MessageTransport.h"
 }
 
-int ReceiveMessageAddBindings(char *message)
-{
-    strcpy(message, "SIP/2.0 200 OK\r\n\
+#define ADD_BINDING_MESSAGE "SIP/2.0 200 OK\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5060\r\n\
 From: <sip:88001@192.168.10.62>;tag=1225432999\r\n\
 To: <sip:88001@192.168.10.62>;tag=as1d07559a\r\n\
@@ -25,8 +23,22 @@ Call-ID: 1222971951\r\n\
 CSeq: 1 REGISTER\r\n\
 Expires: 3600\r\n\
 Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
-Content-Length: 0\r\n");
+Content-Length: 0\r\n"
 
+#define REMOVE_BINDING_MESSAGE "SIP/2.0 200 OK\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5060\r\n\
+From: <sip:88001@192.168.10.62>;tag=1225432999\r\n\
+To: <sip:88001@192.168.10.62>;tag=as1d07559a\r\n\
+Call-ID: 1222971951\r\n\
+CSeq: 1 REGISTER\r\n\
+Expires: 0\r\n\
+Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
+Content-Length: 0\r\n"
+
+
+int ReceiveMessageAddBindings(char *message)
+{
+    strcpy(message, mock().actualCall("ReceiveMessageAddBindings").returnStringValue());
     return 0;
 }
 
@@ -46,6 +58,17 @@ TEST_GROUP(UserAgentTestGroup)
         UserAgentSetProxy(ua, (char *)"192.168.10.63");
 
         return ua;
+    }
+    void setup()
+    {
+        AddMessageTransporter((char *)"TRANS", SendMessageAddBindings, ReceiveMessageAddBindings);
+        InitReceiveMessageCallback(MessageReceived);
+    }
+
+    void teardown()
+    {
+        RemoveMessageTransporter((char *)"TRANS");
+        mock().clear();
     }
 };
 
@@ -193,14 +216,11 @@ TEST(UserAgentTestGroup, BindingsContactHeaderTest)
 TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-
-    AddMessageTransporter((char *)"TRANS", SendMessageAddBindings, ReceiveMessageAddBindings);
-    InitReceiveMessageCallback(MessageReceived);
-
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
+    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -208,6 +228,24 @@ TEST(UserAgentTestGroup, BindingTest)
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
     
-    RemoveMessageTransporter((char *)"TRANS");
+}
+
+TEST(UserAgentTestGroup, RemoveBindingTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildRegisterMessage(ua);
+    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+    
+    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
+    ReceiveMessage(revMessage);
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    CHECK_EQUAL(TRUE, UserAgentBinded(ua));
+
+    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(REMOVE_BINDING_MESSAGE);
+    CHECK_EQUAL(FALSE, UserAgentBinded(ua));
+
+    DestoryUserAgent(&ua);
+    DestoryTransactionManager();
 
 }
