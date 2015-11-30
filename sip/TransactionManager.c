@@ -31,7 +31,6 @@ struct Transaction *CreateTransactionExt(struct Message *message)
         TransactionSetNotifyInterface(t, GetTransactionManager()->interface);
         put_in_list(&SingletonTransactionManager.transactions, t);
     }
-
     return t;
 }
 
@@ -112,7 +111,9 @@ BOOL MessageReceived(char *string)
     int statusCode = 0;
     struct Transaction *t = NULL;
 
-    ParseMessage(string, message);
+    if (ParseMessage(string, message) < 0) {
+        return FALSE;
+    }
     status = MessageGetStatus(message);
     statusCode = StatusLineGetStatusCode(status);
 
@@ -137,18 +138,18 @@ void DestoryTransactions(struct TransactionManager *manager)
 {
     int i = 0;
     int length = CountTransaction();
-    
+
     for ( ; i < length; i++) {
         struct Transaction *t = GetTransactionByNumber(i);
         DestoryTransaction((struct Transaction **)&t);
     }
-    
+
     destroy_list(&manager->transactions, NULL);
 }
 
-void DestoryTransactionManager(struct TransactionManager **manager)
+void DestoryTransactionManager()
 {
-    DestoryTransactions(*manager);
+    DestoryTransactions(&SingletonTransactionManager);
 }
 
 struct TransactionNotifyInterface NotifyInterface = {

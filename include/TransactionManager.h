@@ -3,7 +3,7 @@
 struct Message;
 
 struct TransactionManager *GetTransactionManager();
-void DestoryTransactionManager(struct TransactionManager **manager);
+void DestoryTransactionManager();
 int MessageReceived(char *string);
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod);
 int CountTransaction(void);

@@ -7,6 +7,7 @@ struct UserAgent {
     char authName[AUTH_NAME_MAX_LENGTH];
     char proxy[PROXY_MAX_LENGTH];
     char registrar[REGISTRAR_MAX_LENGTH];
+    BOOL IsBinded;
 };
 
 #define DEFINE_STRING_MEMBER_WRITER(struct, name, field, maxLength)    \
@@ -35,6 +36,11 @@ DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetRegistrar, registrar);
 
 DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetAuthName, authName, AUTH_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetAuthName, authName);
+
+BOOL UserAgentIsBinded(struct UserAgent *ua)
+{
+    return ua->IsBinded;
+}
 
 void UserAgentAddBindings(struct UserAgent *ua)
 {

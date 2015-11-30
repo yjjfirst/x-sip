@@ -239,5 +239,14 @@ Content-Length:0\r\n";
     STRCMP_EQUAL(string,result);
 
     DestoryMessage(&message);
+}
 
+TEST(MessageTestGroup, EmptyMessageParseTest)
+{
+    struct Message *message = CreateMessage();
+    char string[] = "";
+    
+    CHECK_EQUAL(-1,ParseMessage(string, message));
+
+    DestoryMessage(&message);
 }

@@ -39,6 +39,9 @@ void AddViaHeader(struct Message *m)
     struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_PORT);
     struct ViaHeader *via = CreateViaHeader(uri);
     
+    struct Parameters *ps = ViaHeaderGetParameters(via);
+    AddParameter(ps, VIA_BRANCH_PARAMETER_NAME, "z9hG4bK1491280923"); 
+
     MessageAddHeader(m, (struct Header *)via);
 }
 

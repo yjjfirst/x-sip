@@ -70,7 +70,6 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
     
     MessageAddViaParameter(m, (char *)"rport", (char *)"");
-    MessageAddViaParameter(m, (char *)VIA_BRANCH_PARAMETER_NAME, (char *)"z9hG4bK1491280923");
 
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
     STRCMP_EQUAL(LOCAL_IPADDR, UriGetHost(ViaHeaderGetUri(via)));

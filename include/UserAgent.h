@@ -1,3 +1,5 @@
+#include "Bool.h"
+
 #define USER_NAME_MAX_LENGTH 64
 #define PROXY_MAX_LENGTH 64
 #define REGISTRAR_MAX_LENGTH 64
@@ -15,6 +17,7 @@ void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
 char *UserAgentGetAuthName(struct UserAgent *ua);
 
 void UserAgentAddBindings(struct UserAgent *ua);
+BOOL UserAgentIsBinded(struct UserAgent *ua);
 
 struct UserAgent *CreateUserAgent();
 void DestoryUserAgent(struct UserAgent **ua);

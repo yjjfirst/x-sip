@@ -133,6 +133,10 @@ int ParseMessage(char *string, struct Message *message)
     char localString[MAX_MESSAGE_LENGTH] = {0};
     char *save_ptr = NULL;
 
+    if (strlen(string) == 0) {
+        return -1;
+    }
+
     strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
     char *line = strtok_r(localString, "\r\n", &save_ptr);
     

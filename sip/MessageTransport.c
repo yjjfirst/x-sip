@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include <error.h>
+
 #include "MessageTransport.h"
 #include "utils/list/include/list.h"
 
@@ -52,7 +54,6 @@ BOOL ReceiveMessage(char *message)
     if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->receiver != NULL) {
         GetTransporterAt(0)->receiver(message);
     }
-
     if (ReceiveMessageCallback != NULL) {
         return ReceiveMessageCallback(message);
     }
@@ -64,6 +65,7 @@ int SendMessage(char *message)
 {
     if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->sender != NULL)
      return GetTransporterAt(0)->sender(message);
-
+    
+    printf("%s %d: No Transporter", __FILE__, __LINE__);
     return 0;
 }

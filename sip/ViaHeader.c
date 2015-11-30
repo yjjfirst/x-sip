@@ -128,7 +128,7 @@ struct ViaHeader *CreateViaHeader(struct URI *uri)
     ViaHeaderSetName(via, "Via");
     ViaHeaderSetTransport(via, "SIP/2.0/UDP");
     ViaHeaderSetUri(via, uri);
-    
+
     return via;
 }
 

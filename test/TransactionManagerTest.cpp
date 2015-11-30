@@ -51,7 +51,7 @@ TEST(TransactionManager, Init)
     struct TransactionManager *manager = GetTransactionManager();
     CHECK_FALSE(manager == NULL);
 
-    DestoryTransactionManager(&manager);
+    DestoryTransactionManager();
 }
 
 TEST(TransactionManager, Signleton)
@@ -61,14 +61,13 @@ TEST(TransactionManager, Signleton)
 
     CHECK_EQUAL(m1, m2);
 
-    DestoryTransactionManager(&m1);
+    DestoryTransactionManager();
 }
 
 TEST(TransactionManager, NewTransaction)
 {
     struct UserAgent *ua = CreateUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
-    struct TransactionManager *manager = GetTransactionManager();
     struct Transaction *transaction;
 
     transaction = CreateTransactionExt(message);
@@ -84,7 +83,7 @@ TEST(TransactionManager, NewTransaction)
 
 
     CHECK_FALSE(0 == transaction)
-    DestoryTransactionManager(&manager);
+    DestoryTransactionManager();
     DestoryUserAgent(&ua);
 }
 
@@ -92,16 +91,12 @@ TEST(TransactionManager, MatchResponse)
 {
     struct UserAgent *ua = CreateUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
-    struct TransactionManager *manager = GetTransactionManager();
     char string[MAX_MESSAGE_LENGTH] = {0};
     
-    MessageAddViaParameter(message, (char *)"rport", (char *)"");
-    MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280923");
-
     CreateTransactionExt(message);
     CHECK_TRUE(ReceiveMessage(string));
 
-    DestoryTransactionManager(&manager);
+    DestoryTransactionManager();
     DestoryUserAgent(&ua);
 }
 
@@ -110,7 +105,6 @@ TEST(TransactionManager, BranchNonMatchTest)
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = CreateUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
-    struct TransactionManager *manager = GetTransactionManager();
     struct Transaction *t = CreateTransactionExt(message);
     enum TransactionState s;
 
@@ -121,23 +115,20 @@ TEST(TransactionManager, BranchNonMatchTest)
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
     DestoryUserAgent(&ua);    
-    DestoryTransactionManager(&manager);
+    DestoryTransactionManager();
 }
 
 TEST(TransactionManager, GetTransactionByTest)
 {
     struct UserAgent *ua = CreateUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
-    struct TransactionManager *manager = GetTransactionManager();
     struct Transaction *t = CreateTransactionExt(message);
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
 
-    MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280923");
-
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager(&manager);
+    DestoryTransactionManager();
 }
 
