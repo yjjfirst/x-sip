@@ -17,7 +17,7 @@ void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
 char *UserAgentGetAuthName(struct UserAgent *ua);
 
 void UserAgentAddBindings(struct UserAgent *ua);
-BOOL UserAgentIsBinded(struct UserAgent *ua);
+BOOL UserAgentBinded(struct UserAgent *ua);
 
 struct UserAgent *CreateUserAgent();
 void DestoryUserAgent(struct UserAgent **ua);

@@ -199,11 +199,11 @@ TEST(UserAgentTestGroup, BindingTest)
 
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
-    struct Transaction *t = CreateTransactionExt(message);
+    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
     ReceiveMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
-    //CHECK_EQUAL(TRUE, UserAgentIsBinded(ua));
+    CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
     DestoryTransactionManager();

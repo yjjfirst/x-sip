@@ -17,11 +17,13 @@
 #define TRANSACTION_ACTIONS_MAX 5
 
 struct Transaction {
+    struct TransactionOwnerInterface *owner;
     enum TransactionState state;
     struct Message *request;
     t_list *responses;
-    struct TransactionNotifyInterface *interface;
+    struct TransactionManagerInterface *manager;
     int timerEFiredCount;
+    int event;
 };
 
 struct FSM_STATE_ENTRY {
@@ -48,9 +50,9 @@ void TransactionAddResponse(struct Transaction *t, struct Message *message)
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetNotifyInterface(struct Transaction *t, struct TransactionNotifyInterface *interface)
+void TransactionSetManagerInterface(struct Transaction *t, struct TransactionManagerInterface *manager)
 {
-    t->interface = interface;
+    t->manager = manager;
 }
 
 enum TransactionState TransactionGetState(struct Transaction *t)
@@ -107,6 +109,14 @@ int AddTimerK(struct Transaction *t)
     return 0;
 }
 
+int NotifyOwner(struct Transaction *t)
+{
+    if (t && t->owner) {
+        t->owner->onEvent(t);
+    }
+    return 0;
+}
+
 int SendRequestMessage(struct Transaction *t)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
@@ -125,6 +135,16 @@ struct Message *TransactionGetRequest(struct Transaction *t)
     return t->request;
 }
 
+enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
+{
+    return t->event;
+}
+
+struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t)
+{
+    return t->owner;
+}
+
 struct Transaction *CallocTransaction(struct Message *request)
 {
     struct Transaction *t;
@@ -136,7 +156,7 @@ struct Transaction *CallocTransaction(struct Message *request)
     return t;
 }
 
-struct Transaction *CreateTransaction(struct Message *request)
+struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwnerInterface *owner)
 {
     struct Transaction *t;
 
@@ -146,6 +166,7 @@ struct Transaction *CreateTransaction(struct Message *request)
         return NULL;
     }
 
+    t->owner = owner;
     if (TimerAdder != NULL) {
         TimerAdder(t, T1, TimerECallback);    
         TimerAdder(t, 64*T1, TimerFCallback);
@@ -177,7 +198,7 @@ void DestoryTransaction(struct Transaction **t)
 
 struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
     {TRANSACTION_STATE_TRYING,{
-            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
+            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK, NotifyOwner}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
             {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{
                     SendRequestMessage,
@@ -236,6 +257,7 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
     entrys = fsmState->entrys;
     for ( i = 0; entrys[i].event != -1; i++) {
         if (entrys[i].event == event) {
+            t->event = event;
             t->state = entrys[i].nextState;
             InvokeActions(t, &entrys[i]);
             break;
@@ -243,7 +265,7 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
     }
 
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->interface != NULL)
-            ((struct Transaction *)t)->interface->die(t);
+        if (t != NULL && t->manager != NULL)
+            ((struct Transaction *)t)->manager->die(t);
 
 }

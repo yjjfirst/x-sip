@@ -1,13 +1,18 @@
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
+
 #include "UserAgent.h"
+#include "TransactionNotifyInterface.h"
+#include "Transaction.h"
 
 struct UserAgent {
+    struct TransactionOwnerInterface notifyInterface;
     char userName[USER_NAME_MAX_LENGTH];
     char authName[AUTH_NAME_MAX_LENGTH];
     char proxy[PROXY_MAX_LENGTH];
     char registrar[REGISTRAR_MAX_LENGTH];
-    BOOL IsBinded;
+    BOOL binded;
 };
 
 #define DEFINE_STRING_MEMBER_WRITER(struct, name, field, maxLength)    \
@@ -37,9 +42,9 @@ DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetRegistrar, registrar);
 DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetAuthName, authName, AUTH_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetAuthName, authName);
 
-BOOL UserAgentIsBinded(struct UserAgent *ua)
+BOOL UserAgentBinded(struct UserAgent *ua)
 {
-    return ua->IsBinded;
+    return ua->binded;
 }
 
 void UserAgentAddBindings(struct UserAgent *ua)
@@ -47,9 +52,20 @@ void UserAgentAddBindings(struct UserAgent *ua)
 
 }
 
+void OnTransactionEvent(struct Transaction *t)
+{
+    struct UserAgent *ua = NULL;
+
+    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
+        ua = (struct UserAgent *) TransactionGetOwner(t);
+        ua->binded = TRUE;
+    }
+}
+
 struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
+    ua->notifyInterface.onEvent = OnTransactionEvent;
     return ua;
 }
 

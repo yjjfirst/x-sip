@@ -1,6 +1,7 @@
 struct Message;
 struct Transaction;
-struct TransactionNotifyInterface;
+struct TransactionManagerInterface;
+struct TransactionOwnerInterface;
 
 typedef void (*TimerCallback)(void *transaction);
 typedef void (*TransactionTimerAdder)(void *transaction, int ms, TimerCallback onTime);
@@ -24,7 +25,7 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateTransaction(struct Message *request);
+struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwnerInterface *owner);
 void DestoryTransaction(struct Transaction **t);
 void TransactionSetTimer(TransactionTimerAdder adder);
 
@@ -32,4 +33,6 @@ enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
-void TransactionSetNotifyInterface(struct Transaction *t, struct TransactionNotifyInterface *interface);
+void TransactionSetManagerInterface(struct Transaction *t, struct TransactionManagerInterface *manager);
+enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
+struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t);
