@@ -67,6 +67,7 @@ TEST_GROUP(TransactionTestGroup)
         mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
         mock().expectOneCall("TransactionSendMessageMock");
 
+        RemoveMessageTransporter((char *)"TRANS");
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
         TransactionSetTimer(AddTimer);
         ua = CreateUserAgent();

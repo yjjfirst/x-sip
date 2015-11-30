@@ -37,6 +37,7 @@ static int SendMessageMock(char *message)
 TEST_GROUP(TransactionManager)
 {
     void setup() {
+        RemoveMessageTransporter((char *)"TRANS");
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         InitReceiveMessageCallback(MessageReceived);
     }
@@ -120,6 +121,8 @@ TEST(TransactionManager, BranchNonMatchTest)
 
 TEST(TransactionManager, GetTransactionByTest)
 {
+    DestoryTransactionManager();
+
     struct UserAgent *ua = CreateUserAgent();
     struct Message *message = BuildRegisterMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, NULL);

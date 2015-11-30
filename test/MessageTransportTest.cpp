@@ -43,6 +43,7 @@ TEST_GROUP(MessageTransportTestGroup)
 {
 
     void setup() {
+        RemoveMessageTransporter((char *)"TRANS");
         InitTransportMock();
     }
     void teardown() {

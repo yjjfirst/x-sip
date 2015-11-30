@@ -207,7 +207,7 @@ TEST(UserAgentTestGroup, BindingTest)
 
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
-
+    
     RemoveMessageTransporter((char *)"TRANS");
 
 }
