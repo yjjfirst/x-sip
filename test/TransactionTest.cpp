@@ -72,7 +72,7 @@ TEST_GROUP(TransactionTestGroup)
         TransactionSetTimer(AddTimer);
         ua = CreateUserAgent();
 
-        m = BuildRegisterMessage(ua);
+        m = BuildBindingMessage(ua);
         t = CreateTransactionExt(m, NULL);
         s = TransactionGetState(t);
         InitReceiveMessageCallback(MessageReceived);
@@ -220,7 +220,7 @@ TEST(TransactionTestGroup, SendMessageError)
     mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
 
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     CreateTransactionExt(message, NULL);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));

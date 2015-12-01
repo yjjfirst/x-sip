@@ -160,7 +160,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = NULL;
         
-    message = BuildRegisterMessage(ua);
+    message = BuildBindingMessage(ua);
 
     struct RequestLine *rl = MessageGetRequest(message);
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
@@ -177,7 +177,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
 TEST(UserAgentTestGroup, BindingsToHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
 
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
@@ -190,7 +190,7 @@ TEST(UserAgentTestGroup, BindingsToHeaderTest)
 TEST(UserAgentTestGroup, BindingsFromHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
 
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
@@ -203,7 +203,7 @@ TEST(UserAgentTestGroup, BindingsFromHeaderTest)
 TEST(UserAgentTestGroup, BindingsContactHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
 
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
@@ -217,7 +217,7 @@ TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
     mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
@@ -234,7 +234,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
     mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
@@ -244,7 +244,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     DestoryTransactionManager();
 
-    message = BuildRegisterMessage(ua);
+    message = BuildBindingMessage(ua);
     t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
 
     mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(REMOVE_BINDING_MESSAGE);

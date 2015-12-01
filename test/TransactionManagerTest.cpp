@@ -68,17 +68,17 @@ TEST(TransactionManager, Signleton)
 TEST(TransactionManager, NewTransaction)
 {
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     struct Transaction *transaction;
 
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
-    message = BuildRegisterMessage(ua);
+    message = BuildBindingMessage(ua);
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
-    message = BuildRegisterMessage(ua);
+    message = BuildBindingMessage(ua);
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(3, CountTransaction());
 
@@ -91,7 +91,7 @@ TEST(TransactionManager, NewTransaction)
 TEST(TransactionManager, MatchResponse)
 {
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     char string[MAX_MESSAGE_LENGTH] = {0};
     
     CreateTransactionExt(message, NULL);
@@ -105,7 +105,7 @@ TEST(TransactionManager, BranchNonMatchTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, NULL);
     enum TransactionState s;
 
@@ -124,7 +124,7 @@ TEST(TransactionManager, GetTransactionByTest)
     DestoryTransactionManager();
 
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildRegisterMessage(ua);
+    struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, NULL);
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";

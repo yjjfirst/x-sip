@@ -202,7 +202,7 @@ void DestoryTransaction(struct Transaction **t)
     }
 }
 
-struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
+struct FSM_STATE ClientNonInviteTransactionFSM[TRANSACTION_STATE_MAX] = {
     {TRANSACTION_STATE_TRYING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK, NotifyOwner}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
@@ -233,9 +233,9 @@ struct FSM_STATE *LocateFSMState(struct Transaction *t)
     int i = 0;
     struct FSM_STATE *fsmState = NULL;
 
-    for (; TransactionFSM[i].currState != -1; i ++) {
-        if (t->state == TransactionFSM[i].currState)
-            fsmState = &TransactionFSM[i];
+    for (; ClientNonInviteTransactionFSM[i].currState != -1; i ++) {
+        if (t->state == ClientNonInviteTransactionFSM[i].currState)
+            fsmState = &ClientNonInviteTransactionFSM[i];
     }
 
     return fsmState;

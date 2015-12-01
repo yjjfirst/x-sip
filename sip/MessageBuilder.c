@@ -108,7 +108,7 @@ void AddContentLengthHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)c);
 }
 
-struct Message *BuildRegisterMessage(struct UserAgent *ua)
+struct Message *BuildBindingMessage(struct UserAgent *ua)
 {
     struct Message *m = CreateMessage();
     
