@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "Header.h"
 #include "ExpiresHeader.h"
@@ -54,6 +55,7 @@ char *ExpiresHeaderGetName(struct ExpiresHeader *e)
 
 int ExpiresHeaderGetExpires(struct ExpiresHeader *e)
 {
+    assert(e != NULL);
     return e->expires;
 }
 

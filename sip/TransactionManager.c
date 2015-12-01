@@ -118,6 +118,7 @@ BOOL MessageReceived(char *string)
     statusCode = StatusLineGetStatusCode(status);
 
     if ( (t = MatchTransaction(message)) != NULL) {
+        TransactionAddResponse(t, message);
         if (statusCode == 200) {
             RunFSM(t, TRANSACTION_EVENT_200OK);
         }
@@ -125,7 +126,6 @@ BOOL MessageReceived(char *string)
             RunFSM(t, TRANSACTION_EVENT_100TRYING);
         }
         
-        TransactionAddResponse(t, message);
         return TRUE;
     }
 

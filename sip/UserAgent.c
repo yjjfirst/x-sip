@@ -5,6 +5,9 @@
 #include "UserAgent.h"
 #include "TransactionNotifyInterface.h"
 #include "Transaction.h"
+#include "ExpiresHeader.h"
+#include "Messages.h"
+#include "Header.h"
 
 struct UserAgent {
     struct TransactionOwnerInterface notifyInterface;
@@ -47,18 +50,18 @@ BOOL UserAgentBinded(struct UserAgent *ua)
     return ua->binded;
 }
 
-void UserAgentAddBindings(struct UserAgent *ua)
-{
-
-}
-
 void OnTransactionEvent(struct Transaction *t)
 {
     struct UserAgent *ua = NULL;
 
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
+        struct Message *m = TransactionGetLatestResponse(t);
+        struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, m); 
         ua = (struct UserAgent *) TransactionGetOwner(t);
-        ua->binded = TRUE;
+        if (ExpiresHeaderGetExpires(e) != 0)
+            ua->binded = TRUE;
+        else
+            ua->binded = FALSE;
     }
 }
 

@@ -16,6 +16,7 @@ extern "C" {
 #include "ViaHeader.h"
 #include "TransactionManager.h"
 #include "UserAgent.h"
+#include "StatusLine.h"
 }
 
 enum Response {
@@ -58,7 +59,6 @@ TEST_GROUP(TransactionTestGroup)
     struct Message *m;
     struct Transaction *t;
     enum TransactionState s;
-    struct TransactionManager *manager;
     struct UserAgent *ua;
 
     void setup()
@@ -73,7 +73,6 @@ TEST_GROUP(TransactionTestGroup)
         ua = CreateUserAgent();
 
         m = BuildRegisterMessage(ua);
-        manager = GetTransactionManager();
         t = CreateTransactionExt(m, NULL);
         s = TransactionGetState(t);
         InitReceiveMessageCallback(MessageReceived);
@@ -256,4 +255,23 @@ TEST(TransactionTestGroup, TryingTransportErrorTest)
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
     CHECK_EQUAL(0, CountTransaction());    
     mock().checkExpectations();
+}
+
+TEST(TransactionTestGroup, GetLatestResponse)
+{
+    char string[MAX_MESSAGE_LENGTH] = {0};
+
+    Response = RINGING180;
+    ReceiveMessage(string);
+
+    Response = RINGING180;
+    ReceiveMessage(string);
+
+    Response = OK200;
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
+    ReceiveMessage(string);
+
+    struct Message *latestResponse = TransactionGetLatestResponse(t);
+    struct StatusLine *sl = MessageGetStatus(latestResponse);
+    CHECK_EQUAL(200,StatusLineGetStatusCode(sl));
 }

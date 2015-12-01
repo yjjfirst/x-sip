@@ -170,6 +170,7 @@ void MessageSetRequest(struct Message *message, struct RequestLine *rl)
 
 struct StatusLine *MessageGetStatus(struct Message *message)
 {
+    assert(message != NULL);
     return message->rr.status;
 }
 

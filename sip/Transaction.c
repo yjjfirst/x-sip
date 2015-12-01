@@ -60,6 +60,12 @@ enum TransactionState TransactionGetState(struct Transaction *t)
     return t->state;
 }
 
+struct Message *TransactionGetLatestResponse(struct Transaction *t)
+{
+    int length = get_list_len(t->responses);
+    return get_data_at(t->responses, length - 1);
+}
+
 void TimerKCallBack(void *t)
 {
     RunFSM(t, TRANSACTION_EVENT_TIMER_K_FIRED);

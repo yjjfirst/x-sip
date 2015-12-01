@@ -242,10 +242,15 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
+    DestoryTransactionManager();
+
+    message = BuildRegisterMessage(ua);
+    t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+
     mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(REMOVE_BINDING_MESSAGE);
+    ReceiveMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
-
 }

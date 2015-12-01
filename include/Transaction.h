@@ -36,3 +36,4 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event);
 void TransactionSetManagerInterface(struct Transaction *t, struct TransactionManagerInterface *manager);
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
 struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t);
+struct Message *TransactionGetLatestResponse(struct Transaction *t);

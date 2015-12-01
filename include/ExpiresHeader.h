@@ -1,4 +1,5 @@
 struct ExpiresHeader;
+struct Header;
 
 struct ExpiresHeader *CreateExpiresHeader(int expires);
 void DestoryExpiresHeader(struct Header *e);
