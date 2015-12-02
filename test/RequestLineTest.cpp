@@ -156,7 +156,15 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
     DestoryRequestLine(r);
 }
 
+TEST(RequestLineTestGroup, SetMethodTest)
+{
+    struct URI *u = CreateUri((char *)URI_SCHEME_SIP, (char *)"", (char *)"192.168.10.62", 0);
+    struct RequestLine *rl = CreateRequestLine(SIP_METHOD_INVITE, u);
 
+    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, RequestLineGetMethod(rl));
+
+    DestoryRequestLine(rl);
+}
 
 
 

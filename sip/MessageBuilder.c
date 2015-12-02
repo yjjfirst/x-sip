@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
@@ -30,7 +32,7 @@ void MessageSetCSeqMethod (struct Message *message, char *method)
 void AddRequestLine(struct Message *m, char *proxy, SIP_METHOD method)
 {
     struct URI *uri = CreateUri(URI_SCHEME_SIP, "", proxy, 0);
-    struct RequestLine  *r = CreateRequestLine(SIP_METHOD_REGISTER, uri);
+    struct RequestLine  *r = CreateRequestLine(method, uri);
     MessageSetRequest(m, r);
 }
 

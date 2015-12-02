@@ -56,7 +56,6 @@ char *RequestLineGetMethod (struct RequestLine *r)
 int RequestLineSetMethod (struct RequestLine *r, char *method)
 {
     struct HeaderPattern *p = &RequestLinePattern[0];
-
     Copy2Target(r, method, p);        
     return 0;
 }
@@ -95,7 +94,7 @@ char *RequestLine2String(char *string, struct RequestLine *r)
 struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
 {
     struct RequestLine *r = CreateEmptyRequestLine();
-    RequestLineSetMethod(r, "REGISTER");
+    RequestLineSetMethod(r, MethodMap2String(m));
     RequestLineSetUri(r, u);
     RequestLineSetSipVersion(r, "SIP/2.0");
 

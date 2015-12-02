@@ -136,7 +136,7 @@ int Copy2Target(void* target, char *value, struct HeaderPattern *pattern)
     if (pattern->legal != NULL && pattern->legal(value) == FALSE) {
         return -1;
     }
-    
+
     if (pattern->parse != NULL) {
         pattern->parse(value, target + pattern->offset);
     }

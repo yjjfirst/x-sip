@@ -127,5 +127,7 @@ TEST(MessageBuilderTestGroup, InviteMessageTest)
     char toUser[] = "88002";
     struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
 
+    struct RequestLine *rl = MessageGetRequest(inviteMessage);
+    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethod(rl));
     DestoryMessage(&inviteMessage);
 }

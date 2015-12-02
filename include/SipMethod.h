@@ -31,4 +31,4 @@ typedef enum {
 #define SIP_METHOD_NAME_REFER "REFER"
 #define SIP_METHOD_NAME_PUBLISH "PUBLISH"
 
-char *MethodMap2StringName(SIP_METHOD method);
+char *MethodMap2String(SIP_METHOD method);

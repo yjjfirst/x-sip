@@ -23,7 +23,7 @@ struct Mapping Mappings[] = {
     {SIP_METHOD_PUBLISH,     SIP_METHOD_NAME_PUBLISH},
 };
 
-char *MethodMap2StringName(SIP_METHOD method)
+char *MethodMap2String(SIP_METHOD method)
 {
     return Mappings[method].stringName;
 }
