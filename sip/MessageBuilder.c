@@ -89,9 +89,9 @@ void AddCallIdHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)id);
 }
 
-void AddCSeqHeader(struct Message *m)
+void AddCSeqHeader(struct Message *m, SIP_METHOD method)
 {
-    struct CSeqHeader *cseq = CreateCSeqHeader(1, SIP_METHOD_NAME_REGISTER);
+    struct CSeqHeader *cseq = CreateCSeqHeader(1, MethodMap2String(method));
 
     MessageAddHeader(m, (struct Header *)cseq);
 }
@@ -119,7 +119,7 @@ struct Message *BuildBindingMessage(struct UserAgent *ua)
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddCallIdHeader(m);
-    AddCSeqHeader(m);
+    AddCSeqHeader(m, SIP_METHOD_REGISTER);
     AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);
     AddExpiresHeader(m);
@@ -135,9 +135,9 @@ struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
     AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_INVITE);
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
+    AddToHeader(m, UserAgentGetProxy(ua), to);
     AddCallIdHeader(m);
-    AddCSeqHeader(m);
+    AddCSeqHeader(m, SIP_METHOD_INVITE);
     AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);
     AddExpiresHeader(m);
