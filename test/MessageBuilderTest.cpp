@@ -121,3 +121,11 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 
     STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthGetName(c));
 }
+
+TEST(MessageBuilderTestGroup, InviteMessageTest)
+{
+    char toUser[] = "88002";
+    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
+
+    DestoryMessage(&inviteMessage);
+}

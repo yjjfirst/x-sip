@@ -14,3 +14,4 @@ void MessageAddViaParameter(struct Message *message, char *name, char *value);
 void MessageSetCSeqMethod (struct Message *message, char *method);
 
 struct Message *BuildBindingMessage(struct UserAgent *ua);
+struct Message *BuildInviteMessage(struct UserAgent *ua, char *to);
