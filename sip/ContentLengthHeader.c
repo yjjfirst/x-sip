@@ -34,7 +34,7 @@ struct ContentLengthHeader *CreateContentLengthHeader ()
     return c;
 }
 
-struct Header *ParseContentLength(char *string)
+struct Header *ParseContentLengthHeader(char *string)
 {
     struct ContentLengthHeader *c = CreateContentLengthHeader();
     Parse(string, c, GetContentLengthHeaderPattern());
@@ -42,12 +42,19 @@ struct Header *ParseContentLength(char *string)
     return (struct Header *)c;
 }
 
-char *ContentLengthGetName(struct ContentLengthHeader *c)
+char *ContentLengthHeaderGetName(struct ContentLengthHeader *c)
 {
     return c->headerBase.name;
 }
 
-int ContentLengthGetLength(struct ContentLengthHeader *c)
+void ContentLengthHeaderSetLength(struct ContentLengthHeader *c, int length)
+{
+    struct HeaderPattern *p = &ContentLengthHeaderPattern[1];
+    
+    SetIntegerField((void *)c, length, p);
+}
+
+int ContentLengthHeaderGetLength(struct ContentLengthHeader *c)
 {
     return c->length;
 }

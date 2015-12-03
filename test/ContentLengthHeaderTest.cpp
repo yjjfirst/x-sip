@@ -15,8 +15,8 @@ TEST(ContentLengthHeaderTestGroup, ContentLengthHeaderParseTest)
     char header[] = "Content-Length : 1024";
 
     Parse(header, c, GetContentLengthHeaderPattern());
-    STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
-    CHECK_EQUAL(1024, ContentLengthGetLength(c));
+    STRCMP_EQUAL("Content-Length", ContentLengthHeaderGetName(c));
+    CHECK_EQUAL(1024, ContentLengthHeaderGetLength(c));
     DestoryContentLengthHeader((struct Header *)c);
 }
 

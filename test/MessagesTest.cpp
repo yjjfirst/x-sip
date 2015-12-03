@@ -14,6 +14,7 @@ extern "C" {
 #include "CSeqHeader.h"
 #include "ContentLengthHeader.h"
 #include "StatusLine.h"
+#include "Header.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -163,8 +164,8 @@ TEST(MessageTestGroup, ContentLengthParseTest)
     ParseMessage(messageString, message);
 
     struct ContentLengthHeader *c = (struct ContentLengthHeader *) MessageGetHeader("Content-Length", message);
-    STRCMP_EQUAL("Content-Length", ContentLengthGetName(c));
-    CHECK_EQUAL(0, ContentLengthGetLength(c));
+    STRCMP_EQUAL("Content-Length", ContentLengthHeaderGetName(c));
+    CHECK_EQUAL(0, ContentLengthHeaderGetLength(c));
 
     DestoryMessage(&message);
 }
@@ -247,6 +248,18 @@ TEST(MessageTestGroup, EmptyMessageParseTest)
     char string[] = "";
     
     CHECK_EQUAL(-1,ParseMessage(string, message));
+
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, SetContentLengthTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    MessageSetContentLength(message, 1024);
+    CHECK_EQUAL(1024, ContentLengthHeaderGetLength(
+                    (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message)));
 
     DestoryMessage(&message);
 }

@@ -119,7 +119,7 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 {
     struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, m);
 
-    STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthGetName(c));
+    STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthHeaderGetName(c));
 }
 
 TEST(MessageBuilderTestGroup, InviteMessageRequestLineTest)
@@ -129,6 +129,8 @@ TEST(MessageBuilderTestGroup, InviteMessageRequestLineTest)
 
     struct RequestLine *rl = MessageGetRequest(inviteMessage);
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethod(rl));
+    
+    STRCMP_EQUAL("88002", UriGetUser(RequestLineGetUri(rl)));
 
     DestoryMessage(&inviteMessage);
 }
@@ -152,6 +154,19 @@ TEST(MessageBuilderTestGroup, InviteMessageCseqHeaderTest)
     
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, inviteMessage);
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, CSeqHeaderGetMethod(c));
+
+    DestoryMessage(&inviteMessage);
+}
+
+TEST(MessageBuilderTestGroup, InviteContentLengthTest)
+{
+    char toUser[] = "88002";
+    int contengLength = 436;
+    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
+
+    MessageSetContentLength(inviteMessage, contengLength);
+    CHECK_EQUAL(contengLength, ContentLengthHeaderGetLength(
+                    (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, inviteMessage)));
 
     DestoryMessage(&inviteMessage);
 }

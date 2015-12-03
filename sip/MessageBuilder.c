@@ -14,24 +14,9 @@
 #include "Header.h"
 #include "UserAgent.h"
 
-void MessageAddViaParameter(struct Message *message, char *name, char *value)
+void AddRequestLine(struct Message *m, char *proxy, SIP_METHOD method, char *user)
 {
-    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
-    struct Parameters *p = ViaHeaderGetParameters(via);
-
-    AddParameter(p, name, value);
-}
-
-void MessageSetCSeqMethod (struct Message *message, char *method)
-{
-    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
-
-    CSeqHeaderSetMethod(c, method);
-}
-
-void AddRequestLine(struct Message *m, char *proxy, SIP_METHOD method)
-{
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, "", proxy, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
     struct RequestLine  *r = CreateRequestLine(method, uri);
     MessageSetRequest(m, r);
 }
@@ -114,7 +99,7 @@ struct Message *BuildBindingMessage(struct UserAgent *ua)
 {
     struct Message *m = CreateMessage();
     
-    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER);
+    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
@@ -132,7 +117,7 @@ struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
 {
     struct Message *m = CreateMessage();
 
-    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_INVITE);
+    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_INVITE, to);
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddToHeader(m, UserAgentGetProxy(ua), to);

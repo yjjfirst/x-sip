@@ -3,10 +3,11 @@ struct ContentLengthHeader;
 struct ContentLengthHeader *CreateContentLengthHeader();
 void DestoryContentLengthHeader(struct Header *header);
 struct HeaderPattern *GetContentLengthHeaderPattern();
-struct Header *ParseContentLength();
+struct Header *ParseContentLengthHeader();
 
-int ContentLengthGetLength(struct ContentLengthHeader *c);
-char *ContentLengthGetName(struct ContentLengthHeader *c);
+int ContentLengthHeaderGetLength(struct ContentLengthHeader *c);
+void ContentLengthHeaderSetLength(struct ContentLengthHeader *c, int length);
+char *ContentLengthHeaderGetName(struct ContentLengthHeader *c);
 
 char *ContentLengthHeader2String(char *result, struct Header *c);
 

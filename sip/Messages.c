@@ -14,6 +14,7 @@
 #include "ContentLengthHeader.h"
 #include "StatusLine.h"
 #include "ExpiresHeader.h"
+#include "Parameter.h"
 #include "utils/list/include/list.h"
 
 #define SIP_VERSION "SIP/2.0"
@@ -47,7 +48,7 @@ struct HeaderOperation HeaderOperations[] = {
     {HEADER_NAME_CONTACT, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
     {HEADER_NAME_CALLID, ParseCallIdHeader, DestoryCallIdHeader, CallIdHeader2String},
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
-    {HEADER_NAME_CONTENT_LENGTH, ParseContentLength, DestoryContentLengthHeader, ContentLengthHeader2String},
+    {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestoryContentLengthHeader, ContentLengthHeader2String},
     {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},
 };
 
@@ -173,6 +174,29 @@ struct StatusLine *MessageGetStatus(struct Message *message)
     assert(message != NULL);
     return message->rr.status;
 }
+
+void MessageAddViaParameter(struct Message *message, char *name, char *value)
+{
+    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
+    struct Parameters *p = ViaHeaderGetParameters(via);
+
+    AddParameter(p, name, value);
+}
+
+void MessageSetCSeqMethod (struct Message *message, char *method)
+{
+    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
+
+    CSeqHeaderSetMethod(c, method);
+}
+
+void MessageSetContentLength(struct Message *message, int length)
+{
+    struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
+    
+    ContentLengthHeaderSetLength(c, length);
+}
+
 
 char *Header2String(char *result, struct Header *header)
 {

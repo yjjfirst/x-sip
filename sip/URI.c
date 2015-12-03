@@ -247,7 +247,9 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
 {
     struct URI *uri = CreateEmptyUri();
     UriSetScheme(uri, scheme);
-    UriSetUser(uri, user);
+    if (user != NULL) {
+        UriSetUser(uri, user);
+    }
     UriSetHost(uri, host);
     UriSetPort(uri, port);
 
