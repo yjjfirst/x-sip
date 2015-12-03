@@ -31,6 +31,7 @@ struct Transaction *CreateTransactionExt(struct Message *message, struct Transac
         TransactionSetManagerInterface(t, GetTransactionManager()->manager);
         put_in_list(&SingletonTransactionManager.transactions, t);
     }
+
     return t;
 }
 

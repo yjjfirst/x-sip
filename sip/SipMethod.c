@@ -1,12 +1,13 @@
+#include <string.h>
 #include "SipMethod.h"
 #define SIP_METHOD_MAX_LENGTH 32
 
-struct Mapping {
+struct MethodStringMap {
     SIP_METHOD method;
     char stringName[SIP_METHOD_MAX_LENGTH];
 };
 
-struct Mapping Mappings[] = {   
+struct MethodStringMap MethodStringMaps[] = {   
     {SIP_METHOD_INVITE,      SIP_METHOD_NAME_INVITE},
     {SIP_METHOD_ACK,         SIP_METHOD_NAME_ACK},
     {SIP_METHOD_OPTIONS,     SIP_METHOD_NAME_OPTIONS},
@@ -21,9 +22,23 @@ struct Mapping Mappings[] = {
     {SIP_METHOD_MESSAGE,     SIP_METHOD_NAME_MESSAGE},
     {SIP_METHOD_REFER,       SIP_METHOD_NAME_REFER},
     {SIP_METHOD_PUBLISH,     SIP_METHOD_NAME_PUBLISH},
+    {SIP_METHOD_NONE, ""},
 };
 
 char *MethodMap2String(SIP_METHOD method)
 {
-    return Mappings[method].stringName;
+    return MethodStringMaps[method].stringName;
+}
+
+SIP_METHOD StringMap2MethodNumber(char *methodString)
+{
+    struct MethodStringMap *maps = MethodStringMaps;
+
+    for ( ;maps->method != SIP_METHOD_NONE; maps++){
+        if (strcmp(maps->stringName, methodString) == 0)
+            return maps->method;
+        
+    }
+
+    return SIP_METHOD_NONE;;
 }

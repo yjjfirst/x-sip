@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include <string.h>
 #include "SipMethod.h"
 }
 
@@ -21,4 +22,20 @@ TEST(SipMethodGroup, MethodMap2StringTest)
     
     method = SIP_METHOD_PUBLISH;
     STRCMP_EQUAL(SIP_METHOD_NAME_PUBLISH, MethodMap2String(method));
+}
+
+TEST(SipMethodGroup, StringMap2MethodNumber)
+{
+    char methodString[64] = SIP_METHOD_NAME_INVITE;
+    CHECK_EQUAL(SIP_METHOD_INVITE, StringMap2MethodNumber(methodString));
+    
+    strcpy(methodString, SIP_METHOD_NAME_REGISTER);
+    CHECK_EQUAL(SIP_METHOD_REGISTER, StringMap2MethodNumber(methodString));
+
+    strcpy(methodString, SIP_METHOD_NAME_PUBLISH);
+    CHECK_EQUAL(SIP_METHOD_PUBLISH, StringMap2MethodNumber(methodString));
+    
+    strcpy(methodString, "ASDFADF");
+    CHECK_EQUAL(SIP_METHOD_NONE, StringMap2MethodNumber(methodString));
+
 }

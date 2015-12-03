@@ -9,6 +9,7 @@ typedef int (*TransactionAction)(struct Transaction *t);
 
 enum TransactionState {
     TRANSACTION_STATE_TRYING, 
+    TRANSACTION_STATE_CALLING,
     TRANSACTION_STATE_PROCEEDING,
     TRANSACTION_STATE_COMPLETED,
     TRANSACTION_STATE_TERMINATED,

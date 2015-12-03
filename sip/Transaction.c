@@ -57,6 +57,7 @@ void TransactionSetManagerInterface(struct Transaction *t, struct TransactionMan
 
 enum TransactionState TransactionGetState(struct Transaction *t)
 {
+    assert(t != NULL);
     return t->state;
 }
 
@@ -154,9 +155,16 @@ struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t)
 struct Transaction *CallocTransaction(struct Message *request)
 {
     struct Transaction *t;
+    struct RequestLine *rl = MessageGetRequest(request);
 
     t = calloc(1, sizeof (struct Transaction));
-    t->state = TRANSACTION_STATE_TRYING;
+
+    if(RequestLineGetMethodNumber(rl) == SIP_METHOD_INVITE) {
+        t->state = TRANSACTION_STATE_CALLING;
+    }
+    else {
+        t->state = TRANSACTION_STATE_TRYING;
+    }
     t->request = request;
 
     return t;
@@ -164,9 +172,8 @@ struct Transaction *CallocTransaction(struct Message *request)
 
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwnerInterface *owner)
 {
-    struct Transaction *t;
+    struct Transaction *t = CallocTransaction(request);
 
-    t = CallocTransaction(request);
     if (SendRequestMessage(t) < 0) {
         DestoryTransaction(&t);
         return NULL;

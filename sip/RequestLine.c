@@ -53,6 +53,12 @@ char *RequestLineGetMethod (struct RequestLine *r)
     return r->method;
 }
 
+SIP_METHOD RequestLineGetMethodNumber(struct RequestLine *r)
+{
+    
+    return StringMap2MethodNumber(RequestLineGetMethod(r));
+}
+
 int RequestLineSetMethod (struct RequestLine *r, char *method)
 {
     struct HeaderPattern *p = &RequestLinePattern[0];

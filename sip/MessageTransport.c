@@ -66,6 +66,6 @@ int SendMessage(char *message)
     if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->sender != NULL)
      return GetTransporterAt(0)->sender(message);
     
-    printf("%s %d: No Transporter", __FILE__, __LINE__);
-    return 0;
+    printf("%s %d:Error no Transporter", __FILE__, __LINE__);
+    return -1;
 }

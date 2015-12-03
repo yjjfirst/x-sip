@@ -13,6 +13,7 @@ typedef enum {
     SIP_METHOD_MESSAGE,
     SIP_METHOD_REFER,
     SIP_METHOD_PUBLISH,
+    SIP_METHOD_NONE,
 } SIP_METHOD;
 
 #define SIP_METHOD_NAME_NONE "NONE"
@@ -32,3 +33,4 @@ typedef enum {
 #define SIP_METHOD_NAME_PUBLISH "PUBLISH"
 
 char *MethodMap2String(SIP_METHOD method);
+SIP_METHOD StringMap2MethodNumber(char *string);
