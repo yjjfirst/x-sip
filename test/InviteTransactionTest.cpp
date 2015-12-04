@@ -1,4 +1,5 @@
 #include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
 
 extern "C" {
 #include "Messages.h"
@@ -19,14 +20,21 @@ static int SendMessageMock(char *message)
     return 0;
 }
 
+static void AddTimer(void *p, int ms, TimerCallback onTime)
+{
+
+}
+
 TEST_GROUP(InviteTransactionTestGroup)
 {
     void setup(){
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
+        TransactionSetTimer(AddTimer);
     }
 
     void teardown() {
         RemoveMessageTransporter((char *)"TRANS");
+        mock().clear();
     }
 
     struct UserAgent *BuildUserAgent()
@@ -50,6 +58,19 @@ TEST(InviteTransactionTestGroup, CreateInviteTransaction)
  
     CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
 
+    DestoryUserAgent(&ua);
+    DestoryTransactionManager();
+}
+
+
+TEST(InviteTransactionTestGroup, Receive2xxTest)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
+    
+    ReceiveMessage(stringReceived);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
 }

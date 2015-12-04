@@ -183,6 +183,8 @@ struct Transaction *CreateTransaction(struct Message *request, struct Transactio
     if (TimerAdder != NULL) {
         TimerAdder(t, T1, TimerECallback);    
         TimerAdder(t, 64*T1, TimerFCallback);
+    } else {
+        assert("No timer manager initialized" == NULL);
     }
 
     return t;
