@@ -16,6 +16,11 @@ enum TransactionState {
     TRANSACTION_STATE_MAX,
 };
 
+enum TransactionType {
+    TRANSACTION_TYPE_CLIENT_INVITE,
+    TRANSACTION_TYPE_CLIENT_NON_INVITE,
+};
+
 enum TransactionEvent {
     TRANSACTION_EVENT_200OK,
     TRANSACTION_EVENT_100TRYING,
@@ -38,3 +43,4 @@ void TransactionSetManagerInterface(struct Transaction *t, struct TransactionMan
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
 struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
+enum TransactionType TransactionGetType(struct Transaction *t);

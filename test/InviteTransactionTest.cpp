@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 extern "C" {
+#include <string.h>
 #include "Messages.h"
 #include "MessageBuilder.h"
 #include "UserAgent.h"
@@ -10,8 +11,19 @@ extern "C" {
 #include "MessageTransport.h"
 }
 
+#define Message200OK "SIP/2.0 200 OK\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1296642367\r\n\
+To: <sip:88002@192.168.10.62>;tag=as6151ad25\r\n\
+Call-ID: 97295390\r\n\
+CSeq: 20 INVITE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Type: application/sdp\r\n\
+Content-Length: 289\r\n"
+
 static int ReceiveMessageMock(char *message)
 {
+    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
     return 0;
 }
 
@@ -30,6 +42,7 @@ TEST_GROUP(InviteTransactionTestGroup)
     void setup(){
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         TransactionSetTimer(AddTimer);
+        InitReceiveMessageCallback(MessageReceived);
     }
 
     void teardown() {
@@ -62,15 +75,20 @@ TEST(InviteTransactionTestGroup, CreateInviteTransaction)
     DestoryTransactionManager();
 }
 
-
 TEST(InviteTransactionTestGroup, Receive2xxTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
-    
+    CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message200OK);
     ReceiveMessage(stringReceived);
+    
+    CHECK_EQUAL(0, CountTransaction());
+    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
+    mock().checkExpectations();
 }

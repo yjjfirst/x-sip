@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <error.h>
+#include <assert.h>
 
 #include "MessageTransport.h"
 #include "utils/list/include/list.h"
@@ -57,7 +58,8 @@ BOOL ReceiveMessage(char *message)
     if (ReceiveMessageCallback != NULL) {
         return ReceiveMessageCallback(message);
     }
-
+    assert("No receive message call back initialized." == NULL);
+    
     return FALSE;
 }
 
@@ -66,6 +68,6 @@ int SendMessage(char *message)
     if (GetTransporterAt(0) != NULL && GetTransporterAt(0)->sender != NULL)
      return GetTransporterAt(0)->sender(message);
     
-    printf("%s %d:Error no Transporter", __FILE__, __LINE__);
+    assert("No Transporter initialized" == NULL);
     return -1;
 }

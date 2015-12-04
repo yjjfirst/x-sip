@@ -55,13 +55,15 @@ void OnTransactionEvent(struct Transaction *t)
     struct UserAgent *ua = NULL;
 
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
-        struct Message *m = TransactionGetLatestResponse(t);
-        struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, m); 
-        ua = (struct UserAgent *) TransactionGetOwner(t);
-        if (ExpiresHeaderGetExpires(e) != 0)
-            ua->binded = TRUE;
-        else
-            ua->binded = FALSE;
+        if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
+            struct Message *m = TransactionGetLatestResponse(t);
+            struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, m); 
+            ua = (struct UserAgent *) TransactionGetOwner(t);
+            if (ExpiresHeaderGetExpires(e) != 0)
+                ua->binded = TRUE;
+            else
+                ua->binded = FALSE;
+        }
     }
 }
 

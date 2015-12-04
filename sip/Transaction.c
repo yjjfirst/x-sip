@@ -24,6 +24,7 @@ struct Transaction {
     struct TransactionManagerInterface *manager;
     int timerEFiredCount;
     int event;
+    enum TransactionType type;
 };
 
 struct FSM_STATE_ENTRY {
@@ -142,6 +143,11 @@ struct Message *TransactionGetRequest(struct Transaction *t)
     return t->request;
 }
 
+enum TransactionType TransactionGetType(struct Transaction *t)
+{
+    return t->type;
+}
+
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
 {
     return t->event;
@@ -161,9 +167,11 @@ struct Transaction *CallocTransaction(struct Message *request)
 
     if(RequestLineGetMethodNumber(rl) == SIP_METHOD_INVITE) {
         t->state = TRANSACTION_STATE_CALLING;
+        t->type = TRANSACTION_TYPE_CLIENT_INVITE;
     }
     else {
         t->state = TRANSACTION_STATE_TRYING;
+        t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
     }
     t->request = request;
 
@@ -211,7 +219,9 @@ void DestoryTransaction(struct Transaction **t)
     }
 }
 
-struct FSM_STATE ClientNonInviteTransactionFSM[TRANSACTION_STATE_MAX] = {
+#define __XXX_STATE_ENDING__ -1
+#define __XXX_FSM_ENDING__ -1
+struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
     {TRANSACTION_STATE_TRYING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK, NotifyOwner}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
@@ -221,7 +231,20 @@ struct FSM_STATE ClientNonInviteTransactionFSM[TRANSACTION_STATE_MAX] = {
                     AddTimerE}},
             {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
             {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {-1}}},
+            {__XXX_STATE_ENDING__}}},
+
+    {TRANSACTION_STATE_CALLING,{
+            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED,{AddTimerK, NotifyOwner}},
+            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetTimerEFiredCount}},
+            {TRANSACTION_EVENT_TIMER_E_FIRED,TRANSACTION_STATE_TRYING,{
+                    SendRequestMessage,
+                    IncTimerEFiredCount,
+                    AddTimerE}},
+            {TRANSACTION_EVENT_TIMER_F_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+            {__XXX_STATE_ENDING__}}},
+
+
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddTimerK}},
             {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
@@ -230,21 +253,25 @@ struct FSM_STATE ClientNonInviteTransactionFSM[TRANSACTION_STATE_MAX] = {
                     IncTimerEFiredCount,
                     AddTimerE}},
             {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {-1}}},
+            {__XXX_STATE_ENDING__}}},
+
     {TRANSACTION_STATE_COMPLETED,{
             {TRANSACTION_EVENT_TIMER_K_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {-1}}},
-    {-1},
+            {__XXX_STATE_ENDING__}}},
+    {__XXX_FSM_ENDING__},
 };
+
+#undef __XXX_FSM_ENDING__
+#undef __XXX_STATE_ENDING__
 
 struct FSM_STATE *LocateFSMState(struct Transaction *t)
 {
     int i = 0;
     struct FSM_STATE *fsmState = NULL;
 
-    for (; ClientNonInviteTransactionFSM[i].currState != -1; i ++) {
-        if (t->state == ClientNonInviteTransactionFSM[i].currState)
-            fsmState = &ClientNonInviteTransactionFSM[i];
+    for (; TransactionFSM[i].currState != -1; i ++) {
+        if (t->state == TransactionFSM[i].currState)
+            fsmState = &TransactionFSM[i];
     }
 
     return fsmState;
@@ -265,8 +292,8 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
     int i = 0;
     struct FSM_STATE_ENTRY *entrys = NULL;
     struct FSM_STATE *fsmState = LocateFSMState(t);
-    if (fsmState == NULL) return;
 
+    if (fsmState == NULL) return;
     assert(t != NULL);
     
     entrys = fsmState->entrys;
