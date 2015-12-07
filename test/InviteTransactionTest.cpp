@@ -21,6 +21,24 @@ Contact: <sip:88002@192.168.10.62:5060>\r\n\
 Content-Type: application/sdp\r\n\
 Content-Length: 289\r\n"
 
+#define Message100Trying "SIP/2.0 100 Trying\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
+To: <sip:88002@192.168.10.62>\r\n\
+Call-ID: 778885328\r\n\
+CSeq: 20 INVITE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Length: 0\r\n"
+
+#define Message180Ringing "SIP/2.0 180 Ringing\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1441229791;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
+To: <sip:88002@192.168.10.62>;tag=as5cde26a4\r\n\
+Call-ID: 778885328\r\n\
+CSeq: 20 INVITE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Length: 0\r\n"
+
 static int ReceiveMessageMock(char *message)
 {
     strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
@@ -46,6 +64,7 @@ TEST_GROUP(InviteTransactionTestGroup)
     }
 
     void teardown() {
+        DestoryTransactionManager();
         RemoveMessageTransporter((char *)"TRANS");
         mock().clear();
     }
@@ -72,7 +91,6 @@ TEST(InviteTransactionTestGroup, CreateInviteTransaction)
     CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
 }
 
 TEST(InviteTransactionTestGroup, Receive2xxTest)
@@ -89,6 +107,66 @@ TEST(InviteTransactionTestGroup, Receive2xxTest)
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
+    mock().checkExpectations();
+}
+
+TEST(InviteTransactionTestGroup, Receive100Test)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    ReceiveMessage(stringReceived);
+    
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    POINTERS_EQUAL(t, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+
+    DestoryUserAgent(&ua);
+    mock().checkExpectations();
+}
+
+TEST(InviteTransactionTestGroup, Receive180Test)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    ReceiveMessage(stringReceived);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message180Ringing);
+    ReceiveMessage(stringReceived);    
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    DestoryUserAgent(&ua);
+    mock().checkExpectations();
+
+}
+
+TEST(InviteTransactionTestGroup, Receive100and180and200Test)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    struct UserAgent *ua = BuildUserAgent();
+    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    ReceiveMessage(stringReceived);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message180Ringing);
+    ReceiveMessage(stringReceived);    
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message200OK);
+    ReceiveMessage(stringReceived);    
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+
+
+    DestoryUserAgent(&ua);
     mock().checkExpectations();
 }
