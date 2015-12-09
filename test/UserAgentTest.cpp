@@ -47,12 +47,23 @@ int SendMessageAddBindings(char *message)
     return 0;
 }
 
+
+static void AddTimer(void *p, int ms, TimerCallback onTime) 
+{
+}
+
+static void RemoveTimer(struct Timer *timer)
+{
+}
+
 TEST_GROUP(UserAgentTestGroup)
 {
     struct UserAgent *BuildUserAgent()
     {
         struct UserAgent *ua = CreateUserAgent();
+        struct TimerManager *tm = CreateTimerManager(AddTimer, RemoveTimer);
 
+        (void)tm;
         UserAgentSetUserName(ua, (char *)"88002");
         UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
         UserAgentSetProxy(ua, (char *)"192.168.10.63");
@@ -63,6 +74,7 @@ TEST_GROUP(UserAgentTestGroup)
     {
         AddMessageTransporter((char *)"TRANS", SendMessageAddBindings, ReceiveMessageAddBindings);
         InitReceiveMessageCallback(MessageReceived);
+        TransactionSetTimerManager(AddTimer);
     }
 
     void teardown()

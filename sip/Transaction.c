@@ -2,7 +2,6 @@
 #include <assert.h>
 
 #include "Bool.h"
-#include "Timer.h"
 #include "Transaction.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
@@ -38,12 +37,17 @@ struct FSM_STATE {
     struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
 };
 
-static TransactionTimerAdder TimerAdder;
+static TimerAddFunc TimerAdder;
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
 
-void TransactionSetTimer(TransactionTimerAdder adder)
+void TransactionSetTimerManager(TimerAddFunc adder)
 {
     TimerAdder = adder;
+}
+
+void TransactionRemoveTimer()
+{
+    TimerAdder = NULL;
 }
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
@@ -243,7 +247,6 @@ struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
             {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
             {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
             {__XXX_STATE_ENDING__}}},
-
 
     {TRANSACTION_STATE_PROCEEDING,{
             {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},

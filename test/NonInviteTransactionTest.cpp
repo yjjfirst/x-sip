@@ -69,7 +69,7 @@ TEST_GROUP(TransactionTestGroup)
 
         RemoveMessageTransporter((char *)"TRANS");
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
-        TransactionSetTimer(AddTimer);
+        TransactionSetTimerManager(AddTimer);
         ua = CreateUserAgent();
 
         m = BuildBindingMessage(ua);

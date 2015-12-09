@@ -1,10 +1,10 @@
+#include "Timer.h"
+
 struct Message;
 struct Transaction;
 struct TransactionManagerInterface;
 struct TransactionOwnerInterface;
 
-typedef void (*TimerCallback)(void *transaction);
-typedef void (*TransactionTimerAdder)(void *transaction, int ms, TimerCallback onTime);
 typedef int (*TransactionAction)(struct Transaction *t);
 
 enum TransactionState {
@@ -24,16 +24,18 @@ enum TransactionType {
 enum TransactionEvent {
     TRANSACTION_EVENT_200OK,
     TRANSACTION_EVENT_100TRYING,
-    TRANSACTION_EVENT_TIMER_E_FIRED,
-    TRANSACTION_EVENT_TIMER_F_FIRED,
-    TRANSACTION_EVENT_TIMER_K_FIRED,
+    TRANSACTION_EVENT_180RINGING,
+    TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,
+    TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,
+    TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED,
     TRANSACTION_EVENT_TRANSPORT_ERROR,
     TRANSACTION_EVENT_MAX,
 };
 
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwnerInterface *owner);
 void DestoryTransaction(struct Transaction **t);
-void TransactionSetTimer(TransactionTimerAdder adder);
+void TransactionSetTimerManager(TimerAddFunc adder);
+void TransactionRemoveTimer();
 
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
