@@ -5,7 +5,7 @@
 struct Timer;
 
 typedef void (*TimerCallback)(void *transaction);
-typedef void (*TimerAddFunc)(void *transaction, int ms, TimerCallback onTime);
+typedef struct Timer *(*TimerAddFunc)(void *transaction, int ms, TimerCallback onTime);
 typedef void (*TimerRemoveFunc)(struct Timer *t);
 
-struct TimerManager *CreateTimerManager(TimerAddFunc adder, TimerRemoveFunc remover);
+struct TimerManager *GetTimerManager(TimerAddFunc adder, TimerRemoveFunc remover);

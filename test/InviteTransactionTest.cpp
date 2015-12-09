@@ -51,9 +51,10 @@ static int SendMessageMock(char *message)
     return 0;
 }
 
-static void AddTimer(void *p, int ms, TimerCallback onTime)
+static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime)
 {
     mock().actualCall("AddTimer");
+    return NULL;
 }
 
 TEST_GROUP(InviteTransactionTestGroup)

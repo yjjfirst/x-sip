@@ -43,7 +43,7 @@ int TransactionSendMessageMock(char *message)
     return mock().actualCall("TransactionSendMessageMock").returnIntValue();
 }
 
-void AddTimer(void *p, int ms, TimerCallback onTime)
+struct Timer *AddTimer(void *p, int ms, TimerCallback onTime)
 {
     mock().actualCall("AddTimer").withIntParameter("ms", ms);
     if (TimerECallbackFunc == NULL)
@@ -52,6 +52,7 @@ void AddTimer(void *p, int ms, TimerCallback onTime)
         TimerFCallbackFunc = onTime;
     else
         TimerKCallbackFunc = onTime;
+    return NULL;
 }
 
 TEST_GROUP(TransactionTestGroup)

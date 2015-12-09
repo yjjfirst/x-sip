@@ -37,17 +37,17 @@ struct FSM_STATE {
     struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
 };
 
-static TimerAddFunc TimerAdder;
+static TimerAddFunc TransactionTimerAdder;
 void RunFSM(struct Transaction *t, enum TransactionEvent event);
 
 void TransactionSetTimerManager(TimerAddFunc adder)
 {
-    TimerAdder = adder;
+    TransactionTimerAdder = adder;
 }
 
 void TransactionRemoveTimer()
 {
-    TimerAdder = NULL;
+    TransactionTimerAdder = NULL;
 }
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
@@ -107,16 +107,16 @@ int AddRetransmitTimer(struct Transaction *t)
     
     if (interval > T4)
         interval = T4;
-    if (TimerAdder)
-        TimerAdder(t, interval, RetransmitTimerCallback);
+    if (TransactionTimerAdder)
+        TransactionTimerAdder(t, interval, RetransmitTimerCallback);
 
     return 0;
 }
 
 int AddWaitForResponseTimer(struct Transaction *t)
 {
-    if (TimerAdder)
-        TimerAdder(t, T4, WaitForResponseTimerCallBack);
+    if (TransactionTimerAdder)
+        TransactionTimerAdder(t, T4, WaitForResponseTimerCallBack);
 
     return 0;
 }
@@ -192,9 +192,9 @@ struct Transaction *CreateTransaction(struct Message *request, struct Transactio
     }
 
     t->owner = owner;
-    if (TimerAdder != NULL) {
-        TimerAdder(t, T1, RetransmitTimerCallback);    
-        TimerAdder(t, 64*T1, TimeoutTimerCallback);
+    if (TransactionTimerAdder != NULL) {
+        TransactionTimerAdder(t, T1, RetransmitTimerCallback);    
+        TransactionTimerAdder(t, 64*T1, TimeoutTimerCallback);
     } else {
         assert("No timer manager initialized" == NULL);
     }

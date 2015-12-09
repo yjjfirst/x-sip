@@ -48,8 +48,9 @@ int SendMessageAddBindings(char *message)
 }
 
 
-static void AddTimer(void *p, int ms, TimerCallback onTime) 
+static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime) 
 {
+    return NULL;
 }
 
 static void RemoveTimer(struct Timer *timer)
@@ -57,11 +58,11 @@ static void RemoveTimer(struct Timer *timer)
 }
 
 TEST_GROUP(UserAgentTestGroup)
-{
+{    
     struct UserAgent *BuildUserAgent()
     {
         struct UserAgent *ua = CreateUserAgent();
-        struct TimerManager *tm = CreateTimerManager(AddTimer, RemoveTimer);
+        struct TimerManager *tm = GetTimerManager(AddTimer, RemoveTimer);
 
         (void)tm;
         UserAgentSetUserName(ua, (char *)"88002");
