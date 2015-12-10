@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "Header.h"
 #include "Parser.h"
@@ -18,7 +19,7 @@ struct HeaderPattern CallIdHeaderPattern[] = {
 
 struct Header *ParseCallIdHeader(char *string)
 {
-    struct CallIdHeader *id = CreateCallIdHeader();
+    struct CallIdHeader *id = CreateEmptyCallIdHeader();
     Parse(string, id, GetCallIdPattern());
 
     return (struct Header *) id;
@@ -41,10 +42,12 @@ char *CallIdHeaderGetID(struct CallIdHeader *id)
     return id->id;
 }
 
-void CallIdHeaderSetID(struct CallIdHeader *id)
-{
+void CallIdHeaderSetID(struct CallIdHeader *id, char *idString)
+{    
     struct HeaderPattern *p = &CallIdHeaderPattern[1];
-    Copy2Target(id, "1626200011", p);
+
+    assert(idString != NULL);
+    Copy2Target(id, idString, p);
 }
 
 char *CallIdHeader2String(char *result, struct Header *id)
@@ -57,13 +60,22 @@ struct HeaderPattern *GetCallIdPattern()
     return CallIdHeaderPattern;
 }
 
-struct CallIdHeader *CreateCallIdHeader () 
-{ 
-    struct CallIdHeader *header = NULL;
+char *GenerateCallIdString()
+{
+    return "97295390";
+}
 
-    header = (struct CallIdHeader *)calloc(1,sizeof (struct CallIdHeader)); 
+struct CallIdHeader *CreateEmptyCallIdHeader()
+{
+    return (struct CallIdHeader *)calloc(1,sizeof (struct CallIdHeader)); 
+}
+
+struct CallIdHeader *CreateCallIdHeader (char *idString) 
+{ 
+    struct CallIdHeader *header = CreateEmptyCallIdHeader();
+
     CallIdHeaderSetName(header);
-    CallIdHeaderSetID(header);
+    CallIdHeaderSetID(header, idString);
     return header;
 }
 

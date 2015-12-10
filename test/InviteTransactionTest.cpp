@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 extern "C" {
+#include <stdio.h>
 #include <string.h>
 #include "Messages.h"
 #include "MessageBuilder.h"
@@ -151,12 +152,20 @@ TEST(InviteTransactionTestGroup, Receive100and180and200Test)
     mock().checkExpectations();
 }
 
-TEST(InviteTransactionTestGroup, RetransmitTest)
+TEST(InviteTransactionTestGroup, DialogCreateTest)
 {
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct Dialog *dialog = NULL;
     CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
 
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall("AddTimer");
+    ReceiveMessage(stringReceived);
+    
+    dialog = UserAgentGetDialog(ua);
+    (void)dialog;
     DestoryUserAgent(&ua);
     mock().checkExpectations();
 }

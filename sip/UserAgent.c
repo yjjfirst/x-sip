@@ -16,6 +16,7 @@ struct UserAgent {
     char proxy[PROXY_MAX_LENGTH];
     char registrar[REGISTRAR_MAX_LENGTH];
     BOOL binded;
+    struct Dialog *dialogs;
 };
 
 #define DEFINE_STRING_MEMBER_WRITER(struct, name, field, maxLength)    \
@@ -50,6 +51,11 @@ BOOL UserAgentBinded(struct UserAgent *ua)
     return ua->binded;
 }
 
+struct Dialog *UserAgentGetDialog(struct UserAgent *ua)
+{
+    return ua->dialogs;
+}
+
 void OnTransactionEvent(struct Transaction *t)
 {
     struct UserAgent *ua = NULL;
@@ -63,7 +69,7 @@ void OnTransactionEvent(struct Transaction *t)
                 ua->binded = TRUE;
             else
                 ua->binded = FALSE;
-        }
+        } 
         
     }
 }

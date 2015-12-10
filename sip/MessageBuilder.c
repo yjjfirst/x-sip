@@ -67,10 +67,9 @@ void AddMaxForwardsHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)mf);
 }
 
-void AddCallIdHeader(struct Message *m)
+void AddCallIdHeader(struct Message *m, char *idString)
 {
-    struct CallIdHeader *id = CreateCallIdHeader();
-    
+    struct CallIdHeader *id = CreateCallIdHeader(idString);
     MessageAddHeader(m, (struct Header *)id);
 }
 
@@ -103,7 +102,7 @@ struct Message *BuildBindingMessage(struct UserAgent *ua)
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddCallIdHeader(m);
+    AddCallIdHeader(m, GenerateCallIdString());
     AddCSeqHeader(m, SIP_METHOD_REGISTER);
     AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);
@@ -121,7 +120,7 @@ struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddToHeader(m, UserAgentGetProxy(ua), to);
-    AddCallIdHeader(m);
+    AddCallIdHeader(m, GenerateCallIdString());
     AddCSeqHeader(m, SIP_METHOD_INVITE);
     AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);

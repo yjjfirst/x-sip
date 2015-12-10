@@ -11,7 +11,7 @@ TEST_GROUP(CallIdHeaderTestGroup)
 
 TEST(CallIdHeaderTestGroup, CallIdHeaderParseTest)
 {
-    struct CallIdHeader *id = CreateCallIdHeader();
+    struct CallIdHeader *id = CreateEmptyCallIdHeader();
     char callidString[] = "Call-ID :  843E@TTT.COM";
 
     Parse(callidString, id, GetCallIdPattern());
@@ -23,7 +23,7 @@ TEST(CallIdHeaderTestGroup, CallIdHeaderParseTest)
 
 TEST(CallIdHeaderTestGroup, CallIdHeader2StringTest)
 {
-    struct CallIdHeader *id = CreateCallIdHeader();
+    struct CallIdHeader *id = CreateEmptyCallIdHeader();
     char callidString[] = "Call-ID:843E@TTT.COM";
     char result[128] = {0};
 
