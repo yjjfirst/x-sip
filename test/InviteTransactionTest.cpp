@@ -9,36 +9,8 @@ extern "C" {
 #include "TransactionManager.h"
 #include "Transaction.h"
 #include "MessageTransport.h"
-#include "Timer.h"
+#include "TestingMessages.h"
 }
-
-#define Message200OK "SIP/2.0 200 OK\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
-From: <sip:88001@192.168.10.62>;tag=1296642367\r\n\
-To: <sip:88002@192.168.10.62>;tag=as6151ad25\r\n\
-Call-ID: 97295390\r\n\
-CSeq: 20 INVITE\r\n\
-Contact: <sip:88002@192.168.10.62:5060>\r\n\
-Content-Type: application/sdp\r\n\
-Content-Length: 289\r\n"
-
-#define Message100Trying "SIP/2.0 100 Trying\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
-From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
-To: <sip:88002@192.168.10.62>\r\n\
-Call-ID: 778885328\r\n\
-CSeq: 20 INVITE\r\n\
-Contact: <sip:88002@192.168.10.62:5060>\r\n\
-Content-Length: 0\r\n"
-
-#define Message180Ringing "SIP/2.0 180 Ringing\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1441229791;received=192.168.10.1;rport=5061\r\n\
-From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
-To: <sip:88002@192.168.10.62>;tag=as5cde26a4\r\n\
-Call-ID: 778885328\r\n\
-CSeq: 20 INVITE\r\n\
-Contact: <sip:88002@192.168.10.62:5060>\r\n\
-Content-Length: 0\r\n"
 
 static int ReceiveMessageMock(char *message)
 {
@@ -107,7 +79,7 @@ TEST(InviteTransactionTestGroup, Receive2xxTest)
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
     CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message200OK);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall("AddTimer");
     ReceiveMessage(stringReceived);
     
@@ -125,7 +97,7 @@ TEST(InviteTransactionTestGroup, Receive100Test)
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
     struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveMessage(stringReceived);
     
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
@@ -142,11 +114,11 @@ TEST(InviteTransactionTestGroup, Receive180Test)
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
     struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message180Ringing);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
@@ -162,16 +134,16 @@ TEST(InviteTransactionTestGroup, Receive100and180and200Test)
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
     struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message100Trying);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall("AddTimer");
     ReceiveMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message180Ringing);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(Message200OK);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
     ReceiveMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 
@@ -187,5 +159,4 @@ TEST(InviteTransactionTestGroup, RetransmitTest)
 
     DestoryUserAgent(&ua);
     mock().checkExpectations();
-
 }

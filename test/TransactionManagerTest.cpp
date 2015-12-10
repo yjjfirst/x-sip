@@ -23,9 +23,9 @@ static enum Response Response;
 static int ReceiveMessageMock(char *message)
 {
     if (Response == RINGING180)
-        strcpy(message, TryingMessage);
+        strcpy(message, BINDING_TRYING_MESSAGE);
     else
-        strcpy(message, OKMessage);
+        strcpy(message, ADD_BINDING_MESSAGE);
     return 0;
 }
 

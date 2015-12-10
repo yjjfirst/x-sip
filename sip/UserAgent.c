@@ -64,6 +64,7 @@ void OnTransactionEvent(struct Transaction *t)
             else
                 ua->binded = FALSE;
         }
+        
     }
 }
 

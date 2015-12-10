@@ -6,7 +6,6 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 
-#include "Timer.h"
 #include "Transaction.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
@@ -32,9 +31,9 @@ static TimerCallback TimerKCallbackFunc;
 int TransactionReceiveMessageMock(char *message)
 {
     if (Response == RINGING180)
-        strcpy(message, TryingMessage);
+        strcpy(message, BINDING_TRYING_MESSAGE);
     else
-        strcpy(message, OKMessage);
+        strcpy(message, ADD_BINDING_MESSAGE);
     return 0;
 }
 
