@@ -8,7 +8,7 @@
 
 struct CallIdHeader {
     struct Header headerBase;
-    char id[64];
+    char id[CALLID_MAX_LENGTH];
 };
 
 struct HeaderPattern CallIdHeaderPattern[] = {

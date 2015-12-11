@@ -1,4 +1,7 @@
+#define CALLID_MAX_LENGTH 64
+
 struct CallIdHeader ;
+struct Header;
 
 struct CallIdHeader *CreateCallIdHeader(char *idString);
 struct CallIdHeader *CreateEmptyCallIdHeader();

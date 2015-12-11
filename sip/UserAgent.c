@@ -8,6 +8,8 @@
 #include "ExpiresHeader.h"
 #include "Messages.h"
 #include "Header.h"
+#include "Dialogs.h"
+#include "Utils.h"
 
 struct UserAgent {
     struct TransactionOwnerInterface notifyInterface;
@@ -16,23 +18,8 @@ struct UserAgent {
     char proxy[PROXY_MAX_LENGTH];
     char registrar[REGISTRAR_MAX_LENGTH];
     BOOL binded;
-    struct Dialog *dialogs;
+    struct Dialogs *dialogs;
 };
-
-#define DEFINE_STRING_MEMBER_WRITER(struct, name, field, maxLength)    \
-    void name (struct *ua, char *field)                                \
-    {                                                                  \
-        assert(ua != NULL);                                            \
-        strncpy(ua->field, field, sizeof(ua->field) - 1);              \
-        ua->field[maxLength - 1] = '\0';                               \
-    }                                                                  \
-    
-#define DEFINE_STRING_MEMBER_READER(struct, name, field) \
-    char *name (struct *ua)                              \
-    {                                                    \
-        assert(ua != NULL);                              \
-        return ua->field;                                \
-    }                                                    \
 
 DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetUserName, userName, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetUserName,userName);
@@ -51,10 +38,10 @@ BOOL UserAgentBinded(struct UserAgent *ua)
     return ua->binded;
 }
 
-struct Dialog *UserAgentGetDialog(struct UserAgent *ua)
-{
-    return ua->dialogs;
-}
+/* struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct CallIdHeader *callid) */
+/* { */
+/*     return GetDialogByCallId(ua->dialogs, callid, "", ""); */
+/* } */
 
 void OnTransactionEvent(struct Transaction *t)
 {

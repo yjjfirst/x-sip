@@ -11,6 +11,7 @@ extern "C" {
 #include "Transaction.h"
 #include "MessageTransport.h"
 #include "TestingMessages.h"
+#include "CallIdHeader.h"
 }
 
 static int ReceiveMessageMock(char *message)
@@ -158,14 +159,18 @@ TEST(InviteTransactionTestGroup, DialogCreateTest)
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
     struct Dialog *dialog = NULL;
+    struct CallIdHeader *callid = CreateCallIdHeader(GenerateCallIdString());
+
     CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall("AddTimer");
     ReceiveMessage(stringReceived);
     
-    dialog = UserAgentGetDialog(ua);
-    (void)dialog;
+    //dialog = UserAgentGetDialog(ua, callid);
+    CHECK_TRUE(dialog != NULL);
+
+    DestoryCallIdHeader((struct Header *)callid);
     DestoryUserAgent(&ua);
     mock().checkExpectations();
 }

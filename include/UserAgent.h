@@ -6,6 +6,7 @@
 #define AUTH_NAME_MAX_LENGTH 64
 
 struct UserAgent;
+struct CallIdHeader;
 
 void UserAgentSetUserName(struct UserAgent *ua, char *name);
 char *UserAgentGetUserName(struct UserAgent *ua);
@@ -17,7 +18,7 @@ void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
 char *UserAgentGetAuthName(struct UserAgent *ua);
 
 BOOL UserAgentBinded(struct UserAgent *ua);
-struct Dialog *UserAgentGetDialog(struct UserAgent *ua);
+struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct CallIdHeader *callid);
 
 struct UserAgent *CreateUserAgent();
 void DestoryUserAgent(struct UserAgent **ua);
