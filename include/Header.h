@@ -1,3 +1,4 @@
+#include <assert.h>
 #define HEADER_NAME_VIA "Via"
 #define HEADER_NAME_MAX_FORWARDS "Max-Forwards"
 #define HEADER_NAME_TO "To"
@@ -17,5 +18,6 @@ struct Header {
 
 static inline char *HeaderGetName(struct Header *header)
 {
+    assert(header != NULL);
     return header->name;
 }

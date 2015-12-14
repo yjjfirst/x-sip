@@ -152,25 +152,3 @@ TEST(InviteTransactionTestGroup, Receive100and180and200Test)
     DestoryUserAgent(&ua);
     mock().checkExpectations();
 }
-
-TEST(InviteTransactionTestGroup, DialogCreateTest)
-{
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Dialog *dialog = NULL;
-    struct CallIdHeader *callid = CreateCallIdHeader(GenerateCallIdString());
-
-    CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
-
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
-    mock().expectOneCall("AddTimer");
-    ReceiveMessage(stringReceived);
-    
-    //dialog = UserAgentGetDialog(ua, callid);
-    CHECK_TRUE(dialog != NULL);
-
-    DestoryCallIdHeader((struct Header *)callid);
-    DestoryUserAgent(&ua);
-    mock().checkExpectations();
-}

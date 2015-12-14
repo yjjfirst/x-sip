@@ -202,6 +202,8 @@ char *Header2String(char *result, struct Header *header)
 {
     int i = 0;
     
+    assert(result != NULL);
+    assert(header != NULL);
     for ( ; i < CountHeaderOperations(); i++) {
         if (strcmp (HeaderOperations[i].name , HeaderGetName(header)) == 0)
             return HeaderOperations[i].toString(result, header);        
@@ -233,6 +235,15 @@ void Message2String(char *result, struct Message *message)
     }
 
     return ;
+}
+
+//Only for debug, no unit test for this funciton.
+void MessageDump(struct Message *message)
+{
+    char messageString[MAX_MESSAGE_LENGTH] = {0};
+    
+    Message2String(messageString, message);
+    printf("%s\n",messageString);
 }
 
 struct Message *CreateMessage () 
@@ -283,4 +294,3 @@ void DestoryMessage (struct Message **message)
         *message = NULL;
     }
 }
-

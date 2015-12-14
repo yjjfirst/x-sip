@@ -20,3 +20,4 @@ void MessageSetContentLength(struct Message *message, int length);
 void  ExtractHeaderName(char *header, char *name);
 
 void Message2String(char *result, struct Message *message);
+void MessageDump(struct Message *message);
