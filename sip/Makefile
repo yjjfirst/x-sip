@@ -11,7 +11,7 @@ OBJS = Parser.o RequestLine.o URI.o ContactHeader.o ViaHeader.o MaxForwardsHeade
        CallIdHeader.o ContentLengthHeader.o ExpiresHeader.o Parameter.o\
        StatusLine.o CSeqHeader.o Messages.o MessageBuilder.o MessageTransport.o \
        Transaction.o Timer.o TransactionManager.o UserAgent.o SipMethod.o Dialogs.o \
-       Dialog.o
+       Dialog.o DialogId.o
 
 SRCS = $(OBJS:%o=%c)
 %.o:%.c
