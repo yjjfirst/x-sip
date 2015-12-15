@@ -61,6 +61,11 @@ void OnTransactionEvent(struct Transaction *t)
     }
 }
 
+struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
+{
+    return NULL;
+}
+
 struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));

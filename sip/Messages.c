@@ -175,6 +175,24 @@ struct StatusLine *MessageGetStatus(struct Message *message)
     return message->rr.status;
 }
 
+char *MessageGetCallId(struct Message *message)
+{
+    struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader(HEADER_NAME_CALLID, message);
+    return CallIdHeaderGetID(id);
+}
+
+char *MessageGetLocalTag(struct Message *message)
+{
+    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message);
+    return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
+}
+
+char *MessageGetRemoteTag(struct Message *message)
+{
+    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
+}
+
 void MessageAddViaParameter(struct Message *message, char *name, char *value)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);

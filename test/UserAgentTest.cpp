@@ -16,13 +16,13 @@ extern "C" {
 #include "TestingMessages.h"
 }
 
-int ReceiveMessageAddBindings(char *message)
+static int ReceiveMessageMock(char *message)
 {
-    strcpy(message, mock().actualCall("ReceiveMessageAddBindings").returnStringValue());
+    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
     return 0;
 }
 
-int SendMessageAddBindings(char *message)
+static int SendMessageMock(char *message)
 {
     return 0;
 }
@@ -45,7 +45,7 @@ TEST_GROUP(UserAgentTestGroup)
         struct TimerManager *tm = GetTimerManager(AddTimer, RemoveTimer);
 
         (void)tm;
-        UserAgentSetUserName(ua, (char *)"88002");
+        UserAgentSetUserName(ua, (char *)"88001");
         UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
         UserAgentSetProxy(ua, (char *)"192.168.10.63");
 
@@ -53,7 +53,7 @@ TEST_GROUP(UserAgentTestGroup)
     }
     void setup()
     {
-        AddMessageTransporter((char *)"TRANS", SendMessageAddBindings, ReceiveMessageAddBindings);
+        AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         InitReceiveMessageCallback(MessageReceived);
         TransactionSetTimerManager(AddTimer);
     }
@@ -175,7 +175,7 @@ TEST(UserAgentTestGroup, BindingsToHeaderTest)
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
 
-    STRCMP_EQUAL("88002", UriGetUser(uri));
+    STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
 }
@@ -188,7 +188,7 @@ TEST(UserAgentTestGroup, BindingsFromHeaderTest)
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
 
-    STRCMP_EQUAL("88002", UriGetUser(uri));
+    STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
 }
@@ -201,7 +201,7 @@ TEST(UserAgentTestGroup, BindingsContactHeaderTest)
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
 
-    STRCMP_EQUAL("88002", UriGetUser(uri));
+    STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
 }
@@ -213,7 +213,7 @@ TEST(UserAgentTestGroup, BindingTest)
     struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
-    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -230,7 +230,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     struct Message *message = BuildBindingMessage(ua);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
-    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -240,7 +240,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     message = BuildBindingMessage(ua);
     t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
 
-    mock().expectOneCall("ReceiveMessageAddBindings").andReturnValue(REMOVE_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
@@ -253,10 +253,14 @@ TEST(UserAgentTestGroup, MakeCallSuccessfullTest)
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
-    (void)t;
-    (void)revMessage;
-
+    CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
+    
+    ReceiveMessage(revMessage);
+    CHECK_TRUE(UserAgentGetDialog(ua, NULL) != NULL);
+  
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
+    mock().checkExpectations();
 } 
+

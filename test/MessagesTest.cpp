@@ -26,7 +26,7 @@ TEST_GROUP(MessageTestGroup)
 REGISTER sip:registrar.munich.de SIP/2.0\r\n\
 Via:SIP/2.0/UDP 200.201.202.203:5060;branch=z9hG4bKus19\r\n\
 Max-Forwards:70\r\n\
-To:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>\r\n\
+To:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>;tag=4321\r\n\
 From:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>;tag=3431\r\n\
 Call-ID:23@200.201.202.203\r\n\
 CSeq:1 REGISTER\r\n\
@@ -113,7 +113,7 @@ TEST(MessageTestGroup, FromParseTest)
     STRCMP_EQUAL("From", ContactHeaderGetName(from));
     STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(from));
     UriCheck(from);
-    STRCMP_EQUAL("tag=3431", ContactHeaderGetParameters(from));
+    STRCMP_EQUAL("3431", ContactHeaderGetParameter(from, (char *)HEADER_PARAMETER_NAME_TAG));
 
     DestoryMessage(&message);
 
@@ -142,6 +142,7 @@ TEST(MessageTestGroup, CallIdParseTest)
 
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader("Call-ID", message);
     STRCMP_EQUAL("Call-ID", CallIdHeaderGetName(id));
+    STRCMP_EQUAL("23@200.201.202.203", CallIdHeaderGetID(id));
     DestoryMessage(&message);
 } 
 
@@ -261,5 +262,32 @@ TEST(MessageTestGroup, SetContentLengthTest)
     CHECK_EQUAL(1024, ContentLengthHeaderGetLength(
                     (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message)));
 
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, GetCallIdTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    STRCMP_EQUAL("23@200.201.202.203", MessageGetCallId(message));
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, GetLocalTageTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    STRCMP_EQUAL("3431", MessageGetLocalTag(message));
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, GetRemoteTageTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage(messageString, message);
+
+    STRCMP_EQUAL("4321", MessageGetRemoteTag(message));
     DestoryMessage(&message);
 }

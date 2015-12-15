@@ -9,6 +9,9 @@ void DestoryMessage(struct Message **message);
 
 struct RequestLine *MessageGetRequest(struct Message *message);
 struct StatusLine *MessageGetStatus(struct Message *message);
+char *MessageGetCallId(struct Message *message);
+char *MessageGetLocalTag(struct Message *message);
+char *MessageGetRemoteTag(struct Message *message);
 struct Header *MessageGetHeader(const char *name, struct Message *message);
 
 void MessageSetRequest(struct Message *message, struct RequestLine *rl);

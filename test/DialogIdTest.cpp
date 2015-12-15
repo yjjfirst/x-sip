@@ -6,6 +6,8 @@ TEST_GROUP(DialogIdTestGroup)
 
 extern "C" {
 #include "DialogId.h"
+#include "TestingMessages.h"
+#include "Messages.h"
 }
 
 TEST(DialogIdTestGroup, CreateDialogIdTest)
@@ -64,4 +66,19 @@ TEST(DialogIdTestGroup, DialogIdUnequalTest2)
 
     DestoryDialogId(&id1);
     DestoryDialogId(&id2);
+}
+
+TEST(DialogIdTestGroup, BuildDialIdFromMessageTest)
+{
+    struct Message *message = CreateMessage();
+    struct DialogId *dialogid;
+
+    ParseMessage((char *)INVITE_200OK_MESSAGE, message);
+    dialogid = CreateDialogIdFromMessage(message);
+    STRCMP_EQUAL("97295390", DialogIdGetCallId(dialogid));
+    STRCMP_EQUAL("1296642367", DialogIdGetLocalTag(dialogid));
+    STRCMP_EQUAL("as6151ad25", DialogIdGetRemoteTag(dialogid));
+    
+    DestoryDialogId(&dialogid);
+    DestoryMessage(&message);
 }

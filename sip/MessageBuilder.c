@@ -36,8 +36,9 @@ void AddFromHeader(struct Message *m, char *proxy, char *user )
 {
     struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
     struct ContactHeader *from = CreateFromHeader();
+    struct Parameters *ps = ContactHeaderGetParameters(from);
 
-    ContactHeaderSetParameters(from, "tag=1069855717");
+    AddParameter(ps, HEADER_PARAMETER_NAME_TAG, "1069855717");
     ContactHeaderSetUri(from, uri);
     MessageAddHeader(m, (struct Header *)from);
 }

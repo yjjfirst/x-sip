@@ -6,6 +6,7 @@ extern "C" {
 #include "URI.h"
 #include "ContactHeader.h"
 #include "Parser.h"
+#include "Header.h"
 }
 
 TEST_GROUP(ToTestGroup)
@@ -31,7 +32,7 @@ TEST(ToTestGroup, ContactHeaderParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("tag=287447", ContactHeaderGetParameters(toHeader));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -47,7 +48,7 @@ TEST(ToTestGroup, ContactHeaderWithSpaceParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("tag=287447", ContactHeaderGetParameters(toHeader));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -63,7 +64,7 @@ TEST(ToTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("tag=287447", ContactHeaderGetParameters(toHeader));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -79,7 +80,7 @@ TEST(ToTestGroup, ContactHeaderNoDisplayNameParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("tag=287447", ContactHeaderGetParameters(toHeader));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
     

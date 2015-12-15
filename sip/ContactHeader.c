@@ -6,12 +6,13 @@
 #include "Parser.h"
 #include "ContactHeader.h"
 #include "URI.h"
+#include "Parameter.h"
 
 struct ContactHeader {
     struct Header headerBase;
     char displayName[32];
     struct URI *uri;
-    char parameters[128];
+    struct Parameters *parameters;
 };
 
 static struct HeaderPattern ContactNamePattern[] = {
@@ -21,7 +22,7 @@ static struct HeaderPattern DisplayNamePattern[] = {
 static struct HeaderPattern UriPattern[] = {
     {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String }};
 static struct HeaderPattern ParameterPattern[] = {
-    {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseString, NULL, String2String }};
+    {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseParameters, NULL, Parameters2String }};
 static struct HeaderPattern PlaceholderUriParameter[] = {
     {"*^",RIGHT_ANGLE, SEMICOLON, 0, 0, NULL, NULL, String2String }};
 static struct HeaderPattern PlaceholderNameDisplayname[] = {
@@ -152,15 +153,21 @@ void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri)
     header->uri = uri;
 }
 
-char *ContactHeaderGetParameters(struct ContactHeader *toHeader)
+char *ContactHeaderGetParameter(struct ContactHeader *toHeader, char *name)
 {
-    return toHeader->parameters;
+    return GetParameter(toHeader->parameters, name);
 }
 
-void ContactHeaderSetParameters(struct ContactHeader *header, char *parameters)
+struct Parameters *ContactHeaderGetParameters(struct ContactHeader *header)
 {
-    struct HeaderPattern *p = ParameterPattern;
-    Copy2Target(header, parameters, p);
+    return header->parameters;
+}
+
+void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters *parameters)
+{
+    if (header->parameters != NULL)
+        DestoryParameters(header->parameters);
+    header->parameters = parameters;
 }
 
 char *ContactHeader2String(char *result, struct Header *contact)
@@ -171,8 +178,11 @@ char *ContactHeader2String(char *result, struct Header *contact)
 struct ContactHeader *CreateEmptyContactHeader()
 {
     struct ContactHeader *header = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
+    struct Parameters *p = CreateParameters();
     
     header->uri = CreateEmptyUri();
+    header->parameters = p;
+
     return header;
 
 }
@@ -206,6 +216,7 @@ void DestoryContactHeader(struct Header *h)
 
     struct ContactHeader *header = (struct ContactHeader *)h;
     if (header != NULL) {
+        DestoryParameters(header->parameters);
         DestoryUri(header->uri);
         free(header);
     }
