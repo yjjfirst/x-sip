@@ -14,6 +14,8 @@ extern "C" {
 #include "Transaction.h"
 #include "MessageTransport.h"
 #include "TestingMessages.h"
+#include "DialogId.h"
+#include "Dialog.h"
 }
 
 static int ReceiveMessageMock(char *message)
@@ -248,17 +250,33 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     DestoryTransactionManager();
 }
 
+TEST(UserAgentTestGroup, AddDialogTest)
+{
+    struct UserAgent *ua = BuildUserAgent();
+    struct DialogId *dialogid = CreateDialogId((char *)"1", (char *)"2",(char *)"3");
+    struct Dialog *dialog = CreateDialog(dialogid);
+
+    UserAgentAddDialog(ua, dialog);
+    CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
+    POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
+
+    DestoryUserAgent(&ua);
+}
+
 TEST(UserAgentTestGroup, MakeCallSuccessfullTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
     struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
     CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
+
     ReceiveMessage(revMessage);
-    CHECK_TRUE(UserAgentGetDialog(ua, NULL) != NULL);
+    CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
   
+    DestoryDialogId(&dialogid);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
     mock().checkExpectations();

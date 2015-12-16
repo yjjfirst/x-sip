@@ -22,13 +22,11 @@ TEST(DialogsTestGroup, CreateDialogsTest)
 TEST(DialogsTestGroup, AddDialogTest)
 {
     struct Dialogs *dialogs = CreateDialogs();
-    struct Dialog *dialog = CreateDialog();
-    char callid[] = "";
-    char localTag[] = "";
-    char remoteTag[] = "";
-            
+    struct DialogId *dialogid = CreateDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct Dialog *dialog = CreateDialog(dialogid);
+           
     AddDialog(dialogs, dialog);
-    GetDialogByCallId(dialogs, callid, localTag, remoteTag);
+
     DestoryDialogs(&dialogs);
 }
 

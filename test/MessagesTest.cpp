@@ -15,6 +15,7 @@ extern "C" {
 #include "ContentLengthHeader.h"
 #include "StatusLine.h"
 #include "Header.h"
+#include "TestingMessages.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -289,5 +290,14 @@ TEST(MessageTestGroup, GetRemoteTageTest)
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("4321", MessageGetRemoteTag(message));
+    DestoryMessage(&message);
+}
+
+TEST(MessageTestGroup, GetExpiresTest)
+{
+    struct Message *message = CreateMessage();
+    ParseMessage((char *)ADD_BINDING_MESSAGE, message);
+
+    CHECK_EQUAL(3600, MessageGetExpires(message));
     DestoryMessage(&message);
 }

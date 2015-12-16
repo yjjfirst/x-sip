@@ -193,6 +193,12 @@ char *MessageGetRemoteTag(struct Message *message)
     return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
 }
 
+int MessageGetExpires(struct Message *message)
+{
+    struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, message); 
+    return ExpiresHeaderGetExpires(e);
+}
+
 void MessageAddViaParameter(struct Message *message, char *name, char *value)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);

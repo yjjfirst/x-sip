@@ -10,6 +10,8 @@
 #include "Header.h"
 #include "Dialogs.h"
 #include "Utils.h"
+#include "DialogId.h"
+#include "Dialog.h"
 
 struct UserAgent {
     struct TransactionOwnerInterface notifyInterface;
@@ -38,44 +40,49 @@ BOOL UserAgentBinded(struct UserAgent *ua)
     return ua->binded;
 }
 
-/* struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct CallIdHeader *callid) */
-/* { */
-/*     return GetDialogByCallId(ua->dialogs, callid, "", ""); */
-/* } */
-
 void OnTransactionEvent(struct Transaction *t)
 {
-    struct UserAgent *ua = NULL;
+    struct Message *m = TransactionGetLatestResponse(t);
+    struct UserAgent *ua = (struct UserAgent *) TransactionGetOwner(t);
 
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
         if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-            struct Message *m = TransactionGetLatestResponse(t);
-            struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, m); 
-            ua = (struct UserAgent *) TransactionGetOwner(t);
-            if (ExpiresHeaderGetExpires(e) != 0)
+            if (MessageGetExpires(m) != 0)
                 ua->binded = TRUE;
             else
                 ua->binded = FALSE;
+        } else {
+            struct DialogId *dialogid = CreateDialogIdFromMessage(m);
+            struct Dialog *dialog = CreateDialog(dialogid);
+            UserAgentAddDialog(ua, dialog);
         } 
-        
     }
+}
+
+void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
+{
+    AddDialog(ua->dialogs, dialog);
 }
 
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
 {
-    return NULL;
+    return GetDialogById(ua->dialogs, callid);
 }
 
 struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
+    struct Dialogs *dialogs = CreateDialogs();
     ua->notifyInterface.onEvent = OnTransactionEvent;
+    ua->dialogs = dialogs;
+
     return ua;
 }
 
 void DestoryUserAgent(struct UserAgent **ua)
 {
     if (*ua != NULL) {
+        DestoryDialogs(&(*ua)->dialogs);
         free(*ua);
         *ua = NULL;
     }
