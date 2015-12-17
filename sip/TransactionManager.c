@@ -115,7 +115,7 @@ BOOL MessageReceived(char *string)
     if (ParseMessage(string, message) < 0) {
         return FALSE;
     }
-    status = MessageGetStatus(message);
+    status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
 
     if ( (t = MatchTransaction(message)) != NULL) {

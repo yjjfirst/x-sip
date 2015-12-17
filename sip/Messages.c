@@ -159,7 +159,7 @@ int ParseMessage(char *string, struct Message *message)
     return 0;
 }
 
-struct RequestLine *MessageGetRequest(struct Message *message)
+struct RequestLine *MessageGetRequestLine(struct Message *message)
 {
     return message->rr.request;
 }
@@ -169,7 +169,7 @@ void MessageSetRequest(struct Message *message, struct RequestLine *rl)
     message->rr.request = rl;
 }
 
-struct StatusLine *MessageGetStatus(struct Message *message)
+struct StatusLine *MessageGetStatusLine(struct Message *message)
 {
     assert(message != NULL);
     return message->rr.status;
@@ -245,10 +245,11 @@ void Message2String(char *result, struct Message *message)
 
     assert(message != NULL);
     assert(result != NULL);
+
     if (message->type == MESSAGE_TYPE_REQUEST) {
-        p = RequestLine2String(p, MessageGetRequest(message));
+        p = RequestLine2String(p, MessageGetRequestLine(message));
     } else {
-        p = StatusLine2String(p, MessageGetStatus(message));
+        p = StatusLine2String(p, MessageGetStatusLine(message));
     }
 
     for (i = 0 ; i < length; i++) {        
@@ -265,7 +266,7 @@ void Message2String(char *result, struct Message *message)
 void MessageDump(struct Message *message)
 {
     char messageString[MAX_MESSAGE_LENGTH] = {0};
-    
+
     Message2String(messageString, message);
     printf("%s\n",messageString);
 }

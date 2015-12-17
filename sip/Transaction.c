@@ -165,7 +165,7 @@ struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t)
 struct Transaction *CallocTransaction(struct Message *request)
 {
     struct Transaction *t;
-    struct RequestLine *rl = MessageGetRequest(request);
+    struct RequestLine *rl = MessageGetRequestLine(request);
 
     t = calloc(1, sizeof (struct Transaction));
 

@@ -272,6 +272,6 @@ TEST(TransactionTestGroup, GetLatestResponse)
     ReceiveMessage(string);
 
     struct Message *latestResponse = TransactionGetLatestResponse(t);
-    struct StatusLine *sl = MessageGetStatus(latestResponse);
+    struct StatusLine *sl = MessageGetStatusLine(latestResponse);
     CHECK_EQUAL(200,StatusLineGetStatusCode(sl));
 }

@@ -39,6 +39,7 @@ void CallIdHeaderSetName(struct CallIdHeader *id)
 
 char *CallIdHeaderGetID(struct CallIdHeader *id)
 {
+    assert (id != NULL);
     return id->id;
 }
 

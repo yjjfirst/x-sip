@@ -12,3 +12,4 @@ struct UserAgent;
 
 struct Message *BuildBindingMessage(struct UserAgent *ua);
 struct Message *BuildInviteMessage(struct UserAgent *ua, char *to);
+struct Message *BuildAckMessage(struct UserAgent *ua, struct Message *request);

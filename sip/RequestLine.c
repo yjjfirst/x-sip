@@ -19,7 +19,8 @@ struct RequestLine {
 BOOL RequestLineMethodLegal(char *method)
 {
     if (strcmp(method, SIP_METHOD_NAME_REGISTER) == 0 
-        || strcmp(method, SIP_METHOD_NAME_INVITE) == 0)
+        || strcmp(method, SIP_METHOD_NAME_INVITE) == 0
+        || strcmp(method, SIP_METHOD_NAME_ACK) == 0)
         return TRUE;
     return FALSE;
 }
@@ -81,7 +82,11 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version)
 
 int RequestLineSetUri(struct RequestLine *r, struct URI *u)
 {
-    DestoryUri(r->requestUri);
+    assert(r != NULL);
+    assert(u != NULL);
+    
+    if (r->requestUri != NULL)
+        DestoryUri(r->requestUri);
     r->requestUri = u;
 
     return 0;
@@ -89,16 +94,21 @@ int RequestLineSetUri(struct RequestLine *r, struct URI *u)
 
 struct URI *RequestLineGetUri(struct RequestLine *r)
 {
+    assert (r != NULL);
     return r->requestUri;
 }
 
 char *RequestLine2String(char *string, struct RequestLine *r)
 {
+    assert(r != NULL);
+    assert(string != NULL);
     return ToString(string, r, GetRequestLinePattern());
 }
 
 struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
 {
+    assert (u != NULL);
+
     struct RequestLine *r = CreateEmptyRequestLine();
     RequestLineSetMethod(r, MethodMap2String(m));
     RequestLineSetUri(r, u);

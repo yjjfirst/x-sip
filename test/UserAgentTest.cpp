@@ -157,7 +157,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
         
     message = BuildBindingMessage(ua);
 
-    struct RequestLine *rl = MessageGetRequest(message);
+    struct RequestLine *rl = MessageGetRequestLine(message);
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
 
@@ -263,7 +263,7 @@ TEST(UserAgentTestGroup, AddDialogTest)
     DestoryUserAgent(&ua);
 }
 
-TEST(UserAgentTestGroup, MakeCallSuccessfullTest)
+TEST(UserAgentTestGroup, InviteSucceedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
@@ -272,7 +272,6 @@ TEST(UserAgentTestGroup, MakeCallSuccessfullTest)
     CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
-
     ReceiveMessage(revMessage);
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
   

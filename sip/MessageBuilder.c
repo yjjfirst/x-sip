@@ -95,38 +95,49 @@ void AddContentLengthHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)c);
 }
 
-struct Message *BuildBindingMessage(struct UserAgent *ua)
+struct Message *BuildMessageTemplate(struct UserAgent *ua, SIP_METHOD method)
 {
     struct Message *m = CreateMessage();
-    
-    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
+
     AddViaHeader(m);
     AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddCallIdHeader(m, GenerateCallIdString());
-    AddCSeqHeader(m, SIP_METHOD_REGISTER);
     AddContactHeader(m, UserAgentGetUserName(ua));
     AddMaxForwardsHeader(m);
-    AddExpiresHeader(m);
+    AddCSeqHeader(m, method);
     AddContentLengthHeader(m);
+
+    return m;
+}
+
+struct Message *BuildBindingMessage(struct UserAgent *ua)
+{
+    struct Message *m = BuildMessageTemplate(ua, SIP_METHOD_REGISTER);
+    
+    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
+    AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
+    AddExpiresHeader(m);
 
     return m;
 }
 
 struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
 {
-    struct Message *m = CreateMessage();
+    struct Message *invite = BuildMessageTemplate(ua, SIP_METHOD_INVITE);
 
-    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_INVITE, to);
-    AddViaHeader(m);
-    AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddToHeader(m, UserAgentGetProxy(ua), to);
-    AddCallIdHeader(m, GenerateCallIdString());
-    AddCSeqHeader(m, SIP_METHOD_INVITE);
-    AddContactHeader(m, UserAgentGetUserName(ua));
-    AddMaxForwardsHeader(m);
-    AddExpiresHeader(m);
-    AddContentLengthHeader(m);
+    AddRequestLine(invite, UserAgentGetProxy(ua), SIP_METHOD_INVITE, to);
+    AddToHeader(invite, UserAgentGetProxy(ua), to);
 
-    return m;
+    return invite;
+}
+
+struct Message *BuildAckMessage(struct UserAgent *ua, struct Message *request)
+{
+    struct Message *ack = BuildMessageTemplate(ua, SIP_METHOD_ACK);
+    struct URI *uri = RequestLineGetUri(MessageGetRequestLine(request));
+
+    AddRequestLine(ack, UserAgentGetProxy(ua), SIP_METHOD_ACK, UriGetUser(uri));
+    AddCallIdHeader(ack, MessageGetCallId(request));
+
+    return ack;
 }

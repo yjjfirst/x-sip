@@ -7,8 +7,8 @@ int ParseMessage(char *string, struct Message *message);
 struct Message *CreateMessage();
 void DestoryMessage(struct Message **message);
 
-struct RequestLine *MessageGetRequest(struct Message *message);
-struct StatusLine *MessageGetStatus(struct Message *message);
+struct RequestLine *MessageGetRequestLine(struct Message *message);
+struct StatusLine *MessageGetStatusLine(struct Message *message);
 char *MessageGetCallId(struct Message *message);
 char *MessageGetLocalTag(struct Message *message);
 char *MessageGetRemoteTag(struct Message *message);

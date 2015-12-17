@@ -50,7 +50,7 @@ TEST(MessageTestGroup, RegisterRequestLineParseTest)
     struct Message *message = CreateMessage();
     ParseMessage(messageString, message);
     
-    struct RequestLine *request = MessageGetRequest(message);
+    struct RequestLine *request = MessageGetRequestLine(message);
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(request));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(request));
     
@@ -214,7 +214,7 @@ CSeq:314159 INVITE\r\n\
 Content-Length:0\r\n";
 
     ParseMessage(string, message);
-    StatusLine *s = MessageGetStatus(message);
+    StatusLine *s = MessageGetStatusLine(message);
     
     STRCMP_EQUAL("SIP/2.0", StatusLineGetSipVersion(s));
     CHECK_EQUAL(180, StatusLineGetStatusCode(s));

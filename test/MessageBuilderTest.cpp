@@ -38,7 +38,7 @@ TEST_GROUP(MessageBuilderTestGroup)
 TEST(MessageBuilderTestGroup, RequestLineTest)
 {
 
-    struct RequestLine *rl = MessageGetRequest(m);
+    struct RequestLine *rl = MessageGetRequestLine(m);
     struct URI *uri = RequestLineGetUri(rl);
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
@@ -127,7 +127,7 @@ TEST(MessageBuilderTestGroup, InviteMessageRequestLineTest)
     char toUser[] = "88002";
     struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
 
-    struct RequestLine *rl = MessageGetRequest(inviteMessage);
+    struct RequestLine *rl = MessageGetRequestLine(inviteMessage);
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethod(rl));
     
     STRCMP_EQUAL("88002", UriGetUser(RequestLineGetUri(rl)));
@@ -168,5 +168,46 @@ TEST(MessageBuilderTestGroup, InviteContentLengthTest)
     CHECK_EQUAL(contengLength, ContentLengthHeaderGetLength(
                     (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, inviteMessage)));
 
+    DestoryMessage(&inviteMessage);
+}
+
+TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
+{
+    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
+    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
+    struct URI *uri = RequestLineGetUri(requestLine);
+    struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
+    
+    STRCMP_EQUAL("ACK", RequestLineGetMethod(requestLine));
+    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(requestLine));
+    STRCMP_EQUAL(UriGetUser(inviteUri), UriGetUser(uri));
+    STRCMP_EQUAL(UriGetScheme(inviteUri), UriGetScheme(uri));
+    STRCMP_EQUAL(UriGetHost(inviteUri), UriGetHost(uri));
+
+    DestoryMessage(&ackMessage);
+    DestoryMessage(&inviteMessage);
+}
+
+TEST(MessageBuilderTestGroup, AckMessageCallIdTest)
+{
+    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
+    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    
+    STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ackMessage));
+
+    DestoryMessage(&ackMessage);
+    DestoryMessage(&inviteMessage);
+}
+
+TEST(MessageBuilderTestGroup, AckMessageFromTest)
+{
+    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
+    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    //struct ContactHeader *from = MessageGetHeader(HEADER_NAME_FROM, ackMessage);
+    //struct ContactHeader *inviteFrom = MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
+
+
+    DestoryMessage(&ackMessage);
     DestoryMessage(&inviteMessage);
 }
