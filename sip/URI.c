@@ -223,6 +223,23 @@ void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 
 }
 
+BOOL UriMatched(struct URI *uri, struct URI *uri2)
+{
+    if (!ParametersMatched(uri->parameters, uri2->parameters)){
+        return FALSE;
+    }
+    if (!ParametersMatched(uri->headers, uri2->headers)) {
+        return FALSE;
+    }
+    if (uri->port != uri2->port) {
+        return FALSE;
+    }
+
+    return !(strcmp(uri->user, uri2->user) != 0
+             || strcmp(uri->host, uri2->host) != 0
+             || strcmp(uri->scheme, uri2->scheme) != 0);
+}
+
 void UriAddParameter(struct URI *uri, char *name, char *value)
 {
     AddParameter(uri->parameters, name, value);

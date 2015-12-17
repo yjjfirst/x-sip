@@ -178,3 +178,94 @@ TEST(URITestGroup, URIFieldSetTest)
     STRCMP_EQUAL("project", UriGetHeader(uri,(char *)"subject"));
     CHECK_EQUAL(5061, UriGetPort(uri));
 }
+
+TEST(URITestGroup, URIMatchedTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+ 
+    ParseURI((char *)URIString, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_TRUE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URIPortUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sip:alice:secretword@atlanta.com:5060;transport=tcp?subject=project";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URISchemeUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sips:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URIUserUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sip:Peter:secretword@atlanta.com;transport=tcp?subject=project";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URIHostUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sip:alice:secretword@delta.com;transport=tcp?subject=project";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URIParametersUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sip:alice:secretword@atlanta.com;transport=udp?subject=project";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
+
+TEST(URITestGroup, URIHeadersUnmatchTest)
+{
+    struct URI *uri2 = CreateEmptyUri();
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+    char URIString2[] = "sip:alice:secretword@atlanta.com;transport=udp?subject=management";
+    ParseURI((char *)URIString2, &uri2);
+    ParseURI((char *)URIString, &uri);
+
+    CHECK_FALSE(UriMatched(uri, uri2));
+
+    DestoryUri(uri2);
+}
