@@ -26,12 +26,17 @@ static struct HeaderPattern ParameterPattern[] = {
 
 struct Parameter *ParseParameter(char *s)
 {
-    struct Parameter *p = CreateParameter();
+    struct Parameter *p = CreateEmptyParameter();
     Parse(s, p, ParameterPattern);
     
     return p;
 }
 
+BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2)
+{
+    return !(strcmp(p1->name, p2->name) != 0 
+            || strcmp(p1->value, p2->value) != 0);
+}
 /*
  * Only call this function when parse parameters stand alone.
  */
@@ -81,7 +86,7 @@ int AddParameter(struct Parameters *ps, char *name, char *value)
     }
 
     if (p == NULL) {
-        p = CreateParameter();
+        p = CreateEmptyParameter();
         put_in_list(&ps->parameters, p);
     }
 
@@ -89,6 +94,28 @@ int AddParameter(struct Parameters *ps, char *name, char *value)
     Copy2Target(p, value,&ParameterPattern[1]);
 
     return 0;
+}
+
+BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2)
+{
+
+    int i = 0;
+    int length = get_list_len(ps1->parameters);
+    
+    if (length != get_list_len(ps2->parameters)) {
+        return FALSE;
+    }
+
+    for ( ; i < length; i ++) {
+        struct Parameter *p1 = get_data_at(ps1->parameters, i);
+        struct Parameter *p2 = get_data_at(ps2->parameters, i);
+        if (!ParameterMatched(p1, p2))
+            return FALSE;
+
+    }
+
+    return TRUE;
+    
 }
 
 char *GetParameter(struct Parameters *ps, char *name)
@@ -131,9 +158,25 @@ char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
     return pos;
 }
 
-struct Parameter *CreateParameter()
+struct Parameter *CreateEmptyParameter()
 {
-    return calloc(1, sizeof(struct Parameter) );
+    struct Parameter *p = calloc(1, sizeof(struct Parameter));
+    
+    assert(p != NULL);
+    return p;
+}
+
+struct Parameter *CreateParameter(char *name, char *value)
+{
+    struct Parameter *p = CreateEmptyParameter();
+
+    assert(name != NULL);
+    assert(value != NULL);
+
+    Copy2Target(p, name, &ParameterPattern[0]);
+    Copy2Target(p, value,&ParameterPattern[1]);
+
+    return p;
 }
 
 void DestoryParameter(struct Parameter *p)

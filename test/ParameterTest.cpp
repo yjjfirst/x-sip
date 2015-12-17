@@ -87,3 +87,75 @@ TEST(ParameterTestGroup, AddParameterTest)
     AddParameter(params, (char *)"test2", (char *)"value2");
     STRCMP_EQUAL("value2", GetParameter(params, (char *)"test2"));
 }
+
+TEST(ParameterTestGroup, ParameterMatchedTest)
+{
+    struct Parameter *p1 = CreateParameter((char *)"1", (char *)"2");
+    struct Parameter *p2 = CreateParameter((char *)"1", (char *)"2");
+
+    CHECK_TRUE(ParameterMatched(p1, p2));
+    
+    DestoryParameter(p1);
+    DestoryParameter(p2);
+}
+
+TEST(ParameterTestGroup, ParameterUnmatchedTest)
+{
+    struct Parameter *p1 = CreateParameter((char *)"1", (char *)"2");
+    struct Parameter *p2 = CreateParameter((char *)"4", (char *)"3");
+
+    CHECK_FALSE(ParameterMatched(p1, p2));
+    
+    DestoryParameter(p1);
+    DestoryParameter(p2);
+}
+
+TEST(ParameterTestGroup, ParametersMatchedTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(params, (char *)"test1", (char *)"value1");
+    AddParameter(params, (char *)"test2", (char *)"value2");
+    AddParameter(params, (char *)"test3", (char *)"value3");
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+
+    CHECK_TRUE(ParametersMatched(params, ps));
+
+    DestoryParameters(ps);
+}
+
+TEST(ParameterTestGroup, ParametersUnmatchedTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(params, (char *)"test1", (char *)"value1");
+    AddParameter(params, (char *)"test2", (char *)"value2");
+    AddParameter(params, (char *)"test3", (char *)"value3");
+
+    AddParameter(ps, (char *)"test2", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+
+    CHECK_FALSE(ParametersMatched(params, ps));
+
+    DestoryParameters(ps);
+}
+
+TEST(ParameterTestGroup, ParametersLengthUnmatchedTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(params, (char *)"test1", (char *)"value1");
+    AddParameter(params, (char *)"test2", (char *)"value2");
+    AddParameter(params, (char *)"test3", (char *)"value3");
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+
+    CHECK_FALSE(ParametersMatched(params, ps));
+
+    DestoryParameters(ps);
+}
