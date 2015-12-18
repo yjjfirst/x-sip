@@ -170,6 +170,16 @@ void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters 
     header->parameters = parameters;
 }
 
+BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2)
+{
+    if (!ParametersMatched(header1->parameters, header2->parameters))
+        return FALSE;
+    if (!UriMatched(header1->uri, header2->uri))
+        return FALSE;
+
+    return strcmp(header1->displayName, header2->displayName) == 0;
+}
+
 char *ContactHeader2String(char *result, struct Header *contact)
 {
     return ToString(result, contact, BuildQuotedDisplayNamePattern());

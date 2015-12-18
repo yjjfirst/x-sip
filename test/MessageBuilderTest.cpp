@@ -181,9 +181,7 @@ TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
     
     STRCMP_EQUAL("ACK", RequestLineGetMethod(requestLine));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(requestLine));
-    STRCMP_EQUAL(UriGetUser(inviteUri), UriGetUser(uri));
-    STRCMP_EQUAL(UriGetScheme(inviteUri), UriGetScheme(uri));
-    STRCMP_EQUAL(UriGetHost(inviteUri), UriGetHost(uri));
+    CHECK_TRUE(UriMatched(uri, inviteUri));
 
     DestoryMessage(&ackMessage);
     DestoryMessage(&inviteMessage);
@@ -204,9 +202,9 @@ TEST(MessageBuilderTestGroup, AckMessageFromTest)
 {
     struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
     struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
-    //struct ContactHeader *from = MessageGetHeader(HEADER_NAME_FROM, ackMessage);
-    //struct ContactHeader *inviteFrom = MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
-
+    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
+    struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
+    CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
 
     DestoryMessage(&ackMessage);
     DestoryMessage(&inviteMessage);
