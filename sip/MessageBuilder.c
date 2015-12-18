@@ -111,25 +111,10 @@ struct Message *BuildMessageTemplate(struct UserAgent *ua, SIP_METHOD method)
     return m;
 }
 
-struct Message *BuildMessageTemplateNew(struct UserAgent *ua, SIP_METHOD method)
-{
-    struct Message *m = CreateMessage();
-
-    AddViaHeader(m);
-    AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddCallIdHeader(m, GenerateCallIdString());
-    AddContactHeader(m, UserAgentGetUserName(ua));
-    AddMaxForwardsHeader(m);
-    AddCSeqHeader(m, method);
-    AddContentLengthHeader(m);
-
-    return m;
-}
-
 struct Message *BuildBindingMessage(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Message *m = BuildMessageTemplateNew(ua, SIP_METHOD_REGISTER);
+    struct Message *m = BuildMessageTemplate(ua, SIP_METHOD_REGISTER);
 
     AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
     AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
@@ -138,8 +123,10 @@ struct Message *BuildBindingMessage(struct Dialog *dialog)
     return m;
 }
 
-struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
+struct Message *BuildInviteMessage(struct Dialog *dialog)
 {
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    char *to = DialogGetToUser(dialog);
     struct Message *invite = BuildMessageTemplate(ua, SIP_METHOD_INVITE);
 
     AddRequestLine(invite, UserAgentGetProxy(ua), SIP_METHOD_INVITE, to);
@@ -148,13 +135,12 @@ struct Message *BuildInviteMessage(struct UserAgent *ua, char *to)
     return invite;
 }
 
-struct Message *BuildAckMessage(struct UserAgent *ua, struct Message *request)
+struct Message *BuildAckMessage(struct Dialog *dialog)
 {
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct Message *ack = BuildMessageTemplate(ua, SIP_METHOD_ACK);
-    struct URI *uri = RequestLineGetUri(MessageGetRequestLine(request));
 
-    AddRequestLine(ack, UserAgentGetProxy(ua), SIP_METHOD_ACK, UriGetUser(uri));
-    AddCallIdHeader(ack, MessageGetCallId(request));
+    AddRequestLine(ack, UserAgentGetProxy(ua), SIP_METHOD_ACK, DialogGetToUser(dialog));
 
     return ack;
 }

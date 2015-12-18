@@ -12,6 +12,7 @@ extern "C" {
 #include "MessageTransport.h"
 #include "TestingMessages.h"
 #include "CallIdHeader.h"
+#include "Dialog.h"
 }
 
 static int ReceiveMessageMock(char *message)
@@ -33,6 +34,10 @@ static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime)
 
 TEST_GROUP(InviteTransactionTestGroup)
 {
+    struct UserAgent *ua;
+    struct Message *message;
+    struct Transaction *t;
+    struct Dialog *dialog;
     void setup(){
         mock().expectOneCall("AddTimer");
         mock().expectOneCall("AddTimer");
@@ -40,10 +45,17 @@ TEST_GROUP(InviteTransactionTestGroup)
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         TransactionSetTimerManager(AddTimer);
         InitReceiveMessageCallback(MessageReceived);
-    }
+        ua = BuildUserAgent();
+        dialog = CreateDialog(NULL, ua);
+        message = BuildInviteMessage(dialog); 
+        t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
+
+   }
 
     void teardown() {
+        DestoryUserAgent(&ua);
         DestoryTransactionManager();
+        DestoryDialog(&dialog);
         RemoveMessageTransporter((char *)"TRANS");
         TransactionRemoveTimer();
         mock().checkExpectations();
@@ -64,22 +76,13 @@ TEST_GROUP(InviteTransactionTestGroup)
 };
 
 TEST(InviteTransactionTestGroup, CreateInviteTransaction)
-{
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
- 
+{ 
     CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
-
-    DestoryUserAgent(&ua);
 }
 
 TEST(InviteTransactionTestGroup, Receive2xxTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall("AddTimer");
@@ -88,16 +91,12 @@ TEST(InviteTransactionTestGroup, Receive2xxTest)
     CHECK_EQUAL(0, CountTransaction());
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
-    DestoryUserAgent(&ua);
     mock().checkExpectations();
 }
 
 TEST(InviteTransactionTestGroup, Receive100Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveMessage(stringReceived);
@@ -105,16 +104,12 @@ TEST(InviteTransactionTestGroup, Receive100Test)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
     POINTERS_EQUAL(t, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
-    DestoryUserAgent(&ua);
     mock().checkExpectations();
 }
 
 TEST(InviteTransactionTestGroup, Receive180Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveMessage(stringReceived);
@@ -124,17 +119,12 @@ TEST(InviteTransactionTestGroup, Receive180Test)
     ReceiveMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    DestoryUserAgent(&ua);
     mock().checkExpectations();
-
 }
 
 TEST(InviteTransactionTestGroup, Receive100and180and200Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
-    struct Transaction *t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);    
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall("AddTimer");
@@ -149,6 +139,5 @@ TEST(InviteTransactionTestGroup, Receive100and180and200Test)
     ReceiveMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 
-    DestoryUserAgent(&ua);
     mock().checkExpectations();
 }

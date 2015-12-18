@@ -22,6 +22,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct UserAgent *ua;
     struct Message *m;
     struct Dialog *dialog;
+    struct Message *inviteMessage;
     void setup()
     {
         ua = CreateUserAgent();
@@ -29,11 +30,14 @@ TEST_GROUP(MessageBuilderTestGroup)
         UserAgentSetUserName(ua, (char *)USER_NAME);
         dialog = CreateDialog(NULL, ua);
         m = BuildBindingMessage(dialog);
+        inviteMessage = BuildInviteMessage(dialog);
+
     }
 
     void teardown()
     {
         DestoryMessage(&m);
+        DestoryMessage(&inviteMessage);
         DestoryUserAgent(&ua);
         DestoryDialog(&dialog);
     }
@@ -128,57 +132,39 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 
 TEST(MessageBuilderTestGroup, InviteMessageRequestLineTest)
 {
-    char toUser[] = "88002";
-    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
-
     struct RequestLine *rl = MessageGetRequestLine(inviteMessage);
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethod(rl));
     
     STRCMP_EQUAL("88002", UriGetUser(RequestLineGetUri(rl)));
 
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, InviteMessageToHeaderTest)
 {
-    char toUser[] = "88002";
-    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
-
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, inviteMessage);
     struct URI *uri = ContactHeaderGetUri(to);
     STRCMP_EQUAL("88002", UriGetUser(uri));
-
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, InviteMessageCseqHeaderTest)
 {
-    char toUser[] = "88002";
-    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
-    
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, inviteMessage);
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, CSeqHeaderGetMethod(c));
-
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, InviteContentLengthTest)
 {
-    char toUser[] = "88002";
     int contengLength = 436;
-    struct Message *inviteMessage = BuildInviteMessage(ua, toUser);
 
     MessageSetContentLength(inviteMessage, contengLength);
     CHECK_EQUAL(contengLength, ContentLengthHeaderGetLength(
                     (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, inviteMessage)));
 
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
 {
-    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
-    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    struct Message *ackMessage = BuildAckMessage(dialog);
     struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
     struct URI *uri = RequestLineGetUri(requestLine);
     struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
@@ -188,28 +174,22 @@ TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
     CHECK_TRUE(UriMatched(uri, inviteUri));
 
     DestoryMessage(&ackMessage);
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageCallIdTest)
 {
-    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
-    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    struct Message *ackMessage = BuildAckMessage(dialog);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ackMessage));
-
     DestoryMessage(&ackMessage);
-    DestoryMessage(&inviteMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageFromTest)
 {
-    struct Message *inviteMessage = BuildInviteMessage(ua, (char *)"88002");
-    struct Message *ackMessage = BuildAckMessage(ua, inviteMessage);
+    struct Message *ackMessage = BuildAckMessage(dialog);
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
     CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
 
     DestoryMessage(&ackMessage);
-    DestoryMessage(&inviteMessage);
 }

@@ -24,6 +24,11 @@ struct UserAgent *DialogGetUserAgent(struct Dialog *dialog)
     return dialog->ua;
 }
 
+char *DialogGetToUser(struct Dialog *dialog)
+{
+    return "88002";
+}
+
 void DestoryDialog(struct Dialog **dialog)
 {
     if (*dialog != NULL) {

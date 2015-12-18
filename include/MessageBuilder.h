@@ -12,5 +12,5 @@ struct UserAgent;
 struct Dialog;
 
 struct Message *BuildBindingMessage(struct Dialog *dialog);
-struct Message *BuildInviteMessage(struct UserAgent *ua, char *to);
-struct Message *BuildAckMessage(struct UserAgent *ua, struct Message *request);
+struct Message *BuildInviteMessage(struct Dialog *dialog);
+struct Message *BuildAckMessage(struct Dialog *dialog);

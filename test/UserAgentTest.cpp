@@ -279,7 +279,8 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildInviteMessage(ua, (char *)"88002");
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildInviteMessage(dialog);
     struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
     CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
@@ -288,6 +289,7 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
   
     DestoryDialogId(&dialogid);
+    DestoryDialog(&dialog);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
     mock().checkExpectations();
