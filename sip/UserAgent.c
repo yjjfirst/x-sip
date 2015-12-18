@@ -53,7 +53,7 @@ void OnTransactionEvent(struct Transaction *t)
                 ua->binded = FALSE;
         } else {
             struct DialogId *dialogid = CreateDialogIdFromMessage(m);
-            struct Dialog *dialog = CreateDialog(dialogid);
+            struct Dialog *dialog = CreateDialog(dialogid, ua);
             UserAgentAddDialog(ua, dialog);
         } 
     }

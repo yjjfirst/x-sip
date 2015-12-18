@@ -9,7 +9,8 @@
 
 struct Message;
 struct UserAgent;
+struct Dialog;
 
-struct Message *BuildBindingMessage(struct UserAgent *ua);
+struct Message *BuildBindingMessage(struct Dialog *dialog);
 struct Message *BuildInviteMessage(struct UserAgent *ua, char *to);
 struct Message *BuildAckMessage(struct UserAgent *ua, struct Message *request);

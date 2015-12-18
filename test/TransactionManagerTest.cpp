@@ -11,6 +11,7 @@ extern "C" {
 #include "MessageTransport.h"
 #include "Transaction.h"
 #include "UserAgent.h"
+#include "Dialog.h"
 }
 
 enum Response {
@@ -68,17 +69,18 @@ TEST(TransactionManager, Signleton)
 TEST(TransactionManager, NewTransaction)
 {
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *transaction;
 
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
-    message = BuildBindingMessage(ua);
+    message = BuildBindingMessage(dialog);
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
-    message = BuildBindingMessage(ua);
+    message = BuildBindingMessage(dialog);
     transaction = CreateTransactionExt(message, NULL);
     CHECK_EQUAL(3, CountTransaction());
 
@@ -86,12 +88,14 @@ TEST(TransactionManager, NewTransaction)
     CHECK_FALSE(0 == transaction)
     DestoryTransactionManager();
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(TransactionManager, MatchResponse)
 {
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     char string[MAX_MESSAGE_LENGTH] = {0};
     
     CreateTransactionExt(message, NULL);
@@ -99,13 +103,15 @@ TEST(TransactionManager, MatchResponse)
 
     DestoryTransactionManager();
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *t = CreateTransactionExt(message, NULL);
     enum TransactionState s;
 
@@ -115,7 +121,8 @@ TEST(TransactionManager, BranchNonMatchTest)
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
-    DestoryUserAgent(&ua);    
+    DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 
@@ -124,7 +131,8 @@ TEST(TransactionManager, GetTransactionByTest)
     DestoryTransactionManager();
 
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *t = CreateTransactionExt(message, NULL);
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
@@ -132,6 +140,7 @@ TEST(TransactionManager, GetTransactionByTest)
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 

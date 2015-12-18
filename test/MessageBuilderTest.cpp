@@ -13,6 +13,7 @@ extern "C" {
 #include "Header.h"
 #include "Parameter.h"
 #include "UserAgent.h"
+#include "Dialog.h"
 }
 
 
@@ -20,18 +21,21 @@ TEST_GROUP(MessageBuilderTestGroup)
 {
     struct UserAgent *ua;
     struct Message *m;
+    struct Dialog *dialog;
     void setup()
     {
         ua = CreateUserAgent();
         UserAgentSetProxy(ua, (char *)PROXY_IPADDR);
         UserAgentSetUserName(ua, (char *)USER_NAME);
-        m = BuildBindingMessage(ua);
+        dialog = CreateDialog(NULL, ua);
+        m = BuildBindingMessage(dialog);
     }
 
     void teardown()
     {
         DestoryMessage(&m);
         DestoryUserAgent(&ua);
+        DestoryDialog(&dialog);
     }
 };
 

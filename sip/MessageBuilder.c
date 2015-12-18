@@ -13,6 +13,7 @@
 #include "Parameter.h"
 #include "Header.h"
 #include "UserAgent.h"
+#include "Dialog.h"
 
 void AddRequestLine(struct Message *m, char *proxy, SIP_METHOD method, char *user)
 {
@@ -110,10 +111,26 @@ struct Message *BuildMessageTemplate(struct UserAgent *ua, SIP_METHOD method)
     return m;
 }
 
-struct Message *BuildBindingMessage(struct UserAgent *ua)
+struct Message *BuildMessageTemplateNew(struct UserAgent *ua, SIP_METHOD method)
 {
-    struct Message *m = BuildMessageTemplate(ua, SIP_METHOD_REGISTER);
-    
+    struct Message *m = CreateMessage();
+
+    AddViaHeader(m);
+    AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
+    AddCallIdHeader(m, GenerateCallIdString());
+    AddContactHeader(m, UserAgentGetUserName(ua));
+    AddMaxForwardsHeader(m);
+    AddCSeqHeader(m, method);
+    AddContentLengthHeader(m);
+
+    return m;
+}
+
+struct Message *BuildBindingMessage(struct Dialog *dialog)
+{
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Message *m = BuildMessageTemplateNew(ua, SIP_METHOD_REGISTER);
+
     AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
     AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
     AddExpiresHeader(m);

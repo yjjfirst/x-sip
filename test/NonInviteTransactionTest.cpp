@@ -16,6 +16,7 @@ extern "C" {
 #include "TransactionManager.h"
 #include "UserAgent.h"
 #include "StatusLine.h"
+#include "Dialog.h"
 }
 
 enum Response {
@@ -60,6 +61,7 @@ TEST_GROUP(TransactionTestGroup)
     struct Transaction *t;
     enum TransactionState s;
     struct UserAgent *ua;
+    struct Dialog *dialog;
 
     void setup()
     {
@@ -71,8 +73,9 @@ TEST_GROUP(TransactionTestGroup)
         AddMessageTransporter((char *)"TRANS", TransactionSendMessageMock, TransactionReceiveMessageMock);
         TransactionSetTimerManager(AddTimer);
         ua = CreateUserAgent();
+        dialog = CreateDialog(NULL, ua);
 
-        m = BuildBindingMessage(ua);
+        m = BuildBindingMessage(dialog);
         t = CreateTransactionExt(m, NULL);
         s = TransactionGetState(t);
         InitReceiveMessageCallback(MessageReceived);
@@ -83,6 +86,7 @@ TEST_GROUP(TransactionTestGroup)
         RemoveMessageTransporter((char *)"TRANS");
         DestoryTransactionManager();
         DestoryUserAgent(&ua);
+        DestoryDialog(&dialog);
         mock().clear();
     }
 };
@@ -220,11 +224,14 @@ TEST(TransactionTestGroup, SendMessageError)
     mock().expectOneCall("TransactionSendMessageMock").andReturnValue(-1);
 
     struct UserAgent *ua = CreateUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
+
     CreateTransactionExt(message, NULL);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 
+    DestoryDialog(&dialog);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
 }

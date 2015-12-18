@@ -153,9 +153,10 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
 TEST(UserAgentTestGroup, BindingsRequestLineTest)
 {
     struct UserAgent *ua = BuildUserAgent();
+    struct Dialog *dialog = CreateDialog(NULL, ua);
     struct Message *message = NULL;
         
-    message = BuildBindingMessage(ua);
+    message = BuildBindingMessage(dialog);
 
     struct RequestLine *rl = MessageGetRequestLine(message);
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
@@ -167,12 +168,14 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
 
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(UserAgentTestGroup, BindingsToHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
 
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
@@ -180,12 +183,14 @@ TEST(UserAgentTestGroup, BindingsToHeaderTest)
     STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(UserAgentTestGroup, BindingsFromHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
 
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
@@ -193,12 +198,14 @@ TEST(UserAgentTestGroup, BindingsFromHeaderTest)
     STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(UserAgentTestGroup, BindingsContactHeaderTest)
 {
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
 
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
@@ -206,13 +213,15 @@ TEST(UserAgentTestGroup, BindingsContactHeaderTest)
     STRCMP_EQUAL("88001", UriGetUser(uri));
     DestoryMessage(&message);
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
 }
 
 TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
@@ -221,6 +230,7 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
     DestoryTransactionManager();
     
 }
@@ -229,7 +239,8 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = BuildUserAgent();
-    struct Message *message = BuildBindingMessage(ua);
+    struct Dialog *dialog = CreateDialog(NULL, ua);
+    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
@@ -239,7 +250,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     DestoryTransactionManager();
 
-    message = BuildBindingMessage(ua);
+    message = BuildBindingMessage(dialog);
     t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
@@ -247,6 +258,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
+    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 
@@ -254,7 +266,7 @@ TEST(UserAgentTestGroup, AddDialogTest)
 {
     struct UserAgent *ua = BuildUserAgent();
     struct DialogId *dialogid = CreateDialogId((char *)"1", (char *)"2",(char *)"3");
-    struct Dialog *dialog = CreateDialog(dialogid);
+    struct Dialog *dialog = CreateDialog(dialogid, ua);
 
     UserAgentAddDialog(ua, dialog);
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
