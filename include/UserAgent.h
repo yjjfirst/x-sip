@@ -16,6 +16,8 @@ void UserAgentSetRegistrar(struct UserAgent *ua, char *registrar);
 char *UserAgentGetRegistrar(struct UserAgent *ua);
 void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
 char *UserAgentGetAuthName(struct UserAgent *ua);
+void UserAgentSetBinded(struct UserAgent *ua);
+void UserAgentSetUnbinded(struct UserAgent *ua);
 
 BOOL UserAgentBinded(struct UserAgent *ua);
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid);

@@ -23,7 +23,7 @@ struct Dialog *GetDialogById(struct Dialogs *dialogs, struct DialogId *dialogid)
 
     for (; i < length ; i ++) {
         struct Dialog *dialog = get_data_at(dialogs->dialogList, i);
-        if (DialogIdMatched(DialogGetId(dialog), dialogid))
+        if (DialogGetId(dialog) != NULL && DialogIdMatched(DialogGetId(dialog), dialogid))
            return dialog;
     }
 

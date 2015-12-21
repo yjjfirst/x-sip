@@ -41,6 +41,23 @@ static void RemoveTimer(struct Timer *timer)
 
 TEST_GROUP(UserAgentTestGroup)
 {    
+    struct UserAgent *ua;
+    struct Dialog *dialog;
+    struct Message *message;
+
+    void BuildTestingMessage()
+    {
+        ua = BuildUserAgent();
+        dialog = CreateDialog(NULL, ua);
+        message = BuildBindingMessage(dialog);
+    }
+
+    void DestoryTestingMessage()
+    {
+        DestoryMessage(&message);
+        DestoryUserAgent(&ua);
+    }
+
     struct UserAgent *BuildUserAgent()
     {
         struct UserAgent *ua = CreateUserAgent();
@@ -64,7 +81,7 @@ TEST_GROUP(UserAgentTestGroup)
     {
         RemoveMessageTransporter((char *)"TRANS");
         mock().clear();
-    }
+    }    
 };
 
 TEST(UserAgentTestGroup, CreateUserAgentTest)
@@ -152,11 +169,7 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
 
 TEST(UserAgentTestGroup, BindingsRequestLineTest)
 {
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = NULL;
-        
-    message = BuildBindingMessage(dialog);
+    BuildTestingMessage();
 
     struct RequestLine *rl = MessageGetRequestLine(message);
     STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
@@ -166,63 +179,50 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
     STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
     STRCMP_EQUAL("192.168.10.63", UriGetHost(uri));
 
-    DestoryMessage(&message);
-    DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
+    DestoryTestingMessage();
 }
 
 TEST(UserAgentTestGroup, BindingsToHeaderTest)
 {
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
+    BuildTestingMessage();
 
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
 
     STRCMP_EQUAL("88001", UriGetUser(uri));
-    DestoryMessage(&message);
-    DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
+
+    DestoryTestingMessage();
 }
 
 TEST(UserAgentTestGroup, BindingsFromHeaderTest)
 {
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
+    BuildTestingMessage();
 
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
 
     STRCMP_EQUAL("88001", UriGetUser(uri));
-    DestoryMessage(&message);
-    DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
+    DestoryTestingMessage();
 }
 
 TEST(UserAgentTestGroup, BindingsContactHeaderTest)
 {
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
+    BuildTestingMessage();
 
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
 
     STRCMP_EQUAL("88001", UriGetUser(uri));
-    DestoryMessage(&message);
-    DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
+
+    DestoryTestingMessage();
 }
 
 TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
-    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+
+    BuildTestingMessage();
+    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)dialog);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
@@ -230,18 +230,14 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
-    DestoryTransactionManager();
-    
+    DestoryTransactionManager();    
 }
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
-    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+    BuildTestingMessage();
+    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)dialog);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
@@ -251,24 +247,22 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     DestoryTransactionManager();
 
     message = BuildBindingMessage(dialog);
-    t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+    t = CreateTransactionExt(message, (struct TransactionOwnerInterface *)dialog);
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 
 TEST(UserAgentTestGroup, AddDialogTest)
 {
-    struct UserAgent *ua = BuildUserAgent();
+    ua = BuildUserAgent();
     struct DialogId *dialogid = CreateDialogId((char *)"1", (char *)"2",(char *)"3");
-    struct Dialog *dialog = CreateDialog(dialogid, ua);
+    dialog = CreateDialog(dialogid, ua);
 
-    UserAgentAddDialog(ua, dialog);
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
 
@@ -278,18 +272,17 @@ TEST(UserAgentTestGroup, AddDialogTest)
 TEST(UserAgentTestGroup, InviteSucceedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = BuildUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildInviteMessage(dialog);
+    ua = BuildUserAgent();
+    dialog = CreateDialog(NULL, ua);
+    message = BuildInviteMessage(dialog);
     struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
-    CreateTransactionExt(message, (struct TransactionOwnerInterface *)ua);
+    CreateTransactionExt(message, (struct TransactionOwnerInterface *)dialog);
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
     ReceiveMessage(revMessage);
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
-  
+
     DestoryDialogId(&dialogid);
-    DestoryDialog(&dialog);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
     mock().checkExpectations();

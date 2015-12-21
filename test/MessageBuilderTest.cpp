@@ -39,7 +39,6 @@ TEST_GROUP(MessageBuilderTestGroup)
         DestoryMessage(&m);
         DestoryMessage(&inviteMessage);
         DestoryUserAgent(&ua);
-        DestoryDialog(&dialog);
     }
 };
 

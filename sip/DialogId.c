@@ -23,6 +23,9 @@ DEFINE_STRING_MEMBER_READER(struct DialogId, DialogIdGetRemoteTag, remoteTag);
 
 BOOL DialogIdMatched(struct DialogId *id1, struct DialogId *id2)
 {
+    assert(id1 != NULL);
+    assert(id2 != NULL);
+
     return !(strcmp(id1->callid, id2->callid)
              || strcmp(id1->localTag, id2->localTag)
              || strcmp(id1->remoteTag, id2->remoteTag));

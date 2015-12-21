@@ -88,7 +88,6 @@ TEST(TransactionManager, NewTransaction)
     CHECK_FALSE(0 == transaction)
     DestoryTransactionManager();
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
 }
 
 TEST(TransactionManager, MatchResponse)
@@ -103,7 +102,6 @@ TEST(TransactionManager, MatchResponse)
 
     DestoryTransactionManager();
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
@@ -122,7 +120,6 @@ TEST(TransactionManager, BranchNonMatchTest)
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 
@@ -140,7 +137,6 @@ TEST(TransactionManager, GetTransactionByTest)
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
     DestoryUserAgent(&ua);
-    DestoryDialog(&dialog);
     DestoryTransactionManager();
 }
 

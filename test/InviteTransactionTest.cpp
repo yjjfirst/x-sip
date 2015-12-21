@@ -48,14 +48,13 @@ TEST_GROUP(InviteTransactionTestGroup)
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildInviteMessage(dialog); 
-        t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) ua);
+        t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) dialog);
 
    }
 
     void teardown() {
         DestoryUserAgent(&ua);
         DestoryTransactionManager();
-        DestoryDialog(&dialog);
         RemoveMessageTransporter((char *)"TRANS");
         TransactionRemoveTimer();
         mock().checkExpectations();

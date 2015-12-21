@@ -40,32 +40,28 @@ BOOL UserAgentBinded(struct UserAgent *ua)
     return ua->binded;
 }
 
-void OnTransactionEvent(struct Transaction *t)
+void UserAgentSetBinded(struct UserAgent *ua)
 {
-    struct Message *m = TransactionGetLatestResponse(t);
-    struct UserAgent *ua = (struct UserAgent *) TransactionGetOwner(t);
+    ua->binded = TRUE;
+}
 
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
-        if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-            if (MessageGetExpires(m) != 0)
-                ua->binded = TRUE;
-            else
-                ua->binded = FALSE;
-        } else {
-            struct DialogId *dialogid = CreateDialogIdFromMessage(m);
-            struct Dialog *dialog = CreateDialog(dialogid, ua);
-            UserAgentAddDialog(ua, dialog);
-        } 
-    }
+void UserAgentSetUnbinded(struct UserAgent *ua)
+{
+    ua->binded = FALSE;
 }
 
 void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
 {
+    assert(ua != NULL);
+    assert(dialog != NULL);
+
     AddDialog(ua->dialogs, dialog);
 }
 
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
 {
+    assert(ua != NULL);
+    assert(callid != NULL);
     return GetDialogById(ua->dialogs, callid);
 }
 
@@ -73,7 +69,6 @@ struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
     struct Dialogs *dialogs = CreateDialogs();
-    ua->notifyInterface.onEvent = OnTransactionEvent;
     ua->dialogs = dialogs;
 
     return ua;

@@ -86,7 +86,6 @@ TEST_GROUP(TransactionTestGroup)
         RemoveMessageTransporter((char *)"TRANS");
         DestoryTransactionManager();
         DestoryUserAgent(&ua);
-        DestoryDialog(&dialog);
         mock().clear();
     }
 };
@@ -231,7 +230,6 @@ TEST(TransactionTestGroup, SendMessageError)
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 
-    DestoryDialog(&dialog);
     DestoryUserAgent(&ua);
     DestoryTransactionManager();
 }
