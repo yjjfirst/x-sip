@@ -29,7 +29,11 @@ TEST_GROUP(MessageBuilderTestGroup)
         UserAgentSetProxy(ua, (char *)PROXY_IPADDR);
         UserAgentSetUserName(ua, (char *)USER_NAME);
         dialog = CreateDialog(NULL, ua);
+
+        DialogSetToUser(dialog, (char *)USER_NAME);
         m = BuildBindingMessage(dialog);
+
+        DialogSetToUser(dialog, (char *)"88002");
         inviteMessage = BuildInviteMessage(dialog);
 
     }
@@ -50,6 +54,7 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
     STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
+    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
 }
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
@@ -142,6 +147,7 @@ TEST(MessageBuilderTestGroup, InviteMessageToHeaderTest)
 {
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, inviteMessage);
     struct URI *uri = ContactHeaderGetUri(to);
+
     STRCMP_EQUAL("88002", UriGetUser(uri));
 }
 

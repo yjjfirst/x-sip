@@ -15,71 +15,76 @@
 #include "UserAgent.h"
 #include "Dialog.h"
 
-void AddRequestLine(struct Message *m, char *proxy, SIP_METHOD method, char *user)
+struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
-    struct RequestLine  *r = CreateRequestLine(method, uri);
-    MessageSetRequest(m, r);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+    struct RequestLine  *r = CreateRequestLine(DialogGetRequestMethod(dialog), uri);
+    return r;
 }
 
-void AddViaHeader(struct Message *m)
+struct Header *BuildViaHeader(struct Dialog *dialog)
 {
     struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_PORT);
     struct ViaHeader *via = CreateViaHeader(uri);
     
     struct Parameters *ps = ViaHeaderGetParameters(via);
     AddParameter(ps, VIA_BRANCH_PARAMETER_NAME, "z9hG4bK1491280923"); 
-
-    MessageAddHeader(m, (struct Header *)via);
+    return (struct Header *)via;
 }
 
-void AddFromHeader(struct Message *m, char *proxy, char *user )
+struct Header *BuildFromHeader(struct Dialog *dialog)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), UserAgentGetProxy(ua), 0);
     struct ContactHeader *from = CreateFromHeader();
     struct Parameters *ps = ContactHeaderGetParameters(from);
 
     AddParameter(ps, HEADER_PARAMETER_NAME_TAG, "1069855717");
     ContactHeaderSetUri(from, uri);
-    MessageAddHeader(m, (struct Header *)from);
+    
+    return (struct Header *)from;
 }
 
-void AddToHeader(struct Message *m, char *proxy, char *user)
+struct Header *BuildToHeader(struct Dialog *dialog)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, proxy, 0);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
     struct ContactHeader *to = CreateToHeader();
 
     ContactHeaderSetUri(to, uri);
-    MessageAddHeader(m, (struct Header *)to);
+    return (struct Header *)to;
 }
 
-void AddContactHeader(struct Message *m, char *user)
+struct Header *BuildContactHeader(struct Dialog *dialog)
 {
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, user, LOCAL_IPADDR, 0);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), LOCAL_IPADDR, 0);
     UriAddParameter(uri, "line", "6c451db26592505");
     struct ContactHeader *contact = CreateContactHeader();
 
     ContactHeaderSetUri(contact, uri);
-    MessageAddHeader(m, (struct Header *)contact);
+    return  (struct Header *)contact;
 }
 
-void AddMaxForwardsHeader(struct Message *m)
+struct Header *BuildMaxForwardsHeader(struct Dialog *dialog)
 {
     struct MaxForwardsHeader *mf = CreateMaxForwardsHeader();
-    MessageAddHeader(m, (struct Header *)mf);
+    return  (struct Header *)mf;
 }
 
-void AddCallIdHeader(struct Message *m, char *idString)
+struct Header *BuildCallIdHeader(struct Dialog *dialog)
 {
-    struct CallIdHeader *id = CreateCallIdHeader(idString);
-    MessageAddHeader(m, (struct Header *)id);
+    struct CallIdHeader *id = CreateCallIdHeader(GenerateCallIdString());
+    return (struct Header *)id;
 }
 
-void AddCSeqHeader(struct Message *m, SIP_METHOD method)
+struct Header *BuildCSeqHeader(struct Dialog *dialog)
 {
+    SIP_METHOD method = DialogGetRequestMethod(dialog);
     struct CSeqHeader *cseq = CreateCSeqHeader(1, MethodMap2String(method));
 
-    MessageAddHeader(m, (struct Header *)cseq);
+    return (struct Header *)cseq;
 }
 
 void AddExpiresHeader(struct Message *m)
@@ -89,35 +94,36 @@ void AddExpiresHeader(struct Message *m)
     MessageAddHeader(m, (struct Header *)e);
 }
 
-void AddContentLengthHeader(struct Message *m)
+struct Header *BuildContentLengthHeader(struct Dialog *dialog)
 {
     struct ContentLengthHeader *c = CreateContentLengthHeader();
 
-    MessageAddHeader(m, (struct Header *)c);
+    return (struct Header *)c;
 }
 
-struct Message *BuildMessageTemplate(struct UserAgent *ua, SIP_METHOD method)
+struct Message *BuildMessage(struct Dialog *dialog, SIP_METHOD method)
 {
     struct Message *m = CreateMessage();
+ 
+    DialogSetRequestMethod(dialog, method);
 
-    AddViaHeader(m);
-    AddFromHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
-    AddCallIdHeader(m, GenerateCallIdString());
-    AddContactHeader(m, UserAgentGetUserName(ua));
-    AddMaxForwardsHeader(m);
-    AddCSeqHeader(m, method);
-    AddContentLengthHeader(m);
+    MessageSetRequest(m, BuildRequestLine(dialog));
+
+    MessageAddHeader(m, BuildViaHeader(dialog));
+    MessageAddHeader(m, BuildFromHeader(dialog));
+    MessageAddHeader(m, BuildToHeader(dialog));
+    MessageAddHeader(m, BuildCallIdHeader(dialog));
+    MessageAddHeader(m, BuildContactHeader(dialog));
+    MessageAddHeader(m, BuildMaxForwardsHeader(dialog));
+    MessageAddHeader(m, BuildCSeqHeader(dialog));
+    MessageAddHeader(m, BuildContentLengthHeader(dialog));
 
     return m;
 }
 
 struct Message *BuildBindingMessage(struct Dialog *dialog)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Message *m = BuildMessageTemplate(ua, SIP_METHOD_REGISTER);
-
-    AddRequestLine(m, UserAgentGetProxy(ua), SIP_METHOD_REGISTER, NULL);
-    AddToHeader(m, UserAgentGetProxy(ua), UserAgentGetUserName(ua));
+    struct Message *m = BuildMessage(dialog, SIP_METHOD_REGISTER);
     AddExpiresHeader(m);
 
     return m;
@@ -125,22 +131,12 @@ struct Message *BuildBindingMessage(struct Dialog *dialog)
 
 struct Message *BuildInviteMessage(struct Dialog *dialog)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    char *to = DialogGetToUser(dialog);
-    struct Message *invite = BuildMessageTemplate(ua, SIP_METHOD_INVITE);
-
-    AddRequestLine(invite, UserAgentGetProxy(ua), SIP_METHOD_INVITE, to);
-    AddToHeader(invite, UserAgentGetProxy(ua), to);
-
+    struct Message *invite = BuildMessage(dialog, SIP_METHOD_INVITE);
     return invite;
 }
 
 struct Message *BuildAckMessage(struct Dialog *dialog)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Message *ack = BuildMessageTemplate(ua, SIP_METHOD_ACK);
-
-    AddRequestLine(ack, UserAgentGetProxy(ua), SIP_METHOD_ACK, DialogGetToUser(dialog));
-
+    struct Message *ack = BuildMessage(dialog, SIP_METHOD_ACK);
     return ack;
 }

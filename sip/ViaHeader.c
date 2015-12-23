@@ -9,9 +9,11 @@
 #include "URI.h"
 #include "Parameter.h"
 
+#define TRANSPORT_PROTOCOL_NAME_MAX_LENGTH 32
+
 struct ViaHeader {
     struct Header headerBase;
-    char transport[32];
+    char transport[TRANSPORT_PROTOCOL_NAME_MAX_LENGTH];
     struct URI *uri;
     struct Parameters *parameters;
 };

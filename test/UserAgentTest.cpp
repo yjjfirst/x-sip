@@ -49,6 +49,7 @@ TEST_GROUP(UserAgentTestGroup)
     {
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
+        DialogSetToUser(dialog, (char *)"88001");
         message = BuildBindingMessage(dialog);
     }
 

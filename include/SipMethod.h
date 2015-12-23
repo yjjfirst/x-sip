@@ -1,3 +1,5 @@
+#ifndef _SIP_METHOD_H_
+#define _SIP_METHOD_H_
 typedef enum {
     SIP_METHOD_INVITE,
     SIP_METHOD_ACK,
@@ -34,3 +36,5 @@ typedef enum {
 
 char *MethodMap2String(SIP_METHOD method);
 SIP_METHOD StringMap2MethodNumber(char *string);
+
+#endif

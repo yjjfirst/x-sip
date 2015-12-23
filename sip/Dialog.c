@@ -1,3 +1,4 @@
+#include "Utils.h"
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
@@ -6,9 +7,11 @@
 #include "Transaction.h"
 
 struct Dialog {
-    struct TransactionOwnerInterface notifyInterface;
+    struct TransactionOwnerInterface notifyInterface;  //must be the first field in the struct.
+    SIP_METHOD requestMethod;
     struct DialogId *id;
     struct UserAgent *ua;
+    char to[USER_NAME_MAX_LENGTH];
 };
 
 struct DialogId *DialogGetId(struct Dialog *dialog)
@@ -21,9 +24,17 @@ struct UserAgent *DialogGetUserAgent(struct Dialog *dialog)
     return dialog->ua;
 }
 
-char *DialogGetToUser(struct Dialog *dialog)
+DEFINE_STRING_MEMBER_WRITER(struct Dialog, DialogSetToUser, to, USER_NAME_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct Dialog, DialogGetToUser, to);
+
+void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
 {
-    return "88002";
+    dialog->requestMethod = method;
+}
+
+SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
+{
+    return dialog->requestMethod;
 }
 
 void DialogOnTransactionEvent(struct Transaction *t)
@@ -52,6 +63,7 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     dialog->ua = ua;
     dialog->notifyInterface.onEvent = DialogOnTransactionEvent;
     UserAgentAddDialog(ua, dialog);
+    DialogSetToUser(dialog, "88002");
 
     return dialog;
 }
