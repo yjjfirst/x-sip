@@ -24,7 +24,7 @@ int CountTransaction()
     return get_list_len(GetTransactionManager()->transactions);
 }
 
-struct Transaction *CreateTransactionExt(struct Message *message, struct TransactionOwner *owner)
+struct Transaction *AddTransaction(struct Message *message, struct TransactionOwner *owner)
 {
     struct Transaction *t = CreateTransaction(message, owner);
     if (t != NULL) {

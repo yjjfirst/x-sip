@@ -76,7 +76,7 @@ TEST_GROUP(TransactionTestGroup)
         dialog = CreateDialog(NULL, ua);
 
         m = BuildBindingMessage(dialog);
-        t = CreateTransactionExt(m, NULL);
+        t = AddTransaction(m, NULL);
         s = TransactionGetState(t);
         InitReceiveMessageCallback(MessageReceived);
     }
@@ -226,7 +226,7 @@ TEST(TransactionTestGroup, SendMessageError)
     struct Dialog *dialog = CreateDialog(NULL, ua);
     struct Message *message = BuildBindingMessage(dialog);
 
-    CreateTransactionExt(message, NULL);
+    AddTransaction(message, NULL);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 

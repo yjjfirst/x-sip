@@ -223,7 +223,7 @@ TEST(UserAgentTestGroup, BindingTest)
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
     BuildTestingMessage();
-    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwner *)dialog);
+    struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
@@ -238,7 +238,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
-    struct Transaction *t = CreateTransactionExt(message, (struct TransactionOwner *)dialog);
+    struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
@@ -248,7 +248,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     DestoryTransactionManager();
 
     message = BuildBindingMessage(dialog);
-    t = CreateTransactionExt(message, (struct TransactionOwner *)dialog);
+    t = AddTransaction(message, (struct TransactionOwner *)dialog);
 
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
     ReceiveMessage(revMessage);
@@ -273,11 +273,12 @@ TEST(UserAgentTestGroup, AddDialogTest)
 TEST(UserAgentTestGroup, InviteSucceedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
+
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);
     message = BuildInviteMessage(dialog);
-    struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
-    CreateTransactionExt(message, (struct TransactionOwner *)dialog);
+    AddTransaction(message, (struct TransactionOwner *)dialog);
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
     ReceiveMessage(revMessage);
