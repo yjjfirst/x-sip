@@ -48,24 +48,6 @@ TEST_GROUP(TransactionManager)
     }
 };
 
-TEST(TransactionManager, Init)
-{
-    struct TransactionManager *manager = GetTransactionManager();
-    CHECK_FALSE(manager == NULL);
-
-    DestoryTransactionManager();
-}
-
-TEST(TransactionManager, Signleton)
-{
-    struct TransactionManager *m1 = GetTransactionManager();
-    struct TransactionManager *m2 = GetTransactionManager();
-
-    CHECK_EQUAL(m1, m2);
-
-    DestoryTransactionManager();
-}
-
 TEST(TransactionManager, NewTransaction)
 {
     struct UserAgent *ua = CreateUserAgent();
@@ -86,7 +68,7 @@ TEST(TransactionManager, NewTransaction)
 
 
     CHECK_FALSE(0 == transaction)
-    DestoryTransactionManager();
+    EmptyTransactionManager();
     DestoryUserAgent(&ua);
 }
 
@@ -100,7 +82,7 @@ TEST(TransactionManager, MatchResponse)
     AddTransaction(message, NULL);
     CHECK_TRUE(ReceiveMessage(string));
 
-    DestoryTransactionManager();
+    EmptyTransactionManager();
     DestoryUserAgent(&ua);
 }
 
@@ -120,12 +102,12 @@ TEST(TransactionManager, BranchNonMatchTest)
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
+    EmptyTransactionManager();
 }
 
 TEST(TransactionManager, GetTransactionByTest)
 {
-    DestoryTransactionManager();
+    EmptyTransactionManager();
 
     struct UserAgent *ua = CreateUserAgent();
     struct Dialog *dialog = CreateDialog(NULL, ua);
@@ -137,6 +119,6 @@ TEST(TransactionManager, GetTransactionByTest)
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
+    EmptyTransactionManager();
 }
 

@@ -231,7 +231,7 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();    
+    EmptyTransactionManager();    
 }
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
@@ -245,7 +245,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
-    DestoryTransactionManager();
+    EmptyTransactionManager();
 
     message = BuildBindingMessage(dialog);
     t = AddTransaction(message, (struct TransactionOwner *)dialog);
@@ -255,7 +255,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
+    EmptyTransactionManager();
 }
 
 TEST(UserAgentTestGroup, AddDialogTest)
@@ -282,11 +282,12 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
     ReceiveMessage(revMessage);
+
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
+    mock().checkExpectations();
 
     DestoryDialogId(&dialogid);
     DestoryUserAgent(&ua);
-    DestoryTransactionManager();
-    mock().checkExpectations();
+    EmptyTransactionManager();
 } 
 

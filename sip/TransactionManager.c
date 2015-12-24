@@ -17,32 +17,22 @@ struct TransactionManager {
     t_list *transactions;
 };
 
-static struct TransactionManager SingletonTransactionManager;
+struct TransactionManager TransactionManager;
 
 int CountTransaction()
 {
-    return get_list_len(GetTransactionManager()->transactions);
+    return get_list_len(TransactionManager.transactions);
 }
 
-struct Transaction *AddTransaction(struct Message *message, struct TransactionOwner *owner)
-{
-    struct Transaction *t = CreateTransaction(message, owner);
-    if (t != NULL) {
-        TransactionSetNotifiers(t, GetTransactionManager()->notifiers);
-        put_in_list(&SingletonTransactionManager.transactions, t);
-    }
-
-    return t;
-}
 
 struct Transaction *GetTransactionByNumber(int number)
 {
-    return (struct Transaction *)get_data_at(SingletonTransactionManager.transactions,number);
+    return (struct Transaction *)get_data_at(TransactionManager.transactions,number);
 }
 
 void RemoveTransactionByNumber(int number)
 {
-    del_node_at(&GetTransactionManager()->transactions, number);
+    del_node_at(&TransactionManager.transactions, number);
 }
 
 void RemoveTransaction(struct Transaction *t)
@@ -134,7 +124,6 @@ BOOL MessageReceived(char *string)
     return FALSE;
 }
 
-
 void DestoryTransactions(struct TransactionManager *manager)
 {
     int i = 0;
@@ -148,17 +137,27 @@ void DestoryTransactions(struct TransactionManager *manager)
     destroy_list(&manager->transactions, NULL);
 }
 
-void DestoryTransactionManager()
+void EmptyTransactionManager()
 {
-    DestoryTransactions(&SingletonTransactionManager);
+    DestoryTransactions(&TransactionManager);
 }
 
 struct TransactionNotifiers Notifiers = {
     .die = RemoveTransaction,
 };
 
-struct TransactionManager *GetTransactionManager()
+struct Transaction *AddTransaction(struct Message *message, struct TransactionOwner *owner)
 {
-    SingletonTransactionManager.notifiers = &Notifiers;
-    return &SingletonTransactionManager;
+    struct Transaction *t = CreateTransaction(message, owner);
+
+    if (TransactionManager.notifiers == NULL) {
+        TransactionManager.notifiers = &Notifiers;
+    }
+
+    if (t != NULL) {
+        TransactionSetNotifiers(t, TransactionManager.notifiers);
+        put_in_list(&TransactionManager.transactions, t);
+    }
+
+    return t;
 }

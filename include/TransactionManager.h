@@ -4,8 +4,7 @@ struct Message;
 struct UserAgent;
 struct TransactionOwner;
 
-struct TransactionManager *GetTransactionManager();
-void DestoryTransactionManager();
+void EmptyTransactionManager();
 int MessageReceived(char *string);
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod);
 int CountTransaction(void);

@@ -54,7 +54,7 @@ TEST_GROUP(InviteTransactionTestGroup)
 
     void teardown() {
         DestoryUserAgent(&ua);
-        DestoryTransactionManager();
+        EmptyTransactionManager();
         RemoveMessageTransporter((char *)"TRANS");
         TransactionRemoveTimer();
         mock().checkExpectations();
