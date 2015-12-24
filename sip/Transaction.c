@@ -10,17 +10,17 @@
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
-#include "TransactionNotifyInterface.h"
+#include "TransactionNotifiers.h"
 #include "utils/list/include/list.h"
 
 #define TRANSACTION_ACTIONS_MAX 5
 
 struct Transaction {
-    struct TransactionOwnerInterface *owner;
+    struct TransactionOwner *owner;
     enum TransactionState state;
     struct Message *request;
     t_list *responses;
-    struct TransactionManagerInterface *manager;
+    struct TransactionNotifiers *notifiers;
     int retransmits;
     int event;
     enum TransactionType type;
@@ -55,9 +55,9 @@ void TransactionAddResponse(struct Transaction *t, struct Message *message)
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetManagerInterface(struct Transaction *t, struct TransactionManagerInterface *manager)
+void TransactionSetNotifiers(struct Transaction *t, struct TransactionNotifiers *notifiers)
 {
-    t->manager = manager;
+    t->notifiers = notifiers;
 }
 
 enum TransactionState TransactionGetState(struct Transaction *t)
@@ -157,7 +157,7 @@ enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
     return t->event;
 }
 
-struct TransactionOwnerInterface *TransactionGetOwner(struct Transaction *t)
+struct TransactionOwner *TransactionGetOwner(struct Transaction *t)
 {
     return t->owner;
 }
@@ -182,7 +182,7 @@ struct Transaction *CallocTransaction(struct Message *request)
     return t;
 }
 
-struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwnerInterface *owner)
+struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwner *owner)
 {
     struct Transaction *t = CallocTransaction(request);
 
@@ -311,7 +311,7 @@ void RunFSM(struct Transaction *t, enum TransactionEvent event)
     }
 
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->manager != NULL)
-            ((struct Transaction *)t)->manager->die(t);
+        if (t != NULL && t->notifiers != NULL)
+            ((struct Transaction *)t)->notifiers->die(t);
 
 }

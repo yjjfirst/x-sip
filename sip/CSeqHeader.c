@@ -11,8 +11,8 @@
 struct CSeqHeader 
 {
     struct Header headerBase;
-    int seq;
-    char method[16];
+    unsigned int seq;
+    char method[METHOD_MAX_LENGTH];
 };
 
 struct HeaderPattern CSeqHeaderPattern[] = {
@@ -42,7 +42,7 @@ char *CSeqHeaderGetName(struct CSeqHeader *c)
     return c->headerBase.name;
 }
 
-int CSeqHeaderGetSeq(struct CSeqHeader *c)
+unsigned int CSeqHeaderGetSeq(struct CSeqHeader *c)
 {
     return c->seq;
 }
@@ -66,6 +66,13 @@ char *CSeq2String(char *result, struct Header *c)
 {
     return ToString(result, c, GetCSeqHeaderPattern());
 }
+
+static unsigned int CSeqGenerateSeqImpl()
+{
+    return 102;
+}
+
+unsigned int (*CSeqGenerateSeq)() = CSeqGenerateSeqImpl;
 
 struct CSeqHeader *CreateCSeqHeader (int seq, char *method) 
 { 

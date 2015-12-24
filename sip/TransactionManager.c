@@ -8,12 +8,12 @@
 #include "Header.h"
 #include "StatusLine.h"
 #include "TransactionManager.h"
-#include "TransactionNotifyInterface.h"
+#include "TransactionNotifiers.h"
 #include "Transaction.h"
 #include "Messages.h"
 
 struct TransactionManager {
-    struct TransactionManagerInterface *manager;
+    struct TransactionNotifiers *notifiers;
     t_list *transactions;
 };
 
@@ -24,11 +24,11 @@ int CountTransaction()
     return get_list_len(GetTransactionManager()->transactions);
 }
 
-struct Transaction *CreateTransactionExt(struct Message *message, struct TransactionOwnerInterface *owner)
+struct Transaction *CreateTransactionExt(struct Message *message, struct TransactionOwner *owner)
 {
     struct Transaction *t = CreateTransaction(message, owner);
     if (t != NULL) {
-        TransactionSetManagerInterface(t, GetTransactionManager()->manager);
+        TransactionSetNotifiers(t, GetTransactionManager()->notifiers);
         put_in_list(&SingletonTransactionManager.transactions, t);
     }
 
@@ -153,12 +153,12 @@ void DestoryTransactionManager()
     DestoryTransactions(&SingletonTransactionManager);
 }
 
-struct TransactionManagerInterface ManagerInterface = {
+struct TransactionNotifiers Notifiers = {
     .die = RemoveTransaction,
 };
 
 struct TransactionManager *GetTransactionManager()
 {
-    SingletonTransactionManager.manager = &ManagerInterface;
+    SingletonTransactionManager.notifiers = &Notifiers;
     return &SingletonTransactionManager;
 }

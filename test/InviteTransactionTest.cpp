@@ -48,7 +48,7 @@ TEST_GROUP(InviteTransactionTestGroup)
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildInviteMessage(dialog); 
-        t = CreateTransactionExt(message,(struct TransactionOwnerInterface *) dialog);
+        t = CreateTransactionExt(message,(struct TransactionOwner *) dialog);
 
    }
 

@@ -2,13 +2,14 @@
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
-#include "TransactionNotifyInterface.h"
+#include "TransactionNotifiers.h"
 #include "Messages.h"
 #include "Transaction.h"
 
 struct Dialog {
-    struct TransactionOwnerInterface notifyInterface;  //must be the first field in the struct.
+    struct TransactionOwner notifyInterface;  //must be the first field in the struct.
     SIP_METHOD requestMethod;
+    struct Transaction *transaction;
     struct DialogId *id;
     struct UserAgent *ua;
     char to[USER_NAME_MAX_LENGTH];

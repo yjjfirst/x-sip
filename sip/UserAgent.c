@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "UserAgent.h"
-#include "TransactionNotifyInterface.h"
 #include "Transaction.h"
 #include "ExpiresHeader.h"
 #include "Messages.h"
@@ -14,7 +13,6 @@
 #include "Dialog.h"
 
 struct UserAgent {
-    struct TransactionOwnerInterface notifyInterface;
     char userName[USER_NAME_MAX_LENGTH];
     char authName[AUTH_NAME_MAX_LENGTH];
     char proxy[PROXY_MAX_LENGTH];

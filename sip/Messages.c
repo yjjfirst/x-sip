@@ -199,6 +199,14 @@ int MessageGetExpires(struct Message *message)
     return ExpiresHeaderGetExpires(e);
 }
 
+unsigned int MessageGetCSeqNumber(struct Message *message)
+{
+    assert (message != NULL);
+    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
+    
+    return CSeqHeaderGetSeq(c);
+}
+
 void MessageAddViaParameter(struct Message *message, char *name, char *value)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);

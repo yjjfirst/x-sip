@@ -6,8 +6,18 @@ extern "C" {
 #include "SipMethod.h"
 }
 
+
 TEST_GROUP(CSeqTestGroup)
 {
+    static unsigned int FakeCSeqGenerateSeq()
+    {
+        return 100;
+    }
+
+    void setup()
+    {
+        UT_PTR_SET(CSeqGenerateSeq, FakeCSeqGenerateSeq);
+    }
 };
 
 TEST(CSeqTestGroup, CSeqParseTest)

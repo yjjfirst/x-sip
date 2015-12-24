@@ -35,7 +35,6 @@ TEST_GROUP(MessageBuilderTestGroup)
 
         DialogSetToUser(dialog, (char *)"88002");
         inviteMessage = BuildInviteMessage(dialog);
-
     }
 
     void teardown()
@@ -195,6 +194,15 @@ TEST(MessageBuilderTestGroup, AckMessageFromTest)
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
     CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
+
+    DestoryMessage(&ackMessage);
+}
+
+TEST(MessageBuilderTestGroup, AckMessageCSeqTest)
+{
+    struct Message *ackMessage = BuildAckMessage(dialog);
+
+    CHECK_EQUAL(MessageGetCSeqNumber(ackMessage),MessageGetCSeqNumber(inviteMessage));
 
     DestoryMessage(&ackMessage);
 }

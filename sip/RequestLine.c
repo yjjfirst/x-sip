@@ -7,7 +7,6 @@
 #include "Parser.h"
 #include "Header.h"
 
-#define METHOD_MAX_LENGTH 16
 #define SIP_VERSION_LENGTH 8
 
 struct RequestLine {

@@ -87,11 +87,11 @@ struct Header *BuildCSeqHeader(struct Dialog *dialog)
     return (struct Header *)cseq;
 }
 
-void AddExpiresHeader(struct Message *m)
+struct Header *BuildExpiresHeader(struct Dialog *dialog)
 {
     struct ExpiresHeader *e = CreateExpiresHeader(7200);
     
-    MessageAddHeader(m, (struct Header *)e);
+    return (struct Header *)e;
 }
 
 struct Header *BuildContentLengthHeader(struct Dialog *dialog)
@@ -103,30 +103,30 @@ struct Header *BuildContentLengthHeader(struct Dialog *dialog)
 
 struct Message *BuildMessage(struct Dialog *dialog, SIP_METHOD method)
 {
-    struct Message *m = CreateMessage();
+    struct Message *message = CreateMessage();
  
     DialogSetRequestMethod(dialog, method);
 
-    MessageSetRequest(m, BuildRequestLine(dialog));
+    MessageSetRequest(message, BuildRequestLine(dialog));
 
-    MessageAddHeader(m, BuildViaHeader(dialog));
-    MessageAddHeader(m, BuildFromHeader(dialog));
-    MessageAddHeader(m, BuildToHeader(dialog));
-    MessageAddHeader(m, BuildCallIdHeader(dialog));
-    MessageAddHeader(m, BuildContactHeader(dialog));
-    MessageAddHeader(m, BuildMaxForwardsHeader(dialog));
-    MessageAddHeader(m, BuildCSeqHeader(dialog));
-    MessageAddHeader(m, BuildContentLengthHeader(dialog));
+    MessageAddHeader(message, BuildViaHeader(dialog));
+    MessageAddHeader(message, BuildFromHeader(dialog));
+    MessageAddHeader(message, BuildToHeader(dialog));
+    MessageAddHeader(message, BuildCallIdHeader(dialog));
+    MessageAddHeader(message, BuildContactHeader(dialog));
+    MessageAddHeader(message, BuildMaxForwardsHeader(dialog));
+    MessageAddHeader(message, BuildCSeqHeader(dialog));
+    MessageAddHeader(message, BuildContentLengthHeader(dialog));
 
-    return m;
+    return message;
 }
 
 struct Message *BuildBindingMessage(struct Dialog *dialog)
 {
-    struct Message *m = BuildMessage(dialog, SIP_METHOD_REGISTER);
-    AddExpiresHeader(m);
+    struct Message *binding = BuildMessage(dialog, SIP_METHOD_REGISTER);
+    MessageAddHeader(binding, BuildExpiresHeader(dialog));
 
-    return m;
+    return binding;
 }
 
 struct Message *BuildInviteMessage(struct Dialog *dialog)

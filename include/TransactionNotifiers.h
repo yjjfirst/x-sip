@@ -1,9 +1,9 @@
 struct Transaction;
 
-struct TransactionManagerInterface  {
+struct TransactionNotifiers  {
     void (*die)(struct Transaction *t);
 };
 
-struct TransactionOwnerInterface {
+struct TransactionOwner {
     void (*onEvent) (struct Transaction *t);
 };
