@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <string.h>
@@ -7,17 +8,6 @@ extern "C" {
 }
 
 static char Message4ReceivingTest[] = "Receiving test string";
-
-int ReceiveMessageMock(char *message)
-{
-    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
-    return 0;
-}
-
-int SendMessageMock(char *message)
-{
-    return mock().actualCall("SendMessageMock").returnIntValue();
-}
 
 int MessageHandleMock(char *message)
 {

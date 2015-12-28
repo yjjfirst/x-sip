@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -12,17 +13,6 @@ extern "C" {
 #include "Transaction.h"
 #include "UserAgent.h"
 #include "Dialog.h"
-}
-
-static int ReceiveMessageMock(char *message)
-{
-    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
-    return 0;
-}
-
-static int SendMessageMock(char *message)
-{
-    return mock().actualCall("SendMessageMock").returnIntValue();
 }
 
 TEST_GROUP(TransactionManager)

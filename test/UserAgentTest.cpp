@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -17,18 +18,6 @@ extern "C" {
 #include "DialogId.h"
 #include "Dialog.h"
 }
-
-static int ReceiveMessageMock(char *message)
-{
-    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
-    return 0;
-}
-
-static int SendMessageMock(char *message)
-{
-    return mock().actualCall("SendMessageMock").returnIntValue();
-}
-
 
 static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime) 
 {

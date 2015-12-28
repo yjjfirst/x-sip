@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -13,17 +14,6 @@ extern "C" {
 #include "TestingMessages.h"
 #include "CallIdHeader.h"
 #include "Dialog.h"
-}
-
-static int ReceiveMessageMock(char *message)
-{
-    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
-    return 0;
-}
-
-static int SendMessageMock(char *message)
-{
-    return 0;
 }
 
 static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime)
@@ -41,6 +31,7 @@ TEST_GROUP(InviteTransactionTestGroup)
     void setup(){
         mock().expectOneCall("AddTimer");
         mock().expectOneCall("AddTimer");
+        mock().expectOneCall("SendMessageMock");
 
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);

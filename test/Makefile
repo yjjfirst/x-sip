@@ -13,7 +13,7 @@ TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeader
 	CallIdHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o MessagesTest.o \
 	StatusLineTest.o MessageBuilderTest.o MessageTransportTest.o SessionTest.o ParameterTest.o NonInviteTransactionTest.o \
 	TimerTest.o TransactionManagerTest.o UserAgentTest.o SipMethodTest.o InviteTransactionTest.o DialogTest.o \
-	DialogsTest.o DialogIdTest.o
+	DialogsTest.o DialogIdTest.o TransportMock.o
 
 TEST_SRCS = $(TESTSUITE_OBJS:%.o=%.cpp)
 
