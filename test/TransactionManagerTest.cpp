@@ -40,7 +40,7 @@ TEST_GROUP(TransactionManager)
     void setup() {
         RemoveMessageTransporter((char *)"TRANS");
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
-        InitReceiveMessageCallback(MessageReceived);
+        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
     }
 
     void teardown() {

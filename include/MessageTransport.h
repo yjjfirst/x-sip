@@ -5,24 +5,7 @@ typedef int (*MessageReceiver) (char *message);
 typedef int (*MessageHandler) (char *message);
 
 void AddMessageTransporter(char *name ,MessageSender s, MessageReceiver r);
-void InitReceiveMessageCallback(MessageSender h);
 void RemoveMessageTransporter(char *name);
 BOOL ReceiveMessage(char *message);
 int SendMessage(char *message);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+extern MessageHandler ReceiveMessageCallback;

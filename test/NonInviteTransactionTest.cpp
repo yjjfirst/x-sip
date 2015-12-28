@@ -78,7 +78,8 @@ TEST_GROUP(TransactionTestGroup)
         m = BuildBindingMessage(dialog);
         t = AddTransaction(m, NULL);
         s = TransactionGetState(t);
-        InitReceiveMessageCallback(MessageReceived);
+        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+
     }
 
     void teardown()

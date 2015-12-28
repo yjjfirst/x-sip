@@ -43,8 +43,9 @@ TEST_GROUP(InviteTransactionTestGroup)
         mock().expectOneCall("AddTimer");
 
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
+        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+
         TransactionSetTimerManager(AddTimer);
-        InitReceiveMessageCallback(MessageReceived);
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildInviteMessage(dialog); 

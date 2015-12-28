@@ -13,12 +13,13 @@ struct MessageTransporter {
 };
 
 t_list *MessageTransports;
-MessageHandler ReceiveMessageCallback;
 
-void InitReceiveMessageCallback(MessageHandler h)
+int ReceiveMessageCallbackImpl (char *message) 
 {
-    ReceiveMessageCallback = h;
+    return 0;
 }
+
+MessageHandler ReceiveMessageCallback =  ReceiveMessageCallbackImpl;
 
 struct MessageTransporter *CreateMessageTransport(char *name, MessageSender s, MessageReceiver r)
 {

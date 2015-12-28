@@ -30,7 +30,7 @@ int MessageHandleMock(char *message)
 void InitTransportMock()
 {
     AddMessageTransporter((char *)"Mock", SendMessageMock, ReceiveMessageMock);
-    InitReceiveMessageCallback(MessageHandleMock);
+    UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
 }
 
 void CleanupTransportMock()

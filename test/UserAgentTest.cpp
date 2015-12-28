@@ -74,7 +74,7 @@ TEST_GROUP(UserAgentTestGroup)
     void setup()
     {
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
-        InitReceiveMessageCallback(MessageReceived);
+        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         TransactionSetTimerManager(AddTimer);
     }
 
