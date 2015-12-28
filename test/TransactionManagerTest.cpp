@@ -14,19 +14,9 @@ extern "C" {
 #include "Dialog.h"
 }
 
-enum Response {
-    OK200,
-    RINGING180,
-};
-
-static enum Response Response;
-
 static int ReceiveMessageMock(char *message)
 {
-    if (Response == RINGING180)
-        strcpy(message, BINDING_TRYING_MESSAGE);
-    else
-        strcpy(message, ADD_BINDING_MESSAGE);
+    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
     return 0;
 }
 
@@ -38,13 +28,13 @@ static int SendMessageMock(char *message)
 TEST_GROUP(TransactionManager)
 {
     void setup() {
-        RemoveMessageTransporter((char *)"TRANS");
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
     }
 
     void teardown() {
         RemoveMessageTransporter((char *)"TRANS");
+        mock().clear();
     }
 };
 
@@ -79,6 +69,8 @@ TEST(TransactionManager, MatchResponse)
     struct Message *message = BuildBindingMessage(dialog);
     char string[MAX_MESSAGE_LENGTH] = {0};
     
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+
     AddTransaction(message, NULL);
     CHECK_TRUE(ReceiveMessage(string));
 
@@ -95,6 +87,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     struct Transaction *t = AddTransaction(message, NULL);
     enum TransactionState s;
 
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
     ReceiveMessage(string);

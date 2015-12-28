@@ -10,8 +10,7 @@ static char Message4ReceivingTest[] = "Receiving test string";
 
 int ReceiveMessageMock(char *message)
 {
-    strcpy(message, Message4ReceivingTest);
-    mock().actualCall("ReceiveMessageMock");
+    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
     return 0;
 }
 
@@ -56,7 +55,7 @@ TEST(MessageTransportTestGroup, ReceiveMessageTest)
 {
     char message[64] = {0};
 
-    mock().expectOneCall("ReceiveMessageMock");
+    mock().expectOneCall("ReceiveMessageMock").andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
 
     ReceiveMessage(message);
