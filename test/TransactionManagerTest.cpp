@@ -22,7 +22,7 @@ static int ReceiveMessageMock(char *message)
 
 static int SendMessageMock(char *message)
 {
-    return 0;
+    return mock().actualCall("SendMessageMock").returnIntValue();
 }
 
 TEST_GROUP(TransactionManager)
@@ -45,13 +45,16 @@ TEST(TransactionManager, NewTransaction)
     struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *transaction;
 
+    mock().expectOneCall("SendMessageMock");
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
+    mock().expectOneCall("SendMessageMock");
     message = BuildBindingMessage(dialog);
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
+    mock().expectOneCall("SendMessageMock");
     message = BuildBindingMessage(dialog);
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(3, CountTransaction());
@@ -64,6 +67,8 @@ TEST(TransactionManager, NewTransaction)
 
 TEST(TransactionManager, MatchResponse)
 {
+    mock().expectOneCall("SendMessageMock");
+
     struct UserAgent *ua = CreateUserAgent();
     struct Dialog *dialog = CreateDialog(NULL, ua);
     struct Message *message = BuildBindingMessage(dialog);
@@ -80,6 +85,8 @@ TEST(TransactionManager, MatchResponse)
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
+    mock().expectOneCall("SendMessageMock");
+
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct UserAgent *ua = CreateUserAgent();
     struct Dialog *dialog = CreateDialog(NULL, ua);
@@ -102,6 +109,7 @@ TEST(TransactionManager, GetTransactionByTest)
 {
     EmptyTransactionManager();
 
+    mock().expectOneCall("SendMessageMock");
     struct UserAgent *ua = CreateUserAgent();
     struct Dialog *dialog = CreateDialog(NULL, ua);
     struct Message *message = BuildBindingMessage(dialog);

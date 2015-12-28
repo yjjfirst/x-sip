@@ -26,7 +26,7 @@ static int ReceiveMessageMock(char *message)
 
 static int SendMessageMock(char *message)
 {
-    return 0;
+    return mock().actualCall("SendMessageMock").returnIntValue();
 }
 
 
@@ -222,6 +222,7 @@ TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
+    mock().expectOneCall("SendMessageMock");
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
@@ -236,6 +237,8 @@ TEST(UserAgentTestGroup, BindingTest)
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
 {
+    mock().expectOneCall("SendMessageMock");
+
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
@@ -247,6 +250,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     EmptyTransactionManager();
 
+    mock().expectOneCall("SendMessageMock");
     message = BuildBindingMessage(dialog);
     t = AddTransaction(message, (struct TransactionOwner *)dialog);
 
@@ -275,6 +279,7 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
 
+    mock().expectOneCall("SendMessageMock");
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);
     message = BuildInviteMessage(dialog);

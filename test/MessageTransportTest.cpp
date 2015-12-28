@@ -16,8 +16,7 @@ int ReceiveMessageMock(char *message)
 
 int SendMessageMock(char *message)
 {
-    mock().actualCall("SendMessageMock").withStringParameter("message",message);
-    return 0;
+    return mock().actualCall("SendMessageMock").returnIntValue();
 }
 
 int MessageHandleMock(char *message)
@@ -68,7 +67,7 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 {
     char message[32] = "Sending test string";
 
-    mock().expectOneCall("SendMessageMock").withStringParameter("message", message);
+    mock().expectOneCall("SendMessageMock");
     SendMessage(message);
     mock().checkExpectations();
 }
