@@ -17,6 +17,7 @@ extern "C" {
 #include "TestingMessages.h"
 #include "DialogId.h"
 #include "Dialog.h"
+#include "Provision.h"
 }
 
 static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime) 
@@ -38,7 +39,7 @@ TEST_GROUP(UserAgentTestGroup)
     {
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
-        DialogSetToUser(dialog, (char *)"88001");
+        DialogSetToUser(dialog, GetUserName());
         message = BuildBindingMessage(dialog);
     }
 
@@ -54,9 +55,9 @@ TEST_GROUP(UserAgentTestGroup)
         struct TimerManager *tm = GetTimerManager(AddTimer, RemoveTimer);
 
         (void)tm;
-        UserAgentSetUserName(ua, (char *)"88001");
-        UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
-        UserAgentSetProxy(ua, (char *)"192.168.10.63");
+        UserAgentSetUserName(ua, GetUserName());
+        UserAgentSetRegistrar(ua, GetRegistrar());
+        UserAgentSetProxy(ua, GetProxy());
 
         return ua;
     }
@@ -167,7 +168,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
 
     struct URI *uri = RequestLineGetUri(rl);
     STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
-    STRCMP_EQUAL("192.168.10.63", UriGetHost(uri));
+    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
 
     DestoryTestingMessage();
 }
@@ -179,7 +180,7 @@ TEST(UserAgentTestGroup, BindingsToHeaderTest)
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
 
-    STRCMP_EQUAL("88001", UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
 
     DestoryTestingMessage();
 }
@@ -191,7 +192,7 @@ TEST(UserAgentTestGroup, BindingsFromHeaderTest)
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
 
-    STRCMP_EQUAL("88001", UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
     DestoryTestingMessage();
 }
 
@@ -202,7 +203,7 @@ TEST(UserAgentTestGroup, BindingsContactHeaderTest)
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
 
-    STRCMP_EQUAL("88001", UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
 
     DestoryTestingMessage();
 }
@@ -283,5 +284,4 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     DestoryDialogId(&dialogid);
     DestoryUserAgent(&ua);
     EmptyTransactionManager();
-} 
-
+}

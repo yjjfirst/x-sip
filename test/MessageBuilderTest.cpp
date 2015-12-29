@@ -14,6 +14,7 @@ extern "C" {
 #include "Parameter.h"
 #include "UserAgent.h"
 #include "Dialog.h"
+#include "Provision.h"
 }
 
 
@@ -26,11 +27,11 @@ TEST_GROUP(MessageBuilderTestGroup)
     void setup()
     {
         ua = CreateUserAgent();
-        UserAgentSetProxy(ua, (char *)PROXY_IPADDR);
-        UserAgentSetUserName(ua, (char *)USER_NAME);
+        UserAgentSetProxy(ua, GetProxy());
+        UserAgentSetUserName(ua, GetUserName());
         dialog = CreateDialog(NULL, ua);
 
-        DialogSetToUser(dialog, (char *)USER_NAME);
+        DialogSetToUser(dialog, GetUserName());
         m = BuildBindingMessage(dialog);
 
         DialogSetToUser(dialog, (char *)"88002");
@@ -52,8 +53,8 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     struct URI *uri = RequestLineGetUri(rl);
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
-    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
-    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
 }
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
@@ -62,8 +63,8 @@ TEST(MessageBuilderTestGroup, FromHeaderTest)
     STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
 
     struct URI *uri = ContactHeaderGetUri(from);
-    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
-    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ToHeaderTest)
@@ -72,8 +73,8 @@ TEST(MessageBuilderTestGroup, ToHeaderTest)
     STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
 
     struct URI *uri = ContactHeaderGetUri(to);
-    STRCMP_EQUAL(USER_NAME, UriGetUser(uri));
-    STRCMP_EQUAL(PROXY_IPADDR, UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ViaHeaderTest)
@@ -83,7 +84,7 @@ TEST(MessageBuilderTestGroup, ViaHeaderTest)
     MessageAddViaParameter(m, (char *)"rport", (char *)"");
 
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
-    STRCMP_EQUAL(LOCAL_IPADDR, UriGetHost(ViaHeaderGetUri(via)));
+    STRCMP_EQUAL(GetLocalIpAddr(), UriGetHost(ViaHeaderGetUri(via)));
     STRCMP_EQUAL("", ViaHeaderGetParameter(via, (char *)"rport"));
     STRCMP_EQUAL("z9hG4bK1491280923", ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
 

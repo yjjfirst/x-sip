@@ -14,6 +14,7 @@
 #include "Header.h"
 #include "UserAgent.h"
 #include "Dialog.h"
+#include "Provision.h"
 
 struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
@@ -25,7 +26,7 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 
 struct Header *BuildViaHeader(struct Dialog *dialog)
 {
-    struct URI *uri = CreateUri("", "", LOCAL_IPADDR, LOCAL_PORT);
+    struct URI *uri = CreateUri("", "", GetLocalIpAddr(), LOCAL_PORT);
     struct ViaHeader *via = CreateViaHeader(uri);
     
     struct Parameters *ps = ViaHeaderGetParameters(via);
@@ -59,7 +60,7 @@ struct Header *BuildToHeader(struct Dialog *dialog)
 struct Header *BuildContactHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), LOCAL_IPADDR, 0);
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), GetLocalIpAddr(), 0);
     UriAddParameter(uri, "line", "6c451db26592505");
     struct ContactHeader *contact = CreateContactHeader();
 

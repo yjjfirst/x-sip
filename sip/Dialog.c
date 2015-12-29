@@ -53,9 +53,8 @@ void DialogOnTransactionEvent(struct Transaction *t)
             else
                 UserAgentSetUnbinded(ua);
         } else {
-            struct DialogId *dialogid;
-            if ( (dialogid = DialogGetId(dialog)) != NULL)
-                DialogIdExtractFromMessage(dialogid, m);
+            struct DialogId *dialogid = DialogGetId(dialog);
+            DialogIdExtractFromMessage(dialogid, m);
         } 
     }
 }
@@ -63,14 +62,15 @@ void DialogOnTransactionEvent(struct Transaction *t)
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
 {
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
-    if (dialogid == NULL) 
+
+    if (dialogid == NULL) {
         dialog->id = CreateEmptyDialogId();
-    else
+    } else {
         dialog->id = dialogid;
+    }
     dialog->ua = ua;
     dialog->notifyInterface.onEvent = DialogOnTransactionEvent;
     UserAgentAddDialog(ua, dialog);
-    DialogSetToUser(dialog, "88002");
 
     return dialog;
 }

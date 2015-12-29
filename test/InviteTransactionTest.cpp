@@ -14,6 +14,7 @@ extern "C" {
 #include "TestingMessages.h"
 #include "CallIdHeader.h"
 #include "Dialog.h"
+#include "Provision.h"
 }
 
 static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime)
@@ -57,9 +58,9 @@ TEST_GROUP(InviteTransactionTestGroup)
     {
         struct UserAgent *ua = CreateUserAgent();
 
-        UserAgentSetUserName(ua, (char *)"88001");
-        UserAgentSetRegistrar(ua, (char *)"192.168.10.63");
-        UserAgentSetProxy(ua, (char *)"192.168.10.63");
+        UserAgentSetUserName(ua, GetUserName());
+        UserAgentSetRegistrar(ua, GetRegistrar());
+        UserAgentSetProxy(ua, GetProxy());
 
         return ua;
 
