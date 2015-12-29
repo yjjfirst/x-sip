@@ -39,8 +39,8 @@ TEST_GROUP(RequestLineTestGroup)
 
 TEST(RequestLineTestGroup, RegisterMethodTest)
 {
-    STRCMP_EQUAL("REGISTER",RequestLineGetMethod(RegisterRequestLine));
-    STRCMP_EQUAL("INVITE", RequestLineGetMethod(InviteRequestLine));
+    STRCMP_EQUAL("REGISTER",RequestLineGetMethodName(RegisterRequestLine));
+    STRCMP_EQUAL("INVITE", RequestLineGetMethodName(InviteRequestLine));
 }
 
 TEST(RequestLineTestGroup, RegisterSIP_VersionTest)
@@ -71,10 +71,10 @@ TEST(RequestLineTestGroup, CreateRequestLineTest)
     struct RequestLine *r = CreateEmptyRequestLine();
 
     RequestLineSetMethod(r, (char *)"REGISTER");
-    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(r));
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(r));
     
     RequestLineSetMethod(r, (char *)"INVITE");
-    STRCMP_EQUAL("INVITE", RequestLineGetMethod(r));
+    STRCMP_EQUAL("INVITE", RequestLineGetMethodName(r));
 
     DestoryRequestLine(r);
 }
@@ -84,7 +84,7 @@ TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
     struct RequestLine *r = CreateEmptyRequestLine();
     RequestLineSetMethod(r, (char *)"aaaaaaa");
 
-    STRCMP_EQUAL("", RequestLineGetMethod(r));
+    STRCMP_EQUAL("", RequestLineGetMethodName(r));
     DestoryRequestLine(r);
 }
 
@@ -145,7 +145,7 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
 
     ParseURI((char *)URIString, &u);
     r = CreateRequestLine(m, u); 
-    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(r));
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(r));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
     
     u = RequestLineGetUri(r);
@@ -161,7 +161,7 @@ TEST(RequestLineTestGroup, SetMethodTest)
     struct URI *u = CreateUri((char *)URI_SCHEME_SIP, (char *)"", (char *)"192.168.10.62", 0);
     struct RequestLine *rl = CreateRequestLine(SIP_METHOD_INVITE, u);
 
-    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, RequestLineGetMethod(rl));
+    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, RequestLineGetMethodName(rl));
 
     DestoryRequestLine(rl);
 }

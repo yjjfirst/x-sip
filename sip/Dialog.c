@@ -42,19 +42,19 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
 
 void DialogOnTransactionEvent(struct Transaction *t)
 {
-    struct Message *m = TransactionGetLatestResponse(t);
+    struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetOwner(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
 
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
         if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-            if (MessageGetExpires(m) != 0)
+            if (MessageGetExpires(message) != 0)
                 UserAgentSetBinded(ua);
             else
                 UserAgentSetUnbinded(ua);
         } else {
             struct DialogId *dialogid = DialogGetId(dialog);
-            DialogIdExtractFromMessage(dialogid, m);
+            DialogIdExtractFromMessage(dialogid, message);
         } 
     }
 }

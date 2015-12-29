@@ -51,7 +51,7 @@ TEST(MessageTestGroup, RegisterRequestLineParseTest)
     ParseMessage(messageString, message);
     
     struct RequestLine *request = MessageGetRequestLine(message);
-    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(request));
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(request));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(request));
     
     struct URI *uri = RequestLineGetUri(request);

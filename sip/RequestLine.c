@@ -48,15 +48,15 @@ int ParseRequestLine(char *string, struct RequestLine *r)
     return Parse(string, r, GetRequestLinePattern());
 }
 
-char *RequestLineGetMethod (struct RequestLine *r)
+char *RequestLineGetMethodName (struct RequestLine *r)
 {
     return r->method;
 }
 
-SIP_METHOD RequestLineGetMethodNumber(struct RequestLine *r)
+SIP_METHOD RequestLineGetMethod(struct RequestLine *r)
 {
     
-    return StringMap2MethodNumber(RequestLineGetMethod(r));
+    return StringMap2MethodNumber(RequestLineGetMethodName(r));
 }
 
 int RequestLineSetMethod (struct RequestLine *r, char *method)

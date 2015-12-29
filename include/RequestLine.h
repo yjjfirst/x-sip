@@ -7,8 +7,8 @@ void DestoryRequestLine(struct RequestLine *requestLine);
 struct RequestLine *CreateEmptyRequestLine();
 struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u);
 
-char *RequestLineGetMethod (struct RequestLine *r);
-SIP_METHOD RequestLineGetMethodNumber(struct RequestLine *r);
+char *RequestLineGetMethodName (struct RequestLine *r);
+SIP_METHOD RequestLineGetMethod(struct RequestLine *r);
 char *RequestLineGetSipVersion(struct RequestLine *r);
 struct URI *RequestLineGetUri(struct RequestLine *r);
 

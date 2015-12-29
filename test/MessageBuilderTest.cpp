@@ -137,7 +137,7 @@ TEST(MessageBuilderTestGroup, ContentLengthTest)
 TEST(MessageBuilderTestGroup, InviteMessageRequestLineTest)
 {
     struct RequestLine *rl = MessageGetRequestLine(inviteMessage);
-    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethod(rl));
+    STRCMP_EQUAL(SIP_METHOD_NAME_INVITE,RequestLineGetMethodName(rl));
     
     STRCMP_EQUAL("88002", UriGetUser(RequestLineGetUri(rl)));
 
@@ -174,7 +174,7 @@ TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
     struct URI *uri = RequestLineGetUri(requestLine);
     struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
     
-    STRCMP_EQUAL("ACK", RequestLineGetMethod(requestLine));
+    STRCMP_EQUAL("ACK", RequestLineGetMethodName(requestLine));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(requestLine));
     CHECK_TRUE(UriMatched(uri, inviteUri));
 

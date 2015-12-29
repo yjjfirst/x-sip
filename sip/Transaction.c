@@ -169,7 +169,7 @@ struct Transaction *CallocTransaction(struct Message *request)
 
     t = calloc(1, sizeof (struct Transaction));
 
-    if(RequestLineGetMethodNumber(rl) == SIP_METHOD_INVITE) {
+    if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
         t->state = TRANSACTION_STATE_CALLING;
         t->type = TRANSACTION_TYPE_CLIENT_INVITE;
     }

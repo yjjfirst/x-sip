@@ -163,7 +163,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
     BuildTestingMessage();
 
     struct RequestLine *rl = MessageGetRequestLine(message);
-    STRCMP_EQUAL("REGISTER", RequestLineGetMethod(rl));
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(rl));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
 
     struct URI *uri = RequestLineGetUri(rl);
