@@ -173,7 +173,7 @@ TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
     struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
     struct URI *uri = RequestLineGetUri(requestLine);
     struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
-    
+        
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(requestLine));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(requestLine));
     CHECK_TRUE(UriMatched(uri, inviteUri));

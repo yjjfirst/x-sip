@@ -7,7 +7,7 @@
 #include "Parser.h"
 #include "Header.h"
 
-#define SIP_VERSION_LENGTH 8
+#define SIP_VERSION_LENGTH 16
 
 struct RequestLine {
     char method[METHOD_MAX_LENGTH + 1];
@@ -54,8 +54,7 @@ char *RequestLineGetMethodName (struct RequestLine *r)
 }
 
 SIP_METHOD RequestLineGetMethod(struct RequestLine *r)
-{
-    
+{    
     return StringMap2MethodNumber(RequestLineGetMethodName(r));
 }
 
@@ -95,6 +94,22 @@ struct URI *RequestLineGetUri(struct RequestLine *r)
 {
     assert (r != NULL);
     return r->requestUri;
+}
+
+BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2)
+{
+    if (!UriMatched(RequestLineGetUri(r1), RequestLineGetUri(r2))) {
+        return FALSE;
+    }
+
+    if (strcmp(r1->method, r2->method) != 0) {
+        return FALSE;
+    }
+
+    if (strcmp(r1->sipVersion, r2->sipVersion) != 0){
+        return FALSE;
+    }
+    return TRUE;
 }
 
 char *RequestLine2String(char *string, struct RequestLine *r)

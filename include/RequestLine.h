@@ -19,11 +19,4 @@ int RequestLineSetUri(struct RequestLine *r, struct URI *u);
 char *RequestLine2String(char *string, struct RequestLine *r);
 int ParseRequestLine(char *string, struct RequestLine *r);
 
-
-
-
-
-
-
-
-
+BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2);

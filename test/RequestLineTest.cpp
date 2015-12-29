@@ -166,10 +166,46 @@ TEST(RequestLineTestGroup, SetMethodTest)
     DestoryRequestLine(rl);
 }
 
+TEST(RequestLineTestGroup, RequestLineMatchedTest)
+{
+    char requestLine[] = "REGISTER sip:192.168.2.89 SIP/2.0";    
+    struct RequestLine *rl = CreateEmptyRequestLine();
 
+    ParseRequestLine(requestLine, rl);
+    CHECK_TRUE(RequestLineMatched(rl, RegisterRequestLine));
+    
+    DestoryRequestLine(rl);
+}
 
+TEST(RequestLineTestGroup, RequestLineUriUnmatchedTest)
+{
+    char requestLine[] = "REGISTER sip:192.168.2.99 SIP/2.0";    
+    struct RequestLine *rl = CreateEmptyRequestLine();
 
+    ParseRequestLine(requestLine, rl);
+    CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
+    
+    DestoryRequestLine(rl);
+}
 
+TEST(RequestLineTestGroup, RequestLineMethodUnmatchedTest)
+{
+    char requestLine[] = "INVITE sip:192.168.2.89 SIP/2.0";    
+    struct RequestLine *rl = CreateEmptyRequestLine();
 
+    ParseRequestLine(requestLine, rl);
+    CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
+    
+    DestoryRequestLine(rl);
+}
 
+TEST(RequestLineTestGroup, RequestLineVersionUnmatchedTest)
+{
+    char requestLine[] = "REGISTER sip:192.168.2.89 SIPS/2.0";    
+    struct RequestLine *rl = CreateEmptyRequestLine();
 
+    ParseRequestLine(requestLine, rl);
+    CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
+    
+    DestoryRequestLine(rl);
+}
