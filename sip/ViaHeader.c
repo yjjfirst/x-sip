@@ -31,7 +31,7 @@ struct HeaderPattern *GetViaPattern()
     return ViaHeaderPattern;
 }
 
-BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+BOOL ViaHeaderBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
 {
     assert(via1 != NULL && via2 != NULL);
     assert(ViaHeaderGetParameter(via1, VIA_BRANCH_PARAMETER_NAME) != NULL);
@@ -41,12 +41,31 @@ BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
                     ViaHeaderGetParameter(via2, VIA_BRANCH_PARAMETER_NAME));
 }
 
-BOOL ViaBranchMatchedByString(struct ViaHeader *via, char *string)
+BOOL ViaHeaderBranchMatchedByString(struct ViaHeader *via, char *string)
 {
     assert(via != NULL && string != NULL);
     return !strcmp(ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME), string);
 }
 
+BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+{
+    assert(via1 != NULL);
+    assert(via2 != NULL);
+    
+    if (!UriMatched(ViaHeaderGetUri(via1), ViaHeaderGetUri(via2))) {
+        return FALSE;
+    }
+
+    if (strcmp (ViaHeaderGetTransport(via1), ViaHeaderGetTransport(via2)) != 0) {
+        return FALSE;
+    }
+    
+    if (!ParametersMatched(ViaHeaderGetParameters(via1), ViaHeaderGetParameters(via2))) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
 
 char *ViaHeaderGetName(struct ViaHeader *via)
 {

@@ -23,5 +23,6 @@ void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri);
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters);
 
 char *ViaHeader2String(char *result, struct Header *via);
-BOOL ViaBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2);
-BOOL ViaBranchMatchedByString(struct ViaHeader *via, char *string);
+BOOL ViaHeaderBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2);
+BOOL ViaHeaderBranchMatchedByString(struct ViaHeader *via, char *string);
+BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2);

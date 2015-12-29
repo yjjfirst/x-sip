@@ -207,3 +207,13 @@ TEST(MessageBuilderTestGroup, AckMessageCSeqTest)
 
     DestoryMessage(&ackMessage);
 }
+
+TEST(MessageBuilderTestGroup, AckMessageViaTest)
+{
+    struct Message *ackMessage = BuildAckMessage(dialog);
+    struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage);
+    struct ViaHeader *ackVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
+
+    CHECK_TRUE(ViaHeaderMatched(ackVia, inviteVia));
+    DestoryMessage(&ackMessage);
+}

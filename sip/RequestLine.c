@@ -98,6 +98,9 @@ struct URI *RequestLineGetUri(struct RequestLine *r)
 
 BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2)
 {
+    assert(r1 != NULL);
+    assert(r2 != NULL);
+
     if (!UriMatched(RequestLineGetUri(r1), RequestLineGetUri(r2))) {
         return FALSE;
     }

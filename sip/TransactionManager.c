@@ -53,7 +53,7 @@ BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMeth
 {
     struct Message *m = TransactionGetRequest(t);
     
-    return ViaBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m), branch) 
+    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m), branch) 
         && CSeqMethodMatchedByString((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m), seqMethod);
 }
 
@@ -74,7 +74,7 @@ struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
 
 BOOL MatchResponse(struct Message *request, struct Message *response)
 {
-    return ViaBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
+    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
                      (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response)) 
         && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
                                    (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
