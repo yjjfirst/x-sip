@@ -47,6 +47,13 @@ struct DialogId *CreateDialogId(char *callid, char *localTag, char *remoteTag)
     return dialogid;
 }
 
+void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *message)
+{
+    DialogIdSetCallId(dialogid, MessageGetCallId(message));
+    DialogIdSetLocalTag(dialogid, MessageGetLocalTag(message));
+    DialogIdSetRemoteTag(dialogid, MessageGetRemoteTag(message));
+}
+
 struct DialogId *CreateDialogIdFromMessage(struct Message *message)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();

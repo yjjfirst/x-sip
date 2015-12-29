@@ -9,3 +9,4 @@ char *DialogIdGetCallId(struct DialogId *dialid);
 char *DialogIdGetLocalTag(struct DialogId *dialid);
 char *DialogIdGetRemoteTag(struct DialogId *dialid);
 BOOL DialogIdMatched(struct DialogId *id1, struct DialogId *id2);
+void DialogIdExtractFromMessage(struct DialogId *id, struct Message *message);

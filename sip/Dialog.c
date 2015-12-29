@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "Utils.h"
 #include "Dialog.h"
 #include "DialogId.h"
@@ -51,8 +53,9 @@ void DialogOnTransactionEvent(struct Transaction *t)
             else
                 UserAgentSetUnbinded(ua);
         } else {
-            struct DialogId *dialogid = CreateDialogIdFromMessage(m);
-            CreateDialog(dialogid, ua);
+            struct DialogId *dialogid;
+            if ( (dialogid = DialogGetId(dialog)) != NULL)
+                DialogIdExtractFromMessage(dialogid, m);
         } 
     }
 }
@@ -60,7 +63,10 @@ void DialogOnTransactionEvent(struct Transaction *t)
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
 {
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
-    dialog->id = dialogid;
+    if (dialogid == NULL) 
+        dialog->id = CreateEmptyDialogId();
+    else
+        dialog->id = dialogid;
     dialog->ua = ua;
     dialog->notifyInterface.onEvent = DialogOnTransactionEvent;
     UserAgentAddDialog(ua, dialog);
