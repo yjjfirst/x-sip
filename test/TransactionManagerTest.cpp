@@ -17,25 +17,34 @@ extern "C" {
 
 TEST_GROUP(TransactionManager)
 {
+    struct UserAgent *ua;
+    struct Dialog *dialog;
+    struct Message *message;
+    
     void setup() {
         AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+
+        mock().expectOneCall("SendMessageMock");
+        ua = CreateUserAgent();
+        dialog = CreateDialog(NULL, ua);
+        message = BuildBindingMessage(dialog);
+
     }
 
     void teardown() {
         RemoveMessageTransporter((char *)"TRANS");
         mock().clear();
+
+        DestoryUserAgent(&ua);
+        EmptyTransactionManager();
     }
 };
 
 TEST(TransactionManager, NewTransaction)
 {
-    struct UserAgent *ua = CreateUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *transaction;
 
-    mock().expectOneCall("SendMessageMock");
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
@@ -47,40 +56,23 @@ TEST(TransactionManager, NewTransaction)
     mock().expectOneCall("SendMessageMock");
     message = BuildBindingMessage(dialog);
     transaction = AddTransaction(message, NULL);
+
     CHECK_EQUAL(3, CountTransaction());
-
-
     CHECK_FALSE(0 == transaction)
-    EmptyTransactionManager();
-    DestoryUserAgent(&ua);
 }
 
 TEST(TransactionManager, MatchResponse)
 {
-    mock().expectOneCall("SendMessageMock");
-
-    struct UserAgent *ua = CreateUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
     char string[MAX_MESSAGE_LENGTH] = {0};
     
     mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
-
     AddTransaction(message, NULL);
     CHECK_TRUE(ReceiveMessage(string));
-
-    EmptyTransactionManager();
-    DestoryUserAgent(&ua);
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
-    mock().expectOneCall("SendMessageMock");
-
     char string[MAX_MESSAGE_LENGTH] = {0};
-    struct UserAgent *ua = CreateUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
     struct Transaction *t = AddTransaction(message, NULL);
     enum TransactionState s;
 
@@ -90,26 +82,13 @@ TEST(TransactionManager, BranchNonMatchTest)
     ReceiveMessage(string);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
-
-    DestoryUserAgent(&ua);
-    EmptyTransactionManager();
 }
 
 TEST(TransactionManager, GetTransactionByTest)
 {
-    EmptyTransactionManager();
-
-    mock().expectOneCall("SendMessageMock");
-    struct UserAgent *ua = CreateUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
-    struct Message *message = BuildBindingMessage(dialog);
-    struct Transaction *t = AddTransaction(message, NULL);
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
+    struct Transaction *t = AddTransaction(message, NULL);
 
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
-
-    DestoryUserAgent(&ua);
-    EmptyTransactionManager();
 }
-

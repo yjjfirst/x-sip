@@ -203,10 +203,7 @@ TEST(TransactionTestGroup, SendMessageError)
     mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
     mock().expectOneCall("SendMessageMock").andReturnValue(-1);
 
-    struct UserAgent *ua = CreateUserAgent();
-    struct Dialog *dialog = CreateDialog(NULL, ua);
     struct Message *message = BuildBindingMessage(dialog);
-
     AddTransaction(message, NULL);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
