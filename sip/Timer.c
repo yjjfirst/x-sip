@@ -1,10 +1,18 @@
 #include "Timer.h"
 
-static struct TimerManager TimerManager;
+struct Timer {
+};
 
-struct TimerManager *GetTimerManager(TimerAddFunc adder, TimerRemoveFunc remover)
+
+struct Timer *AddTimerImpl(void *data, int ms, TimerCallback action)
 {
-    TimerManager.adder = adder;
-    TimerManager.remover = remover;
-    return &TimerManager;
+    return NULL;
 }
+
+struct Timer *(*AddTimer)(void *data, int ms, TimerCallback action) = AddTimerImpl;
+
+void RemoveTimerImpl(struct Timer *t)
+{
+}
+
+void (*RemoveTimer)(struct Timer *t) = RemoveTimerImpl;

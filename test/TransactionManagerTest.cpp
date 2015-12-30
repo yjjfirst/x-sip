@@ -22,10 +22,10 @@ TEST_GROUP(TransactionManager)
     struct Message *message;
     
     void setup() {
-        AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+        UT_PTR_SET(Transporter, &MockTransporter);
 
-        mock().expectOneCall("SendMessageMock");
+        mock().expectOneCall("SendOutMessageMock");
         ua = CreateUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildBindingMessage(dialog);
@@ -33,7 +33,6 @@ TEST_GROUP(TransactionManager)
     }
 
     void teardown() {
-        RemoveMessageTransporter((char *)"TRANS");
         mock().clear();
 
         DestoryUserAgent(&ua);
@@ -48,12 +47,12 @@ TEST(TransactionManager, NewTransaction)
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
     transaction = AddTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
     transaction = AddTransaction(message, NULL);
 
@@ -65,9 +64,9 @@ TEST(TransactionManager, MatchResponse)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     AddTransaction(message, NULL);
-    CHECK_TRUE(ReceiveMessage(string));
+    CHECK_TRUE(ReceiveInMessage(string));
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
@@ -76,10 +75,10 @@ TEST(TransactionManager, BranchNonMatchTest)
     struct Transaction *t = AddTransaction(message, NULL);
     enum TransactionState s;
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
-    ReceiveMessage(string);
+    ReceiveInMessage(string);
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }
@@ -92,3 +91,4 @@ TEST(TransactionManager, GetTransactionByTest)
 
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 }
+

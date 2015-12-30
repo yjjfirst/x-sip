@@ -20,13 +20,15 @@ extern "C" {
 #include "Provision.h"
 }
 
-static struct Timer *AddTimer(void *p, int ms, TimerCallback onTime) 
+struct UserAgent *BuildUserAgent()
 {
-    return NULL;
-}
-
-static void RemoveTimer(struct Timer *timer)
-{
+    struct UserAgent *ua = CreateUserAgent();
+    
+    UserAgentSetUserName(ua, GetUserName());
+    UserAgentSetRegistrar(ua, GetRegistrar());
+    UserAgentSetProxy(ua, GetProxy());
+    
+    return ua;
 }
 
 TEST_GROUP(UserAgentTestGroup)
@@ -49,28 +51,14 @@ TEST_GROUP(UserAgentTestGroup)
         DestoryUserAgent(&ua);
     }
 
-    struct UserAgent *BuildUserAgent()
-    {
-        struct UserAgent *ua = CreateUserAgent();
-        struct TimerManager *tm = GetTimerManager(AddTimer, RemoveTimer);
-
-        (void)tm;
-        UserAgentSetUserName(ua, GetUserName());
-        UserAgentSetRegistrar(ua, GetRegistrar());
-        UserAgentSetProxy(ua, GetProxy());
-
-        return ua;
-    }
     void setup()
     {
-        AddMessageTransporter((char *)"TRANS", SendMessageMock, ReceiveMessageMock);
+        UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
-        TransactionSetTimerManager(AddTimer);
     }
 
     void teardown()
     {
-        RemoveMessageTransporter((char *)"TRANS");
         mock().clear();
     }    
 };
@@ -212,12 +200,12 @@ TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
-    ReceiveMessage(revMessage);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
@@ -227,25 +215,25 @@ TEST(UserAgentTestGroup, BindingTest)
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
 {
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
 
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
-    ReceiveMessage(revMessage);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     EmptyTransactionManager();
 
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
     t = AddTransaction(message, (struct TransactionOwner *)dialog);
 
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
-    ReceiveMessage(revMessage);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
+    ReceiveInMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
@@ -269,17 +257,16 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
 
-    mock().expectOneCall("SendMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);
     message = BuildInviteMessage(dialog);
     AddTransaction(message, (struct TransactionOwner *)dialog);
-    mock().expectOneCall("ReceiveMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
-    ReceiveMessage(revMessage);
+    ReceiveInMessage(revMessage);
 
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
-    mock().checkExpectations();
 
     DestoryDialogId(&dialogid);
     DestoryUserAgent(&ua);

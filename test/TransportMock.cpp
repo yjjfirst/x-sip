@@ -4,14 +4,32 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+#include "MessageTransport.h"
 }
-int ReceiveMessageMock(char *message)
+
+int ReceiveInMessageMock(char *message)
 {
-    strcpy(message, mock().actualCall("ReceiveMessageMock").returnStringValue());
+    strcpy(message, mock().actualCall("ReceiveInMessageMock").returnStringValue());
     return 0;
 }
 
-int SendMessageMock(char *message)
+int SendOutMessageMock(char *message)
 {
-    return mock().actualCall("SendMessageMock").returnIntValue();
+    return mock().actualCall("SendOutMessageMock").returnIntValue();
 }
+
+struct MessageTransporter MockTransporter = {
+    "Mock",
+    SendOutMessageMock,
+    ReceiveInMessageMock,
+};
+
+
+
+
+
+
+
+
+
+

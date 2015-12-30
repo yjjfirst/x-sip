@@ -1,2 +1,5 @@
-int ReceiveMessageMock(char *message);
-int SendMessageMock(char *message);
+struct MessageTransporter;
+int ReceiveInMessageMock(char *message);
+int SendOutMessageMock(char *message);
+
+extern MessageTransporter MockTransporter;
