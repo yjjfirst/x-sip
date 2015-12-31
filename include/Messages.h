@@ -12,6 +12,7 @@ struct StatusLine *MessageGetStatusLine(struct Message *message);
 char *MessageGetCallId(struct Message *message);
 char *MessageGetLocalTag(struct Message *message);
 char *MessageGetRemoteTag(struct Message *message);
+void MessageSetRemoteTag(struct Message *message, char *tag);
 int MessageGetExpires(struct Message *message);
 struct Header *MessageGetHeader(const char *name, struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);

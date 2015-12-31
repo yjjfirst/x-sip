@@ -5,10 +5,13 @@
 #include "UserAgentTest.h"
 
 extern "C" {
+#include <stdio.h>
+
 #include "Transaction.h"
 #include "UserAgent.h"
 #include "Dialog.h"
 #include "MessageBuilder.h"
+#include "Messages.h"
 #include "TransactionManager.h"
 #include "MessageTransport.h"
 }
@@ -28,15 +31,24 @@ TEST_GROUP(DialogTestGroup)
 
     void teardown()
     {
+        EmptyTransactionManager();
         DestoryUserAgent(&ua);
+        mock().checkExpectations();
         mock().clear();
     }
 };
 
-TEST(DialogTestGroup, AckSendAfterInviteSuccessedTest)
+TEST(DialogTestGroup, AckRequestInviteSuccessedTest)
 {
-    // struct Message *message = BuildInviteMessage(dialog);
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *message = BuildInviteMessage(dialog);
 
-    // mock().expectOneCall("SendMessageMock");
-    // AddTransaction(message, (struct TransactionOwner *)dialog);
+    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
+   
+    AddTransaction(message, (struct TransactionOwner *)dialog);
+    UT_PTR_SET(Transporter, &MockTransporterForAck);
+    mock().expectOneCall("SendOutMessageMock").withParameter("RemoteTag", "as6151ad25");
+
+    ReceiveInMessage(revMessage);
 }

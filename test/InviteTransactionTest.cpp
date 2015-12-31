@@ -23,6 +23,7 @@ static struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
     return NULL;
 }
 
+
 TEST_GROUP(InviteTransactionTestGroup)
 {
     struct UserAgent *ua;
@@ -76,9 +77,13 @@ TEST(InviteTransactionTestGroup, Receive2xxTest)
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall("AddTimer");
+
+    mock().expectOneCall("AddTimer");
+    mock().expectOneCall("AddTimer");
+    mock().expectOneCall("SendOutMessageMock");
+    
     ReceiveInMessage(stringReceived);
     
-    CHECK_EQUAL(0, CountTransaction());
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
     mock().checkExpectations();

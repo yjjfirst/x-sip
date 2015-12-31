@@ -163,6 +163,11 @@ struct Parameters *ContactHeaderGetParameters(struct ContactHeader *header)
     return header->parameters;
 }
 
+void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *value)
+{
+    AddParameter(header->parameters, name, value);
+}
+
 void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters *parameters)
 {
     if (header->parameters != NULL)

@@ -189,8 +189,14 @@ char *MessageGetLocalTag(struct Message *message)
 
 char *MessageGetRemoteTag(struct Message *message)
 {
-    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
-    return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
+}
+
+void MessageSetRemoteTag(struct Message *message, char *tag)
+{
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    return ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
 }
 
 int MessageGetExpires(struct Message *message)

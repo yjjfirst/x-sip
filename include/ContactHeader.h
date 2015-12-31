@@ -15,11 +15,12 @@ char *ContactHeaderGetDisplayName(struct ContactHeader *Header);
 struct URI *ContactHeaderGetUri(struct ContactHeader *Header);
 char *ContactHeaderGetParameter(struct ContactHeader *Header, char *name);
 struct Parameters *ContactHeaderGetParameters(struct ContactHeader *header);
+
 void ContactHeaderSetDisplayName(struct ContactHeader *header, char *displayName);
 void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri);
 void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters *parameters);
 BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2);
-
+void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *value);
 char *ContactHeader2String(char *result, struct Header *contact);
 
 

@@ -21,8 +21,6 @@ struct MessageTransporter DummyTransporter = {
     .receiver = DummyReceive,
 };
 
-struct MessageTransporter *Transporter = &DummyTransporter;
-
 int SendOutMessage(char *message)
 {
     return Transporter->sender(message);
@@ -39,5 +37,5 @@ int ReceiveMessageCallbackImpl (char *message)
     return 0;
 }
 
+struct MessageTransporter *Transporter = &DummyTransporter;
 MessageHandler ReceiveMessageCallback =  ReceiveMessageCallbackImpl;
-

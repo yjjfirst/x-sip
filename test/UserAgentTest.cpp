@@ -258,11 +258,16 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
 
     mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
+
+    mock().expectOneCall("AddTimer");
+    mock().expectOneCall("AddTimer");
+    mock().expectOneCall("SendOutMessageMock");
+
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);
     message = BuildInviteMessage(dialog);
     AddTransaction(message, (struct TransactionOwner *)dialog);
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
     
     ReceiveInMessage(revMessage);
 

@@ -5,8 +5,11 @@
 #include "DialogId.h"
 #include "UserAgent.h"
 #include "TransactionNotifiers.h"
+#include "TransactionManager.h"
 #include "Messages.h"
 #include "Transaction.h"
+#include "MessageBuilder.h"
+#include "MessageTransport.h"
 
 struct Dialog {
     struct TransactionOwner notifyInterface;  //must be the first field in the struct.
@@ -54,7 +57,11 @@ void DialogOnTransactionEvent(struct Transaction *t)
                 UserAgentSetUnbinded(ua);
         } else {
             struct DialogId *dialogid = DialogGetId(dialog);
-            DialogIdExtractFromMessage(dialogid, message);
+            DialogIdExtractFromMessage(dialogid, message);            
+
+            struct Message *ack = BuildAckMessage(dialog);
+            MessageSetRemoteTag(ack, MessageGetRemoteTag(message));
+            AddTransaction(ack, (struct TransactionOwner *)dialog);
         } 
     }
 }
