@@ -136,4 +136,3 @@ TEST(OutgoingInviteTransactionTestGroup, Receive100and180and200Test)
 
     mock().checkExpectations();
 }
-

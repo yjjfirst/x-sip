@@ -24,15 +24,20 @@ int CountTransaction()
     return get_list_len(TransactionManager.transactions);
 }
 
-
-struct Transaction *GetTransactionByPosition(int number)
+struct TransactionId *ExtractTransactionIdFromMessage(struct Message *message)
 {
-    return (struct Transaction *)get_data_at(TransactionManager.transactions,number);
+    //ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME);
+    return NULL;
 }
 
-void RemoveTransactionByNumber(int number)
+struct Transaction *GetTransactionByPosition(int position)
 {
-    del_node_at(&TransactionManager.transactions, number);
+    return (struct Transaction *)get_data_at(TransactionManager.transactions, position);
+}
+
+void RemoveTransactionByPosition(int position)
+{
+    del_node_at(&TransactionManager.transactions, position);
 }
 
 void RemoveTransaction(struct Transaction *t)
@@ -42,7 +47,7 @@ void RemoveTransaction(struct Transaction *t)
     for(; i < CountTransaction(); i++) {
         struct Transaction *tt = GetTransactionByPosition(i);
         if (tt == t) {
-            RemoveTransactionByNumber(i);
+            RemoveTransactionByPosition(i);
             DestoryTransaction(&tt);
             break;
         }
@@ -72,14 +77,6 @@ struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
     return NULL;
 }
 
-BOOL MatchResponse(struct Message *request, struct Message *response)
-{
-    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
-                     (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response)) 
-        && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
-                                   (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));
-}
-
 struct Transaction *MatchTransaction(struct Message *message)
 {
     int i = 0;
@@ -88,7 +85,7 @@ struct Transaction *MatchTransaction(struct Message *message)
     
     for (; i < length; i++) {
         struct Transaction *tt = GetTransactionByPosition(i);
-        if (MatchResponse(TransactionGetRequest(tt), message))
+        if (RequestResponseMatched(TransactionGetRequest(tt), message))
             t = tt;
     }
     
@@ -105,6 +102,7 @@ BOOL MessageReceived(char *string)
     if (ParseMessage(string, message) < 0) {
         return FALSE;
     }
+    
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
 

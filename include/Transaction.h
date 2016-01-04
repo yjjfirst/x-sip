@@ -34,8 +34,6 @@ enum TransactionEvent {
 
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwner *owner);
 void DestoryTransaction(struct Transaction **t);
-void TransactionSetTimerManager(TimerAddFunc adder);
-void TransactionRemoveTimer();
 
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);

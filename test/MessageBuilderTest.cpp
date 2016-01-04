@@ -46,6 +46,20 @@ TEST_GROUP(MessageBuilderTestGroup)
     }
 };
 
+TEST(MessageBuilderTestGroup, MessageTypeTest)
+{
+    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(m));
+    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(inviteMessage));
+
+    struct Message *tmpMessage = CreateMessage();
+    CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
+    DestoryMessage(&tmpMessage);
+
+    tmpMessage = BuildAckMessage(dialog);
+    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
+    DestoryMessage(&tmpMessage);
+}
+
 TEST(MessageBuilderTestGroup, RequestLineTest)
 {
 

@@ -204,7 +204,7 @@ TEST(UserAgentTestGroup, BindingTest)
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -221,7 +221,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     BuildTestingMessage();
     struct Transaction *t = AddTransaction(message, (struct TransactionOwner *)dialog);
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -232,7 +232,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     message = BuildBindingMessage(dialog);
     t = AddTransaction(message, (struct TransactionOwner *)dialog);
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
@@ -255,7 +255,11 @@ TEST(UserAgentTestGroup, AddDialogTest)
 TEST(UserAgentTestGroup, InviteSucceedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct DialogId *dialogid = CreateDialogId((char *)"97295390",(char *)"1296642367",(char *)"as6151ad25");
+    struct Message *expectedMessage = CreateMessage();
+    struct DialogId *dialogid = CreateEmptyDialogId();
+
+    ParseMessage((char *)INVITE_200OK_MESSAGE, expectedMessage);
+    DialogIdExtractFromMessage(dialogid, expectedMessage);
 
     mock().expectOneCall("SendOutMessageMock");
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
@@ -273,6 +277,7 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
 
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
 
+    DestoryMessage(&expectedMessage);
     DestoryDialogId(&dialogid);
     DestoryUserAgent(&ua);
     EmptyTransactionManager();

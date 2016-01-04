@@ -102,14 +102,14 @@ struct Header *BuildContentLengthHeader(struct Dialog *dialog)
     return (struct Header *)c;
 }
 
-struct Message *BuildMessage(struct Dialog *dialog, SIP_METHOD method)
+struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 {
     struct Message *message = CreateMessage();
  
     DialogSetRequestMethod(dialog, method);
+    MessageSetType(message, MESSAGE_TYPE_REQUEST);
 
     MessageSetRequest(message, BuildRequestLine(dialog));
-
     MessageAddHeader(message, BuildViaHeader(dialog));
     MessageAddHeader(message, BuildFromHeader(dialog));
     MessageAddHeader(message, BuildToHeader(dialog));
@@ -124,7 +124,7 @@ struct Message *BuildMessage(struct Dialog *dialog, SIP_METHOD method)
 
 struct Message *BuildBindingMessage(struct Dialog *dialog)
 {
-    struct Message *binding = BuildMessage(dialog, SIP_METHOD_REGISTER);
+    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
     MessageAddHeader(binding, BuildExpiresHeader(dialog));
 
     return binding;
@@ -132,12 +132,14 @@ struct Message *BuildBindingMessage(struct Dialog *dialog)
 
 struct Message *BuildInviteMessage(struct Dialog *dialog)
 {
-    struct Message *invite = BuildMessage(dialog, SIP_METHOD_INVITE);
+    struct Message *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
+
     return invite;
 }
 
 struct Message *BuildAckMessage(struct Dialog *dialog)
 {
-    struct Message *ack = BuildMessage(dialog, SIP_METHOD_ACK);
+    struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
+
     return ack;
 }

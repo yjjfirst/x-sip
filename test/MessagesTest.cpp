@@ -296,7 +296,7 @@ TEST(MessageTestGroup, GetRemoteTageTest)
 TEST(MessageTestGroup, GetExpiresTest)
 {
     struct Message *message = CreateMessage();
-    ParseMessage((char *)ADD_BINDING_MESSAGE, message);
+    ParseMessage((char *)ADD_BINDING_OK_MESSAGE, message);
 
     CHECK_EQUAL(3600, MessageGetExpires(message));
     DestoryMessage(&message);

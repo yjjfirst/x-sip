@@ -19,11 +19,6 @@
 
 #define SIP_VERSION "SIP/2.0"
 
-enum MESSAGE_TYPE {
-    MESSAGE_TYPE_REQUEST,
-    MESSAGE_TYPE_RESPONSE
-};
-
 struct Message {
     union {
         struct RequestLine *request;
@@ -66,6 +61,18 @@ void ExtractHeaderName(char *header, char *name)
     while (*header == SPACE) header ++;
 
     strncpy(name, header, end - header + 1);
+}
+
+void MessageSetType(struct Message *message, enum MESSAGE_TYPE type)
+{
+    assert (message != NULL);
+    message->type = type;
+}
+
+enum MESSAGE_TYPE MessageGetType(struct Message *message)
+{
+    assert(message != NULL);
+    return message->type;
 }
 
 enum MESSAGE_TYPE ParseMessageType(char *line)
@@ -285,9 +292,18 @@ void MessageDump(struct Message *message)
     printf("%s\n",messageString);
 }
 
+BOOL RequestResponseMatched(struct Message *request, struct Message *response)
+{
+    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
+                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response)) 
+        && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
+                                   (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));    
+}
+
 struct Message *CreateMessage () 
 { 
     struct Message *message = calloc(1,sizeof (struct Message));
+    message->type = MESSAGE_TYPE_NONE;
     put_in_list (&message->headers, "");
     return message;
 }

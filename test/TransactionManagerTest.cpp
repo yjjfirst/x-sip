@@ -34,7 +34,6 @@ TEST_GROUP(TransactionManager)
 
     void teardown() {
         mock().clear();
-
         DestoryUserAgent(&ua);
         EmptyTransactionManager();
     }
@@ -64,7 +63,7 @@ TEST(TransactionManager, MatchResponse)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddTransaction(message, NULL);
     CHECK_TRUE(ReceiveInMessage(string));
 }
@@ -75,7 +74,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     struct Transaction *t = AddTransaction(message, NULL);
     enum TransactionState s;
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
     ReceiveInMessage(string);
@@ -92,3 +91,14 @@ TEST(TransactionManager, GetTransactionByTest)
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 }
 
+TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
+{
+    struct Message *localMessage = CreateMessage();
+    struct TransactionId *tid = NULL; 
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
+    tid = ExtractTransactionIdFromMessage(localMessage);
+
+    (void)tid;
+    DestoryMessage(&localMessage);
+    DestoryMessage(&message);
+}
