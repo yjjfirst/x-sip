@@ -38,6 +38,24 @@ TEST_GROUP(DialogTestGroup)
     }
 };
 
+int SendOutAckMessageMock(char *message)
+{
+    struct Message *m = CreateMessage();
+    char *remoteTag = NULL;
+
+    ParseMessage(message, m);
+    remoteTag = MessageGetRemoteTag(m);    
+    mock().actualCall("SendOutMessageMock").withParameter("RemoteTag", remoteTag).returnIntValue();
+
+    DestoryMessage(&m);
+    return 0;
+}
+
+static struct MessageTransporter MockTransporterForAck = {
+    SendOutAckMessageMock,
+    ReceiveInMessageMock,
+};
+
 TEST(DialogTestGroup, AckRequestInviteSuccessedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};

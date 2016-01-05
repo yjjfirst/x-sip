@@ -49,10 +49,10 @@ void RemoveTransaction(struct Transaction *t)
 
 BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMethod)
 {
-    struct Message *m = TransactionGetRequest(t);
+    struct Message *request = TransactionGetRequest(t);
     
-    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m), branch) 
-        && CSeqMethodMatchedByString((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m), seqMethod);
+    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
+        && CSeqMethodMatchedByString((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
 
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod)

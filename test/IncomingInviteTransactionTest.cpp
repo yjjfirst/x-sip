@@ -18,21 +18,33 @@ TEST_GROUP(IncomingInviteTransactionTestGroup)
    }
 
     void teardown() {
+        mock().checkExpectations();
         mock().clear();
     }
 };
 
-TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedTest)
+TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedCreateTransactionTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
     ReceiveInMessage(stringReceived);    
-    
+    CHECK_EQUAL(1, CountTransaction());
+    CHECK_TRUE(GetTransactionBy((char *)"z9hG4bK27dc30b4",(char *)"INVITE") != NULL);
+
     EmptyTransactionManager();
 }
 
+TEST(IncomingInviteTransactionTestGroup, Send100TryingTest)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall("SendOutMessageMock");
+    ReceiveInMessage(stringReceived);    
+
+    EmptyTransactionManager();
+}
 
 
 

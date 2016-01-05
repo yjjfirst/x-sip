@@ -16,7 +16,6 @@ int DummyReceive(char *message)
 }
 
 struct MessageTransporter DummyTransporter = {
-    .name = "Dummy",
     .sender = DummySend,
     .receiver = DummyReceive,
 };

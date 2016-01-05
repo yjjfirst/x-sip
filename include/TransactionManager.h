@@ -6,7 +6,7 @@ struct TransactionOwner;
 
 void EmptyTransactionManager();
 int MessageReceived(char *string);
-struct TransactionId *ExtractTransactionIdFromMessage(struct Message *message);
+struct TransactionId *ExtractTransactionIdFromMessage(struct TransactionId *tid, struct Message *message);
 
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod);
 int CountTransaction(void);

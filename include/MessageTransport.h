@@ -5,7 +5,6 @@ typedef int (*MessageReceiver) (char *message);
 typedef int (*MessageHandler) (char *message);
 
 struct MessageTransporter {
-    char name[8];
     MessageSender sender;
     MessageReceiver receiver;
 };

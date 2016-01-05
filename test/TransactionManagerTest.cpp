@@ -97,7 +97,7 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
     struct Message *localMessage = CreateMessage();
     struct TransactionId *tid = CreateTransactionId(); 
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
-    ExtractTransactionIdFromMessage(localMessage);
+    ExtractTransactionIdFromMessage(tid, localMessage);
 
     STRCMP_EQUAL("z9hG4bK27dc30b4",TransactionIdGetBranch(tid));
     STRCMP_EQUAL("INVITE",TransactionIdGetMethod(tid));
