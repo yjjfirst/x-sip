@@ -11,6 +11,7 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "MessageTransport.h"
 #include "Transaction.h"
+#include "TransactionId.h"
 #include "UserAgent.h"
 #include "Dialog.h"
 }
@@ -43,17 +44,17 @@ TEST(TransactionManager, NewTransaction)
 {
     struct Transaction *transaction;
 
-    transaction = AddTransaction(message, NULL);
+    transaction = AddClientTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
     mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
-    transaction = AddTransaction(message, NULL);
+    transaction = AddClientTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
     mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
-    transaction = AddTransaction(message, NULL);
+    transaction = AddClientTransaction(message, NULL);
 
     CHECK_EQUAL(3, CountTransaction());
     CHECK_FALSE(0 == transaction)
@@ -64,14 +65,14 @@ TEST(TransactionManager, MatchResponse)
     char string[MAX_MESSAGE_LENGTH] = {0};
     
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
-    AddTransaction(message, NULL);
+    AddClientTransaction(message, NULL);
     CHECK_TRUE(ReceiveInMessage(string));
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
-    struct Transaction *t = AddTransaction(message, NULL);
+    struct Transaction *t = AddClientTransaction(message, NULL);
     enum TransactionState s;
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
@@ -86,7 +87,7 @@ TEST(TransactionManager, GetTransactionByTest)
 {
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
-    struct Transaction *t = AddTransaction(message, NULL);
+    struct Transaction *t = AddClientTransaction(message, NULL);
 
     POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
 }
@@ -94,11 +95,14 @@ TEST(TransactionManager, GetTransactionByTest)
 TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
 {
     struct Message *localMessage = CreateMessage();
-    struct TransactionId *tid = NULL; 
+    struct TransactionId *tid = CreateTransactionId(); 
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
-    tid = ExtractTransactionIdFromMessage(localMessage);
+    ExtractTransactionIdFromMessage(localMessage);
 
-    (void)tid;
+    STRCMP_EQUAL("z9hG4bK27dc30b4",TransactionIdGetBranch(tid));
+    STRCMP_EQUAL("INVITE",TransactionIdGetMethod(tid));
+   
     DestoryMessage(&localMessage);
+    DestoryTransactionId(&tid);
     DestoryMessage(&message);
 }

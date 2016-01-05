@@ -4,6 +4,7 @@
 #include "TestingMessages.h"
 
 extern "C" {
+#include <stdio.h>
 #include "Messages.h"
 #include "MessageTransport.h"
 #include "TransactionManager.h"
@@ -24,10 +25,11 @@ TEST_GROUP(IncomingInviteTransactionTestGroup)
 TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
 
-    ReceiveInMessage(stringReceived);
-    mock().checkExpectations();
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
+    ReceiveInMessage(stringReceived);    
+    
+    EmptyTransactionManager();
 }
 
 

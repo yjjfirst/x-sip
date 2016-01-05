@@ -126,12 +126,13 @@ int SendRequestMessage(struct Transaction *t)
         RunFSM(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
-
+    
     return 0;
 }
 
 struct Message *TransactionGetRequest(struct Transaction *t)
 {
+    assert (t != NULL);
     return t->request;
 }
 
@@ -170,7 +171,7 @@ struct Transaction *CallocTransaction(struct Message *request)
     return t;
 }
 
-struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwner *owner)
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionOwner *owner)
 {
     struct Transaction *t = CallocTransaction(request);
 
@@ -182,6 +183,14 @@ struct Transaction *CreateTransaction(struct Message *request, struct Transactio
     t->owner = owner;
     AddTimer(t, T1, RetransmitTimerCallback);    
     AddTimer(t, 64*T1, TimeoutTimerCallback);
+
+    return t;
+}
+
+struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner)
+{
+    struct Transaction *t = CallocTransaction(request);
+    t->owner = owner;
 
     return t;
 }
@@ -200,7 +209,7 @@ void DestoryResponseMessage(struct Transaction *t)
 void DestoryTransaction(struct Transaction **t)
 {
     if ( *t != NULL) {
-        DestoryMessage(&(*t)->request);
+        DestoryMessage(&(*t)->request); 
         DestoryResponseMessage(*t);
         free(*t);
         *t = NULL;

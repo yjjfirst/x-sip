@@ -301,3 +301,23 @@ TEST(MessageTestGroup, GetExpiresTest)
     CHECK_EQUAL(3600, MessageGetExpires(message));
     DestoryMessage(&message);
 }
+
+TEST(MessageTestGroup, GetBranchTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
+
+    STRCMP_EQUAL("z9hG4bK27dc30b4",MessageGetViaBranch(localMessage));
+   
+    DestoryMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, GetCSeqMethodTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
+
+    STRCMP_EQUAL("INVITE",MessageGetCSeqMethod(localMessage));
+   
+    DestoryMessage(&localMessage);
+}

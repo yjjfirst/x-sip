@@ -90,6 +90,7 @@ struct CSeqHeader *CreateCSeqHeader (int seq, char *method)
 BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
 {
     assert(c1 != NULL && c2 != NULL);
+
     return !strcmp (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
 }
 

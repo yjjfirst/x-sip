@@ -61,7 +61,7 @@ void DialogOnTransactionEvent(struct Transaction *t)
 
             struct Message *ack = BuildAckMessage(dialog);
             MessageSetRemoteTag(ack, MessageGetRemoteTag(message));
-            AddTransaction(ack, (struct TransactionOwner *)dialog);
+            AddClientTransaction(ack, (struct TransactionOwner *)dialog);
         } 
     }
 }

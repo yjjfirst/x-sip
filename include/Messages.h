@@ -25,6 +25,8 @@ void MessageSetRemoteTag(struct Message *message, char *tag);
 int MessageGetExpires(struct Message *message);
 struct Header *MessageGetHeader(const char *name, struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);
+char *MessageGetViaBranch(struct Message *message);
+char *MessageGetCSeqMethod(struct Message *message);
 
 void MessageSetRequest(struct Message *message, struct RequestLine *rl);
 void MessageAddHeader(struct Message *message, struct Header *header);

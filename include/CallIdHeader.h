@@ -1,4 +1,4 @@
-#define CALLID_MAX_LENGTH 64
+#define CALLID_MAX_LENGTH 256
 
 struct CallIdHeader ;
 struct Header;

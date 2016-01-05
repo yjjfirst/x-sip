@@ -1,5 +1,8 @@
 #include <stdlib.h>
 
+#include "TransactionId.h"
+#include "Messages.h"
+
 struct TransactionId {
     char* branch;
     char* method;
@@ -36,4 +39,8 @@ void TransactionIdSetBranch(struct TransactionId *transactionId, char *branch)
 void TransactionIdSetMethod(struct TransactionId *transactionId, char *method)
 {
     transactionId->method = method;
+}
+
+void ExtractTransactionIdFromMessage(struct TransactionId *tid, struct Message *message)
+{
 }

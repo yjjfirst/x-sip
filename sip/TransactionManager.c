@@ -16,18 +16,11 @@ struct TransactionManager {
     struct TransactionNotifiers *notifiers;
     t_list *transactions;
 };
-
 struct TransactionManager TransactionManager;
 
 int CountTransaction()
 {
     return get_list_len(TransactionManager.transactions);
-}
-
-struct TransactionId *ExtractTransactionIdFromMessage(struct Message *message)
-{
-    //ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME);
-    return NULL;
 }
 
 struct Transaction *GetTransactionByPosition(int position)
@@ -83,29 +76,26 @@ struct Transaction *MatchTransaction(struct Message *message)
     int length = CountTransaction();
     struct Transaction *t = NULL;
     
+    assert (message != NULL);
     for (; i < length; i++) {
         struct Transaction *tt = GetTransactionByPosition(i);
-        if (RequestResponseMatched(TransactionGetRequest(tt), message))
+        struct Message *request = TransactionGetRequest(tt);
+        if (RequestResponseMatched(request, message))
             t = tt;
     }
     
     return t;
 }
 
-BOOL MessageReceived(char *string)
+BOOL TmHandleReponseMessage(struct Message *message)
 {
-    struct Message *message = CreateMessage();
     struct StatusLine *status = NULL;
     int statusCode = 0;
     struct Transaction *t = NULL;
 
-    if (ParseMessage(string, message) < 0) {
-        return FALSE;
-    }
-    
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
-
+        
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
         if (statusCode == 200) {
@@ -118,8 +108,36 @@ BOOL MessageReceived(char *string)
         return TRUE;
     }
 
-    DestoryMessage(&message);
     return FALSE;
+}
+
+BOOL TmHandleRequestMessage(struct Message *message)
+{
+    AddServerTransaction(message, NULL);
+    return TRUE;
+}
+
+BOOL MessageReceived(char *string)
+{
+    struct Message *message = CreateMessage();
+    BOOL garbage;
+
+    if (ParseMessage(string, message) < 0) {
+        return FALSE;
+    }
+    
+    if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
+        garbage = !TmHandleReponseMessage(message);
+    } else if (MessageGetType(message) == MESSAGE_TYPE_REQUEST){
+        garbage = !TmHandleRequestMessage(message);
+    }
+    
+    if (garbage) {
+        DestoryMessage(&message);
+        return FALSE;
+    }
+    
+    return TRUE;
 }
 
 void DestoryTransactions(struct TransactionManager *manager)
@@ -144,13 +162,25 @@ struct TransactionNotifiers Notifiers = {
     .die = RemoveTransaction,
 };
 
-struct Transaction *AddTransaction(struct Message *message, struct TransactionOwner *owner)
-{
-    struct Transaction *t = CreateTransaction(message, owner);
+struct TransactionManager TransactionManager = {
+    .notifiers = &Notifiers,
+};
 
-    if (TransactionManager.notifiers == NULL) {
-        TransactionManager.notifiers = &Notifiers;
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionOwner *owner)
+{
+    struct Transaction *t = CreateClientTransaction(message, owner);
+
+    if (t != NULL) {
+        TransactionSetNotifiers(t, TransactionManager.notifiers);
+        put_in_list(&TransactionManager.transactions, t);
     }
+
+    return t;
+}
+
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionOwner *owner)
+{
+    struct Transaction *t = CreateServerTransaction(message, owner);
 
     if (t != NULL) {
         TransactionSetNotifiers(t, TransactionManager.notifiers);

@@ -10,5 +10,7 @@ struct TransactionId *ExtractTransactionIdFromMessage(struct Message *message);
 
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod);
 int CountTransaction(void);
-struct Transaction *AddTransaction(struct Message *message, struct TransactionOwner *ua);
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionOwner *owner);
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionOwner *owner);
+
 void RemoveTransaction(struct Transaction *t);

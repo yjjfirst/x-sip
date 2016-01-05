@@ -57,7 +57,7 @@ TEST_GROUP(TransactionTestGroup)
         ua = CreateUserAgent();
         dialog = CreateDialog(NULL, ua);
         m = BuildBindingMessage(dialog);
-        t = AddTransaction(m, NULL);
+        t = AddClientTransaction(m, NULL);
         s = TransactionGetState(t);
     }
 
@@ -201,7 +201,7 @@ TEST(TransactionTestGroup, SendOutMessageError)
     mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
 
     struct Message *message = BuildBindingMessage(dialog);
-    AddTransaction(message, NULL);
+    AddClientTransaction(message, NULL);
 
     POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 

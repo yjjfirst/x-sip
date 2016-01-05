@@ -32,7 +32,9 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateTransaction(struct Message *request, struct TransactionOwner *owner);
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionOwner *owner);
+struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner);
+
 void DestoryTransaction(struct Transaction **t);
 
 enum TransactionState TransactionGetState(struct Transaction *t);

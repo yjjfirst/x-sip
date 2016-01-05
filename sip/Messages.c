@@ -220,6 +220,19 @@ unsigned int MessageGetCSeqNumber(struct Message *message)
     return CSeqHeaderGetSeq(c);
 }
 
+char *MessageGetViaBranch(struct Message *message)
+{
+    assert (message != NULL);
+    return ViaHeaderGetParameter((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, message), 
+                                 VIA_BRANCH_PARAMETER_NAME);
+}
+
+char *MessageGetCSeqMethod(struct Message *message)
+{
+    assert (message != NULL);
+    return CSeqHeaderGetMethod((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message));
+}
+
 void MessageAddViaParameter(struct Message *message, char *name, char *value)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
@@ -294,6 +307,8 @@ void MessageDump(struct Message *message)
 
 BOOL RequestResponseMatched(struct Message *request, struct Message *response)
 {
+    assert (request != NULL);
+    assert (response != NULL);
     return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response)) 
         && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
@@ -339,10 +354,12 @@ void DestoryMessage (struct Message **message)
     assert(message != NULL);
 
     if ((*message) != ((void *)0)) {
-        if ((*message)->type == MESSAGE_TYPE_REQUEST) 
+        if ((*message)->type == MESSAGE_TYPE_REQUEST) {
             DestoryRequestLine((*message)->rr.request);
-        else
+        } else {
             DestoryStatusLine((*message)->rr.status);
+        }
+
         MessageDestoryHeaders(*message);
         destroy_list(&(*message)->headers, NULL);
         free(*message);
