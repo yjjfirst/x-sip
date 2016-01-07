@@ -99,10 +99,10 @@ BOOL TmHandleReponseMessage(struct Message *message)
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
         if (statusCode == 200) {
-            RunFSM(t, TRANSACTION_EVENT_200OK);
+            RunFsm(t, TRANSACTION_EVENT_200OK);
         }
         else if (statusCode == 100) {
-            RunFSM(t, TRANSACTION_EVENT_100TRYING);
+            RunFsm(t, TRANSACTION_EVENT_100TRYING);
         }
         
         return TRUE;

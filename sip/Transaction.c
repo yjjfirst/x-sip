@@ -13,11 +13,12 @@
 #include "TransactionNotifiers.h"
 #include "utils/list/include/list.h"
 
-#define TRANSACTION_ACTIONS_MAX 5
+#define TRANSACTION_ACTIONS_MAX 10
 
 struct Transaction {
     struct TransactionOwner *owner;
     enum TransactionState state;
+    struct FSM *fsm;
     struct Message *request;
     t_list *responses;
     struct TransactionNotifiers *notifiers;
@@ -37,7 +38,11 @@ struct FSM_STATE {
     struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
 };
 
-void RunFSM(struct Transaction *t, enum TransactionEvent event);
+struct FSM {
+    struct FSM_STATE *fsmStates[TRANSACTION_STATE_MAX];
+};
+
+struct FSM ClientTransactionFsm;
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
 {
@@ -63,20 +68,20 @@ struct Message *TransactionGetLatestResponse(struct Transaction *t)
 
 void WaitForResponseTimerCallBack(void *t)
 {
-    RunFSM(t, TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED);
+    RunFsm(t, TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED);
 }
 
 void TimeoutTimerCallback(void *t)
 {
-    RunFSM(t, TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED);
+    RunFsm(t, TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED);
 }
 
 void RetransmitTimerCallback(void *t)
 {
-    RunFSM(t, TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED);
+    RunFsm(t, TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED);
 }
 
-int ResetRetransmits(struct Transaction *t)
+int ResetRetransmitTimer(struct Transaction *t)
 {
     t->retransmits = 0;
     return 0;
@@ -120,10 +125,14 @@ int NotifyOwner(struct Transaction *t)
 int SendRequestMessage(struct Transaction *t)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
+
+    assert(t != NULL);
+    assert(t->request != NULL);
+
     Message2String(s, t->request);
 
     if (SendOutMessage(s) < 0) {
-        RunFSM(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
     
@@ -151,36 +160,32 @@ struct TransactionOwner *TransactionGetOwner(struct Transaction *t)
     return t->owner;
 }
 
-struct Transaction *CallocTransaction(struct Message *request)
+struct Transaction *CallocTransaction()
 {
-    struct Transaction *t;
-    struct RequestLine *rl = MessageGetRequestLine(request);
-
-    t = calloc(1, sizeof (struct Transaction));
-
-    if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
-        t->state = TRANSACTION_STATE_CALLING;
-        t->type = TRANSACTION_TYPE_CLIENT_INVITE;
-    }
-    else {
-        t->state = TRANSACTION_STATE_TRYING;
-        t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
-    }
-    t->request = request;
-
-    return t;
+    return  calloc(1, sizeof (struct Transaction));
 }
 
 struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionOwner *owner)
 {
-    struct Transaction *t = CallocTransaction(request);
+    struct Transaction *t = CallocTransaction();
+    struct RequestLine *rl = MessageGetRequestLine(request);
+    
+    if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
+        t->state = TRANSACTION_STATE_CALLING;
+        t->type = TRANSACTION_TYPE_CLIENT_INVITE;
+    } else {
+        t->state = TRANSACTION_STATE_TRYING;
+        t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
+    }
+    
+    t->request = request;
+    t->owner = owner;
+    t->fsm = &ClientTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {
         DestoryTransaction(&t);
         return NULL;
     }
-
-    t->owner = owner;
     AddTimer(t, T1, RetransmitTimerCallback);    
     AddTimer(t, 64*T1, TimeoutTimerCallback);
 
@@ -189,7 +194,9 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
 
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner)
 {
-    struct Transaction *t = CallocTransaction(request);
+    struct Transaction *t = CallocTransaction();
+    t->state = TRANSACTION_STATE_PROCEEDING;
+    t->request = request;
     t->owner = owner;
 
     return t;
@@ -216,59 +223,81 @@ void DestoryTransaction(struct Transaction **t)
     }
 }
 
-#define __XXX_STATE_ENDING__ -1
-#define __XXX_FSM_ENDING__ -1
-struct FSM_STATE TransactionFSM[TRANSACTION_STATE_MAX] = {
-    {TRANSACTION_STATE_TRYING,{
-            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer, NotifyOwner}},
-            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetRetransmits}},
-            {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
-                    SendRequestMessage,
-                    IncRetransmit,
-                    AddRetransmitTimer}},
-            {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
-            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {__XXX_STATE_ENDING__}}},
+struct FSM_STATE TryingState = {
+    TRANSACTION_STATE_TRYING,
+    {
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
+                SendRequestMessage,
+                IncRetransmit,
+                AddRetransmitTimer}},
+        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_MAX},
+    }
+}; 
 
-    {TRANSACTION_STATE_CALLING,{
-            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyOwner}},
-            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetRetransmits}},
-            {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
-                    SendRequestMessage,
-                    IncRetransmit,
-                    AddRetransmitTimer}},
-            {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
-            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {__XXX_STATE_ENDING__}}},
-
-    {TRANSACTION_STATE_PROCEEDING,{
-            {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
-            {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
-            {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NULL}},
-            {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
-                    SendRequestMessage,
-                    IncRetransmit,
-                    AddRetransmitTimer}},
-            {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {__XXX_STATE_ENDING__}}},
-
-    {TRANSACTION_STATE_COMPLETED,{
-            {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
-            {__XXX_STATE_ENDING__}}},
-    {__XXX_FSM_ENDING__},
+struct FSM_STATE CallingState = {
+    TRANSACTION_STATE_CALLING,
+    {
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
+                SendRequestMessage,
+                IncRetransmit,
+                AddRetransmitTimer}},
+        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_MAX}
+    }
 };
 
-#undef __XXX_FSM_ENDING__
-#undef __XXX_STATE_ENDING__
+struct FSM_STATE ProceedingState = {
+    TRANSACTION_STATE_PROCEEDING,
+    {
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
+        {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NULL}},
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
+                SendRequestMessage,
+                IncRetransmit,
+                AddRetransmitTimer}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
 
-struct FSM_STATE *LocateFSMState(struct Transaction *t)
+struct FSM_STATE CompletedState = {
+    TRANSACTION_STATE_COMPLETED,
+    {
+        {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FSM ClientTransactionFsm = {
+    {
+        &TryingState,
+        &CallingState,
+        &ProceedingState,
+        &CompletedState,
+        NULL,
+    }
+};
+
+struct FSM_STATE *LocateFsmState(struct Transaction *t)
 {
     int i = 0;
     struct FSM_STATE *fsmState = NULL;
+    struct FSM *fsm = t->fsm;
 
-    for (; TransactionFSM[i].currState != -1; i ++) {
-        if (t->state == TransactionFSM[i].currState)
-            fsmState = &TransactionFSM[i];
+    assert (t != NULL);
+    assert (t->fsm != NULL);
+
+    for (; fsm->fsmStates[i] != NULL; i ++) {
+        if (t->state == fsm->fsmStates[i]->currState)
+            fsmState = fsm->fsmStates[i];
     }
 
     return fsmState;
@@ -284,17 +313,18 @@ void InvokeActions(struct Transaction *t, struct FSM_STATE_ENTRY *e)
     }
 }
 
-void RunFSM(struct Transaction *t, enum TransactionEvent event)
+void RunFsm(struct Transaction *t, enum TransactionEvent event)
 {
     int i = 0;
     struct FSM_STATE_ENTRY *entrys = NULL;
-    struct FSM_STATE *fsmState = LocateFSMState(t);
+    struct FSM_STATE *fsmState = LocateFsmState(t);
+
+    assert(t != NULL);
 
     if (fsmState == NULL) return;
-    assert(t != NULL);
     
     entrys = fsmState->entrys;
-    for ( i = 0; entrys[i].event != -1; i++) {
+    for ( i = 0; entrys[i].event != TRANSACTION_EVENT_MAX; i++) {
         if (entrys[i].event == event) {
             t->event = event;
             t->state = entrys[i].nextState;
