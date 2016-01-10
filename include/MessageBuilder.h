@@ -9,3 +9,5 @@ struct Dialog;
 struct Message *BuildBindingMessage(struct Dialog *dialog);
 struct Message *BuildInviteMessage(struct Dialog *dialog);
 struct Message *BuildAckMessage(struct Dialog *dialog);
+
+struct Message *Build100TryingMessage(struct Message *invite);

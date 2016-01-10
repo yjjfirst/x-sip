@@ -7,6 +7,7 @@ struct HeaderPattern *GetContactHeaderPattern(char *header);
 struct ContactHeader *CreateContactHeader();
 struct ContactHeader *CreateToHeader();
 struct ContactHeader *CreateFromHeader();
+struct ContactHeader *ContactHeaderDup(struct ContactHeader *src);
 void DestoryContactHeader(struct Header *to);
 struct Header *ParseContactHeader(char *string);
 
@@ -22,9 +23,3 @@ void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters 
 BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2);
 void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *value);
 char *ContactHeader2String(char *result, struct Header *contact);
-
-
-
-
-
-

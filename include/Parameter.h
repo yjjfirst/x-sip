@@ -13,6 +13,7 @@ BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2);
  *Function for parameters struct.
  */
 struct Parameters *CreateParameters();
+struct Parameters *ParametersDup(struct Parameters *src);
 void DestoryParameters(struct Parameters *ps);
 int ParseParameters(char *string, void *target);
 int ParseParametersExt(char *string, void *target);

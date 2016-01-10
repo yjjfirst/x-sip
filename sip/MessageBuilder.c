@@ -143,3 +143,13 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
 
     return ack;
 }
+
+struct Message *Build100TryingMessage(struct Message *invite)
+{
+    struct Message *message = CreateMessage();
+
+    struct ContactHeader *from = ContactHeaderDup((struct ContactHeader *)
+                                                  MessageGetHeader(HEADER_NAME_FROM, invite));
+    (void)from;
+    return message;  
+}

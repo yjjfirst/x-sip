@@ -177,12 +177,21 @@ void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters 
 
 BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2)
 {
+    assert(header1 != NULL);
+    assert(header2 != NULL);
+
     if (!ParametersMatched(header1->parameters, header2->parameters))
         return FALSE;
     if (!UriMatched(header1->uri, header2->uri))
         return FALSE;
 
     return strcmp(header1->displayName, header2->displayName) == 0;
+}
+
+struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
+{
+    struct ContactHeader *header = CreateContactHeader();
+    return header;
 }
 
 char *ContactHeader2String(char *result, struct Header *contact)

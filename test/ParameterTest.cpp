@@ -159,3 +159,68 @@ TEST(ParameterTestGroup, ParametersLengthUnmatchedTest)
 
     DestoryParameters(ps);
 }
+
+TEST(ParameterTestGroup, NullElementParametersDupTest)
+{
+    struct Parameters *ps = CreateParameters();
+    struct Parameters *dest = ParametersDup(ps);
+    CHECK_TRUE(ParametersMatched(ps, dest));
+
+    DestoryParameters(dest);
+    DestoryParameters(ps);
+
+}
+
+TEST(ParameterTestGroup, OneElementParametersDupTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+
+    struct Parameters *dest = ParametersDup(ps);
+    CHECK_TRUE(ParametersMatched(ps, dest));
+
+    DestoryParameters(dest);
+    DestoryParameters(ps);
+
+
+}
+
+TEST(ParameterTestGroup, ThreeElementParametersDupTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+
+    struct Parameters *dest = ParametersDup(ps);
+    CHECK_TRUE(ParametersMatched(ps, dest));
+
+    DestoryParameters(dest);
+    DestoryParameters(ps);
+
+
+}
+
+TEST(ParameterTestGroup, TenElementParametersDupTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+    AddParameter(ps, (char *)"test4", (char *)"value4");
+    AddParameter(ps, (char *)"test5", (char *)"value6");
+    AddParameter(ps, (char *)"test6", (char *)"value7");
+    AddParameter(ps, (char *)"test7", (char *)"value8");
+    AddParameter(ps, (char *)"test8", (char *)"value9");
+    AddParameter(ps, (char *)"test9", (char *)"value10");
+    AddParameter(ps, (char *)"test10", (char *)"value5");
+
+    struct Parameters *dest = ParametersDup(ps);
+    CHECK_TRUE(ParametersMatched(ps, dest));
+
+    DestoryParameters(dest);
+    DestoryParameters(ps);
+}

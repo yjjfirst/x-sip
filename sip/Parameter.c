@@ -4,7 +4,9 @@
 #include "Header.h"
 #include "Parser.h"
 #include "Parameter.h"
+#include "Utils.h"
 #include "utils/list/include/list.h"
+
 
 #define PARAMETER_MAX_NAME_LENGTH 32
 #define PARAMETER_MAX_VALUE_LENGTH 128
@@ -37,6 +39,9 @@ BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2)
     return !(strcmp(p1->name, p2->name) != 0 
             || strcmp(p1->value, p2->value) != 0);
 }
+
+DEFINE_STRING_MEMBER_READER(struct Parameter, GetParameterName, name);
+DEFINE_STRING_MEMBER_READER(struct Parameter, GetParameterValue, value);
 /*
  * Only call this function when parse parameters stand alone.
  */
@@ -63,7 +68,7 @@ int ParseParametersExt(char *s, void *target)
 }
 
 /* 
- * Only call this function when parameters embedded in other sturcture 
+ * Only call this function when parameters embedded in other structure 
  */
 int ParseParameters(char *s, void *target)
 {
@@ -98,9 +103,12 @@ int AddParameter(struct Parameters *ps, char *name, char *value)
 
 BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2)
 {
-
     int i = 0;
-    int length = get_list_len(ps1->parameters);
+
+    assert(ps1 != NULL);
+    assert(ps2 != NULL);
+
+    int length = get_list_len(ps1->parameters);    
     
     if (length != get_list_len(ps2->parameters)) {
         return FALSE;
@@ -188,6 +196,19 @@ void DestoryParameter(struct Parameter *p)
 struct Parameters *CreateParameters()
 {
     return calloc(1, sizeof(struct Parameters));
+}
+
+struct Parameters *ParametersDup(struct Parameters *src)
+{
+    struct Parameters *dest = CreateParameters();
+    int length = get_list_len(src->parameters);
+    int i = 0;
+    
+    for (; i < length; i++) {
+        struct Parameter *p = get_data_at(src->parameters, i);
+        AddParameter(dest, GetParameterName(p), GetParameterValue(p));
+    }
+    return dest;
 }
 
 void DestoryParameters(struct Parameters *ps)

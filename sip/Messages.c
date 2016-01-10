@@ -108,10 +108,14 @@ void MessageAddHeader(struct Message *message, struct Header *header)
 
 struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
-    int length = get_list_len(message->headers);
+    int length = 0; 
     int i = 0;
     struct Header *header = NULL;
 
+    assert (name != NULL);
+    assert (message != NULL);
+
+    length = get_list_len(message->headers);
     for (i = 0 ; i < length; i++) {
         struct Header *h = (struct Header *) get_data_at(message->headers, i);
         if (strcmp (name, HeaderGetName(h)) == 0) {

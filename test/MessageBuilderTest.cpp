@@ -15,6 +15,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "Dialog.h"
 #include "Provision.h"
+#include "TestingMessages.h"
 }
 
 
@@ -29,6 +30,7 @@ TEST_GROUP(MessageBuilderTestGroup)
         ua = CreateUserAgent();
         UserAgentSetProxy(ua, GetProxy());
         UserAgentSetUserName(ua, GetUserName());
+
         dialog = CreateDialog(NULL, ua);
 
         DialogSetToUser(dialog, GetUserName());
@@ -230,4 +232,19 @@ TEST(MessageBuilderTestGroup, AckMessageViaTest)
 
     CHECK_TRUE(ViaHeaderMatched(ackVia, inviteVia));
     DestoryMessage(&ackMessage);
+}
+
+IGNORE_TEST(MessageBuilderTestGroup, Build100TryingMessageTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+
+    struct Message *trying = Build100TryingMessage(invite);
+    struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
+    struct ContactHeader *tryingFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, trying);
+
+    CHECK_TRUE(ContactHeaderMatched(inviteFrom, tryingFrom));
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);
 }
