@@ -234,7 +234,6 @@ BOOL UriMatched(struct URI *uri, struct URI *uri2)
     if (uri->port != uri2->port) {
         return FALSE;
     }
-
     return !(strcmp(uri->user, uri2->user) != 0
              || strcmp(uri->host, uri2->host) != 0
              || strcmp(uri->scheme, uri2->scheme) != 0);
@@ -275,6 +274,24 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
     UriSetPort(uri, port);
 
     return uri;
+}
+
+struct URI *UriDup(struct URI *src)
+{
+    struct URI *dest = CreateEmptyUri();
+    
+    DestoryParameters(dest->parameters);
+    DestoryParameters(dest->headers);
+    memcpy(dest, src, sizeof(struct URI));
+
+    //Prevent release src parameters and headers.
+    dest->parameters = NULL; 
+    dest->headers = NULL;    
+
+    UriSetParameters(dest, ParametersDup(src->parameters));
+    UriSetHeaders(dest,ParametersDup(src->headers));
+
+    return dest;
 }
 
 void DestoryUri(struct URI *uri)

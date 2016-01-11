@@ -269,3 +269,14 @@ TEST(URITestGroup, URIHeadersUnmatchTest)
 
     DestoryUri(uri2);
 }
+
+TEST(URITestGroup, URIDup)
+{
+    char URIString[] = "sip:alice:secretword@atlanta.com;transport=tcp?subject=project";
+
+    ParseURI((char *)URIString, &uri);    
+    struct URI *dest = UriDup(uri);
+    CHECK_TRUE(UriMatched(uri, dest));
+
+    DestoryUri(dest);
+}
