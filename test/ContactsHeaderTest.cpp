@@ -220,7 +220,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderParametersUnmatchedTest)
     DestoryContactHeader((struct Header *)header2);
 }
 
-IGNORE_TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
+TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
 {
     struct ContactHeader *header = CreateContactHeader();
     char toString[] = "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
@@ -229,5 +229,6 @@ IGNORE_TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
     struct ContactHeader *headerDup = ContactHeaderDup(header);
     CHECK_TRUE(ContactHeaderMatched(header, headerDup));
 
+    DestoryContactHeader((struct Header *)headerDup);
     DestoryContactHeader((struct Header *)header);
 }

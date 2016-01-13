@@ -190,8 +190,15 @@ BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *h
 
 struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
 {
-    struct ContactHeader *header = CreateContactHeader();
-    return header;
+    struct ContactHeader *dest = CreateContactHeader();
+
+    DestoryUri(dest->uri);
+    DestoryParameters(dest->parameters);
+    memcpy(dest, src, sizeof(struct ContactHeader));
+    
+    dest->uri = UriDup(src->uri);
+    dest->parameters = ParametersDup(src->parameters);
+    return dest;
 }
 
 char *ContactHeader2String(char *result, struct Header *contact)
@@ -202,13 +209,11 @@ char *ContactHeader2String(char *result, struct Header *contact)
 struct ContactHeader *CreateEmptyContactHeader()
 {
     struct ContactHeader *header = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
-    struct Parameters *p = CreateParameters();
     
     header->uri = CreateEmptyUri();
-    header->parameters = p;
+    header->parameters = CreateParameters();
 
     return header;
-
 }
 
 struct ContactHeader *CreateContactHeader()
