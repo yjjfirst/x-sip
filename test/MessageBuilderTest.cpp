@@ -237,12 +237,12 @@ TEST(MessageBuilderTestGroup, AckMessageViaTest)
     DestoryMessage(&ackMessage);
 }
 
-TEST(MessageBuilderTestGroup, Build100TryingMessageStatusLineTest)
+TEST(MessageBuilderTestGroup, TryingMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
 
-    struct Message *trying = Build100TryingMessage(invite);
+    struct Message *trying = BuildTryingMessage(invite);
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
@@ -254,12 +254,12 @@ TEST(MessageBuilderTestGroup, Build100TryingMessageStatusLineTest)
     DestoryMessage(&invite);
 }
 
-TEST(MessageBuilderTestGroup, Build100TryingMessageFromHeaderTest)
+TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
 
-    struct Message *trying = Build100TryingMessage(invite);
+    struct Message *trying = BuildTryingMessage(invite);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
     struct ContactHeader *tryingFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, trying);
 
@@ -269,3 +269,6 @@ TEST(MessageBuilderTestGroup, Build100TryingMessageFromHeaderTest)
     DestoryMessage(&invite);
 }
 
+TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
+{
+}

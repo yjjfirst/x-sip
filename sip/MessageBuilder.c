@@ -146,7 +146,7 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
     return ack;
 }
 
-struct Message *Build100TryingMessage(struct Message *invite)
+struct Message *BuildTryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
     struct StatusLine *status = CreateStatusLine(100); 

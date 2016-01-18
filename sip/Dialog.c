@@ -77,7 +77,9 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     }
     dialog->ua = ua;
     dialog->notifyInterface.onEvent = DialogOnTransactionEvent;
-    UserAgentAddDialog(ua, dialog);
+
+    if (ua != NULL)
+        UserAgentAddDialog(ua, dialog);
 
     return dialog;
 }

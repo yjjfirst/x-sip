@@ -5,7 +5,8 @@
     void name (struct *object, char *field)                             \
     {                                                                   \
         assert(object != NULL);                                         \
-        strncpy(object->field, field, sizeof(object->field) - 1);       \
+        if (field != NULL)                                              \
+            strncpy(object->field, field, sizeof(object->field) - 1);   \
         object->field[maxLength - 1] = '\0';                            \
     }                                                                   \
     

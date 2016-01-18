@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "DialogId.h"
 #include "CallIdHeader.h"
 #include "Messages.h"
@@ -60,6 +62,7 @@ struct DialogId *CreateDialogIdFromMessage(struct Message *message)
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
     DialogIdSetLocalTag(dialogid, MessageGetLocalTag(message));
     DialogIdSetRemoteTag(dialogid, MessageGetRemoteTag(message));
+
     return dialogid;
 }
 

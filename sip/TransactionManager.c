@@ -11,6 +11,8 @@
 #include "TransactionNotifiers.h"
 #include "Transaction.h"
 #include "Messages.h"
+#include "DialogId.h"
+#include "Dialog.h"
 
 struct TransactionManager {
     struct TransactionNotifiers *notifiers;
@@ -113,7 +115,10 @@ BOOL TmHandleReponseMessage(struct Message *message)
 
 BOOL TmHandleRequestMessage(struct Message *message)
 {
-    AddServerTransaction(message, NULL);
+    //struct DialogId *dialogId = CreateDialogIdFromMessage(message);
+    //struct Dialog *dialog = CreateDialog(dialogId, NULL);
+
+    AddServerTransaction(message,NULL);//(struct TransactionOwner *) dialog);
     return TRUE;
 }
 

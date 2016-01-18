@@ -9,6 +9,7 @@ extern "C" {
 #include "MessageTransport.h"
 #include "TransactionManager.h"
 #include "Transaction.h"
+#include "UserAgent.h"
 }
 
 TEST_GROUP(IncomingInviteTransactionTestGroup)
@@ -32,6 +33,7 @@ TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedCreateTransactionTest)
     struct Transaction *t = NULL;
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall("SendOutMessageMock");
     ReceiveInMessage(stringReceived); 
     t = GetTransactionBy((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
 
@@ -40,11 +42,12 @@ TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedCreateTransactionTest)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
-IGNORE_TEST(IncomingInviteTransactionTestGroup, Send100TryingTest)
+TEST(IncomingInviteTransactionTestGroup, Send100TryingTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall("SendOutMessageMock");
     ReceiveInMessage(stringReceived);    
+    
 }

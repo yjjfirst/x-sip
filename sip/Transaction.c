@@ -123,16 +123,20 @@ int NotifyOwner(struct Transaction *t)
     return 0;
 }
 
-int SendRequestMessage(struct Transaction *t)
+int TransactionSendMessage(struct Message *message)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
+    Message2String(s, message);
 
+    return SendOutMessage(s);
+}
+
+int SendRequestMessage(struct Transaction *t)
+{
     assert(t != NULL);
     assert(t->request != NULL);
 
-    Message2String(s, t->request);
-
-    if (SendOutMessage(s) < 0) {
+    if (TransactionSendMessage(t->request) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
@@ -196,10 +200,16 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner)
 {
     struct Transaction *t = CallocTransaction();
+    struct Message *trying = NULL;
+
     t->state = TRANSACTION_STATE_PROCEEDING;
     t->request = request;
     t->owner = owner;
-
+    
+    trying = BuildTryingMessage(t->request);
+    TransactionSendMessage(trying);
+    TransactionAddResponse(t, trying);
+    
     return t;
 }
 
