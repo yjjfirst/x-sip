@@ -6,6 +6,7 @@
 #include "RequestLine.h"
 #include "Parser.h"
 #include "Header.h"
+#include "URI.h"
 
 #define SIP_VERSION_LENGTH 16
 

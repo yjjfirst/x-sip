@@ -7,6 +7,7 @@
 #include "Messages.h"
 #include "MessageTransport.h"
 #include "StatusLine.h"
+#include "RequestLine.h"
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"

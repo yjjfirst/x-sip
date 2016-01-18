@@ -6,6 +6,8 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 
+#include "URI.h"
+#include "RequestLine.h"
 #include "Header.h"
 #include "UserAgent.h"
 #include "MessageBuilder.h"

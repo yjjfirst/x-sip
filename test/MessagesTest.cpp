@@ -16,6 +16,8 @@ extern "C" {
 #include "StatusLine.h"
 #include "Header.h"
 #include "TestingMessages.h"
+#include "URI.h"
+#include "RequestLine.h"
 }
 
 TEST_GROUP(MessageTestGroup)

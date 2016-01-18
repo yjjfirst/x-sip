@@ -1,6 +1,8 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include "URI.h"
+#include "RequestLine.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
@@ -234,7 +236,21 @@ TEST(MessageBuilderTestGroup, AckMessageViaTest)
     DestoryMessage(&ackMessage);
 }
 
-IGNORE_TEST(MessageBuilderTestGroup, Build100TryingMessageTest)
+TEST(MessageBuilderTestGroup, Build100TryingMessageStatusLineTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+
+    struct Message *trying = Build100TryingMessage(invite);
+    struct StatusLine *status = MessageGetStatusLine(trying);
+    
+    CHECK_TRUE(status != NULL);
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);
+}
+
+TEST(MessageBuilderTestGroup, Build100TryingMessageFromHeaderTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);

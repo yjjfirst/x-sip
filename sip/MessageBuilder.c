@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "StatusLine.h"
+#include "RequestLine.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
@@ -109,7 +111,7 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
 
-    MessageSetRequest(message, BuildRequestLine(dialog));
+    MessageSetRequestLine(message, BuildRequestLine(dialog));
     MessageAddHeader(message, BuildViaHeader(dialog));
     MessageAddHeader(message, BuildFromHeader(dialog));
     MessageAddHeader(message, BuildToHeader(dialog));
@@ -147,9 +149,11 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
 struct Message *Build100TryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
+    struct StatusLine *status = CreateStatusLine(); 
+    MessageSetStatusLine(message, status);
 
     struct ContactHeader *from = ContactHeaderDup((struct ContactHeader *)
                                                   MessageGetHeader(HEADER_NAME_FROM, invite));
-    (void)from;
+    MessageAddHeader(message, (struct Header *)from);
     return message;  
 }

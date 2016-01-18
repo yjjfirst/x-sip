@@ -4,6 +4,7 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 
+#include "URI.h"
 #include "RequestLine.h"
 #include "Parser.h"
 }

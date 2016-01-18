@@ -15,6 +15,7 @@
 #include "StatusLine.h"
 #include "ExpiresHeader.h"
 #include "Parameter.h"
+#include "RequestLine.h"
 #include "utils/list/include/list.h"
 
 #define SIP_VERSION "SIP/2.0"
@@ -175,7 +176,7 @@ struct RequestLine *MessageGetRequestLine(struct Message *message)
     return message->rr.request;
 }
 
-void MessageSetRequest(struct Message *message, struct RequestLine *rl)
+void MessageSetRequestLine(struct Message *message, struct RequestLine *rl)
 {
     message->rr.request = rl;
 }
@@ -184,6 +185,14 @@ struct StatusLine *MessageGetStatusLine(struct Message *message)
 {
     assert(message != NULL);
     return message->rr.status;
+}
+
+void MessageSetStatusLine(struct Message *message, struct StatusLine *status)
+{
+    assert (message != NULL);
+    assert (status != NULL);
+    
+    message->rr.status = status;
 }
 
 char *MessageGetCallId(struct Message *message)
@@ -354,7 +363,7 @@ void MessageDestoryHeaders(struct Message *message)
 }
 
 void DestoryMessage (struct Message **message) 
-{ 
+{  
     assert(message != NULL);
 
     if ((*message) != ((void *)0)) {

@@ -1,6 +1,7 @@
-#include "URI.h"
+#include "Bool.h"
 #include "SipMethod.h"
 
+struct URI;
 struct RequestLine;
 
 void DestoryRequestLine(struct RequestLine *requestLine);
