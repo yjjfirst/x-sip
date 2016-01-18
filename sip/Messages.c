@@ -18,8 +18,6 @@
 #include "RequestLine.h"
 #include "utils/list/include/list.h"
 
-#define SIP_VERSION "SIP/2.0"
-
 struct Message {
     union {
         struct RequestLine *request;
@@ -95,7 +93,7 @@ void MessageParseRequestLine(char *string, struct Message *message)
 
 void MessageParseStatusLine(char *string, struct Message *message)
 {
-    struct StatusLine *statusLine = CreateStatusLine();
+    struct StatusLine *statusLine = CreateStatusLine(0);
 
     ParseStatusLine(string, statusLine);
     message->rr.status = statusLine;

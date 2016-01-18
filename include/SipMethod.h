@@ -35,6 +35,7 @@ typedef enum {
 #define SIP_METHOD_NAME_PUBLISH "PUBLISH"
 
 #define METHOD_MAX_LENGTH 16
+#define SIP_VERSION "SIP/2.0"
 
 char *MethodMap2String(SIP_METHOD method);
 SIP_METHOD StringMap2MethodNumber(char *string);

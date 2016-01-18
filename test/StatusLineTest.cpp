@@ -10,7 +10,7 @@ TEST_GROUP(StatusLineTestGroup)
 
 TEST(StatusLineTestGroup, StatusLineParseTest)
 {
-    struct StatusLine *s = CreateStatusLine();
+    struct StatusLine *s = CreateStatusLine(0);
     char string[] = "SIP/2.0 180 Ringing";
 
     ParseStatusLine(string, s);
@@ -23,7 +23,7 @@ TEST(StatusLineTestGroup, StatusLineParseTest)
 
 TEST(StatusLineTestGroup, StatusLine2StringTest)
 {
-    struct StatusLine *s = CreateStatusLine();
+    struct StatusLine *s = CreateStatusLine(0);
     char string[] = "SIP/2.0 180 Ringing";
     char result[64] = {0};
 

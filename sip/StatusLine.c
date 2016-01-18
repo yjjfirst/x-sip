@@ -17,9 +17,6 @@ struct HeaderPattern StatusLinePattern[] = {
 
 };
 
-DEFINE_CREATER(struct StatusLine, CreateStatusLine)
-DEFINE_DESTROYER(struct StatusLine, DestoryStatusLine)
-
 void ParseStatusLine(char *string, struct StatusLine *s)
 {
     Parse(string, s, StatusLinePattern); 
@@ -30,9 +27,19 @@ char *StatusLineGetSipVersion(struct StatusLine *s)
     return s->sipVersion;
 }
 
+void StatusLineSetSipVersion(struct StatusLine *s, char *version)
+{
+    Copy2Target(s, version, &StatusLinePattern[0]);
+}
+
 int StatusLineGetStatusCode(struct StatusLine *s)
 {
     return s->statusCode;
+}
+
+void StatusLineSetStatusCode(struct StatusLine *s, int statusCode)
+{
+    SetIntegerField(s, statusCode, &StatusLinePattern[1]);
 }
 
 char *StatusLineGetReasonPhrase(struct StatusLine *s)
@@ -40,7 +47,23 @@ char *StatusLineGetReasonPhrase(struct StatusLine *s)
     return s->reasonPhrase;
 }
 
+void StatusLineSetReasonPhrase(struct StatusLine *s, int statusCode)
+{
+    Copy2Target(s, "Trying", &StatusLinePattern[2]);
+}
+
 char *StatusLine2String(char *result, struct StatusLine *s)
 {
     return ToString(result, s, StatusLinePattern);
 }
+
+struct StatusLine *CreateStatusLine(int statusCode)
+{
+    struct StatusLine *s = calloc(1, sizeof(struct StatusLine));
+    StatusLineSetSipVersion(s, SIP_VERSION);
+    StatusLineSetStatusCode(s, statusCode);
+    StatusLineSetReasonPhrase(s, statusCode);
+    return s;
+}
+
+DEFINE_DESTROYER(struct StatusLine, DestoryStatusLine)

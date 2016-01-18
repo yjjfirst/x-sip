@@ -149,7 +149,7 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
 struct Message *Build100TryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
-    struct StatusLine *status = CreateStatusLine(); 
+    struct StatusLine *status = CreateStatusLine(100); 
     MessageSetStatusLine(message, status);
 
     struct ContactHeader *from = ContactHeaderDup((struct ContactHeader *)

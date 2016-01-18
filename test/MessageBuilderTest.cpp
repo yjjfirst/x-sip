@@ -3,6 +3,7 @@
 extern "C" {
 #include "URI.h"
 #include "RequestLine.h"
+#include "StatusLine.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
@@ -245,6 +246,9 @@ TEST(MessageBuilderTestGroup, Build100TryingMessageStatusLineTest)
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
+    STRCMP_EQUAL(SIP_VERSION, StatusLineGetSipVersion(status));
+    CHECK_EQUAL(100, StatusLineGetStatusCode(status));
+    STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(status));
 
     DestoryMessage(&trying);
     DestoryMessage(&invite);
@@ -264,3 +268,4 @@ TEST(MessageBuilderTestGroup, Build100TryingMessageFromHeaderTest)
     DestoryMessage(&trying);
     DestoryMessage(&invite);
 }
+
