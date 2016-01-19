@@ -72,11 +72,45 @@ TEST(CSeqTestGroup, MethodMatchedByString)
 {
     struct CSeqHeader *c1 = CreateCSeqHeader(0, (char *)SIP_METHOD_NAME_REGISTER);
 
-    CHECK_TRUE(CSeqMethodMatchedByString(c1, (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_TRUE(CSeqMethodMatchedByName(c1, (char *)SIP_METHOD_NAME_REGISTER));
 
     CSeqHeaderSetMethod(c1, (char *)SIP_METHOD_NAME_INVITE);
-    CHECK_FALSE(CSeqMethodMatchedByString(c1, (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_FALSE(CSeqMethodMatchedByName(c1, (char *)SIP_METHOD_NAME_REGISTER));
 
     DestoryCSeqHeader((struct Header *)c1);    
 
+}
+
+TEST(CSeqTestGroup, CSeqHeadersMatchedTest)
+{
+    struct CSeqHeader *c1 = CreateCSeqHeader(101, (char *)SIP_METHOD_NAME_REGISTER);
+    struct CSeqHeader *c2 = CreateCSeqHeader(101, (char *)SIP_METHOD_NAME_REGISTER);
+
+    CHECK_TRUE(CSeqHeadersMatched(c1, c2));
+    
+    DestoryCSeqHeader((struct Header *)c1);    
+    DestoryCSeqHeader((struct Header *)c2);    
+
+}
+
+TEST(CSeqTestGroup, CSeqHeadersUnmatchedTest)
+{
+    struct CSeqHeader *c1 = CreateCSeqHeader(101, (char *)SIP_METHOD_NAME_REGISTER);
+    struct CSeqHeader *c2 = CreateCSeqHeader(102, (char *)SIP_METHOD_NAME_REGISTER);
+
+    CHECK_FALSE(CSeqHeadersMatched(c1, c2));
+    
+    DestoryCSeqHeader((struct Header *)c1);    
+    DestoryCSeqHeader((struct Header *)c2);    
+}
+
+TEST(CSeqTestGroup, CSeqHeaderDupTest)
+{
+    struct CSeqHeader *src = CreateCSeqHeader(101, (char *)SIP_METHOD_NAME_REGISTER);
+    struct CSeqHeader *dest = CSeqHeaderDup(src);
+
+    CHECK_TRUE(CSeqHeadersMatched(src, dest));
+
+    DestoryCSeqHeader((struct Header *)src);
+    DestoryCSeqHeader((struct Header *)dest);
 }

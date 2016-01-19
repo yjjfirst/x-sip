@@ -319,3 +319,18 @@ TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
     DestoryMessage(&trying);
     DestoryMessage(&invite);    
 }
+
+TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *trying = BuildTryingMessage(invite);
+    
+    struct CSeqHeader *inviteCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite);
+    struct CSeqHeader *tryingCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, trying);
+
+    CHECK_TRUE(CSeqHeadersMatched(inviteCSeq, tryingCSeq));
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);
+}

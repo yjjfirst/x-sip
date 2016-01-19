@@ -168,5 +168,9 @@ struct Message *BuildTryingMessage(struct Message *invite)
         CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
     MessageAddHeader(message, (struct Header *)callId);
 
+    struct CSeqHeader *cseqId =              
+        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
+    MessageAddHeader(message, (struct Header *)cseqId);
+    
     return message;  
 }

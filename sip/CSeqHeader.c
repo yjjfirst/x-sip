@@ -87,6 +87,14 @@ struct CSeqHeader *CreateCSeqHeader (int seq, char *method)
     return cseq;
 }
 
+struct CSeqHeader *CSeqHeaderDup(struct CSeqHeader *src)
+{
+    struct CSeqHeader *dest = CreateCSeqHeader(0,"");
+    memcpy(dest, src, sizeof(struct CSeqHeader));
+
+    return dest;
+}
+
 BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
 {
     assert(c1 != NULL && c2 != NULL);
@@ -94,9 +102,20 @@ BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
     return !strcmp (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
 }
 
-BOOL CSeqMethodMatchedByString(struct CSeqHeader *c, char *string)
+BOOL CSeqMethodMatchedByName(struct CSeqHeader *c, char *string)
 {
     assert(c != NULL && string != NULL);
     
     return !strcmp(CSeqHeaderGetMethod(c), string);
+}
+
+BOOL CSeqHeadersMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
+{
+    assert (c1 != NULL);
+    assert (c2 != NULL);
+
+    if (!CSeqHeaderMethodMatched(c1, c2))
+        return FALSE;
+
+    return c1->seq == c2->seq;
 }

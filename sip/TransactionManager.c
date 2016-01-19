@@ -54,7 +54,7 @@ BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMeth
     struct Message *request = TransactionGetRequest(t);
     
     return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
-        && CSeqMethodMatchedByString((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
+        && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
 
 struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
