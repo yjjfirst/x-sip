@@ -49,5 +49,5 @@ TEST(IncomingInviteTransactionTestGroup, Send100TryingTest)
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall("SendOutMessageMock");
     ReceiveInMessage(stringReceived);    
-    
 }
+

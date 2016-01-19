@@ -269,6 +269,38 @@ TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
     DestoryMessage(&invite);
 }
 
-TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
+TEST(MessageBuilderTestGroup, TryingMessageToWithTagTest)
 {
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
+    
+    struct Message *trying = BuildTryingMessage(invite);
+
+    struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+    struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
+
+    CHECK_TRUE(ContactHeaderMatched(inviteTo, tryingTo));
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);    
+}
+
+TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    
+    struct Message *trying = BuildTryingMessage(invite);
+
+    struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+    struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
+
+    struct URI *inviteToUri = ContactHeaderGetUri(inviteTo);
+    struct URI *tryingToUri = ContactHeaderGetUri(tryingTo);
+
+    CHECK_FALSE(ContactHeaderMatched(inviteTo, tryingTo));
+    CHECK_TRUE(UriMatched(inviteToUri, tryingToUri));
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);    
 }

@@ -149,11 +149,20 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
 struct Message *BuildTryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
+
     struct StatusLine *status = CreateStatusLine(100); 
     MessageSetStatusLine(message, status);
 
-    struct ContactHeader *from = ContactHeaderDup((struct ContactHeader *)
-                                                  MessageGetHeader(HEADER_NAME_FROM, invite));
+    struct ContactHeader *from = 
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
     MessageAddHeader(message, (struct Header *)from);
+
+    struct ContactHeader *to =
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
+    if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
+        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
+    }
+    MessageAddHeader(message, (struct Header *)to);
+
     return message;  
 }
