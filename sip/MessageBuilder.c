@@ -164,5 +164,9 @@ struct Message *BuildTryingMessage(struct Message *invite)
     }
     MessageAddHeader(message, (struct Header *)to);
 
+    struct CallIdHeader *callId = 
+        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
+    MessageAddHeader(message, (struct Header *)callId);
+
     return message;  
 }

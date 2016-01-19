@@ -145,7 +145,7 @@ TEST(MessageTestGroup, CallIdParseTest)
 
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader("Call-ID", message);
     STRCMP_EQUAL("Call-ID", CallIdHeaderGetName(id));
-    STRCMP_EQUAL("23@200.201.202.203", CallIdHeaderGetID(id));
+    STRCMP_EQUAL("23@200.201.202.203", CallIdHeaderGetId(id));
     DestoryMessage(&message);
 } 
 

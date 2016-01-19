@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "Header.h"
 #include "Parser.h"
@@ -37,7 +38,7 @@ void CallIdHeaderSetName(struct CallIdHeader *id)
     Copy2Target(id, HEADER_NAME_CALLID, p);
 }
 
-char *CallIdHeaderGetID(struct CallIdHeader *id)
+char *CallIdHeaderGetId(struct CallIdHeader *id)
 {
     assert (id != NULL);
     return id->id;
@@ -49,6 +50,14 @@ void CallIdHeaderSetID(struct CallIdHeader *id, char *idString)
 
     assert(idString != NULL);
     Copy2Target(id, idString, p);
+}
+
+BOOL CallIdHeaderMatched(struct CallIdHeader *id1, struct CallIdHeader *id2)
+{
+    assert (id1 != NULL);
+    assert (id2 != NULL);
+
+    return !strcmp(id1->id, id2->id);
 }
 
 char *CallIdHeader2String(char *result, struct Header *id)
@@ -78,6 +87,13 @@ struct CallIdHeader *CreateCallIdHeader (char *idString)
     CallIdHeaderSetName(header);
     CallIdHeaderSetID(header, idString);
     return header;
+}
+
+struct CallIdHeader *CallIdHeaderDup(struct CallIdHeader *src)
+{
+    char *srcId = CallIdHeaderGetId(src);
+    struct CallIdHeader *dest = CreateCallIdHeader(srcId);
+    return dest;
 }
 
 DEFINE_DESTROYER(struct Header, DestoryCallIdHeader)

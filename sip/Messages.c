@@ -196,7 +196,7 @@ void MessageSetStatusLine(struct Message *message, struct StatusLine *status)
 char *MessageGetCallId(struct Message *message)
 {
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader(HEADER_NAME_CALLID, message);
-    return CallIdHeaderGetID(id);
+    return CallIdHeaderGetId(id);
 }
 
 char *MessageGetLocalTag(struct Message *message)

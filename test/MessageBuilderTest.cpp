@@ -304,3 +304,18 @@ TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
     DestoryMessage(&trying);
     DestoryMessage(&invite);    
 }
+
+TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *trying = BuildTryingMessage(invite);
+
+    struct CallIdHeader *inviteCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite);
+    struct CallIdHeader *tryingCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, trying);
+    
+    CHECK_TRUE(CallIdHeaderMatched(inviteCallId, tryingCallId));
+    
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);    
+}
