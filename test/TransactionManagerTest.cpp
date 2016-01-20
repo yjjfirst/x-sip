@@ -89,7 +89,7 @@ TEST(TransactionManager, GetTransactionByTest)
     char branch[] = "z9hG4bK1491280923";
     struct Transaction *t = AddClientTransaction(message, NULL);
 
-    POINTERS_EQUAL(t, GetTransactionBy(branch, seqMethod));
+    POINTERS_EQUAL(t, GetTransaction(branch, seqMethod));
 }
 
 TEST(TransactionManager, ExtractTransactionIdFromMessageTest)

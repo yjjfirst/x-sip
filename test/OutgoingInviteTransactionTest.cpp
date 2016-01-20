@@ -84,7 +84,7 @@ TEST(OutgoingInviteTransactionTestGroup, Receive2xxTest)
     
     ReceiveInMessage(stringReceived);
     
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
     mock().checkExpectations();
 }
@@ -97,7 +97,7 @@ TEST(OutgoingInviteTransactionTestGroup, Receive100Test)
     ReceiveInMessage(stringReceived);
     
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
-    POINTERS_EQUAL(t, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    POINTERS_EQUAL(t, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
     mock().checkExpectations();
 }

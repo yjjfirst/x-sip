@@ -335,7 +335,7 @@ TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
     DestoryMessage(&invite);
 }
 
-IGNORE_TEST(MessageBuilderTestGroup, TryingMessageViaTest)
+TEST(MessageBuilderTestGroup, TryingMessageViaTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);

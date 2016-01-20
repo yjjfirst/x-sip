@@ -57,7 +57,7 @@ BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMeth
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
 
-struct Transaction *GetTransactionBy(char *branch, char *seqMethod)
+struct Transaction *GetTransaction(char *branch, char *seqMethod)
 {
     int i = 0;
     int length = CountTransaction();

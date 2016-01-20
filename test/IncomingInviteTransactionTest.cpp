@@ -35,7 +35,7 @@ TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedCreateTransactionTest)
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall("SendOutMessageMock");
     ReceiveInMessage(stringReceived); 
-    t = GetTransactionBy((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
 
     CHECK_EQUAL(1, CountTransaction());
     CHECK_TRUE(t != NULL);

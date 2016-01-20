@@ -169,11 +169,11 @@ TEST(TransactionTestGroup, ProceedingTimeETest)
 TEST(TransactionTestGroup, TimerFTest)
 {
 
-    POINTERS_EQUAL(t, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(t, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
     TimerFCallbackFunc(t);
     s = TransactionGetState(t);
 
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 }
 
 TEST(TransactionTestGroup, TimerKTest)
@@ -189,7 +189,7 @@ TEST(TransactionTestGroup, TimerKTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, s);
 
     TimerKCallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 }
 
 TEST(TransactionTestGroup, SendOutMessageError)
@@ -203,7 +203,7 @@ TEST(TransactionTestGroup, SendOutMessageError)
     struct Message *message = BuildBindingMessage(dialog);
     AddClientTransaction(message, NULL);
 
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 
     DestoryUserAgent(&ua);
     EmptyTransactionManager();
@@ -223,7 +223,7 @@ TEST(TransactionTestGroup, ProceedingTransportError)
     
     mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
     TimerECallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
     CHECK_EQUAL(0, CountTransaction());
     mock().checkExpectations();
 }
@@ -232,7 +232,7 @@ TEST(TransactionTestGroup, TryingTransportErrorTest)
 {
     mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
     TimerECallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransactionBy((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
     CHECK_EQUAL(0, CountTransaction());    
     mock().checkExpectations();
 }
