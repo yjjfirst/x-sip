@@ -10,6 +10,7 @@ struct Parameters;
 struct HeaderPattern *GetViaPattern();
 struct ViaHeader *CreateEmptyViaHeader();
 struct ViaHeader *CreateViaHeader(struct URI *uri);
+struct ViaHeader *ViaHeaderDup(struct ViaHeader *src);
 void DestoryViaHeader(struct Header *via);
 struct Header *ParseViaHeader(char *string);
 

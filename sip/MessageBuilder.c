@@ -153,6 +153,9 @@ struct Message *BuildTryingMessage(struct Message *invite)
     struct StatusLine *status = CreateStatusLine(100); 
     MessageSetStatusLine(message, status);
 
+    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
+    MessageAddHeader(message, (struct Header *)via);
+
     struct ContactHeader *from = 
         ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
     MessageAddHeader(message, (struct Header *)from);

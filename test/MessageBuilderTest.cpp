@@ -334,3 +334,18 @@ TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
     DestoryMessage(&trying);
     DestoryMessage(&invite);
 }
+
+IGNORE_TEST(MessageBuilderTestGroup, TryingMessageViaTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *trying = BuildTryingMessage(invite);
+
+    struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite);
+    struct ViaHeader *tryingVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, trying);
+    
+    CHECK_TRUE(ViaHeaderMatched(inviteVia, tryingVia));
+
+    DestoryMessage(&trying);
+    DestoryMessage(&invite);    
+}

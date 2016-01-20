@@ -133,10 +133,10 @@ char *ViaHeader2String(char *result, struct Header *via)
 struct ViaHeader *CreateEmptyViaHeader()
 {
     struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
-    struct Parameters *p = CreateParameters();
 
+    ViaHeaderSetName(via, "Via");
     via->uri = CreateEmptyUri();
-    via->parameters = p;
+    via->parameters = CreateParameters();
     return via;
 }
 
@@ -144,11 +144,24 @@ struct ViaHeader *CreateViaHeader(struct URI *uri)
 {
     struct ViaHeader *via = CreateEmptyViaHeader();
     
-    ViaHeaderSetName(via, "Via");
     ViaHeaderSetTransport(via, "SIP/2.0/UDP");
     ViaHeaderSetUri(via, uri);
 
     return via;
+}
+
+struct ViaHeader *ViaHeaderDup(struct ViaHeader *src)
+{
+    struct ViaHeader *dest = CreateEmptyViaHeader();
+    
+    DestoryUri(dest->uri);
+    DestoryParameters(dest->parameters);
+
+    memcpy(dest, src, sizeof(struct ViaHeader));
+    
+    dest->uri = UriDup(src->uri);
+    dest->parameters = ParametersDup(src->parameters);
+    return dest;
 }
 
 void DestoryViaHeader(struct Header *via)

@@ -174,3 +174,16 @@ TEST(ViaHeaderTestGroup, ViaParameterUnmatchedTest)
     DestoryViaHeader((struct Header *)via1);
     DestoryViaHeader((struct Header *)via2);
 }
+
+TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
+{
+    struct ViaHeader *src = CreateEmptyViaHeader();
+    char string[] = "Via:SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+    Parse(string, src, GetViaPattern());
+  
+    struct ViaHeader *dest = ViaHeaderDup(src);
+    CHECK_TRUE(ViaHeaderMatched(src, dest));
+
+    DestoryViaHeader((struct Header *)src);
+    DestoryViaHeader((struct Header *)dest);
+}
