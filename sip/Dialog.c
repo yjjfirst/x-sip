@@ -49,7 +49,7 @@ void DialogOnTransactionEvent(struct Transaction *t)
     struct Dialog *dialog = (struct Dialog *) TransactionGetOwner(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
 
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {
+    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
         if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
             if (MessageGetExpires(message) != 0)
                 UserAgentSetBinded(ua);

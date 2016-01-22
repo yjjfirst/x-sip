@@ -22,9 +22,10 @@ enum TransactionType {
 };
 
 enum TransactionEvent {
-    TRANSACTION_EVENT_200OK,
-    TRANSACTION_EVENT_100TRYING,
-    TRANSACTION_EVENT_180RINGING,
+    TRANSACTION_EVENT_200OK_RECEIVED,
+    TRANSACTION_EVENT_100TRYING_RECEIVED,
+    TRANSACTION_EVENT_180RINGING_RECEIVED,
+    TRANSACTION_EVENT_INVITE_RECEIVED,
     TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,
     TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,
     TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED,
@@ -37,6 +38,7 @@ struct Transaction *CreateServerTransaction(struct Message *request, struct Tran
 
 void DestoryTransaction(struct Transaction **t);
 
+int TransactionSendMessage(struct Message *message);
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);

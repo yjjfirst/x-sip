@@ -42,12 +42,40 @@ TEST(IncomingInviteTransactionTestGroup, ReceiveInvitedCreateTransactionTest)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
-TEST(IncomingInviteTransactionTestGroup, Send100TryingTest)
+TEST(IncomingInviteTransactionTestGroup, ReceiveRetransmitInviteTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    struct Transaction *t = NULL;
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall("SendOutMessageMock");
-    ReceiveInMessage(stringReceived);    
-}
+    ReceiveInMessage(stringReceived); 
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
 
+    CHECK_EQUAL(1, CountTransaction());
+    CHECK_TRUE(t != NULL);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    //Receive retransmited INVITE message.
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall("SendOutMessageMock");
+    ReceiveInMessage(stringReceived); 
+
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+
+    CHECK_EQUAL(1, CountTransaction());
+    CHECK_TRUE(t != NULL);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    
+    //Receive retransmited INVITE message.
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall("SendOutMessageMock");
+    ReceiveInMessage(stringReceived); 
+
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+
+    CHECK_EQUAL(1, CountTransaction());
+    CHECK_TRUE(t != NULL);
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+}

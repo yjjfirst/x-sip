@@ -101,10 +101,10 @@ BOOL TmHandleReponseMessage(struct Message *message)
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
         if (statusCode == 200) {
-            RunFsm(t, TRANSACTION_EVENT_200OK);
+            RunFsm(t, TRANSACTION_EVENT_200OK_RECEIVED);
         }
         else if (statusCode == 100) {
-            RunFsm(t, TRANSACTION_EVENT_100TRYING);
+            RunFsm(t, TRANSACTION_EVENT_100TRYING_RECEIVED);
         }
         
         return TRUE;
@@ -117,8 +117,14 @@ BOOL TmHandleRequestMessage(struct Message *message)
 {
     //struct DialogId *dialogId = CreateDialogIdFromMessage(message);
     //struct Dialog *dialog = CreateDialog(dialogId, NULL);
-
-    AddServerTransaction(message,NULL);//(struct TransactionOwner *) dialog);
+    struct Transaction *t = NULL;
+    if ( (t = MatchTransaction(message)) == NULL) {
+        AddServerTransaction(message,NULL);//(struct TransactionOwner *) dialog);
+    } else {
+        //RunFsm(t, 
+        TransactionSendMessage(TransactionGetLatestResponse(t));
+        DestoryMessage(&message);
+    }
     return TRUE;
 }
 

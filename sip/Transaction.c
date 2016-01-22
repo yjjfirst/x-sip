@@ -19,7 +19,7 @@
 struct Transaction {
     struct TransactionOwner *owner;
     enum TransactionState state;
-    struct FSM *fsm;
+    struct Fsm *fsm;
     struct Message *request;
     t_list *responses;
     struct TransactionNotifiers *notifiers;
@@ -28,22 +28,23 @@ struct Transaction {
     enum TransactionType type;
 };
 
-struct FSM_STATE_ENTRY {
+struct FsmStateEventEntry {
     enum TransactionEvent event;
     enum TransactionState nextState;
     TransactionAction actions[TRANSACTION_ACTIONS_MAX + 1];
 };
 
-struct FSM_STATE {
+struct FsmState {
     enum TransactionState currState;
-    struct FSM_STATE_ENTRY entrys[TRANSACTION_EVENT_MAX + 1];
+    struct FsmStateEventEntry entrys[TRANSACTION_EVENT_MAX + 1];
 };
 
-struct FSM {
-    struct FSM_STATE *fsmStates[TRANSACTION_STATE_MAX];
+struct Fsm {
+    struct FsmState *fsmStates[TRANSACTION_STATE_MAX];
 };
 
-struct FSM ClientTransactionFsm;
+struct Fsm ClientTransactionFsm;
+struct Fsm ServerTransactionFsm;
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
 {
@@ -205,7 +206,8 @@ struct Transaction *CreateServerTransaction(struct Message *request, struct Tran
     t->state = TRANSACTION_STATE_PROCEEDING;
     t->request = request;
     t->owner = owner;
-    
+    t->fsm = &ServerTransactionFsm;
+ 
     trying = BuildTryingMessage(t->request);
     TransactionSendMessage(trying);
     TransactionAddResponse(t, trying);
@@ -234,11 +236,11 @@ void DestoryTransaction(struct Transaction **t)
     }
 }
 
-struct FSM_STATE TryingState = {
+struct FsmState ClientTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyOwner}},
-        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
@@ -249,11 +251,11 @@ struct FSM_STATE TryingState = {
     }
 }; 
 
-struct FSM_STATE CallingState = {
+struct FsmState ClientCallingState = {
     TRANSACTION_STATE_CALLING,
     {
-        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyOwner}},
-        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -264,12 +266,12 @@ struct FSM_STATE CallingState = {
     }
 };
 
-struct FSM_STATE ProceedingState = {
+struct FsmState ClientProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{NULL}},
-        {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NULL}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{NULL}},
+        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING,{NULL}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -279,7 +281,7 @@ struct FSM_STATE ProceedingState = {
     }
 };
 
-struct FSM_STATE CompletedState = {
+struct FsmState ClientCompletedState = {
     TRANSACTION_STATE_COMPLETED,
     {
         {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED,{NULL}},
@@ -287,21 +289,60 @@ struct FSM_STATE CompletedState = {
     }
 };
 
-struct FSM ClientTransactionFsm = {
+struct Fsm ClientTransactionFsm = {
     {
-        &TryingState,
-        &CallingState,
-        &ProceedingState,
-        &CompletedState,
+        &ClientTryingState,
+        &ClientCallingState,
+        &ClientProceedingState,
+        &ClientCompletedState,
         NULL,
     }
 };
 
-struct FSM_STATE *LocateFsmState(struct Transaction *t)
+struct FsmState ServerProceedingState = {
+    TRANSACTION_STATE_PROCEEDING,
+    {
+        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{}},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct Fsm ServerTransactionFsm = {
+    {
+        &ServerProceedingState,
+        NULL,
+    }
+};
+
+void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
+{
+    int j;
+
+    for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
+        if(e->actions[j] != NULL) 
+            if (e->actions[j](t) < 0) break;
+    }
+}
+
+void TransactionTerminate(struct Transaction *t)
+{
+    if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
+        if (t != NULL && t->notifiers != NULL)
+            ((struct Transaction *)t)->notifiers->die(t);
+}
+
+void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
+{
+    t->event = event;
+    t->state = entry->nextState;
+    InvokeActions(t, entry);
+}
+
+struct FsmState *LocateFsmState(struct Transaction *t)
 {
     int i = 0;
-    struct FSM_STATE *fsmState = NULL;
-    struct FSM *fsm = t->fsm;
+    struct FsmState *fsmState = NULL;
+    struct Fsm *fsm = t->fsm;
 
     assert (t != NULL);
     assert (t->fsm != NULL);
@@ -314,38 +355,31 @@ struct FSM_STATE *LocateFsmState(struct Transaction *t)
     return fsmState;
 }
 
-void InvokeActions(struct Transaction *t, struct FSM_STATE_ENTRY *e)
+struct FsmStateEventEntry *TransactionLocateEventEntry(struct Transaction *t, enum TransactionEvent event)
 {
-    int j;
+    int i = 0;
+    struct FsmStateEventEntry *entrys = NULL;
+    struct FsmState *fsmState = NULL;
 
-    for (j = 0; j < TRANSACTION_ACTIONS_MAX; j++) {
-        if(e->actions[j] != NULL) 
-            if (e->actions[j](t) < 0) break;
+    if ((fsmState = LocateFsmState(t)) == NULL) return NULL;
+
+    entrys = fsmState->entrys;
+    for ( i = 0; entrys[i].event != TRANSACTION_EVENT_MAX; i++) {
+        if (entrys[i].event == event) {
+            return &entrys[i];
+        }
     }
+
+    return NULL;
 }
 
 void RunFsm(struct Transaction *t, enum TransactionEvent event)
 {
-    int i = 0;
-    struct FSM_STATE_ENTRY *entrys = NULL;
-    struct FSM_STATE *fsmState = LocateFsmState(t);
-
     assert(t != NULL);
-
-    if (fsmState == NULL) return;
+    struct FsmStateEventEntry *entry = NULL;
     
-    entrys = fsmState->entrys;
-    for ( i = 0; entrys[i].event != TRANSACTION_EVENT_MAX; i++) {
-        if (entrys[i].event == event) {
-            t->event = event;
-            t->state = entrys[i].nextState;
-            InvokeActions(t, &entrys[i]);
-            break;
-        }
+    if ((entry = TransactionLocateEventEntry(t, event)) != NULL) {
+        TransactionHandleEvent(t, event, entry);            
+        TransactionTerminate(t);
     }
-
-    if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->notifiers != NULL)
-            ((struct Transaction *)t)->notifiers->die(t);
-
 }
