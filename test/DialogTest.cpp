@@ -64,7 +64,7 @@ TEST(DialogTestGroup, AckRequestInviteSuccessedTest)
     mock().expectOneCall("SendOutMessageMock");
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
    
-    AddClientTransaction(message, (struct TransactionUser *)dialog);
+    AddClientTransaction(message, (struct TransactionUserNofifiers *)dialog);
     UT_PTR_SET(Transporter, &MockTransporterForAck);
     mock().expectOneCall("SendOutMessageMock").withParameter("RemoteTag", "as6151ad25");
 

@@ -176,7 +176,7 @@ struct TransactionManager TransactionManager = {
     .notifiers = &Notifiers,
 };
 
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUser *owner)
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNofifiers *owner)
 {
     struct Transaction *t = CreateClientTransaction(message, owner);
 
@@ -188,7 +188,7 @@ struct Transaction *AddClientTransaction(struct Message *message, struct Transac
     return t;
 }
 
-struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUser *owner)
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNofifiers *owner)
 {
     struct Transaction *t = CreateServerTransaction(message, owner);
 
