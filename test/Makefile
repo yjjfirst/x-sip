@@ -12,9 +12,9 @@ all:AllTests
 TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeaderTest.o ViaHeaderTest.o MaxForwardsTest.o\
 	CallIdHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o MessagesTest.o \
 	StatusLineTest.o MessageBuilderTest.o MessageTransportTest.o SessionTest.o \
-	ParameterTest.o NonInviteTransactionTest.o \
+	ParameterTest.o ClientNonInviteTransactionTest.o \
 	TimerTest.o TransactionManagerTest.o UserAgentTest.o UserAgentManagerTest.o SipMethodTest.o \
-	OutgoingInviteTransactionTest.o IncomingInviteTransactionTest.o DialogTest.o \
+	ClientInviteTransactionTest.o ServerInviteTransactionTest.o DialogTest.o \
 	DialogsTest.o DialogIdTest.o TransportMock.o
 
 TEST_SRCS = $(TESTSUITE_OBJS:%.o=%.cpp)
