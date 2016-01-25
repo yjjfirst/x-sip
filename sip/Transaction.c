@@ -145,6 +145,11 @@ int SendRequestMessage(struct Transaction *t)
     return 0;
 }
 
+int ResendLatestResponse(struct Transaction *t)
+{
+    return TransactionSendMessage(TransactionGetLatestResponse(t));
+}
+
 struct Message *TransactionGetRequest(struct Transaction *t)
 {
     assert (t != NULL);
@@ -302,7 +307,7 @@ struct Fsm ClientTransactionFsm = {
 struct FsmState ServerProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{}},
+        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -355,7 +360,7 @@ struct FsmState *LocateFsmState(struct Transaction *t)
     return fsmState;
 }
 
-struct FsmStateEventEntry *TransactionLocateEventEntry(struct Transaction *t, enum TransactionEvent event)
+struct FsmStateEventEntry *LocateEventEntry(struct Transaction *t, enum TransactionEvent event)
 {
     int i = 0;
     struct FsmStateEventEntry *entrys = NULL;
@@ -378,7 +383,7 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     assert(t != NULL);
     struct FsmStateEventEntry *entry = NULL;
     
-    if ((entry = TransactionLocateEventEntry(t, event)) != NULL) {
+    if ((entry = LocateEventEntry(t, event)) != NULL) {
         TransactionHandleEvent(t, event, entry);            
         TransactionTerminate(t);
     }

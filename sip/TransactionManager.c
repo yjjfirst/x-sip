@@ -115,16 +115,15 @@ BOOL TmHandleReponseMessage(struct Message *message)
 
 BOOL TmHandleRequestMessage(struct Message *message)
 {
-    //struct DialogId *dialogId = CreateDialogIdFromMessage(message);
-    //struct Dialog *dialog = CreateDialog(dialogId, NULL);
     struct Transaction *t = NULL;
+
     if ( (t = MatchTransaction(message)) == NULL) {
-        AddServerTransaction(message,NULL);//(struct TransactionOwner *) dialog);
+        AddServerTransaction(message,NULL);
     } else {
-        //RunFsm(t, 
-        TransactionSendMessage(TransactionGetLatestResponse(t));
+        RunFsm(t, TRANSACTION_EVENT_INVITE_RECEIVED);
         DestoryMessage(&message);
     }
+
     return TRUE;
 }
 
