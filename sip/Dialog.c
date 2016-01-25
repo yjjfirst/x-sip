@@ -12,7 +12,7 @@
 #include "MessageTransport.h"
 
 struct Dialog {
-    struct TransactionOwner notifyInterface;  //must be the first field in the struct.
+    struct TransactionUser notifyInterface;  //must be the first field in the struct.
     SIP_METHOD requestMethod;
     struct Transaction *transaction;
     struct DialogId *id;
@@ -61,7 +61,7 @@ void DialogOnTransactionEvent(struct Transaction *t)
 
             struct Message *ack = BuildAckMessage(dialog);
             MessageSetRemoteTag(ack, MessageGetRemoteTag(message));
-            AddClientTransaction(ack, (struct TransactionOwner *)dialog);
+            AddClientTransaction(ack, (struct TransactionUser *)dialog);
         } 
     }
 }

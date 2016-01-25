@@ -2,8 +2,8 @@
 
 struct Message;
 struct Transaction;
-struct TransactionNotifiers;
-struct TransactionOwner;
+struct TransactionManagerNotifiers;
+struct TransactionUser;
 
 typedef int (*TransactionAction)(struct Transaction *t);
 
@@ -33,8 +33,8 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionOwner *owner);
-struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner);
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUser *owner);
+struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUser *owner);
 
 void DestoryTransaction(struct Transaction **t);
 
@@ -43,8 +43,8 @@ enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
-void TransactionSetNotifiers(struct Transaction *t, struct TransactionNotifiers *notifiers);
+void TransactionSetNotifiers(struct Transaction *t, struct TransactionManagerNotifiers *notifiers);
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
-struct TransactionOwner *TransactionGetOwner(struct Transaction *t);
+struct TransactionUser *TransactionGetOwner(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);

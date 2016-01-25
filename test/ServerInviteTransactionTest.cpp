@@ -79,3 +79,7 @@ TEST(IncomingInviteTransactionTestGroup, ReceiveRetransmitInviteTest)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
 }
+
+TEST(IncomingInviteTransactionTestGroup, TransportErrorTest)
+{
+}

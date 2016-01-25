@@ -17,12 +17,12 @@
 #define TRANSACTION_ACTIONS_MAX 10
 
 struct Transaction {
-    struct TransactionOwner *owner;
+    struct TransactionUser *owner;
     enum TransactionState state;
     struct Fsm *fsm;
     struct Message *request;
     t_list *responses;
-    struct TransactionNotifiers *notifiers;
+    struct TransactionManagerNotifiers *notifiers;
     int retransmits;
     int event;
     enum TransactionType type;
@@ -51,7 +51,7 @@ void TransactionAddResponse(struct Transaction *t, struct Message *message)
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetNotifiers(struct Transaction *t, struct TransactionNotifiers *notifiers)
+void TransactionSetNotifiers(struct Transaction *t, struct TransactionManagerNotifiers *notifiers)
 {
     t->notifiers = notifiers;
 }
@@ -166,7 +166,7 @@ enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
     return t->event;
 }
 
-struct TransactionOwner *TransactionGetOwner(struct Transaction *t)
+struct TransactionUser *TransactionGetOwner(struct Transaction *t)
 {
     return t->owner;
 }
@@ -176,7 +176,7 @@ struct Transaction *CallocTransaction()
     return  calloc(1, sizeof (struct Transaction));
 }
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionOwner *owner)
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUser *owner)
 {
     struct Transaction *t = CallocTransaction();
     struct RequestLine *rl = MessageGetRequestLine(request);
@@ -203,7 +203,7 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
     return t;
 }
 
-struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionOwner *owner)
+struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUser *owner)
 {
     struct Transaction *t = CallocTransaction();
     struct Message *trying = NULL;

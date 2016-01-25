@@ -204,7 +204,7 @@ TEST(UserAgentTestGroup, BindingTest)
 
     mock().expectOneCall("SendOutMessageMock");
     BuildTestingMessage();
-    struct Transaction *t = AddClientTransaction(message, (struct TransactionOwner *)dialog);
+    struct Transaction *t = AddClientTransaction(message, (struct TransactionUser *)dialog);
     
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -221,7 +221,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
-    struct Transaction *t = AddClientTransaction(message, (struct TransactionOwner *)dialog);
+    struct Transaction *t = AddClientTransaction(message, (struct TransactionUser *)dialog);
     
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -232,7 +232,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     mock().expectOneCall("SendOutMessageMock");
     message = BuildBindingMessage(dialog);
-    t = AddClientTransaction(message, (struct TransactionOwner *)dialog);
+    t = AddClientTransaction(message, (struct TransactionUser *)dialog);
 
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -273,7 +273,7 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);
     message = BuildInviteMessage(dialog);
-    AddClientTransaction(message, (struct TransactionOwner *)dialog);
+    AddClientTransaction(message, (struct TransactionUser *)dialog);
     
     ReceiveInMessage(revMessage);
 

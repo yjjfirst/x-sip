@@ -15,7 +15,7 @@
 #include "Dialog.h"
 
 struct TransactionManager {
-    struct TransactionNotifiers *notifiers;
+    struct TransactionManagerNotifiers *notifiers;
     t_list *transactions;
 };
 struct TransactionManager TransactionManager;
@@ -168,7 +168,7 @@ void EmptyTransactionManager()
     DestoryTransactions(&TransactionManager);
 }
 
-struct TransactionNotifiers Notifiers = {
+struct TransactionManagerNotifiers Notifiers = {
     .die = RemoveTransaction,
 };
 
@@ -176,7 +176,7 @@ struct TransactionManager TransactionManager = {
     .notifiers = &Notifiers,
 };
 
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionOwner *owner)
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUser *owner)
 {
     struct Transaction *t = CreateClientTransaction(message, owner);
 
@@ -188,7 +188,7 @@ struct Transaction *AddClientTransaction(struct Message *message, struct Transac
     return t;
 }
 
-struct Transaction *AddServerTransaction(struct Message *message, struct TransactionOwner *owner)
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUser *owner)
 {
     struct Transaction *t = CreateServerTransaction(message, owner);
 
