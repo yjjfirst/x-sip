@@ -26,7 +26,7 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
     return r;
 }
 
-struct Header *BuildViaHeader(struct Dialog *dialog)
+struct Header *BuildRequestViaHeader(struct Dialog *dialog)
 {
     struct URI *uri = CreateUri("", "", GetLocalIpAddr(), LOCAL_PORT);
     struct ViaHeader *via = CreateViaHeader(uri);
@@ -36,7 +36,7 @@ struct Header *BuildViaHeader(struct Dialog *dialog)
     return (struct Header *)via;
 }
 
-struct Header *BuildFromHeader(struct Dialog *dialog)
+struct Header *BuildRequestFromHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), UserAgentGetProxy(ua), 0);
@@ -49,7 +49,7 @@ struct Header *BuildFromHeader(struct Dialog *dialog)
     return (struct Header *)from;
 }
 
-struct Header *BuildToHeader(struct Dialog *dialog)
+struct Header *BuildRequestToHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
@@ -59,7 +59,7 @@ struct Header *BuildToHeader(struct Dialog *dialog)
     return (struct Header *)to;
 }
 
-struct Header *BuildContactHeader(struct Dialog *dialog)
+struct Header *BuildRequestContactHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), GetLocalIpAddr(), 0);
@@ -70,19 +70,19 @@ struct Header *BuildContactHeader(struct Dialog *dialog)
     return  (struct Header *)contact;
 }
 
-struct Header *BuildMaxForwardsHeader(struct Dialog *dialog)
+struct Header *BuildRequestMaxForwardsHeader(struct Dialog *dialog)
 {
     struct MaxForwardsHeader *mf = CreateMaxForwardsHeader();
     return  (struct Header *)mf;
 }
 
-struct Header *BuildCallIdHeader(struct Dialog *dialog)
+struct Header *BuildRequestCallIdHeader(struct Dialog *dialog)
 {
     struct CallIdHeader *id = CreateCallIdHeader(GenerateCallIdString());
     return (struct Header *)id;
 }
 
-struct Header *BuildCSeqHeader(struct Dialog *dialog)
+struct Header *BuildRequestCSeqHeader(struct Dialog *dialog)
 {
     SIP_METHOD method = DialogGetRequestMethod(dialog);
     struct CSeqHeader *cseq = CreateCSeqHeader(1, MethodMap2String(method));
@@ -90,14 +90,14 @@ struct Header *BuildCSeqHeader(struct Dialog *dialog)
     return (struct Header *)cseq;
 }
 
-struct Header *BuildExpiresHeader(struct Dialog *dialog)
+struct Header *BuildRequestExpiresHeader(struct Dialog *dialog)
 {
     struct ExpiresHeader *e = CreateExpiresHeader(7200);
     
     return (struct Header *)e;
 }
 
-struct Header *BuildContentLengthHeader(struct Dialog *dialog)
+struct Header *BuildRequestContentLengthHeader(struct Dialog *dialog)
 {
     struct ContentLengthHeader *c = CreateContentLengthHeader();
 
@@ -112,14 +112,14 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
 
     MessageSetRequestLine(message, BuildRequestLine(dialog));
-    MessageAddHeader(message, BuildViaHeader(dialog));
-    MessageAddHeader(message, BuildFromHeader(dialog));
-    MessageAddHeader(message, BuildToHeader(dialog));
-    MessageAddHeader(message, BuildCallIdHeader(dialog));
-    MessageAddHeader(message, BuildContactHeader(dialog));
-    MessageAddHeader(message, BuildMaxForwardsHeader(dialog));
-    MessageAddHeader(message, BuildCSeqHeader(dialog));
-    MessageAddHeader(message, BuildContentLengthHeader(dialog));
+    MessageAddHeader(message, BuildRequestViaHeader(dialog));
+    MessageAddHeader(message, BuildRequestFromHeader(dialog));
+    MessageAddHeader(message, BuildRequestToHeader(dialog));
+    MessageAddHeader(message, BuildRequestCallIdHeader(dialog));
+    MessageAddHeader(message, BuildRequestContactHeader(dialog));
+    MessageAddHeader(message, BuildRequestMaxForwardsHeader(dialog));
+    MessageAddHeader(message, BuildRequestCSeqHeader(dialog));
+    MessageAddHeader(message, BuildRequestContentLengthHeader(dialog));
 
     return message;
 }
@@ -127,7 +127,7 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 struct Message *BuildBindingMessage(struct Dialog *dialog)
 {
     struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
-    MessageAddHeader(binding, BuildExpiresHeader(dialog));
+    MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
 
     return binding;
 }
@@ -146,35 +146,61 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
     return ack;
 }
 
+void AddResponseViaHeader(struct Message *response, struct Message *invite)
+{
+    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
+    MessageAddHeader(response, (struct Header *)via);
+}
+
+void AddResponseFromHeader(struct Message *response, struct Message *invite)
+{
+    struct ContactHeader *from = 
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
+    MessageAddHeader(response, (struct Header *)from);
+}
+
+void AddResponseToHeader(struct Message *response, struct Message *invite)
+{
+    struct ContactHeader *to =
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
+    if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
+        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
+    }
+    MessageAddHeader(response, (struct Header *)to);
+}
+
+void AddResponseCallIdHeader(struct Message *response, struct Message *invite)
+{
+    struct CallIdHeader *callId = 
+        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
+    MessageAddHeader(response, (struct Header *)callId);
+}
+
+void AddResponseCSeqHeader(struct Message *response, struct Message *invite)
+{
+    struct CSeqHeader *cseqId =              
+        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
+    MessageAddHeader(response, (struct Header *)cseqId);
+
+}
+
+void AddProvisionalResponseHeaders(struct Message *response, struct Message *invite)
+{
+    AddResponseViaHeader(response, invite);
+    AddResponseFromHeader(response, invite);
+    AddResponseToHeader(response, invite);
+    AddResponseCallIdHeader(response, invite);
+    AddResponseCSeqHeader(response, invite);
+}
+
 struct Message *BuildTryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
 
     struct StatusLine *status = CreateStatusLine(100, "Trying"); 
     MessageSetStatusLine(message, status);
+    AddProvisionalResponseHeaders(message, invite);
 
-    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
-    MessageAddHeader(message, (struct Header *)via);
-
-    struct ContactHeader *from = 
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
-    MessageAddHeader(message, (struct Header *)from);
-
-    struct ContactHeader *to =
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
-    if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
-        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
-    }
-    MessageAddHeader(message, (struct Header *)to);
-
-    struct CallIdHeader *callId = 
-        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
-    MessageAddHeader(message, (struct Header *)callId);
-
-    struct CSeqHeader *cseqId =              
-        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
-    MessageAddHeader(message, (struct Header *)cseqId);
-    
     return message;  
 }
 
@@ -184,29 +210,7 @@ struct Message *BuildRingMessage(struct Message *invite)
 
     struct StatusLine *status = CreateStatusLine(180, "Ringing"); 
     MessageSetStatusLine(message, status);
-
-    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
-    MessageAddHeader(message, (struct Header *)via);
-
-    struct ContactHeader *from = 
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
-    MessageAddHeader(message, (struct Header *)from);
-
-    struct ContactHeader *to =
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
-    if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
-        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
-    }
-    MessageAddHeader(message, (struct Header *)to);
-
-    struct CallIdHeader *callId = 
-        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
-    MessageAddHeader(message, (struct Header *)callId);
-
-    struct CSeqHeader *cseqId =              
-        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
-    MessageAddHeader(message, (struct Header *)cseqId);
+    AddProvisionalResponseHeaders(message, invite);
     
     return message;  
-
 }
