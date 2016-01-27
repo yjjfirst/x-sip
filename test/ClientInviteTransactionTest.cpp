@@ -42,7 +42,7 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildInviteMessage(dialog); 
-        t = AddClientTransaction(message,(struct TransactionUserNofifiers *) dialog);
+        t = AddClientTransaction(message,(struct TransactionUserNotifiers *) dialog);
 
    }
 

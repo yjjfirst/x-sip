@@ -93,7 +93,7 @@ void MessageParseRequestLine(char *string, struct Message *message)
 
 void MessageParseStatusLine(char *string, struct Message *message)
 {
-    struct StatusLine *statusLine = CreateStatusLine(0);
+    struct StatusLine *statusLine = CreateStatusLine(0, "");
 
     ParseStatusLine(string, statusLine);
     message->rr.status = statusLine;

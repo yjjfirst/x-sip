@@ -10,7 +10,7 @@ TEST_GROUP(StatusLineTestGroup)
 
 TEST(StatusLineTestGroup, StatusLineParseTest)
 {
-    struct StatusLine *s = CreateStatusLine(0);
+    struct StatusLine *s = CreateStatusLine(0, (char *)"");
     char string[] = "SIP/2.0 180 Ringing";
 
     ParseStatusLine(string, s);
@@ -23,7 +23,7 @@ TEST(StatusLineTestGroup, StatusLineParseTest)
 
 TEST(StatusLineTestGroup, StatusLine2StringTest)
 {
-    struct StatusLine *s = CreateStatusLine(0);
+    struct StatusLine *s = CreateStatusLine(0, (char *)"");
     char string[] = "SIP/2.0 180 Ringing";
     char result[64] = {0};
 
@@ -34,3 +34,31 @@ TEST(StatusLineTestGroup, StatusLine2StringTest)
     DestoryStatusLine(s);
 
 }
+
+TEST(StatusLineTestGroup, Create100StatusLineTest)
+{
+    struct StatusLine *s = CreateStatusLine(100, "Trying");
+    CHECK_EQUAL(100, StatusLineGetStatusCode(s));
+    STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(s));
+
+    DestoryStatusLine(s);
+}
+
+TEST(StatusLineTestGroup, Create180StatusLineTest)
+{
+    struct StatusLine *s = CreateStatusLine(180, "Ringing");
+    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
+    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
+
+    DestoryStatusLine(s);
+}
+
+TEST(StatusLineTestGroup, StatusLineCreateTest)
+{
+    struct StatusLine *s = CreateStatusLine(180, NULL);
+    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
+    STRCMP_EQUAL("", StatusLineGetReasonPhrase(s));
+
+    DestoryStatusLine(s);
+}
+

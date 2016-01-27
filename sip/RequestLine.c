@@ -27,7 +27,7 @@ BOOL RequestLineMethodLegal(char *method)
 
 BOOL RequestLineSipVersionLegal(char *version)
 {
-    if (strcmp (version, "SIP/2.0") == 0)
+    if (strcmp (version, SIP_VERSION) == 0)
         return TRUE;
     return FALSE;
 }
@@ -130,7 +130,7 @@ struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
     struct RequestLine *r = CreateEmptyRequestLine();
     RequestLineSetMethod(r, MethodMap2String(m));
     RequestLineSetUri(r, u);
-    RequestLineSetSipVersion(r, "SIP/2.0");
+    RequestLineSetSipVersion(r, SIP_VERSION);
 
     return r;
 }

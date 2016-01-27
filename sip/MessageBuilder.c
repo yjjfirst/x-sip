@@ -150,7 +150,7 @@ struct Message *BuildTryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
 
-    struct StatusLine *status = CreateStatusLine(100); 
+    struct StatusLine *status = CreateStatusLine(100, "Trying"); 
     MessageSetStatusLine(message, status);
 
     struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
@@ -176,4 +176,37 @@ struct Message *BuildTryingMessage(struct Message *invite)
     MessageAddHeader(message, (struct Header *)cseqId);
     
     return message;  
+}
+
+struct Message *BuildRingMessage(struct Message *invite)
+{
+    struct Message *message = CreateMessage();
+
+    struct StatusLine *status = CreateStatusLine(180, "Ringing"); 
+    MessageSetStatusLine(message, status);
+
+    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
+    MessageAddHeader(message, (struct Header *)via);
+
+    struct ContactHeader *from = 
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
+    MessageAddHeader(message, (struct Header *)from);
+
+    struct ContactHeader *to =
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
+    if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
+        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
+    }
+    MessageAddHeader(message, (struct Header *)to);
+
+    struct CallIdHeader *callId = 
+        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
+    MessageAddHeader(message, (struct Header *)callId);
+
+    struct CSeqHeader *cseqId =              
+        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
+    MessageAddHeader(message, (struct Header *)cseqId);
+    
+    return message;  
+
 }

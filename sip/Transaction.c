@@ -17,14 +17,14 @@
 #define TRANSACTION_ACTIONS_MAX 10
 
 struct Transaction {
-    struct TransactionUserNofifiers *owner;
+    struct TransactionUserNotifiers *user;
     enum TransactionState state;
     struct Fsm *fsm;
     struct Message *request;
     t_list *responses;
     struct TransactionManagerNotifiers *notifiers;
     int retransmits;
-    int event;
+    int curEvent;
     enum TransactionType type;
 };
 
@@ -116,10 +116,10 @@ int AddWaitForResponseTimer(struct Transaction *t)
     return 0;
 }
 
-int NotifyOwner(struct Transaction *t)
+int NotifyUser(struct Transaction *t)
 {
-    if (t && t->owner) {
-        t->owner->onEvent(t);
+    if (t && t->user) {
+        t->user->onEvent(t);
     }
     return 0;
 }
@@ -163,22 +163,27 @@ enum TransactionType TransactionGetType(struct Transaction *t)
 
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
 {
-    return t->event;
+    return t->curEvent;
 }
 
-struct TransactionUserNofifiers *TransactionGetOwner(struct Transaction *t)
+struct TransactionUserNotifiers *TransactionGetUser(struct Transaction *t)
 {
-    return t->owner;
+    return t->user;
 }
 
-struct Transaction *CallocTransaction()
+struct Transaction *CallocTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
-    return  calloc(1, sizeof (struct Transaction));
+    struct Transaction *t = calloc(1, sizeof (struct Transaction));
+
+    t->request = request;
+    t->user = user;
+    
+    return t;
 }
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNofifiers *owner)
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
-    struct Transaction *t = CallocTransaction();
+    struct Transaction *t = CallocTransaction(request, user);
     struct RequestLine *rl = MessageGetRequestLine(request);
     
     if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
@@ -189,8 +194,6 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
         t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
     }
     
-    t->request = request;
-    t->owner = owner;
     t->fsm = &ClientTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {
@@ -203,18 +206,25 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
     return t;
 }
 
-struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNofifiers *owner)
+void ResponseWith180Ringing(struct Transaction *t)
 {
-    struct Transaction *t = CallocTransaction();
-    struct Message *trying = NULL;
+    struct Message *ringing = BuildRingMessage(t->request);
+    TransactionSendMessage(ringing);
+    TransactionAddResponse(t, ringing);
+}
+
+struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CallocTransaction(request, user);
+    struct Message *trying = BuildTryingMessage(t->request);
 
     t->state = TRANSACTION_STATE_PROCEEDING;
-    t->request = request;
-    t->owner = owner;
     t->fsm = &ServerTransactionFsm;
  
-    trying = BuildTryingMessage(t->request);
-    TransactionSendMessage(trying);
+    if (TransactionSendMessage(trying) < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+    }
+
     TransactionAddResponse(t, trying);
     
     return t;
@@ -244,7 +254,7 @@ void DestoryTransaction(struct Transaction **t)
 struct FsmState ClientTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
         {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
@@ -259,7 +269,7 @@ struct FsmState ClientTryingState = {
 struct FsmState ClientCallingState = {
     TRANSACTION_STATE_CALLING,
     {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyOwner}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{AddWaitForResponseTimer, NotifyUser}},
         {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
                 SendRequestMessage,
@@ -308,6 +318,7 @@ struct FsmState ServerProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
         {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -338,7 +349,7 @@ void TransactionTerminate(struct Transaction *t)
 
 void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
 {
-    t->event = event;
+    t->curEvent = event;
     t->state = entry->nextState;
     InvokeActions(t, entry);
 }

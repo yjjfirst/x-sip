@@ -118,7 +118,7 @@ BOOL TmHandleRequestMessage(struct Message *message)
     struct Transaction *t = NULL;
 
     if ( (t = MatchTransaction(message)) == NULL) {
-        AddServerTransaction(message,NULL);
+        AddServerTransaction(message, NULL);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE_RECEIVED);
         DestoryMessage(&message);
@@ -176,9 +176,9 @@ struct TransactionManager TransactionManager = {
     .notifiers = &Notifiers,
 };
 
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNofifiers *owner)
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    struct Transaction *t = CreateClientTransaction(message, owner);
+    struct Transaction *t = CreateClientTransaction(message, user);
 
     if (t != NULL) {
         TransactionSetNotifiers(t, TransactionManager.notifiers);
@@ -188,9 +188,9 @@ struct Transaction *AddClientTransaction(struct Message *message, struct Transac
     return t;
 }
 
-struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNofifiers *owner)
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    struct Transaction *t = CreateServerTransaction(message, owner);
+    struct Transaction *t = CreateServerTransaction(message, user);
 
     if (t != NULL) {
         TransactionSetNotifiers(t, TransactionManager.notifiers);

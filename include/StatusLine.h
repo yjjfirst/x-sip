@@ -6,7 +6,7 @@ int StatusLineGetStatusCode(struct StatusLine *s);
 char *StatusLineGetReasonPhrase(struct StatusLine *s);
 char *StatusLine2String(char *result, struct StatusLine *s);
 
-struct StatusLine *CreateStatusLine(int statusCode);
+struct StatusLine *CreateStatusLine(int statusCode, const char *reasonPhrase);
 void DestoryStatusLine(struct StatusLine *s);
 
 void ParseStatusLine(char *string, struct StatusLine *s);

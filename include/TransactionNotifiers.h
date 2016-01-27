@@ -4,6 +4,6 @@ struct TransactionManagerNotifiers  {
     void (*die)(struct Transaction *t);
 };
 
-struct TransactionUserNofifiers {
+struct TransactionUserNotifiers {
     void (*onEvent) (struct Transaction *t);
 };

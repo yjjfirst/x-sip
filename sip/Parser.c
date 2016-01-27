@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "Parser.h"
 #include "URI.h"
@@ -133,6 +134,10 @@ char *SkipLeadingSeparator(char *header, char *position)
 
 int Copy2Target(void* target, char *value, struct HeaderPattern *pattern)
 {
+    assert(value != NULL);
+    assert(target != NULL);
+    assert(pattern != NULL);
+
     if (pattern->legal != NULL && pattern->legal(value) == FALSE) {
         return -1;
     }

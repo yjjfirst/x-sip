@@ -2,7 +2,7 @@
 
 struct Message;
 struct UserAgent;
-struct TransactionUserNofifiers;
+struct TransactionUserNotifiers;
 
 void EmptyTransactionManager();
 int MessageReceived(char *string);
@@ -10,7 +10,7 @@ struct TransactionId *ExtractTransactionIdFromMessage(struct TransactionId *tid,
 
 struct Transaction *GetTransaction(char *branch, char *seqMethod);
 int CountTransaction(void);
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNofifiers *owner);
-struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNofifiers *owner);
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNotifiers *user);
+struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNotifiers *user);
 
 void RemoveTransaction(struct Transaction *t);
