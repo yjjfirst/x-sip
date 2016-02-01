@@ -349,3 +349,33 @@ TEST(MessageBuilderTestGroup, TryingMessageViaTest)
     DestoryMessage(&trying);
     DestoryMessage(&invite);    
 }
+
+TEST(MessageBuilderTestGroup, RingingMessageStatusLineTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *ringing = BuildRingingMessage(invite);
+    
+    struct StatusLine *sl = MessageGetStatusLine(ringing);
+
+    CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
+    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
+
+    DestoryMessage(&invite);
+    DestoryMessage(&ringing);
+}
+
+TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *ringing = BuildOKMessage(invite);
+    
+    struct StatusLine *sl = MessageGetStatusLine(ringing);
+
+    CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
+    STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
+
+    DestoryMessage(&invite);
+    DestoryMessage(&ringing);
+}

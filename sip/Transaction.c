@@ -206,9 +206,17 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
     return t;
 }
 
+void ResponseWith200OK(struct Transaction *t)
+{
+    struct Message *ok = BuildOKMessage(t->request);
+    TransactionSendMessage(ok);
+    TransactionAddResponse(t, ok);
+    RunFsm(t, TRANSACTION_EVENT_200OK_SENT);
+}
+
 void ResponseWith180Ringing(struct Transaction *t)
 {
-    struct Message *ringing = BuildRingMessage(t->request);
+    struct Message *ringing = BuildRingingMessage(t->request);
     TransactionSendMessage(ringing);
     TransactionAddResponse(t, ringing);
 }
@@ -221,11 +229,13 @@ struct Transaction *CreateServerTransaction(struct Message *request, struct Tran
     t->state = TRANSACTION_STATE_PROCEEDING;
     t->fsm = &ServerTransactionFsm;
  
+    TransactionAddResponse(t, trying);
+
     if (TransactionSendMessage(trying) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        DestoryTransaction(&t);
+        return NULL;
     }
-
-    TransactionAddResponse(t, trying);
     
     return t;
 }
@@ -318,7 +328,8 @@ struct FsmState ServerProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
         {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
-        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX}
     }
 };

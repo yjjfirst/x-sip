@@ -11,4 +11,6 @@ struct Message *BuildInviteMessage(struct Dialog *dialog);
 struct Message *BuildAckMessage(struct Dialog *dialog);
 
 struct Message *BuildTryingMessage(struct Message *invite);
-struct Message *BuildRingMessage(struct Message *invite);
+struct Message *BuildRingingMessage(struct Message *invite);
+struct Message *BuildOKMessage(struct Message *invite);
+

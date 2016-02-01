@@ -104,6 +104,7 @@ TEST(ServerInviteTransactionTestGroup, ReceiveRetransmitInviteTest)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
 }
+
 int SendOut180RingingMock(char *message)
 {
 
@@ -123,7 +124,6 @@ struct MessageTransporter MockTransporterFor180Ringing = {
     SendOut180RingingMock,
     ReceiveInMessageMock,
 };
-
 
 TEST(ServerInviteTransactionTestGroup, 1xxFromTuTest)
 {
@@ -156,6 +156,46 @@ TEST(ServerInviteTransactionTestGroup, TransportErrorTest)
     mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
     struct Transaction *t = AddServerTransaction(request, user);
+
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+
+    CHECK_EQUAL(0, t);
+}
+
+int SendOut200OKMock(char *message)
+{
+
+    struct Message *m = CreateMessage();
+    ParseMessage(message, m);
+    struct StatusLine *sl = MessageGetStatusLine(m);
+
+    CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
+    STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
+    mock().actualCall("SendOutMessageMock").returnIntValue();    
+
+    DestoryMessage(&m);
+    return 0;
+}
+
+struct MessageTransporter MockTransporterFor200OK = {
+    SendOut200OKMock,
+    ReceiveInMessageMock,
+};
+
+TEST(ServerInviteTransactionTestGroup, 200OKSendTest)
+{
+    struct TransactionUserNotifiers *user = &MockUser;
+    struct Message *request = CreateMessage();
+
+    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
+
+    struct Transaction *t = AddServerTransaction(request, user);
+    UT_PTR_SET(Transporter, &MockTransporterFor200OK);    
+    ResponseWith200OK(t);
     
-    CHECK_EQUAL(TRANSACTION_STATE_TERMINATED, TransactionGetState(t));
+    t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+
+    CHECK_EQUAL(0, t);
 }

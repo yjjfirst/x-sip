@@ -184,7 +184,7 @@ void AddResponseCSeqHeader(struct Message *response, struct Message *invite)
 
 }
 
-void AddProvisionalResponseHeaders(struct Message *response, struct Message *invite)
+void AddResponseHeaders(struct Message *response, struct Message *invite)
 {
     AddResponseViaHeader(response, invite);
     AddResponseFromHeader(response, invite);
@@ -197,20 +197,30 @@ struct Message *BuildTryingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
 
-    struct StatusLine *status = CreateStatusLine(100, "Trying"); 
+    struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
     MessageSetStatusLine(message, status);
-    AddProvisionalResponseHeaders(message, invite);
+    AddResponseHeaders(message, invite);
 
     return message;  
 }
 
-struct Message *BuildRingMessage(struct Message *invite)
+struct Message *BuildRingingMessage(struct Message *invite)
 {
     struct Message *message = CreateMessage();
 
-    struct StatusLine *status = CreateStatusLine(180, "Ringing"); 
+    struct StatusLine *status = CreateStatusLine(STATUS_CODE_RINGING, REASON_PHRASE_RINGING); 
     MessageSetStatusLine(message, status);
-    AddProvisionalResponseHeaders(message, invite);
+    AddResponseHeaders(message, invite);
     
     return message;  
+}
+
+struct Message *BuildOKMessage(struct Message *invite)
+{
+    struct Message *message = CreateMessage();
+    struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
+    MessageSetStatusLine(message, status);
+    AddResponseHeaders(message, invite);
+    
+    return message;
 }

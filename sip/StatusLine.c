@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
+
 #include "Parser.h"
 #include "StatusLine.h"
 
@@ -33,6 +35,7 @@ void StatusLineSetSipVersion(struct StatusLine *s, char *version)
 
 int StatusLineGetStatusCode(struct StatusLine *s)
 {
+    assert(s != NULL);
     return s->statusCode;
 }
 
@@ -43,6 +46,7 @@ void StatusLineSetStatusCode(struct StatusLine *s, int statusCode)
 
 char *StatusLineGetReasonPhrase(struct StatusLine *s)
 {
+    assert (s != NULL);
     return s->reasonPhrase;
 }
 
