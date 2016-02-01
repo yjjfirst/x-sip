@@ -125,7 +125,7 @@ struct MessageTransporter MockTransporterFor180Ringing = {
     ReceiveInMessageMock,
 };
 
-TEST(ServerInviteTransactionTestGroup, 1xxFromTuTest)
+TEST(ServerInviteTransactionTestGroup, Send180FromTuTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct Transaction *t = NULL;
@@ -182,7 +182,7 @@ struct MessageTransporter MockTransporterFor200OK = {
     ReceiveInMessageMock,
 };
 
-TEST(ServerInviteTransactionTestGroup, 200OKSendTest)
+TEST(ServerInviteTransactionTestGroup, Send200OKFromTuTest)
 {
     struct TransactionUserNotifiers *user = &MockUser;
     struct Message *request = CreateMessage();
@@ -198,4 +198,19 @@ TEST(ServerInviteTransactionTestGroup, 200OKSendTest)
     t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
 
     CHECK_EQUAL(0, t);
+}
+
+TEST(ServerInviteTransactionTestGroup, Send301FromTuTest)
+{
+    struct TransactionUserNotifiers *user = &MockUser;
+    struct Message *request = CreateMessage();
+
+    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall("SendOutMessageMock");
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
+
+    struct Transaction *t = AddServerTransaction(request, user);
+    ResponseWith301(t);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 }

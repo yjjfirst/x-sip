@@ -193,34 +193,35 @@ void AddResponseHeaders(struct Message *response, struct Message *invite)
     AddResponseCSeqHeader(response, invite);
 }
 
-struct Message *BuildTryingMessage(struct Message *invite)
+struct Message *BuildResponseMessage(struct Message *invite, struct StatusLine *status)
 {
     struct Message *message = CreateMessage();
-
-    struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
     MessageSetStatusLine(message, status);
     AddResponseHeaders(message, invite);
 
     return message;  
+}
+
+struct Message *BuildTryingMessage(struct Message *invite)
+{
+    struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
+    return BuildResponseMessage(invite, status);
 }
 
 struct Message *BuildRingingMessage(struct Message *invite)
 {
-    struct Message *message = CreateMessage();
-
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_RINGING, REASON_PHRASE_RINGING); 
-    MessageSetStatusLine(message, status);
-    AddResponseHeaders(message, invite);
-    
-    return message;  
+    return BuildResponseMessage(invite, status);
 }
 
 struct Message *BuildOKMessage(struct Message *invite)
 {
-    struct Message *message = CreateMessage();
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
-    MessageSetStatusLine(message, status);
-    AddResponseHeaders(message, invite);
-    
-    return message;
+    return BuildResponseMessage(invite, status);
+}
+
+struct Message *Build301Message(struct Message *invite)
+{
+    struct StatusLine *status = CreateStatusLine(STATUS_CODE_MOVED_PERMANENTLY, REASON_PHRASE_MOVED_PERMANENTLY);
+    return BuildResponseMessage(invite, status);
 }

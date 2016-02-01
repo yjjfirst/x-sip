@@ -206,6 +206,14 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
     return t;
 }
 
+void ResponseWith301(struct Transaction *t)
+{
+    struct Message *moved = Build301Message(t->request);
+    TransactionSendMessage(moved);
+    TransactionAddResponse(t, moved);
+    RunFsm(t, TRANSACTION_EVENT_301MOVED_SENT);
+}
+
 void ResponseWith200OK(struct Transaction *t)
 {
     struct Message *ok = BuildOKMessage(t->request);
@@ -330,6 +338,7 @@ struct FsmState ServerProceedingState = {
         {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED},
         {TRANSACTION_EVENT_MAX}
     }
 };

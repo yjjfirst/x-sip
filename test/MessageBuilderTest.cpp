@@ -379,3 +379,19 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
     DestoryMessage(&invite);
     DestoryMessage(&ringing);
 }
+
+TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    struct Message *moved = Build301Message(invite);
+    
+    struct StatusLine *sl = MessageGetStatusLine(moved);
+
+    CHECK_EQUAL(301, StatusLineGetStatusCode(sl));
+    STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
+
+    DestoryMessage(&invite);
+    DestoryMessage(&moved);
+
+}
