@@ -34,7 +34,7 @@ TEST_GROUP(MessageBuilderTestGroup)
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
 
-        DialogSetToUser(dialog, GetUserName());
+        DialogSetToUser(dialog, GetUserName(0));
         m = BuildBindingMessage(dialog);
 
         DialogSetToUser(dialog, (char *)"88002");
@@ -70,8 +70,8 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     struct URI *uri = RequestLineGetUri(rl);
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
-    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 }
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
@@ -80,8 +80,8 @@ TEST(MessageBuilderTestGroup, FromHeaderTest)
     STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
 
     struct URI *uri = ContactHeaderGetUri(from);
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
-    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ToHeaderTest)
@@ -90,8 +90,8 @@ TEST(MessageBuilderTestGroup, ToHeaderTest)
     STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
 
     struct URI *uri = ContactHeaderGetUri(to);
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
-    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 }
 
 TEST(MessageBuilderTestGroup, ViaHeaderTest)

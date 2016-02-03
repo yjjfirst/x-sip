@@ -1,23 +1,22 @@
 #include "Provision.h"
 
-char *GetUserNameImpl(void)
+char *GetUserNameImpl(int i)
 {
     return "88001";
 }
+char *(*GetUserName)(int i) = GetUserNameImpl;
 
-char *(*GetUserName)(void) = GetUserNameImpl;
-
-char *GetProxyImpl(void)
+char *GetProxyImpl(int i)
 {
     return "192.168.10.62";
 }
-char *(*GetProxy)(void) = GetProxyImpl;
+char *(*GetProxy)(int i) = GetProxyImpl;
 
-char *GetRegistrarImpl(void)
+char *GetRegistrarImpl(int i)
 {
     return "192.168.10.62";
 }
-char *(*GetRegistrar)(void) = GetRegistrarImpl;
+char *(*GetRegistrar)(int i) = GetRegistrarImpl;
 
 
 char *GetLocalIpAddrImpl(void)

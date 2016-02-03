@@ -1,4 +1,4 @@
-extern char *(*GetUserName)(void);
-extern char *(*GetProxy)(void);
-extern char *(*GetRegistrar)(void);
+extern char *(*GetUserName)(int i);
+extern char *(*GetProxy)(int i);
+extern char *(*GetRegistrar)(int i);
 extern char *(*GetLocalIpAddr)(void);

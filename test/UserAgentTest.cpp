@@ -33,7 +33,7 @@ TEST_GROUP(UserAgentTestGroup)
     {
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
-        DialogSetToUser(dialog, GetUserName());
+        DialogSetToUser(dialog, GetUserName(0));
         message = BuildBindingMessage(dialog);
     }
 
@@ -148,7 +148,7 @@ TEST(UserAgentTestGroup, BindingsRequestLineTest)
 
     struct URI *uri = RequestLineGetUri(rl);
     STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
-    STRCMP_EQUAL(GetProxy(), UriGetHost(uri));
+    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 
     DestoryTestingMessage();
 }
@@ -160,7 +160,7 @@ TEST(UserAgentTestGroup, BindingsToHeaderTest)
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
     struct URI *uri = ContactHeaderGetUri(to);
 
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 
     DestoryTestingMessage();
 }
@@ -172,7 +172,7 @@ TEST(UserAgentTestGroup, BindingsFromHeaderTest)
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
     struct URI *uri = ContactHeaderGetUri(from);
 
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
     DestoryTestingMessage();
 }
 
@@ -183,7 +183,7 @@ TEST(UserAgentTestGroup, BindingsContactHeaderTest)
     struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
     struct URI *uri = ContactHeaderGetUri(contact);
 
-    STRCMP_EQUAL(GetUserName(), UriGetUser(uri));
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 
     DestoryTestingMessage();
 }
