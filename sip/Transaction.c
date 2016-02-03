@@ -109,10 +109,15 @@ int AddRetransmitTimer(struct Transaction *t)
     return 0;
 }
 
+int AddTimeoutTimer(struct Transaction *t)
+{
+    AddTimer(t, 64*T1, TimeoutTimerCallback);
+    return 0;
+}
+
 int AddWaitForResponseTimer(struct Transaction *t)
 {
     AddTimer(t, T4, WaitForResponseTimerCallBack);
-
     return 0;
 }
 
@@ -147,7 +152,10 @@ int SendRequestMessage(struct Transaction *t)
 
 int ResendLatestResponse(struct Transaction *t)
 {
-    return TransactionSendMessage(TransactionGetLatestResponse(t));
+    if (TransactionSendMessage(TransactionGetLatestResponse(t)) < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+    }
+    return 0;
 }
 
 struct Message *TransactionGetRequest(struct Transaction *t)
@@ -200,8 +208,9 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
         DestoryTransaction(&t);
         return NULL;
     }
-    AddTimer(t, T1, RetransmitTimerCallback);    
-    AddTimer(t, 64*T1, TimeoutTimerCallback);
+
+    AddRetransmitTimer(t);
+    AddTimeoutTimer(t);
 
     return t;
 }
@@ -209,24 +218,34 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
 void ResponseWith301(struct Transaction *t)
 {
     struct Message *moved = Build301Message(t->request);
-    TransactionSendMessage(moved);
+
     TransactionAddResponse(t, moved);
+    if (TransactionSendMessage(moved) < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        return;
+    }
+
     RunFsm(t, TRANSACTION_EVENT_301MOVED_SENT);
 }
 
 void ResponseWith200OK(struct Transaction *t)
 {
     struct Message *ok = BuildOKMessage(t->request);
-    TransactionSendMessage(ok);
     TransactionAddResponse(t, ok);
+    TransactionSendMessage(ok);
+
     RunFsm(t, TRANSACTION_EVENT_200OK_SENT);
 }
 
 void ResponseWith180Ringing(struct Transaction *t)
 {
     struct Message *ringing = BuildRingingMessage(t->request);
-    TransactionSendMessage(ringing);
+
     TransactionAddResponse(t, ringing);
+    if (TransactionSendMessage(ringing) < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        return;
+    }
 }
 
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user)
@@ -244,7 +263,7 @@ struct Transaction *CreateServerTransaction(struct Message *request, struct Tran
         DestoryTransaction(&t);
         return NULL;
     }
-    
+
     return t;
 }
 
@@ -338,7 +357,18 @@ struct FsmState ServerProceedingState = {
         {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED, {AddRetransmitTimer, AddTimeoutTimer}},        
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FsmState ServerCompletedState = {
+    TRANSACTION_STATE_COMPLETED,
+    {
+        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
+        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -346,6 +376,7 @@ struct FsmState ServerProceedingState = {
 struct Fsm ServerTransactionFsm = {
     {
         &ServerProceedingState,
+        &ServerCompletedState,
         NULL,
     }
 };
