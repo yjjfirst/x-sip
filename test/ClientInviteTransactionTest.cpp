@@ -15,6 +15,7 @@ extern "C" {
 #include "CallIdHeader.h"
 #include "Dialog.h"
 #include "Provision.h"
+#include "UserAgentManager.h"
 }
 
 static struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
@@ -51,18 +52,6 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
         EmptyTransactionManager();
         mock().checkExpectations();
         mock().clear();
-    }
-
-    struct UserAgent *BuildUserAgent()
-    {
-        struct UserAgent *ua = CreateUserAgent();
-
-        UserAgentSetUserName(ua, GetUserName());
-        UserAgentSetRegistrar(ua, GetRegistrar());
-        UserAgentSetProxy(ua, GetProxy());
-
-        return ua;
-
     }
 };
 

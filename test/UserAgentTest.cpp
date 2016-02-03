@@ -10,6 +10,7 @@ extern "C" {
 #include "RequestLine.h"
 #include "Header.h"
 #include "UserAgent.h"
+#include "UserAgentManager.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
@@ -20,17 +21,6 @@ extern "C" {
 #include "DialogId.h"
 #include "Dialog.h"
 #include "Provision.h"
-}
-
-struct UserAgent *BuildUserAgent()
-{
-    struct UserAgent *ua = CreateUserAgent();
-    
-    UserAgentSetUserName(ua, GetUserName());
-    UserAgentSetRegistrar(ua, GetRegistrar());
-    UserAgentSetProxy(ua, GetProxy());
-    
-    return ua;
 }
 
 TEST_GROUP(UserAgentTestGroup)

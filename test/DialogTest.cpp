@@ -2,11 +2,10 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
-#include "UserAgentTest.h"
 
 extern "C" {
 #include <stdio.h>
-
+#include "UserAgentManager.h"
 #include "Transaction.h"
 #include "UserAgent.h"
 #include "Dialog.h"

@@ -19,6 +19,7 @@ extern "C" {
 #include "Dialog.h"
 #include "Provision.h"
 #include "TestingMessages.h"
+#include "UserAgentManager.h"
 }
 
 
@@ -30,10 +31,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct Message *inviteMessage;
     void setup()
     {
-        ua = CreateUserAgent();
-        UserAgentSetProxy(ua, GetProxy());
-        UserAgentSetUserName(ua, GetUserName());
-
+        ua = BuildUserAgent();
         dialog = CreateDialog(NULL, ua);
 
         DialogSetToUser(dialog, GetUserName());
