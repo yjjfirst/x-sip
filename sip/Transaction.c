@@ -400,9 +400,11 @@ void TransactionTerminate(struct Transaction *t)
 
 void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
 {
+
     t->curEvent = event;
     t->state = entry->nextState;
     InvokeActions(t, entry);
+
 }
 
 struct FsmState *LocateFsmState(struct Transaction *t)

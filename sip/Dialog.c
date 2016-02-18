@@ -43,27 +43,45 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
     return dialog->requestMethod;
 }
 
-void DialogOnTransactionEvent(struct Transaction *t)
+
+void DialogHandleInviteClientEvent(struct Transaction *t)
+{
+    struct Message *message = TransactionGetLatestResponse(t);
+    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+
+    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
+        struct DialogId *dialogid = DialogGetId(dialog);
+        DialogIdExtractFromMessage(dialogid, message);            
+            
+        struct Message *ack = BuildAckMessage(dialog);
+        AddClientTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
+    }
+}
+
+void DialogHandleNonInviteClientEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
 
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-        if (TransactionGetType(t) == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-            if (MessageGetExpires(message) != 0)
-                UserAgentSetBinded(ua);
-            else
-                UserAgentSetUnbinded(ua);
+        if (MessageGetExpires(message) != 0) {
+            UserAgentSetBinded(ua);
         } else {
-            struct DialogId *dialogid = DialogGetId(dialog);
-            DialogIdExtractFromMessage(dialogid, message);            
-
-            struct Message *ack = BuildAckMessage(dialog);
-            MessageSetRemoteTag(ack, MessageGetRemoteTag(message));
-            AddClientTransaction(ack, (struct TransactionUserNotifiers *)dialog);
-        } 
+            UserAgentSetUnbinded(ua);
+        }
     }
+}
+
+void DialogOnTransactionEvent(struct Transaction *t)
+{
+    enum TransactionType type = TransactionGetType(t);
+
+    if ( type == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
+        DialogHandleNonInviteClientEvent(t);
+    } else if (type == TRANSACTION_TYPE_CLIENT_INVITE){
+        DialogHandleInviteClientEvent(t);
+    } 
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

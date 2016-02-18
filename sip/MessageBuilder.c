@@ -16,6 +16,7 @@
 #include "Header.h"
 #include "UserAgent.h"
 #include "Dialog.h"
+#include "DialogId.h"
 #include "Provision.h"
 
 struct RequestLine *BuildRequestLine(struct Dialog *dialog)
@@ -142,7 +143,7 @@ struct Message *BuildInviteMessage(struct Dialog *dialog)
 struct Message *BuildAckMessage(struct Dialog *dialog)
 {
     struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
-
+    MessageSetRemoteTag(ack, DialogIdGetRemoteTag(DialogGetId(dialog)));
     return ack;
 }
 
