@@ -51,7 +51,7 @@ TEST_GROUP(TransactionTestGroup)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
 
         mock().expectOneCall("AddTimer").withIntParameter("ms", T1);
-        mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
+        mock().expectOneCall("AddTimer").withIntParameter("ms", TRANSPORT_TIMEOUT_INTERVAL);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
         ua = CreateUserAgent();
@@ -197,7 +197,7 @@ TEST(TransactionTestGroup, SendOutMessageError)
     RemoveTransaction(t);
     
     mock().expectOneCall("AddTimer").withIntParameter("ms", T1);
-    mock().expectOneCall("AddTimer").withIntParameter("ms", 64*T1);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", TRANSPORT_TIMEOUT_INTERVAL);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
 
     struct Message *message = BuildBindingMessage(dialog);

@@ -111,7 +111,7 @@ int AddRetransmitTimer(struct Transaction *t)
 
 int AddTimeoutTimer(struct Transaction *t)
 {
-    AddTimer(t, 64*T1, TimeoutTimerCallback);
+    AddTimer(t, TRANSPORT_TIMEOUT_INTERVAL, TimeoutTimerCallback);
     return 0;
 }
 

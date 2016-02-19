@@ -98,7 +98,7 @@ struct MessageTransporter MockTransporterFor200OK = {
 
 static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action)
 {
-    if (interval == 64*T1) {
+    if (interval == TRANSPORT_TIMEOUT_INTERVAL) {
         TimeOutTimerAction = action;
     } else {
         RetransmitTimerAction = action;
@@ -157,7 +157,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         UT_PTR_SET(AddTimer, AddTimerMock);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
-        mock().expectOneCall("AddTimerMock").withIntParameter("interval", 64*T1);
+        mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSPORT_TIMEOUT_INTERVAL);
 
         UT_PTR_SET(Transporter, &MockTransporterFor301);    
         ResponseWith301(t);
@@ -276,7 +276,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
     struct Transaction *t = PrepareProceedingState();
 
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
-    mock().expectOneCall("AddTimerMock").withIntParameter("interval", 64*T1);
+    mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSPORT_TIMEOUT_INTERVAL);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);
 
@@ -360,3 +360,4 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateReceiveAckTest)
     
     CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, TransactionGetState(t));
 }
+
