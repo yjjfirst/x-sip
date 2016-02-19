@@ -31,7 +31,7 @@ TEST(MessageTransportTestGroup, ReceiveMessageTest)
     char Message4ReceivingTest[] = "Receiving test string";
 
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue("Receiving test string");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
 
     ReceiveInMessage(message);
@@ -44,7 +44,7 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 {
     char message[32] = "Sending test string";
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     SendOutMessage(message);
     mock().checkExpectations();
 }

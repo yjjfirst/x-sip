@@ -26,7 +26,7 @@ TEST_GROUP(TransactionManager)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(Transporter, &MockTransporter);
 
-        mock().expectOneCall("SendOutMessageMock");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         ua = CreateUserAgent();
         dialog = CreateDialog(NULL, ua);
         message = BuildBindingMessage(dialog);
@@ -47,12 +47,12 @@ TEST(TransactionManager, NewTransaction)
     transaction = AddClientTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
     transaction = AddClientTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
     transaction = AddClientTransaction(message, NULL);
 
@@ -64,7 +64,7 @@ TEST(TransactionManager, MatchResponse)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddClientTransaction(message, NULL);
     CHECK_TRUE(ReceiveInMessage(string));
 }
@@ -75,7 +75,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     struct Transaction *t = AddClientTransaction(message, NULL);
     enum TransactionState s;
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
     ReceiveInMessage(string);

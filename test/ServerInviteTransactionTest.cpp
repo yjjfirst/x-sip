@@ -32,7 +32,7 @@ int SendOut100TryingMock(char *message)
     STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(sl));
     DestoryMessage(&m);
 
-    return mock().actualCall("SendOutMessageMock").returnIntValue();    
+    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
 
 struct MessageTransporter MockTransporterFor100Trying = {
@@ -51,7 +51,7 @@ int SendOut180RingingMock(char *message)
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
     DestoryMessage(&m);
 
-    return mock().actualCall("SendOutMessageMock").returnIntValue();    
+    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
 
 struct MessageTransporter MockTransporterFor180Ringing = {
@@ -70,7 +70,7 @@ int SendOut301Mock(char *message)
     STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
     DestoryMessage(&m);
 
-    return mock().actualCall("SendOutMessageMock").returnIntValue();    
+    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
 
 struct MessageTransporter MockTransporterFor301 = {
@@ -88,7 +88,7 @@ int SendOut200OKMock(char *message)
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
     DestoryMessage(&m);
-    return mock().actualCall("SendOutMessageMock").returnIntValue();    
+    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
 
 struct MessageTransporter MockTransporterFor200OK = {
@@ -143,7 +143,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         struct TransactionUserNotifiers *user = &MockUser;
         struct Message *request = CreateMessage();
 
-        mock().expectOneCall("SendOutMessageMock");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
         struct Transaction *t = AddServerTransaction(request, user);
 
@@ -155,7 +155,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         struct Transaction *t = PrepareProceedingState();
 
         UT_PTR_SET(AddTimer, AddTimerMock);
-        mock().expectOneCall("SendOutMessageMock");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", 64*T1);
 
@@ -175,8 +175,8 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 
     UT_PTR_SET(Transporter, &MockTransporterFor100Trying);
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(stringReceived); 
     CheckOnlyOneTransactionMatched();
 }
@@ -186,7 +186,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
     struct TransactionUserNotifiers *user = &MockUser;
     struct Message *request = CreateMessage();
 
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
     AddServerTransaction(request, user);
 
@@ -202,14 +202,14 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateReceiveInviteTest)
     CheckOnlyOneTransactionMatched();
 
     //Receive retransmited INVITE message.
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(stringReceived); 
     CheckOnlyOneTransactionMatched();
     
     //Receive retransmited INVITE message.
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(stringReceived); 
     CheckOnlyOneTransactionMatched();
 }
@@ -218,7 +218,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180FromTuTest)
 {
     struct Transaction *t = PrepareProceedingState();
     
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(Transporter, &MockTransporterFor180Ringing);
     ResponseWith180Ringing(t);
 
@@ -231,7 +231,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180ErrorTest)
 {
     struct Transaction *t = PrepareProceedingState();
     
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     UT_PTR_SET(Transporter, &MockTransporterFor180Ringing);
     ResponseWith180Ringing(t);
 
@@ -242,7 +242,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKFromTuTest)
 {
     struct Transaction *t = PrepareProceedingState();
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(Transporter, &MockTransporterFor200OK);    
     ResponseWith200OK(t);
     
@@ -253,7 +253,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKSendErrorTest)
 {
     struct Transaction *t = PrepareProceedingState();
 
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     UT_PTR_SET(Transporter, &MockTransporterFor200OK);    
     ResponseWith200OK(t);
     
@@ -264,7 +264,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuTest)
 {
     struct Transaction *t = PrepareProceedingState();
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(Transporter, &MockTransporterFor301);    
     ResponseWith301(t);
 
@@ -277,7 +277,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
 
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", 64*T1);
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(0);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);
 
     ResponseWith301(t);
@@ -289,7 +289,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
     struct Transaction *t = PrepareProceedingState();
 
     UT_PTR_SET(Transporter, &MockTransporterFor301);
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);    
     ResponseWith301(t);
  
     CheckNoTransaction();
@@ -301,13 +301,13 @@ TEST(ServerInviteTransactionTestGroup, CompletedReceiceInviteStateTest)
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct Transaction *t = PrepareCompletedState();
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 
@@ -318,8 +318,8 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateSendResponseErrorTest)
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     PrepareCompletedState();
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     ReceiveInMessage(stringReceived);
 
     CheckNoTransaction(); 
@@ -329,7 +329,7 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateRetransmitTest)
 {
     struct Transaction *t = PrepareCompletedState();
 
-    mock().expectOneCall("SendOutMessageMock");    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);    
     RetransmitTimerAction(t);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
@@ -339,7 +339,7 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateRetransmitErrorTest)
 {
     struct Transaction *t = PrepareCompletedState();
 
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     RetransmitTimerAction(t);
     
     CheckNoTransaction(); 
@@ -347,14 +347,16 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateRetransmitErrorTest)
 
 TEST(ServerInviteTransactionTestGroup, CompletedStateTimeoutTimerTest)
 {
-    UT_PTR_SET(AddTimer, AddTimerMock);
     struct Transaction *t = PrepareCompletedState();
 
     TimeOutTimerAction(t);
     CheckNoTransaction();
 }
 
-IGNORE_TEST(ServerInviteTransactionTestGroup, CompletedStateReceiveAckTest)
+TEST(ServerInviteTransactionTestGroup, CompletedStateReceiveAckTest)
 {
+    struct Transaction *t = PrepareCompletedState();    
+    ReceiveAckRequest(t);    
     
+    CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, TransactionGetState(t));
 }

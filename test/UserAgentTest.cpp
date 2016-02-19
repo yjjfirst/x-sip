@@ -192,11 +192,11 @@ TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     BuildTestingMessage();
     struct Transaction *t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
@@ -207,24 +207,24 @@ TEST(UserAgentTestGroup, BindingTest)
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
 {
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
     struct Transaction *t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
     
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     EmptyTransactionManager();
 
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
     t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
@@ -253,12 +253,12 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     ParseMessage((char *)INVITE_200OK_MESSAGE, expectedMessage);
     DialogIdExtractFromMessage(dialogid, expectedMessage);
 
-    mock().expectOneCall("SendOutMessageMock");
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
 
     mock().expectOneCall("AddTimer");
     mock().expectOneCall("AddTimer");
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     ua = BuildUserAgent();
     dialog = CreateDialog(NULL, ua);

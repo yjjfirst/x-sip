@@ -248,6 +248,10 @@ void ResponseWith180Ringing(struct Transaction *t)
     }
 }
 
+void ReceiveAckRequest(struct Transaction *t)
+{
+    RunFsm(t, TRANSACTION_EVENT_ACK_RECEIVED);
+}
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
@@ -369,6 +373,7 @@ struct FsmState ServerCompletedState = {
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_ACK_RECEIVED, TRANSACTION_STATE_CONFIRMED},
         {TRANSACTION_EVENT_MAX}
     }
 };

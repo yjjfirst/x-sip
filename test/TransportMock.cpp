@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -10,13 +11,13 @@ extern "C" {
 
 int ReceiveInMessageMock(char *message)
 {
-    strcpy(message, mock().actualCall("ReceiveInMessageMock").returnStringValue());
+    strcpy(message, mock().actualCall(RECEIVE_IN_MESSAGE_MOCK).returnStringValue());
     return 0;
 }
 
 int SendOutMessageMock(char *message)
 {
-    return mock().actualCall("SendOutMessageMock").returnIntValue();
+    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();
 }
 
 struct MessageTransporter MockTransporter = {

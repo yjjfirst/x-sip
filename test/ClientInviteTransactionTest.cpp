@@ -34,7 +34,7 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
     void setup(){
         mock().expectOneCall("AddTimer");
         mock().expectOneCall("AddTimer");
-        mock().expectOneCall("SendOutMessageMock");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(AddTimer, AddTimerMock);
@@ -64,12 +64,12 @@ TEST(OutgoingInviteTransactionTestGroup, Receive2xxTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall("AddTimer");
 
     mock().expectOneCall("AddTimer");
     mock().expectOneCall("AddTimer");
-    mock().expectOneCall("SendOutMessageMock");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     
     ReceiveInMessage(stringReceived);
     
@@ -82,7 +82,7 @@ TEST(OutgoingInviteTransactionTestGroup, Receive100Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveInMessage(stringReceived);
     
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
@@ -95,11 +95,11 @@ TEST(OutgoingInviteTransactionTestGroup, Receive180Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     ReceiveInMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveInMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
@@ -110,16 +110,16 @@ TEST(OutgoingInviteTransactionTestGroup, Receive100and180and200Test)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_100TRYING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall("AddTimer");
     ReceiveInMessage(stringReceived);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveInMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     ReceiveInMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 

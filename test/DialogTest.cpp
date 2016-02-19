@@ -44,7 +44,7 @@ int SendOutAckMessageMock(char *message)
 
     ParseMessage(message, m);
     remoteTag = MessageGetRemoteTag(m);    
-    mock().actualCall("SendOutMessageMock").withParameter("RemoteTag", remoteTag).returnIntValue();
+    mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
 
     DestoryMessage(&m);
     return 0;
@@ -60,12 +60,12 @@ TEST(DialogTestGroup, AckRequestInviteSuccessedTest)
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct Message *message = BuildInviteMessage(dialog);
 
-    mock().expectOneCall("SendOutMessageMock");
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
    
     AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
     UT_PTR_SET(Transporter, &MockTransporterForAck);
-    mock().expectOneCall("SendOutMessageMock").withParameter("RemoteTag", "as6151ad25");
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
 
     ReceiveInMessage(revMessage);
 }

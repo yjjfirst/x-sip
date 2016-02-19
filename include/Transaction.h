@@ -12,6 +12,7 @@ enum TransactionState {
     TRANSACTION_STATE_CALLING,
     TRANSACTION_STATE_PROCEEDING,
     TRANSACTION_STATE_COMPLETED,
+    TRANSACTION_STATE_CONFIRMED,
     TRANSACTION_STATE_TERMINATED,
     TRANSACTION_STATE_MAX,
 };
@@ -23,6 +24,7 @@ enum TransactionType {
 
 enum TransactionEvent {
     TRANSACTION_EVENT_200OK_RECEIVED,
+    TRANSACTION_EVENT_ACK_RECEIVED,
     TRANSACTION_EVENT_100TRYING_RECEIVED,
     TRANSACTION_EVENT_180RINGING_RECEIVED,
 
@@ -44,6 +46,8 @@ int TransactionSendMessage(struct Message *message);
 void ResponseWith180Ringing(struct Transaction *t);
 void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);
+
+void ReceiveAckRequest(struct Transaction *t);
 
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
