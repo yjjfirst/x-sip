@@ -373,8 +373,15 @@ struct FsmState ServerCompletedState = {
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_ACK_RECEIVED, TRANSACTION_STATE_CONFIRMED},
+        {TRANSACTION_EVENT_ACK_RECEIVED, TRANSACTION_STATE_CONFIRMED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FsmState ServerConfirmedState = {
+    TRANSACTION_STATE_CONFIRMED,
+    {
+        {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
     }
 };
 
@@ -382,6 +389,7 @@ struct Fsm ServerTransactionFsm = {
     {
         &ServerProceedingState,
         &ServerCompletedState,
+        &ServerConfirmedState,
         NULL,
     }
 };
@@ -455,5 +463,8 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     if ((entry = LocateEventEntry(t, event)) != NULL) {
         TransactionHandleEvent(t, event, entry);            
         TransactionTerminate(t);
-    }
+        return;
+    } 
+
+    assert ("Located State Failed" == 0);
 }

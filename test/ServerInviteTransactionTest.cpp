@@ -17,6 +17,7 @@ extern "C" {
 
 TimerCallback RetransmitTimerAction;
 TimerCallback TimeOutTimerAction; 
+TimerCallback WaitAckTimerAction;
 
 struct TransactionUserNotifiers MockUser = {
     .onEvent = NULL,
@@ -98,8 +99,10 @@ struct MessageTransporter MockTransporterFor200OK = {
 
 static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action)
 {
-    if (interval == TRANSPORT_TIMEOUT_INTERVAL) {
+    if (interval == WAIT_TIME_FOR_ACK_RECEIPT) {
         TimeOutTimerAction = action;
+    } else if (interval == WAIT_TIME_FOR_ACK_RETRANSMITS) {
+        WaitAckTimerAction = action;
     } else {
         RetransmitTimerAction = action;
     }
@@ -157,7 +160,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         UT_PTR_SET(AddTimer, AddTimerMock);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
-        mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSPORT_TIMEOUT_INTERVAL);
+        mock().expectOneCall("AddTimerMock").withIntParameter("interval", WAIT_TIME_FOR_ACK_RECEIPT);
 
         UT_PTR_SET(Transporter, &MockTransporterFor301);    
         ResponseWith301(t);
@@ -165,7 +168,17 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
         return t;
     }
-
+    
+    struct Transaction *PrepareConfirmedState()
+    {
+        struct Transaction *t = PrepareCompletedState();
+        
+        mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_ACK_RETRANSMITS);
+        ReceiveAckRequest(t); 
+        CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, TransactionGetState(t));
+        
+        return t;
+    }
 };
 
 //Create transaction tests.
@@ -355,9 +368,14 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateTimeoutTimerTest)
 
 TEST(ServerInviteTransactionTestGroup, CompletedStateReceiveAckTest)
 {
-    struct Transaction *t = PrepareCompletedState();    
-    ReceiveAckRequest(t);    
-    
-    CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, TransactionGetState(t));
+    PrepareConfirmedState();
 }
 
+//Confirmed state tests
+TEST(ServerInviteTransactionTestGroup, ConfirmedStateWaitForAckTimerTest)
+{
+    struct Transaction *t = PrepareConfirmedState();
+    WaitAckTimerAction(t);
+
+    CheckNoTransaction();
+}
