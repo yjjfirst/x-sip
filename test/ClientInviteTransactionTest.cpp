@@ -32,10 +32,8 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
     struct Transaction *t;
     struct Dialog *dialog;
     void setup(){
-        mock().expectOneCall("AddTimer");
-        mock().expectOneCall("AddTimer");
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
+        ExpectedNewClientTransaction();
+        
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
@@ -45,13 +43,20 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
         message = BuildInviteMessage(dialog); 
         t = AddClientTransaction(message,(struct TransactionUserNotifiers *) dialog);
 
-   }
+    }
 
     void teardown() {
         DestoryUserAgent(&ua);
         EmptyTransactionManager();
         mock().checkExpectations();
         mock().clear();
+    }
+    
+    void ExpectedNewClientTransaction()
+    {
+        mock().expectOneCall("AddTimer");
+        mock().expectOneCall("AddTimer");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     }
 };
 
@@ -65,14 +70,9 @@ TEST(OutgoingInviteTransactionTestGroup, Receive2xxTest)
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
-    mock().expectOneCall("AddTimer");
 
-    mock().expectOneCall("AddTimer");
-    mock().expectOneCall("AddTimer");
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    
-    ReceiveInMessage(stringReceived);
-    
+    ExpectedNewClientTransaction();
+    ReceiveInMessage(stringReceived);    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
     mock().checkExpectations();
@@ -83,8 +83,8 @@ TEST(OutgoingInviteTransactionTestGroup, Receive100Test)
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-    ReceiveInMessage(stringReceived);
-    
+
+    ReceiveInMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
     POINTERS_EQUAL(t, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 
