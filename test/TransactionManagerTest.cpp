@@ -28,7 +28,7 @@ TEST_GROUP(TransactionManager)
 
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         ua = CreateUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildBindingMessage(dialog);
 
     }

@@ -83,7 +83,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
 
         ua = CreateUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
         m = BuildBindingMessage(dialog);
     }
 

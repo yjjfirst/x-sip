@@ -24,7 +24,6 @@ static struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
     return NULL;
 }
 
-
 TEST_GROUP(OutgoingInviteTransactionTestGroup)
 {
     struct UserAgent *ua;
@@ -39,7 +38,7 @@ TEST_GROUP(OutgoingInviteTransactionTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
 
         ua = BuildUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
         t = AddClientTransaction(message,(struct TransactionUserNotifiers *) dialog);
 

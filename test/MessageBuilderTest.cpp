@@ -32,7 +32,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     void setup()
     {
         ua = BuildUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
 
         DialogSetToUser(dialog, GetUserName(0));
         m = BuildBindingMessage(dialog);

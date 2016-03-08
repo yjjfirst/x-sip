@@ -25,7 +25,7 @@ TEST_GROUP(DialogTestGroup)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
 
         ua = BuildUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
     }
 
     void teardown()

@@ -32,7 +32,7 @@ TEST_GROUP(UserAgentTestGroup)
     void BuildTestingMessage()
     {
         ua = BuildUserAgent();
-        dialog = CreateDialog(NULL, ua);
+        dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, GetUserName(0));
         message = BuildBindingMessage(dialog);
     }
@@ -261,7 +261,7 @@ TEST(UserAgentTestGroup, InviteSucceedTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     ua = BuildUserAgent();
-    dialog = CreateDialog(NULL, ua);
+    dialog = CreateDialog(NULL_DIALOG_ID, ua);
     message = BuildInviteMessage(dialog);
     AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
     
