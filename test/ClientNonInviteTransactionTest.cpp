@@ -147,10 +147,21 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateTimerFTest)
     CheckNoTransaction();
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateSendOutMessageError)
+TEST(ClientNotInviteTransactionTestGroup, TryingStateEnterSendOutMessageError)
 {
     PrepareTryingState(-1);
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+}
+
+TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
+{
+    PrepareTryingState(0);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    TimerECallbackFunc(t);
+
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_EQUAL(0, CountTransaction());    
 }
 
 //Proceeding State tests.
@@ -192,6 +203,18 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeFTest)
     CheckNoTransaction();
 }
 
+TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
+{
+    PrepareTryingState(0);
+    PrepareProceedingState();
+    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    TimerECallbackFunc(t);
+
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_EQUAL(0, CountTransaction());
+}
+
 //Completed state
 TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
 {
@@ -210,37 +233,7 @@ TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
 }
 
-TEST(ClientNotInviteTransactionTestGroup, ProceedingTransportError)
-{
-    char string[MAX_MESSAGE_LENGTH] = {0};
-
-    PrepareTryingState(0);
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
-
-    ReceiveInMessage(string);
-    s = TransactionGetState(t);
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
-    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    TimerECallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
-    CHECK_EQUAL(0, CountTransaction());
-    mock().checkExpectations();
-}
-
-TEST(ClientNotInviteTransactionTestGroup, TryingTransportErrorTest)
-{
-    PrepareTryingState(0);
-
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    TimerECallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
-    CHECK_EQUAL(0, CountTransaction());    
-    mock().checkExpectations();
-}
-
+//Other tests.
 TEST(ClientNotInviteTransactionTestGroup, GetLatestResponse)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
