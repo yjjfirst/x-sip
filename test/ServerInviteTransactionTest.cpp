@@ -309,7 +309,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
 }
 
 //Completed State tests
-TEST(ServerInviteTransactionTestGroup, CompletedReceiceInviteStateTest)
+TEST(ServerInviteTransactionTestGroup, CompletedStateReceiceInviteStateTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct Transaction *t = PrepareCompletedState();
