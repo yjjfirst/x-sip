@@ -44,6 +44,7 @@ struct Fsm {
 };
 
 struct Fsm ClientNonInviteTransactionFsm;
+struct Fsm ClientInviteTransactionFsm;
 struct Fsm ServerInviteTransactionFsm;
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
@@ -191,7 +192,7 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
     return t;
 }
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     struct RequestLine *rl = MessageGetRequestLine(request);
@@ -199,7 +200,26 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
     if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
         t->state = TRANSACTION_STATE_CALLING;
         t->type = TRANSACTION_TYPE_CLIENT_INVITE;
-    } else {
+    }    
+    t->fsm = &ClientInviteTransactionFsm;
+
+    if (SendRequestMessage(t) < 0) {
+        DestoryTransaction(&t);
+        return NULL;
+    }
+
+    AddRetransmitTimer(t);
+    AddTimeoutTimer(t);
+
+    return t;
+}
+
+struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CallocTransaction(request, user);
+    struct RequestLine *rl = MessageGetRequestLine(request);
+    
+    if(RequestLineGetMethod(rl) != SIP_METHOD_INVITE) {
         t->state = TRANSACTION_STATE_TRYING;
         t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
     }
@@ -309,21 +329,6 @@ struct FsmState ClientNonInviteTryingState = {
     }
 }; 
 
-struct FsmState ClientNonInviteCallingState = {
-    TRANSACTION_STATE_CALLING,
-    {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{NotifyUser}},
-        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
-        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
-                SendRequestMessage,
-                IncRetransmit,
-                AddRetransmitTimer}},
-        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
-        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
-        {TRANSACTION_EVENT_MAX}
-    }
-};
-
 struct FsmState ClientNonInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
@@ -351,9 +356,30 @@ struct FsmState ClientNonInviteCompletedState = {
 struct Fsm ClientNonInviteTransactionFsm = {
     {
         &ClientNonInviteTryingState,
-        &ClientNonInviteCallingState,
         &ClientNonInviteProceedingState,
         &ClientNonInviteCompletedState,
+        NULL,
+    }
+};
+
+struct FsmState ClientInviteCallingState = {
+    TRANSACTION_STATE_CALLING,
+    {
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{NotifyUser}},
+        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
+                SendRequestMessage,
+                IncRetransmit,
+                AddRetransmitTimer}},
+        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct Fsm ClientInviteTransactionFsm = {
+    {
+        &ClientInviteCallingState,
         NULL,
     }
 };

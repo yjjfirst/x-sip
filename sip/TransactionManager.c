@@ -176,26 +176,35 @@ struct TransactionManager TransactionManager = {
     .notifiers = &Notifiers,
 };
 
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+void AddTransaction2Manager(struct Transaction *t)
 {
-    struct Transaction *t = CreateClientTransaction(message, user);
-
     if (t != NULL) {
         TransactionSetNotifiers(t, TransactionManager.notifiers);
         put_in_list(&TransactionManager.transactions, t);
     }
+}
 
+struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CreateClientTransaction(message, user);
+
+    AddTransaction2Manager(t);
     return t;
 }
+
+struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CreateClientInviteTransaction(message, user);
+
+    AddTransaction2Manager(t);
+    return t;
+}
+
 
 struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CreateServerTransaction(message, user);
 
-    if (t != NULL) {
-        TransactionSetNotifiers(t, TransactionManager.notifiers);
-        put_in_list(&TransactionManager.transactions, t);
-    }
-
+    AddTransaction2Manager(t);
     return t;
 }
