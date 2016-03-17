@@ -47,7 +47,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
     struct Transaction *PrepareTryingState(int sendExpected)
     {
         if (sendExpected != -1) {
-            mock().expectOneCall("AddTimer").withIntParameter("ms", NON_INVITE_REQUEST_RETRANSMIT_INTERVAL);
+            mock().expectOneCall("AddTimer").withIntParameter("ms", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
             mock().expectOneCall("AddTimer").withIntParameter("ms", TRANSPORT_TIMEOUT_INTERVAL);
         }
 
@@ -116,7 +116,7 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive2xxTest)
 
     PrepareTryingState(0);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_ACK_RETRANSMITS);
 
     ReceiveInMessage(string);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
@@ -129,8 +129,8 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateTimeETest)
     PrepareTryingState(0);
 
     for (; i < 20; i ++) {
-        int expected = (2<<i)*T1;        
-        if (expected > T4) expected = T4;
+        int expected = (2<<i)*INITIAL_REQUEST_RETRANSMIT_INTERVAL;        
+        if (expected > MAXIMUM_RETRANSMIT_INTERVAL) expected = MAXIMUM_RETRANSMIT_INTERVAL;
 
         mock().expectOneCall("AddTimer").withIntParameter("ms", expected);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
@@ -187,7 +187,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeETest)
     PrepareProceedingState();
 
     for (; i < 20; i++) {
-        mock().expectOneCall("AddTimer").withIntParameter("ms",T2);
+        mock().expectOneCall("AddTimer").withIntParameter("ms",MAXIMUM_RETRANSMIT_INTERVAL);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         TimerECallbackFunc(t);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
@@ -224,7 +224,7 @@ TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
     PrepareProceedingState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);   
-    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_ACK_RETRANSMITS);
 
     ReceiveInMessage(string);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
@@ -247,7 +247,7 @@ TEST(ClientNotInviteTransactionTestGroup, GetLatestResponse)
     ReceiveInMessage(string);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_ACK_RETRANSMITS);
     ReceiveInMessage(string);
 
     struct Message *latestResponse = TransactionGetLatestResponse(t);

@@ -159,7 +159,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
         UT_PTR_SET(AddTimer, AddTimerMock);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-        mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
+        mock().expectOneCall("AddTimerMock").withIntParameter("interval", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", WAIT_TIME_FOR_ACK_RECEIPT);
 
         UT_PTR_SET(Transporter, &MockTransporterFor301);    
@@ -288,7 +288,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
 {
     struct Transaction *t = PrepareProceedingState();
 
-    mock().expectOneCall("AddTimerMock").withIntParameter("interval", T1);
+    mock().expectOneCall("AddTimerMock").withIntParameter("interval", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSPORT_TIMEOUT_INTERVAL);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);

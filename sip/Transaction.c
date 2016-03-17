@@ -92,7 +92,7 @@ int ResetRetransmitTimer(struct Transaction *t)
 
 int IncRetransmit(struct Transaction *t)
 {
-    if (T1<<t->retransmits <= T4)
+    if ( (INITIAL_REQUEST_RETRANSMIT_INTERVAL<<t->retransmits) <= MAXIMUM_RETRANSMIT_INTERVAL)
         t->retransmits ++;
 
     return 0;
@@ -100,12 +100,12 @@ int IncRetransmit(struct Transaction *t)
 
 int AddRetransmitTimer(struct Transaction *t)
 {    
-    int interval = T1<<t->retransmits;
+    int interval = INITIAL_REQUEST_RETRANSMIT_INTERVAL<<t->retransmits;
     
     if (t->state == TRANSACTION_STATE_TRYING) {
-        if (interval > T4) interval = T4;
+        if (interval > MAXIMUM_RETRANSMIT_INTERVAL) interval = MAXIMUM_RETRANSMIT_INTERVAL;
     } else if (t->state == TRANSACTION_STATE_PROCEEDING)
-        interval = T2;
+        interval = MAXIMUM_RETRANSMIT_INTERVAL;
     
     AddTimer(t, interval, RetransmitTimerCallback);
 
@@ -120,7 +120,7 @@ int AddTimeoutTimer(struct Transaction *t)
 
 int AddWaitForResponseTimer(struct Transaction *t)
 {
-    AddTimer(t, T4, WaitForResponseTimerCallBack);
+    AddTimer(t, WAIT_TIME_FOR_ACK_RETRANSMITS, WaitForResponseTimerCallBack);
     return 0;
 }
 

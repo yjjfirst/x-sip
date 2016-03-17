@@ -18,6 +18,10 @@ extern "C" {
 #include "UserAgentManager.h"
 }
 
+TimerCallback TimerACallbackFunc;
+TimerCallback TimerBCallbackFunc;
+TimerCallback TimerDCallbackFunc;
+
 static struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
 {
     mock().actualCall("AddTimer");
@@ -31,12 +35,11 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     struct Transaction *t;
     struct Dialog *dialog;
     void setup(){
-        ExpectedNewClientTransaction();
-        
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
 
+        ExpectedNewClientTransaction();
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
@@ -104,6 +107,11 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
     mock().checkExpectations();
+}
+
+TEST(ClientInviteTransactionTestGroup, CallStateTimerATest)
+{
+    //    TimerA
 }
 
 IGNORE_TEST(ClientInviteTransactionTestGroup, Receive100and180and200Test)
