@@ -289,7 +289,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
     struct Transaction *t = PrepareProceedingState();
 
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
-    mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSPORT_TIMEOUT_INTERVAL);
+    mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSACTION_TIMEOUT_INTERVAL);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);
 

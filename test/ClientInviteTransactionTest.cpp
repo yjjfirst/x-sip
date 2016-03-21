@@ -16,15 +16,24 @@ extern "C" {
 #include "Dialog.h"
 #include "Provision.h"
 #include "UserAgentManager.h"
+#include "Timer.h"
 }
 
 TimerCallback TimerACallbackFunc;
 TimerCallback TimerBCallbackFunc;
 TimerCallback TimerDCallbackFunc;
 
-static struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
+static struct Timer *AddTimerMock(void *p, int interval, TimerCallback action)
 {
-    mock().actualCall("AddTimer");
+    mock().actualCall("AddTimer").withParameter("ms", interval);
+
+    if (interval == TRANSACTION_TIMEOUT_INTERVAL) {
+        TimerBCallbackFunc = action;
+    } else if (interval == WAIT_TIME_FOR_RESPONSE_RETRANSMITS) {
+        TimerDCallbackFunc = action;
+    } else {
+        TimerACallbackFunc = action;
+    }
     return NULL;
 }
 
@@ -48,17 +57,36 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     }
 
     void teardown() {
-        DestoryUserAgent(&ua);
-        EmptyTransactionManager();
         mock().checkExpectations();
         mock().clear();
+
+        DestoryUserAgent(&ua);
+        EmptyTransactionManager();
     }
     
     void ExpectedNewClientTransaction()
     {
-        mock().expectOneCall("AddTimer");
-        mock().expectOneCall("AddTimer");
+        mock().expectOneCall("AddTimer").withParameter("ms", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
+        mock().expectOneCall("AddTimer").withParameter("ms", TRANSACTION_TIMEOUT_INTERVAL);
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    }
+
+    void PrepareProceedingState()
+    {
+        char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+
+        mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
+        
+        ReceiveInMessage(stringReceived);    
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+
+    }
+
+    void PrepareCompletedState()
+    {
+        mock().expectOneCall("AddTimer").withParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);        
+        Receive3xxResponse(t);
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     }
 };
 //Init tests.
@@ -77,21 +105,11 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
     ExpectedNewClientTransaction();
     ReceiveInMessage(stringReceived);    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
-
-    mock().checkExpectations();
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive100Test)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-
-    ReceiveInMessage(stringReceived);    
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
-    POINTERS_EQUAL(t, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
-
-    mock().checkExpectations();
+    PrepareProceedingState();
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
@@ -105,31 +123,96 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveInMessage(stringReceived);    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
-
-    mock().checkExpectations();
 }
 
-TEST(ClientInviteTransactionTestGroup, CallStateTimerATest)
+TEST(ClientInviteTransactionTestGroup, CallingStateTimerATest)
 {
-    //    TimerA
+    int i = 0;
+
+    for (; i < 20; i ++) {
+        int expected = (2<<i)*INITIAL_REQUEST_RETRANSMIT_INTERVAL;        
+        if (expected > MAXIMUM_RETRANSMIT_INTERVAL) expected = MAXIMUM_RETRANSMIT_INTERVAL;
+
+        mock().expectOneCall("AddTimer").withIntParameter("ms", expected);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        TimerACallbackFunc(t);
+        CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
+        mock().checkExpectations();
+    }
 }
 
-IGNORE_TEST(ClientInviteTransactionTestGroup, Receive100and180and200Test)
+TEST(ClientInviteTransactionTestGroup, CallingStateTimerBTest)
+{
+    TimerBCallbackFunc(t);
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+}
+
+TEST(ClientInviteTransactionTestGroup, CallingState3xxReceiveTest)
+{
+    PrepareCompletedState();
+}
+
+//Proceeding state.
+TEST(ClientInviteTransactionTestGroup, ProceedingState3xxReceiveTest)
+{
+    PrepareProceedingState();
+    mock().expectOneCall("AddTimer").withParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
+    Receive3xxResponse(t);
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+}
+
+TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 {
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-    mock().expectOneCall("AddTimer");
-    ReceiveInMessage(stringReceived);
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
-
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
-    ReceiveInMessage(stringReceived);    
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    
+    PrepareProceedingState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
-    ReceiveInMessage(stringReceived);    
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 
+    ReceiveInMessage(stringReceived);    
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+ 
+}
+
+TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    int i = 0;
+
+    for (; i < 20; i++) {
+        mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
+        ReceiveInMessage(stringReceived);
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    }
+}
+
+//Completed state
+TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
+{
+    PrepareCompletedState();
     mock().checkExpectations();
+
+    int i = 0;
+
+    for (;i < 20; i++) {
+        mock().expectOneCall("SendOutMessageMock");
+        Receive3xxResponse(t);
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    }
+}
+
+TEST(ClientInviteTransactionTestGroup, CompletedStateTransportErrorTest)
+{
+    PrepareCompletedState();
+
+    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    Receive3xxResponse(t);
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
+}
+
+TEST(ClientInviteTransactionTestGroup, CompletedStateTimerDTest)
+{
+    PrepareCompletedState();
+    TimerDCallbackFunc(t);
+    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
 }

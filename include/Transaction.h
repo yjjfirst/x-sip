@@ -20,6 +20,8 @@ enum TransactionState {
 enum TransactionType {
     TRANSACTION_TYPE_CLIENT_INVITE,
     TRANSACTION_TYPE_CLIENT_NON_INVITE,
+    TRANSACTION_TYPE_SERVER_INVITE,
+    TRANSACTION_TYPE_SERVER_NON_INVITE,
 };
 
 enum TransactionEvent {
@@ -27,6 +29,7 @@ enum TransactionEvent {
     TRANSACTION_EVENT_ACK_RECEIVED,
     TRANSACTION_EVENT_100TRYING_RECEIVED,
     TRANSACTION_EVENT_180RINGING_RECEIVED,
+    TRANSACTION_EVENT_3XX_RECEIVED,
 
     TRANSACTION_EVENT_200OK_SENT,
     TRANSACTION_EVENT_301MOVED_SENT,
@@ -49,6 +52,7 @@ void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);
 
 void ReceiveAckRequest(struct Transaction *t);
+void Receive3xxResponse(struct Transaction *t);
 
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);

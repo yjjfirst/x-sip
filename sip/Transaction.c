@@ -98,23 +98,35 @@ int IncRetransmit(struct Transaction *t)
     return 0;
 }
 
-int AddRetransmitTimer(struct Transaction *t)
-{    
+int CalculateRetransmitInterval(struct Transaction *t)
+{
     int interval = INITIAL_REQUEST_RETRANSMIT_INTERVAL<<t->retransmits;
+    if (interval > MAXIMUM_RETRANSMIT_INTERVAL) interval = MAXIMUM_RETRANSMIT_INTERVAL;
+    return interval;
+}
+
+int ClientInviteAddRetransmitTimer(struct Transaction *t)
+{    
+    AddTimer(t, CalculateRetransmitInterval(t), RetransmitTimerCallback);
+    return 0;
+}
+
+int ClientNonInviteAddRetransmitTimer(struct Transaction *t)
+{    
+    int interval = INITIAL_REQUEST_RETRANSMIT_INTERVAL;
     
-    if (t->state == TRANSACTION_STATE_TRYING) {
-        if (interval > MAXIMUM_RETRANSMIT_INTERVAL) interval = MAXIMUM_RETRANSMIT_INTERVAL;
+    if (t->state == TRANSACTION_STATE_TRYING){
+        interval = CalculateRetransmitInterval(t);
     } else if (t->state == TRANSACTION_STATE_PROCEEDING)
         interval = MAXIMUM_RETRANSMIT_INTERVAL;
     
     AddTimer(t, interval, RetransmitTimerCallback);
-
     return 0;
 }
 
 int AddTimeoutTimer(struct Transaction *t)
 {
-    AddTimer(t, TRANSPORT_TIMEOUT_INTERVAL, TimeoutTimerCallback);
+    AddTimer(t, TRANSACTION_TIMEOUT_INTERVAL, TimeoutTimerCallback);
     return 0;
 }
 
@@ -208,7 +220,7 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
         return NULL;
     }
 
-    AddRetransmitTimer(t);
+    ClientNonInviteAddRetransmitTimer(t);
     AddTimeoutTimer(t);
 
     return t;
@@ -231,7 +243,7 @@ struct Transaction *CreateClientTransaction(struct Message *request, struct Tran
         return NULL;
     }
 
-    AddRetransmitTimer(t);
+    ClientNonInviteAddRetransmitTimer(t);
     AddTimeoutTimer(t);
 
     return t;
@@ -270,10 +282,25 @@ void ResponseWith180Ringing(struct Transaction *t)
     }
 }
 
+int SendAckRequest(struct Transaction *t)
+{
+    if (SendOutMessage((char *)"Ack Message") < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        return -1;
+    }
+    return 0;
+}
+
 void ReceiveAckRequest(struct Transaction *t)
 {
     RunFsm(t, TRANSACTION_EVENT_ACK_RECEIVED);
 }
+
+void Receive3xxResponse(struct Transaction *t)
+{
+    RunFsm(t, TRANSACTION_EVENT_3XX_RECEIVED);
+}
+
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
@@ -322,7 +349,7 @@ struct FsmState ClientNonInviteTryingState = {
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
-                AddRetransmitTimer}},
+                ClientNonInviteAddRetransmitTimer}},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
         {TRANSACTION_EVENT_MAX},
@@ -338,7 +365,7 @@ struct FsmState ClientNonInviteProceedingState = {
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
                 SendRequestMessage,
                 IncRetransmit,
-                AddRetransmitTimer}},
+                ClientNonInviteAddRetransmitTimer}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX}
@@ -367,19 +394,42 @@ struct FsmState ClientInviteCallingState = {
     {
         {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{NotifyUser}},
         {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
-        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING,{
+        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
                 SendRequestMessage,
                 IncRetransmit,
-                AddRetransmitTimer}},
-        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED,{NULL}},
-        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED,{NULL}},
+                ClientInviteAddRetransmitTimer}},
+        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FsmState ClientInviteProceedingState = {
+    TRANSACTION_STATE_PROCEEDING,
+    {
+        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_100TRYING_RECEIVED, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_MAX},
+    }
+};
+
+struct FsmState ClientInviteCompletedState = {
+    TRANSACTION_STATE_COMPLETED,
+    {
+        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_MAX},
     }
 };
 
 struct Fsm ClientInviteTransactionFsm = {
     {
         &ClientInviteCallingState,
+        &ClientInviteProceedingState,
+        &ClientInviteCompletedState,
         NULL,
     }
 };
@@ -390,7 +440,7 @@ struct FsmState ServerInviteProceedingState = {
         {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED, {AddRetransmitTimer, AddTimeoutTimer}},        
+        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED, {ClientNonInviteAddRetransmitTimer, AddTimeoutTimer}},        
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -495,5 +545,5 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
-    assert ("Located State Failed" == 0);
+    assert ("FSM event handle error" == 0);
 }
