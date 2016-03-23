@@ -5,6 +5,7 @@
 struct DialogId;
 struct Dialog;
 
+
 struct DialogId *DialogGetId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
@@ -15,3 +16,5 @@ void DialogSetToUser(struct Dialog *dialog, char *to);
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestoryDialog(struct Dialog **dialog);
+
+struct Transaction *DialogAddTransaction(struct Dialog *dialog, struct Message *message);

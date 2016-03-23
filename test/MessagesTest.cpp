@@ -282,7 +282,7 @@ TEST(MessageTestGroup, GetLocalTageTest)
     struct Message *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    STRCMP_EQUAL("3431", MessageGetLocalTag(message));
+    STRCMP_EQUAL("3431", MessageGetFromTag(message));
     DestoryMessage(&message);
 }
 
@@ -291,7 +291,7 @@ TEST(MessageTestGroup, GetRemoteTageTest)
     struct Message *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    STRCMP_EQUAL("4321", MessageGetRemoteTag(message));
+    STRCMP_EQUAL("4321", MessageGetToTag(message));
     DestoryMessage(&message);
 }
 

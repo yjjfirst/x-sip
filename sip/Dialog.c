@@ -84,6 +84,15 @@ void DialogOnTransactionEvent(struct Transaction *t)
     } 
 }
 
+struct Transaction *DialogAddTransaction(struct Dialog *dialog, struct Message *message)
+{
+    struct DialogId *id = DialogGetId(dialog);
+
+    DialogIdSetLocalTag(id, MessageGetFromTag(message));
+    DialogIdSetCallId(id, MessageGetCallId(message));
+    return AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+}
+
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
 {
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));

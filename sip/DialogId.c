@@ -52,16 +52,16 @@ struct DialogId *CreateDialogId(char *callid, char *localTag, char *remoteTag)
 void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *message)
 {
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
-    DialogIdSetLocalTag(dialogid, MessageGetLocalTag(message));
-    DialogIdSetRemoteTag(dialogid, MessageGetRemoteTag(message));
+    DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
+    DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
 }
 
 struct DialogId *CreateDialogIdFromMessage(struct Message *message)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
-    DialogIdSetLocalTag(dialogid, MessageGetLocalTag(message));
-    DialogIdSetRemoteTag(dialogid, MessageGetRemoteTag(message));
+    DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
+    DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
 
     return dialogid;
 }

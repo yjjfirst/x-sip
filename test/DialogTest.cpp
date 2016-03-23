@@ -9,10 +9,12 @@ extern "C" {
 #include "Transaction.h"
 #include "UserAgent.h"
 #include "Dialog.h"
+#include "DialogId.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "TransactionManager.h"
 #include "MessageTransport.h"
+#include "RequestLine.h"
 }
 
 TEST_GROUP(DialogTestGroup)
@@ -26,6 +28,8 @@ TEST_GROUP(DialogTestGroup)
 
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
+
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     }
 
     void teardown()
@@ -43,10 +47,12 @@ int SendOutAckMessageMock(char *message)
     char *remoteTag = NULL;
 
     ParseMessage(message, m);
-    remoteTag = MessageGetRemoteTag(m);    
+    remoteTag = MessageGetToTag(m);    
     mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
 
+    CHECK_EQUAL(SIP_METHOD_ACK, RequestLineGetMethod(MessageGetRequestLine(m)));
     DestoryMessage(&m);
+
     return 0;
 }
 
@@ -55,17 +61,64 @@ static struct MessageTransporter MockTransporterForAck = {
     ReceiveInMessageMock,
 };
 
-TEST(DialogTestGroup, AckRequestInviteSuccessedTest)
+TEST(DialogTestGroup, AckRequestAfterInviteSuccessedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *message = BuildInviteMessage(dialog);
+    struct Message *invite = BuildInviteMessage(dialog);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
-   
-    AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
-    UT_PTR_SET(Transporter, &MockTransporterForAck);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
+   
+    AddClientTransaction(invite, (struct TransactionUserNotifiers *)dialog);
+    UT_PTR_SET(Transporter, &MockTransporterForAck);
 
     ReceiveInMessage(revMessage);
+}
+
+TEST(DialogTestGroup, AddTransactionTest)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+    struct Transaction *transaction = DialogAddTransaction(dialog, invite);
+
+    POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
+}
+
+TEST(DialogTestGroup, UACDialogIdLocalTagTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+   
+    DialogAddTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+
+    STRCMP_EQUAL(MessageGetFromTag(invite), DialogIdGetLocalTag(DialogGetId(dialog)));    
+}
+
+TEST(DialogTestGroup, UACDialogIdCallIdTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+   
+    DialogAddTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+    STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
+}
+
+TEST(DialogTestGroup, UACDialogIdRemoteTagTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+   
+    struct Transaction *t = DialogAddTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+    STRCMP_EQUAL(MessageGetToTag(TransactionGetLatestResponse(t)), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 }

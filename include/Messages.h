@@ -22,8 +22,8 @@ void MessageSetRequestLine(struct Message *message, struct RequestLine *rl);
 void MessageSetStatusLine(struct Message *message, struct StatusLine *status);
 
 char *MessageGetCallId(struct Message *message);
-char *MessageGetLocalTag(struct Message *message);
-char *MessageGetRemoteTag(struct Message *message);
+char *MessageGetFromTag(struct Message *message);
+char *MessageGetToTag(struct Message *message);
 void MessageSetRemoteTag(struct Message *message, char *tag);
 int MessageGetExpires(struct Message *message);
 struct Header *MessageGetHeader(const char *name, struct Message *message);

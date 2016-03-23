@@ -195,7 +195,7 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
     int i = 0;
 
     for (;i < 20; i++) {
-        mock().expectOneCall("SendOutMessageMock");
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
         Receive3xxResponse(t);
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     }
@@ -205,7 +205,7 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateTransportErrorTest)
 {
     PrepareCompletedState();
 
-    mock().expectOneCall("SendOutMessageMock").andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     Receive3xxResponse(t);
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
 }

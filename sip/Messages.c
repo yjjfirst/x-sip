@@ -199,13 +199,13 @@ char *MessageGetCallId(struct Message *message)
     return CallIdHeaderGetId(id);
 }
 
-char *MessageGetLocalTag(struct Message *message)
+char *MessageGetFromTag(struct Message *message)
 {
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message);
     return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
 }
 
-char *MessageGetRemoteTag(struct Message *message)
+char *MessageGetToTag(struct Message *message)
 {
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
