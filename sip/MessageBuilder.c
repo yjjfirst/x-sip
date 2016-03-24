@@ -215,7 +215,7 @@ struct Message *BuildRingingMessage(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *BuildOKMessage(struct Message *invite)
+struct Message *Build200OKMessage(struct Message *invite)
 {
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
     return BuildResponseMessage(invite, status);

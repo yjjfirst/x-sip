@@ -264,7 +264,7 @@ void ResponseWith301(struct Transaction *t)
 
 void ResponseWith200OK(struct Transaction *t)
 {
-    struct Message *ok = BuildOKMessage(t->request);
+    struct Message *ok = Build200OKMessage(t->request);
     TransactionAddResponse(t, ok);
     TransactionSendMessage(ok);
 

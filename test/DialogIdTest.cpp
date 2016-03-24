@@ -75,9 +75,9 @@ TEST(DialogIdTestGroup, BuildDialIdFromMessageTest)
 
     ParseMessage((char *)INVITE_200OK_MESSAGE, message);
     dialogid = CreateDialogIdFromMessage(message);
-    STRCMP_EQUAL("97295390", DialogIdGetCallId(dialogid));
-    STRCMP_EQUAL("1296642367", DialogIdGetLocalTag(dialogid));
-    STRCMP_EQUAL("as6151ad25", DialogIdGetRemoteTag(dialogid));
+    STRCMP_EQUAL(MessageGetCallId(message), DialogIdGetCallId(dialogid));
+    STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetLocalTag(dialogid));
+    STRCMP_EQUAL(MessageGetToTag(message), DialogIdGetRemoteTag(dialogid));
     
     DestoryDialogId(&dialogid);
     DestoryMessage(&message);

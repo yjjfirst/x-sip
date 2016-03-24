@@ -367,7 +367,7 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ringing = BuildOKMessage(invite);
+    struct Message *ringing = Build200OKMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 

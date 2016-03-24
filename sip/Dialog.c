@@ -84,13 +84,39 @@ void DialogOnTransactionEvent(struct Transaction *t)
     } 
 }
 
-struct Transaction *DialogAddTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Message *message)
 {
     struct DialogId *id = DialogGetId(dialog);
+    struct Transaction *t = NULL;
 
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
-    return AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    dialog->transaction = t;
+
+    return t;
+}
+
+struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Message *message)
+{
+    struct DialogId *id = DialogGetId(dialog);
+    struct Transaction *t = NULL;
+   
+    DialogIdSetRemoteTag(id, MessageGetFromTag(message));
+    DialogIdSetCallId(id, MessageGetCallId(message));
+    t = AddServerTransaction(message, (struct TransactionUserNotifiers *)dialog);;
+    dialog->transaction = t;
+    
+    return t;
+}
+
+void DialogSend200OKResponse(struct Dialog *dialog)
+{
+    struct DialogId *id = DialogGetId(dialog);
+    struct Message *message = Build200OKMessage(TransactionGetRequest(dialog->transaction));
+    
+    TransactionAddResponse(dialog->transaction, message);
+    DialogIdSetLocalTag(id, MessageGetToTag(message));
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
