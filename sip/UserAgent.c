@@ -11,27 +11,53 @@
 #include "Utils.h"
 #include "DialogId.h"
 #include "Dialog.h"
+#include "Accounts.h"
 
 struct UserAgent {
-    char userName[USER_NAME_MAX_LENGTH];
-    char authName[AUTH_NAME_MAX_LENGTH];
-    char proxy[PROXY_MAX_LENGTH];
-    char registrar[REGISTRAR_MAX_LENGTH];
+    struct Account *account;
     BOOL binded;
     struct Dialogs *dialogs;
 };
 
-DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetUserName, userName, USER_NAME_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetUserName,userName);
+void UserAgentSetUserName(struct UserAgent *ua, char *user)
+{
+    AccountSetUserName(ua->account, user);
+}
 
-DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetProxy, proxy, PROXY_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetProxy, proxy);
+char *UserAgentGetUserName(struct UserAgent *ua)
+{
+    return AccountGetUserName(ua->account);
+}
 
-DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetRegistrar, registrar, REGISTRAR_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetRegistrar, registrar);
+void UserAgentSetAuthName(struct UserAgent *ua, char *authName)
+{
+    AccountSetAuthName(ua->account, authName);
+}
 
-DEFINE_STRING_MEMBER_WRITER(struct UserAgent, UserAgentSetAuthName, authName, AUTH_NAME_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct UserAgent, UserAgentGetAuthName, authName);
+char *UserAgentGetAuthName(struct UserAgent *ua)
+{
+    return AccountGetAuthName(ua->account);
+}
+
+void UserAgentSetProxy(struct UserAgent *ua, char *proxy)
+{
+    AccountSetProxy(ua->account, proxy);
+}
+
+char *UserAgentGetProxy(struct UserAgent *ua)
+{
+    return AccountGetProxy(ua->account);
+}
+
+void UserAgentSetRegistrar(struct UserAgent *ua, char *registrar)
+{
+    AccountSetRegistrar(ua->account, registrar);
+}
+
+char *UserAgentGetRegistrar(struct UserAgent *ua)
+{
+    return AccountGetRegistrar(ua->account);
+}
 
 BOOL UserAgentBinded(struct UserAgent *ua)
 {
@@ -66,15 +92,15 @@ struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
 struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
-    struct Dialogs *dialogs = CreateDialogs();
-    ua->dialogs = dialogs;
-
+    ua->dialogs = CreateDialogs();
+    ua->account = CreateAccount();
     return ua;
 }
 
 void DestoryUserAgent(struct UserAgent **ua)
 {
     if (*ua != NULL) {
+        DestoryAccount(&(*ua)->account);
         DestoryDialogs(&(*ua)->dialogs);
         free(*ua);
         *ua = NULL;

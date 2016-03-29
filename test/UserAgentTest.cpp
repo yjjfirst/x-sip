@@ -10,6 +10,7 @@ extern "C" {
 #include "RequestLine.h"
 #include "Header.h"
 #include "UserAgent.h"
+#include "Accounts.h"
 #include "UserAgentManager.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
@@ -244,33 +245,3 @@ TEST(UserAgentTestGroup, AddDialogTest)
     DestoryUserAgent(&ua);
 }
 
-TEST(UserAgentTestGroup, InviteSucceedTest)
-{
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *expectedMessage = CreateMessage();
-    struct DialogId *dialogid = CreateEmptyDialogId();
-
-    ParseMessage((char *)INVITE_200OK_MESSAGE, expectedMessage);
-    DialogIdExtractFromMessage(dialogid, expectedMessage);
-
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
-
-    mock().expectOneCall("AddTimer");
-    mock().expectOneCall("AddTimer");
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
-    ua = BuildUserAgent();
-    dialog = CreateDialog(NULL_DIALOG_ID, ua);
-    message = BuildInviteMessage(dialog);
-    AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
-    
-    ReceiveInMessage(revMessage);
-
-    CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
-
-    DestoryMessage(&expectedMessage);
-    DestoryDialogId(&dialogid);
-    DestoryUserAgent(&ua);
-    EmptyTransactionManager();
-}

@@ -103,7 +103,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
 
 }
 
-TEST(DialogTestGroup, UASDialIdTest)
+TEST(DialogTestGroup, UASDialogIdTest)
 {
     struct Message *invite = BuildInviteMessage(dialog);
     struct Message *ok = Build200OKMessage(invite);
@@ -118,4 +118,45 @@ TEST(DialogTestGroup, UASDialIdTest)
     STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
 
     DestoryMessage(&ok);
+}
+
+TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    DialogAddClientTransaction(dialog, invite);
+
+    CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetLocalSeqNumber(dialog));
+}
+
+TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+   
+    DialogAddClientTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+
+    CHECK_EQUAL(0, DialogGetRemoteSeqNumber(dialog));
+}
+
+TEST(DialogTestGroup, UACDialogConfirmedTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *invite = BuildInviteMessage(dialog);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+   
+    DialogAddClientTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+
+    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
+
 }

@@ -4,6 +4,7 @@
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
+#include "Accounts.h"
 #include "TransactionNotifiers.h"
 #include "TransactionManager.h"
 #include "Messages.h"
@@ -16,17 +17,22 @@ struct Dialog {
     SIP_METHOD requestMethod;
     struct Transaction *transaction;
     struct DialogId *id;
+    unsigned int localSeqNumber;
+    unsigned int remoteSeqNumber;
+    enum DIALOG_STATE state;
     struct UserAgent *ua;
     char to[USER_NAME_MAX_LENGTH];
 };
 
 struct DialogId *DialogGetId(struct Dialog *dialog)
 {
+    assert(dialog != NULL);
     return dialog->id;
 }
 
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog)
 {
+    assert(dialog != NULL);
     return dialog->ua;
 }
 
@@ -35,14 +41,39 @@ DEFINE_STRING_MEMBER_READER(struct Dialog, DialogGetToUser, to);
 
 void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
 {
+    assert(dialog != NULL);
     dialog->requestMethod = method;
 }
 
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
 {
+    assert(dialog != NULL);
     return dialog->requestMethod;
 }
 
+unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog)
+{
+    assert(dialog != NULL);
+    return dialog->localSeqNumber;
+}
+
+unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog)
+{
+    assert(dialog != NULL);
+    return dialog->remoteSeqNumber;
+}
+
+enum DIALOG_STATE DialogGetState(struct Dialog *dialog)
+{
+    assert(dialog != NULL);
+    return dialog->state;
+}
+
+void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
+{
+    assert(dialog != NULL);
+    dialog->state = state;
+}
 
 void DialogHandleInviteClientEvent(struct Transaction *t)
 {
@@ -52,7 +83,8 @@ void DialogHandleInviteClientEvent(struct Transaction *t)
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
         struct DialogId *dialogid = DialogGetId(dialog);
         DialogIdExtractFromMessage(dialogid, message);            
-            
+        DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    
         struct Message *ack = BuildAckMessage(dialog);
         AddClientTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
     }
@@ -91,8 +123,10 @@ struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Mes
 
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
+
     t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
     dialog->transaction = t;
+    dialog->localSeqNumber = MessageGetCSeqNumber(message);
 
     return t;
 }

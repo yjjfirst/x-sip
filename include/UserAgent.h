@@ -1,6 +1,5 @@
 #include "Bool.h"
 
-#define USER_NAME_MAX_LENGTH 64
 #define PROXY_MAX_LENGTH 64
 #define REGISTRAR_MAX_LENGTH 64
 #define AUTH_NAME_MAX_LENGTH 64
