@@ -151,6 +151,8 @@ void DialogSend200OKResponse(struct Dialog *dialog)
     
     TransactionAddResponse(dialog->transaction, message);
     DialogIdSetLocalTag(id, MessageGetToTag(message));
+    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

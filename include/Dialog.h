@@ -1,6 +1,7 @@
 #include "SipMethod.h"
 
 #define NULL_DIALOG_ID NULL
+#define EMPTY_DIALOG_SEQNUMBER 0
 
 struct DialogId;
 struct Dialog;

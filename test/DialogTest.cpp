@@ -142,7 +142,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     DialogAddClientTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
 
-    CHECK_EQUAL(0, DialogGetRemoteSeqNumber(dialog));
+    CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
 }
 
 TEST(DialogTestGroup, UACDialogConfirmedTest)
@@ -159,4 +159,46 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
 
+}
+
+TEST(DialogTestGroup, UASDialogConfirmedTest)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+    struct Message *ok = Build200OKMessage(invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
+    DestoryMessage(&ok);
+}
+
+TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+    struct Message *ok = Build200OKMessage(invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetRemoteSeqNumber(dialog));
+    DestoryMessage(&ok);
+}
+
+TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+    struct Message *ok = Build200OKMessage(invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
+    DestoryMessage(&ok);
 }
