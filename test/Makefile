@@ -9,7 +9,7 @@ LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 all:AllTests
 
-TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeaderTest.o ViaHeaderTest.o MaxForwardsTest.o\
+#TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeaderTest.o ViaHeaderTest.o MaxForwardsTest.o\
 	CallIdHeaderTest.o CSeqHeaderTest.o ExpiresHeaderTest.o ContentLengthHeaderTest.o MessagesTest.o \
 	StatusLineTest.o MessageBuilderTest.o MessageTransportTest.o SessionTest.o \
 	ParameterTest.o ClientNonInviteTransactionTest.o \
@@ -17,7 +17,8 @@ TESTSUITE_OBJS=AllTests.o FirstTest.o RequestLineTest.o URITest.o ContactsHeader
 	ClientInviteTransactionTest.o ServerInviteTransactionTest.o DialogTest.o \
 	DialogsTest.o DialogIdTest.o TransportMock.o AccountsTest.o MediaSessionTest.o
 
-TEST_SRCS = $(TESTSUITE_OBJS:%.o=%.cpp)
+TESTSUITE_SRCS = $(wildcard ./*.cpp)
+TESTSUITE_OBJS = $(TESTSUITE_SRCS:.cpp=.o)
 
 CPPFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacros.h
 
