@@ -195,7 +195,7 @@ TEST(UserAgentTestGroup, BindingTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     BuildTestingMessage();
-    struct Transaction *t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -212,7 +212,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     BuildTestingMessage();
-    struct Transaction *t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -223,7 +223,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
-    t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);

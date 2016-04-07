@@ -86,7 +86,7 @@ void DialogHandleInviteClientEvent(struct Transaction *t)
         DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     
         struct Message *ack = BuildAckMessage(dialog);
-        AddClientTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
+        AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
     }
 }
 
@@ -124,7 +124,7 @@ struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Mes
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
 
-    t = AddClientTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
     dialog->transaction = t;
     dialog->localSeqNumber = MessageGetCSeqNumber(message);
 

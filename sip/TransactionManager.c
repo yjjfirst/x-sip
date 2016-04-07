@@ -184,7 +184,7 @@ void AddTransaction2Manager(struct Transaction *t)
     }
 }
 
-struct Transaction *AddClientTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
 

@@ -53,7 +53,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(sendExpected);
     
-        t = AddClientTransaction(m, NULL);
+        t = AddClientNonInviteTransaction(m, NULL);
         if ( t != NULL)
             CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
 

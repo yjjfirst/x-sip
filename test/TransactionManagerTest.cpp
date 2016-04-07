@@ -44,17 +44,17 @@ TEST(TransactionManager, NewTransaction)
 {
     struct Transaction *transaction;
 
-    transaction = AddClientTransaction(message, NULL);
+    transaction = AddClientNonInviteTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
-    transaction = AddClientTransaction(message, NULL);
+    transaction = AddClientNonInviteTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     message = BuildBindingMessage(dialog);
-    transaction = AddClientTransaction(message, NULL);
+    transaction = AddClientNonInviteTransaction(message, NULL);
 
     CHECK_EQUAL(3, CountTransaction());
     CHECK_FALSE(0 == transaction)
@@ -65,14 +65,14 @@ TEST(TransactionManager, MatchResponse)
     char string[MAX_MESSAGE_LENGTH] = {0};
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    AddClientTransaction(message, NULL);
+    AddClientNonInviteTransaction(message, NULL);
     CHECK_TRUE(ReceiveInMessage(string));
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
-    struct Transaction *t = AddClientTransaction(message, NULL);
+    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
     enum TransactionState s;
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
@@ -87,7 +87,7 @@ TEST(TransactionManager, GetTransactionByTest)
 {
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
-    struct Transaction *t = AddClientTransaction(message, NULL);
+    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
 
     POINTERS_EQUAL(t, GetTransaction(branch, seqMethod));
 }
