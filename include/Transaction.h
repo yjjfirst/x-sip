@@ -41,7 +41,7 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNotifiers *user);
+struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
 struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user);
 void DestoryTransaction(struct Transaction **t);

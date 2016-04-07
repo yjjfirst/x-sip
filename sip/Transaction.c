@@ -207,12 +207,9 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
-    struct RequestLine *rl = MessageGetRequestLine(request);
     
-    if(RequestLineGetMethod(rl) == SIP_METHOD_INVITE) {
-        t->state = TRANSACTION_STATE_CALLING;
-        t->type = TRANSACTION_TYPE_CLIENT_INVITE;
-    }    
+    t->state = TRANSACTION_STATE_CALLING;
+    t->type = TRANSACTION_TYPE_CLIENT_INVITE;
     t->fsm = &ClientInviteTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {
@@ -226,7 +223,7 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
     return t;
 }
 
-struct Transaction *CreateClientTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     struct RequestLine *rl = MessageGetRequestLine(request);
