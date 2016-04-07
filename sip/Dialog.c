@@ -131,7 +131,7 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
     return t;
 }
 
-struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Transaction *t = NULL;

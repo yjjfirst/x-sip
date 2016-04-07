@@ -80,7 +80,7 @@ TEST(DialogTestGroup, AddTransactionTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     struct Message *invite = BuildInviteMessage(dialog);
-    struct Transaction *transaction = DialogAddClientTransaction(dialog, invite);
+    struct Transaction *transaction = DialogAddClientNonInviteTransaction(dialog, invite);
 
     POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
 }

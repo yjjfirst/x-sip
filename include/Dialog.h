@@ -27,7 +27,7 @@ void DialogSetToUser(struct Dialog *dialog, char *to);
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestoryDialog(struct Dialog **dialog);
 
-struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Message *message);
+struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Message *message);
 void DialogSend200OKResponse(struct Dialog *dialog);
