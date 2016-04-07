@@ -69,7 +69,7 @@ TEST(DialogTestGroup, AckRequestAfterInviteSuccessedTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
    
-    AddClientNonInviteTransaction(invite, (struct TransactionUserNotifiers *)dialog);
+    AddClientInviteTransaction(invite, (struct TransactionUserNotifiers *)dialog);
     UT_PTR_SET(Transporter, &MockTransporterForAck);
 
     ReceiveInMessage(revMessage);
@@ -89,18 +89,24 @@ TEST(DialogTestGroup, UACDialogIdTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct Message *invite = BuildInviteMessage(dialog);
+    struct Message *ok = CreateMessage();
+    struct Message *originInvite = BuildInviteMessage(dialog);
+    
+    ParseMessage((char *)INVITE_200OK_MESSAGE, ok);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
    
-    struct Transaction *t = DialogAddClientTransaction(dialog, invite);
+    DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
+    
+    STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));    
+    STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
+    STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 
-    STRCMP_EQUAL(MessageGetFromTag(invite), DialogIdGetLocalTag(DialogGetId(dialog)));    
-    STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetToTag(TransactionGetLatestResponse(t)), DialogIdGetRemoteTag(DialogGetId(dialog)));    
-
+    DestoryMessage(&originInvite);
+    DestoryMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogIdTest)
@@ -125,7 +131,7 @@ TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
     struct Message *invite = BuildInviteMessage(dialog);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    DialogAddClientTransaction(dialog, invite);
+    DialogAddClientInviteTransaction(dialog, invite);
 
     CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetLocalSeqNumber(dialog));
 }
@@ -139,7 +145,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
    
-    DialogAddClientTransaction(dialog, invite);
+    DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
@@ -154,7 +160,7 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
    
-    DialogAddClientTransaction(dialog, invite);
+    DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));

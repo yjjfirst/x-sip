@@ -226,13 +226,9 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
 struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
-    struct RequestLine *rl = MessageGetRequestLine(request);
-    
-    if(RequestLineGetMethod(rl) != SIP_METHOD_INVITE) {
-        t->state = TRANSACTION_STATE_TRYING;
-        t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
-    }
-    
+
+    t->state = TRANSACTION_STATE_TRYING;
+    t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
     t->fsm = &ClientNonInviteTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {

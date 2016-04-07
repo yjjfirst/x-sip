@@ -116,6 +116,21 @@ void DialogOnTransactionEvent(struct Transaction *t)
     } 
 }
 
+struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message)
+{
+    struct DialogId *id = DialogGetId(dialog);
+    struct Transaction *t = NULL;
+
+    DialogIdSetLocalTag(id, MessageGetFromTag(message));
+    DialogIdSetCallId(id, MessageGetCallId(message));
+
+    t = AddClientInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    dialog->transaction = t;
+    dialog->localSeqNumber = MessageGetCSeqNumber(message);
+
+    return t;
+}
+
 struct Transaction *DialogAddClientTransaction(struct Dialog *dialog, struct Message *message)
 {
     struct DialogId *id = DialogGetId(dialog);
