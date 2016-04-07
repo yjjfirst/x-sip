@@ -133,17 +133,7 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
 
 struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
-    struct DialogId *id = DialogGetId(dialog);
-    struct Transaction *t = NULL;
-
-    DialogIdSetLocalTag(id, MessageGetFromTag(message));
-    DialogIdSetCallId(id, MessageGetCallId(message));
-
-    t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
-    dialog->transaction = t;
-    dialog->localSeqNumber = MessageGetCSeqNumber(message);
-
-    return t;
+    return AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
 }
 
 struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Message *message)
