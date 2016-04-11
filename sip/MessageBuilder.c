@@ -53,10 +53,17 @@ struct Header *BuildRequestFromHeader(struct Dialog *dialog)
 struct Header *BuildRequestToHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
-    struct ContactHeader *to = CreateToHeader();
+    struct URI *uri;
+    struct URI *remoteUri = DialogGetRemoteUri(dialog);
 
+    if (remoteUri != NULL)
+        uri = remoteUri;
+    else
+        uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+
+    struct ContactHeader *to = CreateToHeader();
     ContactHeaderSetUri(to, uri);
+
     return (struct Header *)to;
 }
 
@@ -145,6 +152,12 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
     struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
     MessageSetRemoteTag(ack, DialogIdGetRemoteTag(DialogGetId(dialog)));
     return ack;
+}
+
+struct Message *BuildByeMessage(struct Dialog *dialog)
+{
+    struct Message *bye = BuildRequestMessage(dialog, SIP_METHOD_BYE);
+    return bye;
 }
 
 void AddResponseViaHeader(struct Message *response, struct Message *invite)

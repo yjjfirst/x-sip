@@ -21,7 +21,7 @@ struct ViaHeader {
 struct HeaderPattern ViaHeaderPattern []= {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct ViaHeader, headerBase), ParseString, NULL, String2String},
     {"//", COLON, SPACE, 0, OFFSETOF(struct ViaHeader, transport), ParseString, NULL, String2String},
-    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseURI, NULL, Uri2String},
+    {"*", SPACE, SEMICOLON, 1, OFFSETOF(struct ViaHeader, uri), ParseUri, NULL, Uri2String},
     {"*", SEMICOLON, EMPTY, 0, OFFSETOF(struct ViaHeader, parameters), ParseParameters, NULL, Parameters2String},
     {NULL, 0, 0, 0, 0},
 };

@@ -34,7 +34,7 @@ BOOL RequestLineSipVersionLegal(char *version)
 
 struct HeaderPattern RequestLinePattern[] = {
     {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseString, RequestLineMethodLegal, String2String},
-    {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseURI, NULL, Uri2String},
+    {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseUri, NULL, Uri2String},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseString, NULL,String2String},
     {NULL, 0, 0, 0, 0, 0}
 };

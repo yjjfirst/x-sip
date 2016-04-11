@@ -24,11 +24,6 @@ struct Dialog {
     char to[USER_NAME_MAX_LENGTH];
 };
 
-struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
-{
-    return NULL;
-}
-struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
 
 struct DialogId *DialogGetId(struct Dialog *dialog)
 {
@@ -159,17 +154,11 @@ void DialogSend200OKResponse(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Message *message = Build200OKMessage(TransactionGetRequest(dialog->transaction));
- 
+    
     TransactionAddResponse(dialog->transaction, message);
     DialogIdSetLocalTag(id, MessageGetToTag(message));
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
-}
-
-void DialogTerminate(struct Dialog *dialog)
-{
-    struct Message *bye = BuildByeMessage(dialog);
-    (void)bye;
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

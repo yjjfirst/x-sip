@@ -1,6 +1,8 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include <stdio.h>
+
 #include "URI.h"
 #include "RequestLine.h"
 #include "StatusLine.h"
@@ -392,4 +394,26 @@ TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
     DestoryMessage(&invite);
     DestoryMessage(&moved);
 
+}
+
+struct URI *DialogGetRemoteUriMock(struct Dialog *dialog)
+{
+    struct URI *uri = CreateEmptyUri();
+    ParseUri((char *)"sip:abcd@192.168.10.123:tag=1234", &uri);
+    return uri;
+}
+
+TEST(MessageBuilderTestGroup, ByeMessageTest)
+{
+    UT_PTR_SET(DialogGetRemoteUri, DialogGetRemoteUriMock);
+
+    struct Message *bye = BuildByeMessage(dialog);
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
+    struct URI *uri = ContactHeaderGetUri(to);
+
+    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    CHECK_TRUE(UriMatched(uri, remoteUri));
+
+    DestoryUri(remoteUri);
+    DestoryMessage(&bye);
 }

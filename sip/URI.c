@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "Bool.h"
 #include "URI.h"
@@ -148,7 +149,7 @@ struct HeaderPattern *GetURIPattern42String(struct URI **uri)
     return GetURIPattern((void *)uri, HasUser42String, HasScheme42String);
 }
 
-int ParseURI(char *string, void *target)
+int ParseUri(char *string, void *target)
 {
     struct HeaderPattern *pattern = GetURIPattern4Parse(string);
     struct URI **uri = target;
@@ -225,6 +226,9 @@ void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 
 BOOL UriMatched(struct URI *uri, struct URI *uri2)
 {
+    assert (uri != NULL);
+    assert (uri2 != NULL);
+
     if (!ParametersMatched(uri->parameters, uri2->parameters)){
         return FALSE;
     }

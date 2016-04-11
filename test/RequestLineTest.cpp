@@ -104,7 +104,7 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
     struct URI *u = CreateEmptyUri();
     char URIString[] = "sips:peter@192.168.10.62:5060";
     
-    ParseURI((char *)URIString, &u);
+    ParseUri((char *)URIString, &u);
     RequestLineSetUri(r, u);
 
     u = RequestLineGetUri(r);
@@ -125,7 +125,7 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     RequestLineSetSipVersion(r, (char *)"SIP/2.0");
 
     char URIString[] = "sips:192.168.10.62:5060";    
-    ParseURI((char *)URIString, &u);
+    ParseUri((char *)URIString, &u);
     RequestLineSetUri(r, u);
     STRCMP_EQUAL("", UriGetUser(u));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(u));
@@ -144,7 +144,7 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
     struct URI *u = CreateEmptyUri();
     struct RequestLine *r = NULL;
 
-    ParseURI((char *)URIString, &u);
+    ParseUri((char *)URIString, &u);
     r = CreateRequestLine(m, u); 
     STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(r));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));

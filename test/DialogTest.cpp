@@ -21,6 +21,8 @@ TEST_GROUP(DialogTestGroup)
 {
     struct UserAgent *ua;
     struct Dialog *dialog;
+    struct Message *invite;
+    struct Message *ok;
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
@@ -28,13 +30,16 @@ TEST_GROUP(DialogTestGroup)
 
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
-
+        invite = BuildInviteMessage(dialog);
+        ok = Build200OKMessage(invite);
+        
     }
 
     void teardown()
     {
         EmptyTransactionManager();
         DestoryUserAgent(&ua);
+        DestoryMessage(&ok);
         mock().checkExpectations();
         mock().clear();
     }
@@ -63,7 +68,6 @@ static struct MessageTransporter MockTransporterForAck = {
 TEST(DialogTestGroup, AckRequestAfterInviteSuccessedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *invite = BuildInviteMessage(dialog);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
@@ -79,7 +83,6 @@ TEST(DialogTestGroup, AddTransactionTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
-    struct Message *invite = BuildInviteMessage(dialog);
     struct Transaction *transaction = DialogAddClientNonInviteTransaction(dialog, invite);
 
     POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
@@ -88,14 +91,13 @@ TEST(DialogTestGroup, AddTransactionTest)
 TEST(DialogTestGroup, UACDialogIdTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *invite = BuildInviteMessage(dialog);
-    struct Message *ok = CreateMessage();
+    char okString[MAX_MESSAGE_LENGTH] = {0};
     struct Message *originInvite = BuildInviteMessage(dialog);
-    
-    ParseMessage((char *)INVITE_200OK_MESSAGE, ok);
 
+    Message2String(okString, ok);
+    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
    
     DialogAddClientInviteTransaction(dialog, invite);
@@ -106,14 +108,10 @@ TEST(DialogTestGroup, UACDialogIdTest)
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 
     DestoryMessage(&originInvite);
-    DestoryMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogIdTest)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
-    struct Message *ok = Build200OKMessage(invite);
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     DialogAddServerTransaction(dialog, invite);
@@ -122,14 +120,10 @@ TEST(DialogTestGroup, UASDialogIdTest)
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
     STRCMP_EQUAL(MessageGetFromTag(invite), DialogIdGetRemoteTag(DialogGetId(dialog)));
     STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
-
-    DestoryMessage(&ok);
 }
 
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     DialogAddClientInviteTransaction(dialog, invite);
 
@@ -139,7 +133,6 @@ TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *invite = BuildInviteMessage(dialog);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
@@ -154,7 +147,6 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 TEST(DialogTestGroup, UACDialogConfirmedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *invite = BuildInviteMessage(dialog);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
@@ -169,9 +161,6 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 
 TEST(DialogTestGroup, UASDialogConfirmedTest)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
-    struct Message *ok = Build200OKMessage(invite);
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     DialogAddServerTransaction(dialog, invite);
@@ -183,9 +172,6 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
 
 TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
-    struct Message *ok = Build200OKMessage(invite);
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     DialogAddServerTransaction(dialog, invite);
@@ -197,9 +183,6 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 
 TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
-    struct Message *ok = Build200OKMessage(invite);
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
 
     DialogAddServerTransaction(dialog, invite);
@@ -207,4 +190,17 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
     DestoryMessage(&ok);
+}
+
+IGNORE_TEST(DialogTestGroup, UASDialogTerminateTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    DialogTerminate(dialog);
+
+    DestoryMessage(&ok);    
 }

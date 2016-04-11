@@ -20,7 +20,7 @@ static struct HeaderPattern ContactNamePattern[] = {
 static struct HeaderPattern DisplayNamePattern[] = {
     {"*",COLON, LEFT_ANGLE, 0,OFFSETOF(struct ContactHeader, displayName),ParseString, NULL, String2String }};
 static struct HeaderPattern UriPattern[] = {
-    {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseURI, NULL, Uri2String }};
+    {"*",LEFT_ANGLE, RIGHT_ANGLE, 0, OFFSETOF(struct ContactHeader, uri), ParseUri, NULL, Uri2String }};
 static struct HeaderPattern ParameterPattern[] = {
     {"*",SEMICOLON, EMPTY, 0, OFFSETOF(struct ContactHeader, parameters),ParseParameters, NULL, Parameters2String }};
 static struct HeaderPattern PlaceholderUriParameter[] = {
@@ -155,11 +155,15 @@ void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri)
 
 char *ContactHeaderGetParameter(struct ContactHeader *toHeader, char *name)
 {
+    assert(toHeader != NULL);
+    assert(name != NULL);
+
     return GetParameter(toHeader->parameters, name);
 }
 
 struct Parameters *ContactHeaderGetParameters(struct ContactHeader *header)
 {
+    assert(header != NULL);
     return header->parameters;
 }
 

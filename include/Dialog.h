@@ -11,6 +11,8 @@ enum DIALOG_STATE {
     DIALOG_STATE_CONFIRMED,
 };
 
+extern struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog);
+
 struct DialogId *DialogGetId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
@@ -26,6 +28,8 @@ void DialogSetToUser(struct Dialog *dialog, char *to);
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestoryDialog(struct Dialog **dialog);
+void DialogTerminate(struct Dialog *dialog);
+
 
 struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message);
