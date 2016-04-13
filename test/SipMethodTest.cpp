@@ -39,3 +39,4 @@ TEST(SipMethodGroup, StringMap2MethodNumber)
     CHECK_EQUAL(SIP_METHOD_NONE, StringMap2MethodNumber(methodString));
 
 }
+

@@ -44,7 +44,7 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 {
     char message[32] = "Sending test string";
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "");
     SendOutMessage(message);
     mock().checkExpectations();
 }

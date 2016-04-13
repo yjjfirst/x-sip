@@ -48,7 +48,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
 
-        ExpectedNewClientTransaction();
+        ExpectedNewClientTransaction(SIP_METHOD_INVITE);
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
@@ -64,11 +64,11 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         EmptyTransactionManager();
     }
     
-    void ExpectedNewClientTransaction()
+    void ExpectedNewClientTransaction(SIP_METHOD method)
     {
         mock().expectOneCall("AddTimer").withParameter("ms", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
         mock().expectOneCall("AddTimer").withParameter("ms", TRANSACTION_TIMEOUT_INTERVAL);
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(method));
     }
 
     void PrepareProceedingState()
@@ -102,7 +102,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
 
-    ExpectedNewClientTransaction();
+    ExpectedNewClientTransaction(SIP_METHOD_ACK);
     ReceiveInMessage(stringReceived);    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 }
@@ -134,7 +134,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateTimerATest)
         if (expected > MAXIMUM_RETRANSMIT_INTERVAL) expected = MAXIMUM_RETRANSMIT_INTERVAL;
 
         mock().expectOneCall("AddTimer").withIntParameter("ms", expected);
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
         TimerACallbackFunc(t);
         CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
         mock().checkExpectations();
@@ -195,7 +195,8 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
     int i = 0;
 
     for (;i < 20; i++) {
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+            withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
         Receive3xxResponse(t);
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     }

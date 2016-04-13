@@ -9,6 +9,7 @@ struct Dialog;
 enum DIALOG_STATE {
     DIALOG_STATE_EARLY,
     DIALOG_STATE_CONFIRMED,
+    DIALOG_STATE_TERMINATED,
 };
 
 extern struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog);

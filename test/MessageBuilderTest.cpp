@@ -417,3 +417,8 @@ TEST(MessageBuilderTestGroup, ByeMessageTest)
     DestoryUri(remoteUri);
     DestoryMessage(&bye);
 }
+
+TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionTest)
+{
+    //    FAIL("");
+}

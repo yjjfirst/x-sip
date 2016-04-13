@@ -119,7 +119,6 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
     void teardown() {
         EmptyTransactionManager();
-
         mock().checkExpectations();
         mock().clear();
     }
@@ -146,7 +145,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         struct TransactionUserNotifiers *user = &MockUser;
         struct Message *request = CreateMessage();
 
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
         ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
         struct Transaction *t = AddServerTransaction(request, user);
 
@@ -199,7 +198,9 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
     struct TransactionUserNotifiers *user = &MockUser;
     struct Message *request = CreateMessage();
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+        .withIntParameter("StatusCode", 100)
+        .andReturnValue(-1);
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
     AddServerTransaction(request, user);
 
@@ -216,13 +217,13 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateReceiveInviteTest)
 
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     ReceiveInMessage(stringReceived); 
     CheckOnlyOneTransactionMatched();
     
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     ReceiveInMessage(stringReceived); 
     CheckOnlyOneTransactionMatched();
 }
@@ -290,7 +291,9 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
 
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
     mock().expectOneCall("AddTimerMock").withIntParameter("interval", TRANSACTION_TIMEOUT_INTERVAL);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(0);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+        .withIntParameter("StatusCode", 301)
+        .andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);
 
     ResponseWith301(t);

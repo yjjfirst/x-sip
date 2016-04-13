@@ -7,6 +7,8 @@ extern "C" {
 #include <string.h>
 #include "MessageTransport.h"
 #include "Messages.h"
+#include "RequestLine.h"
+#include "StatusLine.h"
 }
 
 int ReceiveInMessageMock(char *message)
@@ -17,7 +19,26 @@ int ReceiveInMessageMock(char *message)
 
 int SendOutMessageMock(char *message)
 {
-    return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();
+    struct Message *m = CreateMessage();
+    ParseMessage(message, m);
+    SIP_METHOD method;
+    int statusCode;
+    enum MESSAGE_TYPE type;
+
+    type = MessageGetType(m);
+    if (type == MESSAGE_TYPE_REQUEST) {
+        method = RequestLineGetMethod(MessageGetRequestLine(m));
+        DestoryMessage(&m);
+        return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
+            withStringParameter("Method", MethodMap2String(method)).
+            returnIntValue();
+    } else { 
+        statusCode = StatusLineGetStatusCode(MessageGetStatusLine(m));
+        DestoryMessage(&m);
+        return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
+            withIntParameter("StatusCode", statusCode).
+            returnIntValue();
+    }
 }
 
 struct MessageTransporter MockTransporter = {

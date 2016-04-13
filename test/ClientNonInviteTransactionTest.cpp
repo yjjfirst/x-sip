@@ -51,7 +51,9 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
             mock().expectOneCall("AddTimer").withIntParameter("ms", TRANSACTION_TIMEOUT_INTERVAL);
         }
 
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(sendExpected);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+            .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
+            .andReturnValue(sendExpected);
     
         t = AddClientNonInviteTransaction(m, NULL);
         if ( t != NULL)
@@ -133,7 +135,8 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateTimeETest)
         if (expected > MAXIMUM_RETRANSMIT_INTERVAL) expected = MAXIMUM_RETRANSMIT_INTERVAL;
 
         mock().expectOneCall("AddTimer").withIntParameter("ms", expected);
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+            .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         TimerECallbackFunc(t);
         CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
         mock().checkExpectations();
@@ -157,7 +160,9 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
 {
     PrepareTryingState(0);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+        .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
+        .andReturnValue(-1);
     TimerECallbackFunc(t);
 
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
@@ -188,7 +193,8 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeETest)
 
     for (; i < 20; i++) {
         mock().expectOneCall("AddTimer").withIntParameter("ms",MAXIMUM_RETRANSMIT_INTERVAL);
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+            withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         TimerECallbackFunc(t);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
         mock().checkExpectations();
@@ -208,7 +214,9 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
     PrepareTryingState(0);
     PrepareProceedingState();
     
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
+        .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
+        .andReturnValue(-1);
     TimerECallbackFunc(t);
 
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));

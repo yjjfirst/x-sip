@@ -51,6 +51,7 @@ void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
     dialog->requestMethod = method;
 }
 
+
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
 {
     assert(dialog != NULL);
@@ -169,7 +170,8 @@ void DialogSend200OKResponse(struct Dialog *dialog)
 void DialogTerminate(struct Dialog *dialog)
 {
     struct Message *bye = BuildByeMessage(dialog);
-    (void)bye;
+    DialogAddClientNonInviteTransaction(dialog, bye);
+    dialog->state = DIALOG_STATE_TERMINATED;
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

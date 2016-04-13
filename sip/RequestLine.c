@@ -16,15 +16,6 @@ struct RequestLine {
     char sipVersion[SIP_VERSION_LENGTH];
 };
 
-BOOL RequestLineMethodLegal(char *method)
-{
-    if (strcmp(method, SIP_METHOD_NAME_REGISTER) == 0 
-        || strcmp(method, SIP_METHOD_NAME_INVITE) == 0
-        || strcmp(method, SIP_METHOD_NAME_ACK) == 0)
-        return TRUE;
-    return FALSE;
-}
-
 BOOL RequestLineSipVersionLegal(char *version)
 {
     if (strcmp (version, SIP_VERSION) == 0)
@@ -33,7 +24,7 @@ BOOL RequestLineSipVersionLegal(char *version)
 }
 
 struct HeaderPattern RequestLinePattern[] = {
-    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseString, RequestLineMethodLegal, String2String},
+    {"*", EMPTY, SPACE, 0, OFFSETOF(struct RequestLine, method), ParseString, SipMethodLegal, String2String},
     {"*", SPACE, SPACE, 0, OFFSETOF(struct RequestLine, requestUri), ParseUri, NULL, Uri2String},
     {"*", SPACE, EMPTY, 0, OFFSETOF(struct RequestLine, sipVersion), ParseString, NULL,String2String},
     {NULL, 0, 0, 0, 0, 0}
@@ -128,7 +119,7 @@ struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
     assert (u != NULL);
 
     struct RequestLine *r = CreateEmptyRequestLine();
-    RequestLineSetMethod(r, MethodMap2String(m));
+    RequestLineSetMethod(r, MethodMap2String(m));    
     RequestLineSetUri(r, u);
     RequestLineSetSipVersion(r, SIP_VERSION);
 

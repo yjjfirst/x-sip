@@ -26,7 +26,8 @@ TEST_GROUP(TransactionManager)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(Transporter, &MockTransporter);
 
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+            withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         ua = CreateUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildBindingMessage(dialog);
@@ -47,12 +48,14 @@ TEST(TransactionManager, NewTransaction)
     transaction = AddClientNonInviteTransaction(message, NULL);
     CHECK_EQUAL(1, CountTransaction());
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildBindingMessage(dialog);
     transaction = AddClientNonInviteTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildBindingMessage(dialog);
     transaction = AddClientNonInviteTransaction(message, NULL);
 

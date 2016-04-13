@@ -65,11 +65,11 @@ static struct MessageTransporter MockTransporterForAck = {
     ReceiveInMessageMock,
 };
 
-TEST(DialogTestGroup, AckRequestAfterInviteSuccessedTest)
+TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
    
@@ -81,8 +81,7 @@ TEST(DialogTestGroup, AckRequestAfterInviteSuccessedTest)
 
 TEST(DialogTestGroup, AddTransactionTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     struct Transaction *transaction = DialogAddClientNonInviteTransaction(dialog, invite);
 
     POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
@@ -96,9 +95,10 @@ TEST(DialogTestGroup, UACDialogIdTest)
 
     Message2String(okString, ok);
     
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
+
    
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
@@ -112,7 +112,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
 
 TEST(DialogTestGroup, UASDialogIdTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
 
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
@@ -124,7 +124,7 @@ TEST(DialogTestGroup, UASDialogIdTest)
 
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     DialogAddClientInviteTransaction(dialog, invite);
 
     CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetLocalSeqNumber(dialog));
@@ -134,9 +134,9 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
@@ -148,9 +148,9 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
@@ -161,8 +161,7 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 
 TEST(DialogTestGroup, UASDialogConfirmedTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -172,8 +171,7 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
 
 TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -183,8 +181,7 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 
 TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -192,15 +189,22 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DestoryMessage(&ok);
 }
 
-IGNORE_TEST(DialogTestGroup, UASDialogTerminateTest)
+TEST(DialogTestGroup, UACDialogTerminateTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_BYE));
 
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
-
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     DialogTerminate(dialog);
 
+    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
+
     DestoryMessage(&ok);    
+}
+
+TEST(DialogTestGroup, UASDialogTerminateTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    DialogAddServerTransaction(dialog, invite);
 }

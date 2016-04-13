@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "SipMethod.h"
 #define SIP_METHOD_MAX_LENGTH 32
 
@@ -41,4 +42,17 @@ SIP_METHOD StringMap2MethodNumber(char *methodString)
     }
 
     return SIP_METHOD_NONE;;
+}
+
+BOOL SipMethodLegal(char *method)
+{
+    struct MethodStringMap *maps = MethodStringMaps;
+
+    for ( ;maps->method != SIP_METHOD_NONE; maps++){
+        if (strcmp(maps->stringName, method) == 0)
+            return TRUE;
+        
+    }
+
+    return FALSE;
 }
