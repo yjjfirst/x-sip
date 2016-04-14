@@ -239,3 +239,10 @@ struct Message *Build301Message(struct Message *invite)
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_MOVED_PERMANENTLY, REASON_PHRASE_MOVED_PERMANENTLY);
     return BuildResponseMessage(invite, status);
 }
+
+struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
+{
+    struct Message *ack = CreateMessage();
+    AddResponseHeaders(ack, invite);
+    return ack;
+}

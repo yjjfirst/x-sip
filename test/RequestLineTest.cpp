@@ -210,3 +210,12 @@ TEST(RequestLineTestGroup, RequestLineVersionUnmatchedTest)
     
     DestoryRequestLine(rl);
 }
+
+TEST(RequestLineTestGroup, RequestLineDupTest)
+{
+    struct RequestLine *rl = RequestLineDup(RegisterRequestLine);
+
+    CHECK_TRUE(RequestLineMatched(RegisterRequestLine, rl));
+    DestoryRequestLine(rl);
+    
+}

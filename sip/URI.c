@@ -300,9 +300,11 @@ struct URI *UriDup(struct URI *src)
 
 void DestoryUri(struct URI *uri)
 {
-    DestoryParameters(uri->parameters);
-    DestoryParameters(uri->headers);
-    free (uri);
+    if (uri != NULL) {
+        DestoryParameters(uri->parameters);
+        DestoryParameters(uri->headers);
+        free (uri);
+    }
 }
 
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p)

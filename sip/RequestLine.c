@@ -126,6 +126,14 @@ struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
     return r;
 }
 
+struct RequestLine *RequestLineDup(struct RequestLine *origin)
+{
+    struct RequestLine *dest = CreateEmptyRequestLine();
+    RequestLineSetMethod(dest, RequestLineGetMethodName(origin));
+    RequestLineSetUri(dest, UriDup(RequestLineGetUri(origin)));
+    RequestLineSetSipVersion(dest, SIP_VERSION);
+    return dest;
+}
 struct RequestLine *CreateEmptyRequestLine()
 {
     struct RequestLine *requestLine = calloc (1, sizeof(struct RequestLine));

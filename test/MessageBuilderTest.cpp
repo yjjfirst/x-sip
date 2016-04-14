@@ -420,5 +420,12 @@ TEST(MessageBuilderTestGroup, ByeMessageTest)
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionTest)
 {
-    //    FAIL("");
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);
+    
+    STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ack));    
+
+    //struct RequestLine *rl = MessageGetRequestLine(ack);
+    //STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
+
+    DestoryMessage(&ack);
 }
