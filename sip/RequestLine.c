@@ -134,6 +134,7 @@ struct RequestLine *RequestLineDup(struct RequestLine *origin)
     RequestLineSetSipVersion(dest, SIP_VERSION);
     return dest;
 }
+
 struct RequestLine *CreateEmptyRequestLine()
 {
     struct RequestLine *requestLine = calloc (1, sizeof(struct RequestLine));

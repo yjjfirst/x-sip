@@ -243,6 +243,14 @@ struct Message *Build301Message(struct Message *invite)
 struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
 {
     struct Message *ack = CreateMessage();
+    struct RequestLine *rl = RequestLineDup(MessageGetRequestLine(invite));
+    
+    MessageSetType(ack, MESSAGE_TYPE_REQUEST);
+
+    RequestLineSetMethod(rl, SIP_METHOD_NAME_ACK);
+    MessageSetRequestLine(ack, rl);
+
     AddResponseHeaders(ack, invite);
+
     return ack;
 }
