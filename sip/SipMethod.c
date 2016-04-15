@@ -46,13 +46,7 @@ SIP_METHOD StringMap2MethodNumber(char *methodString)
 
 BOOL SipMethodLegal(char *method)
 {
-    struct MethodStringMap *maps = MethodStringMaps;
-
-    for ( ;maps->method != SIP_METHOD_NONE; maps++){
-        if (strcmp(maps->stringName, method) == 0)
-            return TRUE;
-        
-    }
-
+    if (StringMap2MethodNumber(method) != SIP_METHOD_NONE)
+        return TRUE;
     return FALSE;
 }

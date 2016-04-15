@@ -40,7 +40,10 @@ TEST(SipMethodGroup, StringMap2MethodNumber)
 
 }
 
-IGNORE_TEST(SipMethodGroup, MethodLegalTest)
+TEST(SipMethodGroup, MethodLegalTest)
 {
-    FAIL("");
+    CHECK_TRUE(SipMethodLegal((char *)SIP_METHOD_NAME_REGISTER));
+    CHECK_TRUE(SipMethodLegal((char *)SIP_METHOD_NAME_ACK));
+    CHECK_TRUE(SipMethodLegal((char *)SIP_METHOD_NAME_MESSAGE));
+    CHECK_TRUE(SipMethodLegal((char *)SIP_METHOD_NAME_PUBLISH));
 }
