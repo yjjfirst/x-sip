@@ -426,6 +426,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionTest)
 
     struct RequestLine *rl = MessageGetRequestLine(ack);
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
+    CHECK_TRUE(UriMatched(RequestLineGetUri(MessageGetRequestLine(inviteMessage)), RequestLineGetUri(rl)));
 
     DestoryMessage(&ack);
 }

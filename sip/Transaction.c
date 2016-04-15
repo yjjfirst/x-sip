@@ -277,7 +277,10 @@ void ResponseWith180Ringing(struct Transaction *t)
 
 int SendAckRequest(struct Transaction *t)
 {
-    if (SendOutMessage((char *)"Ack Message") < 0) {
+    struct Message *ack=BuildAckMessageWithinClientTransaction(t->request);
+
+    TransactionAddResponse(t, ack);
+    if (TransactionSendMessage(ack) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }

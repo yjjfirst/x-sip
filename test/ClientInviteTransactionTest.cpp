@@ -206,7 +206,7 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateTransportErrorTest)
 {
     PrepareCompletedState();
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK).andReturnValue(-1);
     Receive3xxResponse(t);
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
 }

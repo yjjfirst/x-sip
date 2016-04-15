@@ -40,3 +40,7 @@ TEST(SipMethodGroup, StringMap2MethodNumber)
 
 }
 
+IGNORE_TEST(SipMethodGroup, MethodLegalTest)
+{
+    FAIL("");
+}
