@@ -1,5 +1,7 @@
 #include "Bool.h"
 
+#define MAX_TAG_LENGTH 64
+
 struct ContactHeader;
 struct Parameters;
 
@@ -23,3 +25,5 @@ void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters 
 BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2);
 void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *value);
 char *ContactHeader2String(char *result, struct Header *contact);
+
+extern void (*GenerateTag)(char *tag);

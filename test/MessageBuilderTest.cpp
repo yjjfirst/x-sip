@@ -369,15 +369,15 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ringing = Build200OKMessage(invite);
+    struct Message *ok = Build200OKMessage(invite);
     
-    struct StatusLine *sl = MessageGetStatusLine(ringing);
+    struct StatusLine *sl = MessageGetStatusLine(ok);
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
 
     DestoryMessage(&invite);
-    DestoryMessage(&ringing);
+    DestoryMessage(&ok);
 }
 
 TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
@@ -418,15 +418,32 @@ TEST(MessageBuilderTestGroup, ByeMessageTest)
     DestoryMessage(&bye);
 }
 
-TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionTest)
+TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
 {
     struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ack));    
 
+    DestoryMessage(&ack);
+}
+
+TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionRequestUriTest)
+{
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
     struct RequestLine *rl = MessageGetRequestLine(ack);
+
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
     CHECK_TRUE(UriMatched(RequestLineGetUri(MessageGetRequestLine(inviteMessage)), RequestLineGetUri(rl)));
+
+    DestoryMessage(&ack);
+}
+
+TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTest)
+{
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+
+    CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
+                                    (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,ack)));
 
     DestoryMessage(&ack);
 }

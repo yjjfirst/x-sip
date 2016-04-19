@@ -175,10 +175,14 @@ void AddResponseFromHeader(struct Message *response, struct Message *invite)
 
 void AddResponseToHeader(struct Message *response, struct Message *invite)
 {
+    char tag[MAX_TAG_LENGTH] = {0};
+
     struct ContactHeader *to =
         ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
+
+    GenerateTag(tag);
     if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
-        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, "1234567890");
+        ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
     }
     MessageAddHeader(response, (struct Header *)to);
 }

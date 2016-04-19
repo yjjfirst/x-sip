@@ -2,6 +2,7 @@
 
 extern "C" {
 #include <stdio.h>
+#include <string.h>
 
 #include "URI.h"
 #include "ContactHeader.h"
@@ -231,4 +232,19 @@ TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
 
     DestoryContactHeader((struct Header *)headerDup);
     DestoryContactHeader((struct Header *)header);
+}
+
+void GenerateTagMock(char *tag)
+{
+    strcpy(tag, "abcdefghijk");
+}
+
+TEST(ContactHeaderTestGroup, GenerateTagTest)
+{
+    char tag[MAX_TAG_LENGTH] = {0};
+
+    UT_PTR_SET(GenerateTag, GenerateTagMock);
+    GenerateTag(tag);
+    
+    STRCMP_EQUAL("abcdefghijk", tag);
 }

@@ -192,6 +192,12 @@ BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *h
     return strcmp(header1->displayName, header2->displayName) == 0;
 }
 
+void GenerateTagImpl(char *tag)
+{
+    strncpy(tag, "1234567890", MAX_TAG_LENGTH-1);
+}
+void (*GenerateTag)(char *tag) = GenerateTagImpl;
+
 struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
 {
     struct ContactHeader *dest = CreateContactHeader();

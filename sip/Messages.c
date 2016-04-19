@@ -312,6 +312,7 @@ void MessageDump(struct Message *message)
 {
     char messageString[MAX_MESSAGE_LENGTH] = {0};
 
+    printf("\n");
     Message2String(messageString, message);
     printf("%s\n",messageString);
 }
