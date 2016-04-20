@@ -179,6 +179,11 @@ void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters 
     header->parameters = parameters;
 }
 
+void ContactHeaderRemoveParameters(struct ContactHeader *header)
+{
+    ClearParameters(header->parameters);
+}
+
 BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2)
 {
     assert(header1 != NULL);

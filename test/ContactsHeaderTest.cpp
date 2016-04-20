@@ -234,6 +234,17 @@ TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
     DestoryContactHeader((struct Header *)header);
 }
 
+IGNORE_TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
+{
+    struct ContactHeader *header = CreateContactHeader();
+    char toString[] = "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
+    Parse(toString, header, GetContactHeaderPattern(toString));
+
+    ContactHeaderRemoveParameters(header);
+
+    CHECK_TRUE(ContactHeaderGetParameters(header) == NULL);
+}
+
 void GenerateTagMock(char *tag)
 {
     strcpy(tag, "abcdefghijk");

@@ -22,3 +22,5 @@ int AddParameter(struct Parameters *ps, char *name, char *value);
 BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2);
 char *Parameters2String(char *pos, void *ps, struct HeaderPattern *pattern);
 char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern);
+void ClearParameters(struct Parameters *ps);
+int ParametersLength(struct Parameters *ps);

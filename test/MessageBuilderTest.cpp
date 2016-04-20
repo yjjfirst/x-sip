@@ -447,3 +447,27 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTe
 
     DestoryMessage(&ack);
 }
+
+TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
+{
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    struct ContactHeader *toHeaderOfAck = 
+        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, ack));
+
+    ContactHeaderRemoveParameters(toHeaderOfAck);
+    CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO,inviteMessage), 
+                                    toHeaderOfAck));
+
+    DestoryMessage(&ack);
+    DestoryContactHeader((struct Header *)toHeaderOfAck);
+}
+
+IGNORE_TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
+{
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+
+    MessageDump(inviteMessage);
+    MessageDump(ack);
+
+    DestoryMessage(&ack);
+}

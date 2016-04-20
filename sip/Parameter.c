@@ -42,6 +42,11 @@ BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2)
 
 DEFINE_STRING_MEMBER_READER(struct Parameter, GetParameterName, name);
 DEFINE_STRING_MEMBER_READER(struct Parameter, GetParameterValue, value);
+
+int ParametersLength(struct Parameters *ps)
+{
+    return get_list_len(ps->parameters);
+}
 /*
  * Only call this function when parse parameters stand alone.
  */
@@ -83,7 +88,7 @@ int AddParameter(struct Parameters *ps, char *name, char *value)
 {
     struct Parameter *p = NULL;
     int i = 0;
-    int length = get_list_len(ps->parameters);
+    int length = ParametersLength(ps);
 
     for ( ; i < length; i ++) {
         if (strcmp (((struct Parameter *) get_data_at(ps->parameters, i))->name, name) == 0)
@@ -108,9 +113,9 @@ BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2)
     assert(ps1 != NULL);
     assert(ps2 != NULL);
 
-    int length = get_list_len(ps1->parameters);    
+    int length = ParametersLength(ps1);    
     
-    if (length != get_list_len(ps2->parameters)) {
+    if (length != ParametersLength(ps2)) {
         return FALSE;
     }
 
@@ -129,7 +134,7 @@ BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2)
 char *GetParameter(struct Parameters *ps, char *name)
 {
     int i = 0;
-    int length = get_list_len(ps->parameters);
+    int length = ParametersLength(ps);
 
     for ( ; i < length; i ++) {
         struct Parameter *p = get_data_at(ps->parameters, i);
@@ -151,7 +156,7 @@ char *Parameters2StringExt(char *pos, void *ps, struct HeaderPattern *pattern)
 {
     int i = 0;
     struct Parameters *params = (struct Parameters *)ps;
-    int length = get_list_len(params->parameters);
+    int length = ParametersLength(ps);
 
     for (; i < length; i ++) {
         struct Parameter *p = get_data_at(params->parameters, i);
@@ -193,6 +198,18 @@ void DestoryParameter(struct Parameter *p)
         free(p);
 }
 
+void ClearParameters(struct Parameters *ps)
+{
+    int i = 0;
+    int length = ParametersLength(ps);
+
+    for (; i < length; i++) {
+        struct Parameter *p = get_data_at(ps->parameters, 0);
+        free(p);
+        del_node_at(&ps->parameters, 0);
+    }
+}
+
 struct Parameters *CreateParameters()
 {
     return calloc(1, sizeof(struct Parameters));
@@ -201,7 +218,7 @@ struct Parameters *CreateParameters()
 struct Parameters *ParametersDup(struct Parameters *src)
 {
     struct Parameters *dest = CreateParameters();
-    int length = get_list_len(src->parameters);
+    int length = ParametersLength(src);
     int i = 0;
     
     for (; i < length; i++) {
@@ -215,7 +232,7 @@ void DestoryParameters(struct Parameters *ps)
 {
     if (ps == NULL) return;
 
-    int length = get_list_len(ps->parameters);
+    int length = ParametersLength(ps);
     int i = 0;
     for ( ; i < length; i ++) {
         struct Parameter *p = get_data_at(ps->parameters, i);

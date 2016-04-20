@@ -224,3 +224,24 @@ TEST(ParameterTestGroup, TenElementParametersDupTest)
     DestoryParameters(dest);
     DestoryParameters(ps);
 }
+
+TEST(ParameterTestGroup, ClearParametersTest)
+{
+    struct Parameters *ps = CreateParameters();
+
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+    AddParameter(ps, (char *)"test4", (char *)"value4");
+    AddParameter(ps, (char *)"test5", (char *)"value6");
+    AddParameter(ps, (char *)"test6", (char *)"value7");
+    AddParameter(ps, (char *)"test7", (char *)"value8");
+    AddParameter(ps, (char *)"test8", (char *)"value9");
+    AddParameter(ps, (char *)"test9", (char *)"value10");
+    AddParameter(ps, (char *)"test10", (char *)"value5");
+
+    ClearParameters(ps);
+    CHECK_EQUAL(0, ParametersLength(ps));
+    
+    DestoryParameters(ps);
+}
