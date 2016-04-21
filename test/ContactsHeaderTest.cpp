@@ -8,6 +8,7 @@ extern "C" {
 #include "ContactHeader.h"
 #include "Parser.h"
 #include "Header.h"
+#include "Parameter.h"
 }
 
 TEST_GROUP(ContactHeaderTestGroup)
@@ -234,15 +235,18 @@ TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
     DestoryContactHeader((struct Header *)header);
 }
 
-IGNORE_TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
+TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
 {
     struct ContactHeader *header = CreateContactHeader();
     char toString[] = "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     Parse(toString, header, GetContactHeaderPattern(toString));
 
     ContactHeaderRemoveParameters(header);
+    struct Parameters *ps = ContactHeaderGetParameters(header);
 
-    CHECK_TRUE(ContactHeaderGetParameters(header) == NULL);
+    CHECK_EQUAL(0, ParametersLength(ps));
+    
+    DestoryContactHeader((struct Header *)header);
 }
 
 void GenerateTagMock(char *tag)
