@@ -118,7 +118,6 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
  
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
-
     MessageSetRequestLine(message, BuildRequestLine(dialog));
     MessageAddHeader(message, BuildRequestViaHeader(dialog));
     MessageAddHeader(message, BuildRequestFromHeader(dialog));

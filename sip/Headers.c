@@ -4,6 +4,7 @@
 
 #include "Parser.h"
 #include "Header.h"
+#include "Headers.h"
 #include "Messages.h"
 #include "ViaHeader.h"
 #include "MaxForwardsHeader.h"
@@ -40,10 +41,9 @@ struct HeaderOp HeaderOps[] = {
     {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},
 };
 
-
 struct Headers *CreateHeaders()
 {
-    return calloc(sizeof(struct Headers), 1);
+    return calloc(1, sizeof(struct Headers));
 }
 
 int CountHeaderOps()
@@ -64,34 +64,19 @@ static void DestoryOneHeader(struct Header *header)
     }
 }
 
-void RawDestoryHeaders(t_list *headers)
+void RawDestoryHeaders(struct Headers *headers)
 {
-    int length = get_list_len(headers);
+    int length = get_list_len(headers->headerList);
     int i ;
     struct Header *header = NULL;
 
     assert(headers != NULL);
     for (i = 0 ; i < length; i++) {        
-        header = (struct Header *) get_data_at(headers, i);
+        header = (struct Header *) get_data_at(headers->headerList, i);
         DestoryOneHeader(header);
     }
-}
 
-void DestoryHeaders(struct Headers **headers)
-{
-    int len = 0;
-    int i = 0;
-    struct Header *header = NULL;
-
-    if (*headers == NULL) return; 
-        
-    len = get_list_len((*headers)->headerList);
-    for (; i < len; i++) {
-        header = (struct Header *) get_data_at((*headers)->headerList, i);
-        DestoryOneHeader(header);
-    }
-    free(*headers);
-    *headers = NULL;
+    free(headers);    
 }
 
 void HeadersAddHeader(struct Headers *headers, struct Header *header)
@@ -99,9 +84,9 @@ void HeadersAddHeader(struct Headers *headers, struct Header *header)
     put_in_list(&headers->headerList, header);
 }
 
-void RawHeadersAddHeader(t_list *headers, struct Header *header)
+void RawHeadersAddHeader(struct Headers *headers, struct Header *header)
 {
-    put_in_list(&headers, header);
+    put_in_list(&headers->headerList, header);
 }
 
 int HeadersLength(struct Headers *headers)
@@ -109,15 +94,15 @@ int HeadersLength(struct Headers *headers)
     return get_list_len(headers->headerList);
 }
 
-struct Header *RawHeadersGetHeader(const char *name, t_list *headers)
+struct Header *RawHeadersGetHeader(const char *name, struct Headers *headers)
 {
     int length = 0; 
     int i = 0;
     struct Header *header = NULL;
 
-    length = get_list_len(headers);
+    length = get_list_len(headers->headerList);
     for (i = 0 ; i < length; i++) {
-        struct Header *h = (struct Header *) get_data_at(headers, i);
+        struct Header *h = (struct Header *) get_data_at(headers->headerList, i);
         if (strcmp (name, HeaderGetName(h)) == 0) {
             header = h;
             break;
@@ -139,7 +124,7 @@ void ExtractHeaderName(char *header, char *name)
     strncpy(name, header, end - header + 1);
 }
 
-void RawParseHeader(char *string, t_list *headers)
+void RawParseHeader(char *string, struct Headers *headers)
 {
     char name[32] = {0};
     int i = 0;
@@ -148,7 +133,7 @@ void RawParseHeader(char *string, t_list *headers)
 
     for ( ; i < CountHeaderOps(); i++) {
         if (strcmp (HeaderOps[i].name , name) == 0)
-            put_in_list(&headers, (void*) HeaderOps[i].headerParser(string));
+            put_in_list(&headers->headerList, (void*) HeaderOps[i].headerParser(string));
     }
 
 }
@@ -167,15 +152,18 @@ char *Header2String(char *result, struct Header *header)
     return result;
 }
 
-char *RawHeaders2String(char *result, t_list *headers)
+char *RawHeaders2String(char *result, struct Headers *headers)
 {
-    int length = get_list_len(headers);
+    int length = get_list_len(headers->headerList);
     int i = 0;
     struct Header *header = NULL;
     char *p = result;
 
+    *p++ = '\r';
+    *p++ = '\n';
+
     for (i = 0 ; i < length; i++) {        
-        header = (struct Header *) get_data_at(headers, i);
+        header = (struct Header *) get_data_at(headers->headerList, i);
         p = Header2String(p, header);
         *p ++ = '\r';
         *p ++ = '\n';

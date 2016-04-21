@@ -23,7 +23,7 @@ struct Message {
         struct StatusLine *status;
     } rr;
     enum MESSAGE_TYPE type;
-    t_list *headers;
+    struct Headers *headers;
 };
 
 void MessageSetType(struct Message *message, enum MESSAGE_TYPE type)
@@ -89,21 +89,20 @@ int ParseMessage(char *string, struct Message *message)
     }
 
     strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
-    char *line = strtok_r(localString, "\r\n", &save_ptr);
+    char *line = strtok_r(localString, CRLF, &save_ptr);
     
     if (ParseMessageType(line) == MESSAGE_TYPE_REQUEST) {
         message->type = MESSAGE_TYPE_REQUEST;
         MessageParseRequestLine(line, message);
-    }
-    else {
+    } else {
         message->type = MESSAGE_TYPE_RESPONSE;
         MessageParseStatusLine(line, message);
     }
     
-    line = strtok_r(NULL, "\r\n", &save_ptr);
+    line = strtok_r(NULL, CRLF, &save_ptr);
     while(line) {
         ParseHeader(line, message);
-        line = strtok_r(NULL, "\r\n", &save_ptr);
+        line = strtok_r(NULL, CRLF, &save_ptr);
     }
     
     return 0;
@@ -218,7 +217,7 @@ void Message2String(char *result, struct Message *message)
     } else {
         p = StatusLine2String(p, MessageGetStatusLine(message));
     }
-
+    
     RawHeaders2String(p, message->headers);
 
     return ;
@@ -248,7 +247,7 @@ struct Message *CreateMessage ()
 { 
     struct Message *message = calloc(1,sizeof (struct Message));
     message->type = MESSAGE_TYPE_NONE;
-    put_in_list (&message->headers, "");
+    message->headers = CreateHeaders();
     return message;
 }
 
