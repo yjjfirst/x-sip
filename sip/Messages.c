@@ -4,10 +4,10 @@
 #include <assert.h>
 
 #include "Header.h"
+#include "Headers.h"
 #include "Parser.h"
 #include "Messages.h"
 #include "ViaHeader.h"
-#include "MaxForwardsHeader.h"
 #include "ContactHeader.h"
 #include "CallIdHeader.h"
 #include "CSeqHeader.h"
@@ -16,7 +16,6 @@
 #include "ExpiresHeader.h"
 #include "Parameter.h"
 #include "RequestLine.h"
-#include "utils/list/include/list.h"
 
 struct Message {
     union {
@@ -26,41 +25,6 @@ struct Message {
     enum MESSAGE_TYPE type;
     t_list *headers;
 };
-
-struct HeaderOperation {
-    char name[HEADER_NAME_MAX_LENGTH];
-    struct Header * (*headerParser)(char *headerString);
-    void (*headerDestroyer)(struct Header *header);
-    char *(*toString)(char *result, struct Header *header);
-};
-
-struct HeaderOperation HeaderOperations[] = {
-    {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader, ViaHeader2String},
-    {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader,MaxForwards2String},
-    {HEADER_NAME_TO, ParseContactHeader, DestoryContactHeader,ContactHeader2String},
-    {HEADER_NAME_FROM, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
-    {HEADER_NAME_CONTACT, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
-    {HEADER_NAME_CALLID, ParseCallIdHeader, DestoryCallIdHeader, CallIdHeader2String},
-    {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
-    {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestoryContentLengthHeader, ContentLengthHeader2String},
-    {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},
-};
-
-int CountHeaderOperations()
-{
-    return sizeof(HeaderOperations)/sizeof(struct HeaderOperation);    
-}
-
-void ExtractHeaderName(char *header, char *name)
-{
-    char *end = strchr (header, COLON);
-
-    end --;
-    while (*end == SPACE) end --;
-    while (*header == SPACE) header ++;
-
-    strncpy(name, header, end - header + 1);
-}
 
 void MessageSetType(struct Message *message, enum MESSAGE_TYPE type)
 {
@@ -102,41 +66,17 @@ void MessageParseStatusLine(char *string, struct Message *message)
 
 void MessageAddHeader(struct Message *message, struct Header *header)
 {
-    put_in_list(&message->headers, header);
+    RawHeadersAddHeader(message->headers, header);
 }
 
 struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
-    int length = 0; 
-    int i = 0;
-    struct Header *header = NULL;
-
-    assert (name != NULL);
-    assert (message != NULL);
-
-    length = get_list_len(message->headers);
-    for (i = 0 ; i < length; i++) {
-        struct Header *h = (struct Header *) get_data_at(message->headers, i);
-        if (strcmp (name, HeaderGetName(h)) == 0) {
-            header = h;
-            break;
-        }
-    }
-    
-    return header;
+    return RawHeadersGetHeader(name, message->headers);
 }
 
 void ParseHeader(char *headerString, struct Message *message)
 {
-    char name[32] = {0};
-    int i = 0;
-    
-    ExtractHeaderName(headerString, name);
-
-    for ( ; i < CountHeaderOperations(); i++) {
-        if (strcmp (HeaderOperations[i].name , name) == 0)
-            put_in_list(&message->headers, (void*) HeaderOperations[i].headerParser(headerString));
-    }
+    RawParseHeader(headerString, message->headers);
 }
 
 int ParseMessage(char *string, struct Message *message)
@@ -266,26 +206,8 @@ void MessageSetContentLength(struct Message *message, int length)
     ContentLengthHeaderSetLength(c, length);
 }
 
-
-char *Header2String(char *result, struct Header *header)
-{
-    int i = 0;
-    
-    assert(result != NULL);
-    assert(header != NULL);
-    for ( ; i < CountHeaderOperations(); i++) {
-        if (strcmp (HeaderOperations[i].name , HeaderGetName(header)) == 0)
-            return HeaderOperations[i].toString(result, header);        
-    }
-
-    return result;
-}
-
 void Message2String(char *result, struct Message *message)
 {
-    int length = get_list_len(message->headers);
-    int i = 0;
-    struct Header *header = NULL;
     char *p = result;
 
     assert(message != NULL);
@@ -297,12 +219,7 @@ void Message2String(char *result, struct Message *message)
         p = StatusLine2String(p, MessageGetStatusLine(message));
     }
 
-    for (i = 0 ; i < length; i++) {        
-        header = (struct Header *) get_data_at(message->headers, i);
-        p = Header2String(p, header);
-        *p ++ = '\r';
-        *p ++ = '\n';
-    }
+    RawHeaders2String(p, message->headers);
 
     return ;
 }
@@ -335,46 +252,19 @@ struct Message *CreateMessage ()
     return message;
 }
 
-void DestoryOneHeader(struct Header *header)
-{
-    int i;
-
-    assert(header != NULL);
-    for (i = 0 ; i < CountHeaderOperations(); i++) {
-        if (strcmp (HeaderOperations[i].name, header->name) == 0) {
-            HeaderOperations[i].headerDestroyer(header);
-            return;
-        }
-    }
-}
-
-void MessageDestoryHeaders(struct Message *message)
-{
-    int length = get_list_len(message->headers);
-    int i ;
-    struct Header *header = NULL;
-
-    assert(message != NULL);
-    for (i = 0 ; i < length; i++) {        
-        header = (struct Header *) get_data_at(message->headers, i);
-        DestoryOneHeader(header);
-    }
-}
-
 void DestoryMessage (struct Message **message) 
 {  
     assert(message != NULL);
 
-    if ((*message) != ((void *)0)) {
-        if ((*message)->type == MESSAGE_TYPE_REQUEST) {
-            DestoryRequestLine((*message)->rr.request);
-        } else {
-            DestoryStatusLine((*message)->rr.status);
-        }
+    if ((*message) == ((void *)0)) return;
 
-        MessageDestoryHeaders(*message);
-        destroy_list(&(*message)->headers, NULL);
-        free(*message);
-        *message = NULL;
+    if ((*message)->type == MESSAGE_TYPE_REQUEST) {
+        DestoryRequestLine((*message)->rr.request);
+    } else {
+        DestoryStatusLine((*message)->rr.status);
     }
+
+    RawDestoryHeaders((*message)->headers);
+    free(*message);
+    *message = NULL;
 }
