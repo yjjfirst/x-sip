@@ -251,9 +251,13 @@ struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
     MessageSetType(ack, MESSAGE_TYPE_REQUEST);
 
     RequestLineSetMethod(rl, SIP_METHOD_NAME_ACK);
+
     MessageSetRequestLine(ack, rl);
 
     AddResponseHeaders(ack, invite);
+    
+    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
+    CSeqHeaderSetMethod(cseq, SIP_METHOD_NAME_ACK);
 
     return ack;
 }

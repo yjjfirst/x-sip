@@ -462,12 +462,22 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
     DestoryContactHeader((struct Header *)toHeaderOfAck);
 }
 
-IGNORE_TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
+TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
 {
     struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
-    MessageDump(inviteMessage);
-    MessageDump(ack);
+    CHECK_TRUE(ViaHeaderMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
+                                (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ack)));
 
+    DestoryMessage(&ack);
+}
+
+TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest)
+{
+    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+
+    struct CSeqHeader *seq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
+    STRCMP_EQUAL(SIP_METHOD_NAME_ACK, CSeqHeaderGetMethod(seq));
+    
     DestoryMessage(&ack);
 }
