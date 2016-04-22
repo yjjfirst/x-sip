@@ -34,7 +34,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -50,7 +50,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderWithSpaceParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -66,7 +66,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
 }
@@ -82,7 +82,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderNoDisplayNameParseTest)
 
     UriCheck(toHeader);
 
-    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, (char *)HEADER_PARAMETER_NAME_TAG));
+    STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
     DestoryContactHeader((struct Header *)toHeader);
     

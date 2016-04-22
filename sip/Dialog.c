@@ -30,6 +30,12 @@ struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
 }
 struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
 
+char *DialogGetRemoteTagImpl(struct Dialog *dialog)
+{
+    return "";
+}
+char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
+
 struct DialogId *DialogGetId(struct Dialog *dialog)
 {
     assert(dialog != NULL);

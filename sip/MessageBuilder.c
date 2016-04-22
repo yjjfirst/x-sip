@@ -156,6 +156,11 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
 struct Message *BuildByeMessage(struct Dialog *dialog)
 {
     struct Message *bye = BuildRequestMessage(dialog, SIP_METHOD_BYE);
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
+    struct Parameters *ps = ContactHeaderGetParameters(to);
+
+    AddParameter(ps, HEADER_PARAMETER_NAME_TAG, DialogGetRemoteTag(dialog));
+
     return bye;
 }
 

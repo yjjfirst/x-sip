@@ -10,7 +10,7 @@
 #define HEADER_NAME_EXPIRES "Expires"
 
 
-#define HEADER_PARAMETER_NAME_TAG "tag"
+#define HEADER_PARAMETER_NAME_TAG ((char *)"tag")
 #define HEADER_NAME_MAX_LENGTH 32
 #define HEADER_MAX_LENGTH 256
 

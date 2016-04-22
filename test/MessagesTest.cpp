@@ -116,7 +116,7 @@ TEST(MessageTestGroup, FromParseTest)
     STRCMP_EQUAL("From", ContactHeaderGetName(from));
     STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(from));
     UriCheck(from);
-    STRCMP_EQUAL("3431", ContactHeaderGetParameter(from, (char *)HEADER_PARAMETER_NAME_TAG));
+    STRCMP_EQUAL("3431", ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG));
 
     DestoryMessage(&message);
 

@@ -403,19 +403,40 @@ struct URI *DialogGetRemoteUriMock(struct Dialog *dialog)
     return uri;
 }
 
-TEST(MessageBuilderTestGroup, ByeMessageTest)
+char *DialogGetRemoteTagMock(struct Dialog *dialog)
+{
+    return (char *)"123456abcde";
+}
+
+TEST(MessageBuilderTestGroup, ByeMessageToHeaderTest)
 {
     UT_PTR_SET(DialogGetRemoteUri, DialogGetRemoteUriMock);
+    UT_PTR_SET(DialogGetRemoteTag, DialogGetRemoteTagMock);
 
     struct Message *bye = BuildByeMessage(dialog);
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct URI *uri = ContactHeaderGetUri(to);
-
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
+
     CHECK_TRUE(UriMatched(uri, remoteUri));
+    STRCMP_EQUAL(DialogGetRemoteTag(dialog), ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG));
 
     DestoryUri(remoteUri);
     DestoryMessage(&bye);
+}
+
+TEST(MessageBuilderTestGroup, ByeMessageRequestLineTest)
+{
+    UT_PTR_SET(DialogGetRemoteUri, DialogGetRemoteUriMock);
+
+    struct Message *bye = BuildByeMessage(dialog);
+    struct RequestLine *rl = MessageGetRequestLine(bye);
+
+    STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
+    STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));
+    //    STRCMP_EQUAL(
+    DestoryMessage(&bye);
+
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)

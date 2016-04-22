@@ -206,5 +206,5 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
 TEST(DialogTestGroup, UASDialogTerminateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    DialogAddServerTransaction(dialog, invite);
+    DialogAddServerTransaction(dialog, invite);    
 }
