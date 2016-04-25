@@ -36,6 +36,13 @@ char *DialogGetRemoteTagImpl(struct Dialog *dialog)
 }
 char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
 
+struct URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
+{
+    return NULL;
+}
+struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
+
+
 struct DialogId *DialogGetId(struct Dialog *dialog)
 {
     assert(dialog != NULL);

@@ -14,6 +14,7 @@ enum DIALOG_STATE {
 
 extern struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog);
 extern char *(*DialogGetRemoteTag)(struct Dialog *dialog);
+extern struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog);
 
 struct DialogId *DialogGetId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);

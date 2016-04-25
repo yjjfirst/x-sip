@@ -22,9 +22,14 @@
 struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct URI *uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
-    struct RequestLine  *r = CreateRequestLine(DialogGetRequestMethod(dialog), uri);
-    return r;
+    struct URI *uri ;
+    struct URI *remoteTarget = DialogGetRemoteTarget(dialog);
+    if (remoteTarget == NULL)
+        uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+    else
+        uri = remoteTarget;
+
+    return  CreateRequestLine(DialogGetRequestMethod(dialog), uri);
 }
 
 struct Header *BuildRequestViaHeader(struct Dialog *dialog)
