@@ -113,18 +113,6 @@ TEST(DialogTestGroup, UACDialogIdTest)
     DestoryMessage(&originInvite);
 }
 
-TEST(DialogTestGroup, UASDialogIdTest)
-{
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-
-    DialogAddServerTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
-
-    STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetFromTag(invite), DialogIdGetRemoteTag(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
-}
-
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
@@ -181,6 +169,32 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 
 }
 
+TEST(DialogTestGroup, UACDialogTerminateTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_BYE));
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+    DialogTerminate(dialog);
+
+    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
+
+    DestoryMessage(&ok);    
+}
+
+TEST(DialogTestGroup, UASDialogIdTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
+    STRCMP_EQUAL(MessageGetFromTag(invite), DialogIdGetRemoteTag(DialogGetId(dialog)));
+    STRCMP_EQUAL(MessageGetCallId(invite), DialogIdGetCallId(DialogGetId(dialog)));
+}
+
 TEST(DialogTestGroup, UASDialogConfirmedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
@@ -209,20 +223,6 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
     DestoryMessage(&ok);
-}
-
-TEST(DialogTestGroup, UACDialogTerminateTest)
-{
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_BYE));
-
-    DialogAddServerTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
-    DialogTerminate(dialog);
-
-    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
-
-    DestoryMessage(&ok);    
 }
 
 TEST(DialogTestGroup, UASDialogTerminateTest)
