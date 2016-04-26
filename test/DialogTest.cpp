@@ -15,6 +15,9 @@ extern "C" {
 #include "TransactionManager.h"
 #include "MessageTransport.h"
 #include "RequestLine.h"
+#include "URI.h"
+#include "Header.h"
+#include "ContactHeader.h"
 }
 
 TEST_GROUP(DialogTestGroup)
@@ -144,12 +147,31 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
 }
 
+IGNORE_TEST(DialogTestGroup, UACDialogRemoteTargetTest)
+{
+    char revMessage[MAX_MESSAGE_LENGTH] = {0};
+    struct Message *ok = CreateMessage();
+  
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
+ 
+    DialogAddClientInviteTransaction(dialog, invite);
+    ReceiveInMessage(revMessage);
+
+    ParseMessage((char *)INVITE_200OK_MESSAGE, ok);
+    struct ContactHeader *ch = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
+
+    CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));
+    DestoryMessage(&ok);
+}
+
 TEST(DialogTestGroup, UACDialogConfirmedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);

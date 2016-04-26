@@ -11,6 +11,9 @@
 #include "Transaction.h"
 #include "MessageBuilder.h"
 #include "MessageTransport.h"
+#include "Header.h"
+#include "URI.h"
+#include "ContactHeader.h"
 
 struct Dialog {
     struct TransactionUserNotifiers notifyInterface;  //must be the first field in the struct.
@@ -19,9 +22,11 @@ struct Dialog {
     struct DialogId *id;
     unsigned int localSeqNumber;
     unsigned int remoteSeqNumber;
+    struct URI *remoteTarget;
     enum DIALOG_STATE state;
     struct UserAgent *ua;
     char to[USER_NAME_MAX_LENGTH];
+    
 };
 
 struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
@@ -38,7 +43,8 @@ char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
 
 struct URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
 {
-    return NULL;
+    assert(dialog != NULL);
+    return dialog->remoteTarget;
 }
 struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
 
@@ -99,11 +105,17 @@ void DialogHandleInviteClientEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
-
+    
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
         struct DialogId *dialogid = DialogGetId(dialog);
         DialogIdExtractFromMessage(dialogid, message);            
+
         DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+
+        /* MessageDump(message); */
+        /* struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); */
+        /* struct URI *uri = ContactHeaderGetUri(c); */
+        /* dialog->remoteTarget = UriDup(uri); */
     
         struct Message *ack = BuildAckMessage(dialog);
         AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         

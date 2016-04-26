@@ -143,6 +143,7 @@ void ContactHeaderSetDisplayName(struct ContactHeader *header, char *name)
 
 struct URI *ContactHeaderGetUri(struct ContactHeader *header)
 {
+    assert(header != NULL);
     return header->uri;
 }
 

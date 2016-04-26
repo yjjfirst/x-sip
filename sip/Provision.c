@@ -17,7 +17,7 @@ char *GetRegistrarImpl(int i)
 
 char *GetLocalIpAddrImpl(void)
 {
-    return "192.168.10.63";
+    return "192.168.10.1";
 }
 
 char *(*GetUserName)(int i) = GetUserNameImpl;

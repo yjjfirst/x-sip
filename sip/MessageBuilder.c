@@ -211,6 +211,16 @@ void AddResponseCSeqHeader(struct Message *response, struct Message *invite)
 
 }
 
+void AddResponseContactHeader(struct Message *response, struct Message *invite)
+{
+    struct ContactHeader *c = CreateContactHeader();
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, "88001", GetLocalIpAddr(), LOCAL_PORT);
+
+    ContactHeaderSetUri(c, uri);
+    MessageAddHeader(response, (struct Header *)c);
+    
+}
+
 void AddResponseHeaders(struct Message *response, struct Message *invite)
 {
     AddResponseViaHeader(response, invite);
@@ -218,6 +228,7 @@ void AddResponseHeaders(struct Message *response, struct Message *invite)
     AddResponseToHeader(response, invite);
     AddResponseCallIdHeader(response, invite);
     AddResponseCSeqHeader(response, invite);
+    AddResponseContactHeader(response, invite);
 }
 
 struct Message *BuildResponseMessage(struct Message *invite, struct StatusLine *status)
