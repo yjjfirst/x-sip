@@ -59,10 +59,7 @@ void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *messa
 struct DialogId *CreateDialogIdFromMessage(struct Message *message)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
-    DialogIdSetCallId(dialogid, MessageGetCallId(message));
-    DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
-    DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
-
+    DialogIdExtractFromMessage(dialogid, message);
     return dialogid;
 }
 

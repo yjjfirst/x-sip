@@ -147,7 +147,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
 }
 
-IGNORE_TEST(DialogTestGroup, UACDialogRemoteTargetTest)
+TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct Message *ok = CreateMessage();

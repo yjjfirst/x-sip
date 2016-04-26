@@ -101,24 +101,35 @@ void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
     dialog->state = state;
 }
 
+void DialogExtractDialogIdFromMessage(struct Dialog *dialog, struct Message *message)
+{
+    struct DialogId *dialogid = DialogGetId(dialog);
+    DialogIdExtractFromMessage(dialogid, message);                    
+}
+
+void DialogExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message *message)
+{
+    struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message);
+    struct URI *uri = ContactHeaderGetUri(c);
+    dialog->remoteTarget = UriDup(uri);
+}
+
+void DialogAck(struct Dialog *dialog)
+{
+    struct Message *ack = BuildAckMessage(dialog);
+    AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
+}
+
 void DialogHandleInviteClientEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-        struct DialogId *dialogid = DialogGetId(dialog);
-        DialogIdExtractFromMessage(dialogid, message);            
-
+        DialogExtractDialogIdFromMessage(dialog, message);
         DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
-
-        /* MessageDump(message); */
-        /* struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); */
-        /* struct URI *uri = ContactHeaderGetUri(c); */
-        /* dialog->remoteTarget = UriDup(uri); */
-    
-        struct Message *ack = BuildAckMessage(dialog);
-        AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
+        DialogExtractRemoteTargetFromMessage(dialog, message);
+        DialogAck(dialog);
     }
 }
 
