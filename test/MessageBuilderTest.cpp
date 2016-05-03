@@ -425,13 +425,6 @@ char *DialogGetRemoteTagMock(struct Dialog *dialog)
     return (char *)"123456abcde";
 }
 
-struct URI *DialogGetRemoteTargetMock(struct Dialog *dialog)
-{
-    struct URI *uri = CreateEmptyUri();
-    ParseUri((char *)"sip:8800222@192.168.10.62", &uri);
-    return uri;
-}
-
 TEST(MessageBuilderTestGroup, ByeMessageToHeaderTest)
 {
     UT_PTR_SET(DialogGetRemoteUri, DialogGetRemoteUriMock);
@@ -448,6 +441,16 @@ TEST(MessageBuilderTestGroup, ByeMessageToHeaderTest)
 
     DestoryUri(remoteUri);
     DestoryMessage(&bye);
+}
+
+struct URI *dialog_remote_target;
+struct URI *DialogGetRemoteTargetMock(struct Dialog *dialog)
+{
+    if (dialog_remote_target == NULL) {
+        dialog_remote_target = CreateEmptyUri();
+        ParseUri((char *)"sip:8800222@192.168.10.62", &dialog_remote_target);
+    }
+    return dialog_remote_target;
 }
 
 TEST(MessageBuilderTestGroup, ByeMessageRequestLineTest)

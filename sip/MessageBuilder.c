@@ -23,7 +23,8 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri ;
-    struct URI *remoteTarget = DialogGetRemoteTarget(dialog);
+    struct URI *remoteTarget = UriDup(DialogGetRemoteTarget(dialog));
+
     if (remoteTarget == NULL)
         uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
     else

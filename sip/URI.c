@@ -282,6 +282,8 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
 
 struct URI *UriDup(struct URI *src)
 {
+    if (src == NULL) return NULL;
+
     struct URI *dest = CreateEmptyUri();
     
     DestoryParameters(dest->parameters);

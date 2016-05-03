@@ -180,7 +180,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
 
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 
-    DestoryMessage(&ok);    
+    DestoryMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogIdTest)
@@ -222,6 +222,18 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
+    DestoryMessage(&ok);
+}
+
+IGNORE_TEST(DialogTestGroup, UASDialogRemoteTargetTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    DialogAddServerTransaction(dialog, invite);
+    DialogSend200OKResponse(dialog);
+
+    struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
+    CHECK_TRUE(UriMatched(ContactHeaderGetUri(c), DialogGetRemoteTarget(dialog)));
+
     DestoryMessage(&ok);
 }
 
