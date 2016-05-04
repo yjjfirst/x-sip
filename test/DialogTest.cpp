@@ -173,6 +173,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_BYE));
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
@@ -186,6 +187,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
 TEST(DialogTestGroup, UASDialogIdTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
@@ -198,6 +200,8 @@ TEST(DialogTestGroup, UASDialogIdTest)
 TEST(DialogTestGroup, UASDialogConfirmedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -208,6 +212,8 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
 TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -218,6 +224,8 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -228,6 +236,8 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
 TEST(DialogTestGroup, UASDialogRemoteTargetTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
     DialogAddServerTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
@@ -240,5 +250,8 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
 TEST(DialogTestGroup, UASDialogTerminateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    DialogAddServerTransaction(dialog, invite);    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
+    DialogAddServerTransaction(dialog, invite); 
+    DialogSend200OKResponse(dialog);
 }

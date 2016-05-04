@@ -199,6 +199,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
     struct Message *message = Build200OKMessage(TransactionGetRequest(dialog->transaction));
  
     TransactionAddResponse(dialog->transaction, message);
+    TransactionSendMessage(message);
     DialogIdSetLocalTag(id, MessageGetToTag(message));
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
