@@ -280,3 +280,21 @@ TEST(URITestGroup, URIDup)
 
     DestoryUri(dest);
 }
+
+TEST(URITestGroup, URIDupNull)
+{
+    struct URI *src = NULL;
+    
+    POINTERS_EQUAL(NULL, UriDup(src));
+
+}
+
+
+
+
+
+
+
+
+
+
