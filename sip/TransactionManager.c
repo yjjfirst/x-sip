@@ -118,7 +118,7 @@ BOOL TmHandleRequestMessage(struct Message *message)
     struct Transaction *t = NULL;
 
     if ( (t = MatchTransaction(message)) == NULL) {
-        AddServerTransaction(message, NULL);
+        AddServerInviteTransaction(message, NULL);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE_RECEIVED);
         DestoryMessage(&message);
@@ -201,10 +201,15 @@ struct Transaction *AddClientInviteTransaction(struct Message *message, struct T
 }
 
 
-struct Transaction *AddServerTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CreateServerTransaction(message, user);
 
     AddTransaction2Manager(t);
     return t;
+}
+
+struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+{
+    return NULL;
 }

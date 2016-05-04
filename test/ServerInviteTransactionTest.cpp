@@ -147,7 +147,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
         ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
-        struct Transaction *t = AddServerTransaction(request, user);
+        struct Transaction *t = AddServerInviteTransaction(request, user);
 
         return t;
     }
@@ -202,7 +202,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
         .withIntParameter("StatusCode", 100)
         .andReturnValue(-1);
     ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
-    AddServerTransaction(request, user);
+    AddServerInviteTransaction(request, user);
 
     CheckNoTransaction();
 }

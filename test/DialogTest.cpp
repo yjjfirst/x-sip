@@ -254,4 +254,6 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
 
     DialogAddServerTransaction(dialog, invite); 
     DialogSend200OKResponse(dialog);
+
+    DialogReceiveBye(dialog, NULL);
 }

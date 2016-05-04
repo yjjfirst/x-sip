@@ -187,7 +187,7 @@ struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Mes
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
     DialogExtractRemoteTargetFromMessage(dialog, message);
-    t = AddServerTransaction(message, (struct TransactionUserNotifiers *)dialog);;
+    t = AddServerInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);;
     dialog->transaction = t;
     
     return t;
@@ -203,6 +203,11 @@ void DialogSend200OKResponse(struct Dialog *dialog)
     DialogIdSetLocalTag(id, MessageGetToTag(message));
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
+}
+
+void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
+{
+    AddServerNonInviteTransaction(bye, (struct TransactionUserNotifiers *)dialog);
 }
 
 void DialogTerminate(struct Dialog *dialog)
