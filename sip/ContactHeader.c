@@ -150,7 +150,7 @@ struct URI *ContactHeaderGetUri(struct ContactHeader *header)
 void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri)
 {
     if (header->uri != NULL)
-        DestoryUri(header->uri);
+        DestoryUri(&header->uri);
     header->uri = uri;
 }
 
@@ -208,7 +208,7 @@ struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
 {
     struct ContactHeader *dest = CreateContactHeader();
 
-    DestoryUri(dest->uri);
+    DestoryUri(&dest->uri);
     DestoryParameters(dest->parameters);
     memcpy(dest, src, sizeof(struct ContactHeader));
     
@@ -262,7 +262,7 @@ void DestoryContactHeader(struct Header *h)
     struct ContactHeader *header = (struct ContactHeader *)h;
     if (header != NULL) {
         DestoryParameters(header->parameters);
-        DestoryUri(header->uri);
+        DestoryUri(&header->uri);
         free(header);
     }
 }

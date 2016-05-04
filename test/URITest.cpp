@@ -19,7 +19,7 @@ TEST_GROUP(URITestGroup)
 
     void teardown()
     {
-        DestoryUri(uri);
+        DestoryUri(&uri);
     }
 };
 
@@ -189,7 +189,7 @@ TEST(URITestGroup, URIMatchedTest)
 
     CHECK_TRUE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIPortUnmatchTest)
@@ -202,7 +202,7 @@ TEST(URITestGroup, URIPortUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URISchemeUnmatchTest)
@@ -215,7 +215,7 @@ TEST(URITestGroup, URISchemeUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIUserUnmatchTest)
@@ -228,7 +228,7 @@ TEST(URITestGroup, URIUserUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIHostUnmatchTest)
@@ -241,7 +241,7 @@ TEST(URITestGroup, URIHostUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIParametersUnmatchTest)
@@ -254,7 +254,7 @@ TEST(URITestGroup, URIParametersUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIHeadersUnmatchTest)
@@ -267,7 +267,7 @@ TEST(URITestGroup, URIHeadersUnmatchTest)
 
     CHECK_FALSE(UriMatched(uri, uri2));
 
-    DestoryUri(uri2);
+    DestoryUri(&uri2);
 }
 
 TEST(URITestGroup, URIDup)
@@ -278,7 +278,7 @@ TEST(URITestGroup, URIDup)
     struct URI *dest = UriDup(uri);
     CHECK_TRUE(UriMatched(uri, dest));
 
-    DestoryUri(dest);
+    DestoryUri(&dest);
 }
 
 TEST(URITestGroup, URIDupNull)

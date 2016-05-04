@@ -439,7 +439,7 @@ TEST(MessageBuilderTestGroup, ByeMessageToHeaderTest)
     CHECK_TRUE(UriMatched(uri, remoteUri));
     STRCMP_EQUAL(DialogGetRemoteTag(dialog), ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG));
 
-    DestoryUri(remoteUri);
+    DestoryUri(&remoteUri);
     DestoryMessage(&bye);
 }
 
@@ -466,7 +466,7 @@ TEST(MessageBuilderTestGroup, ByeMessageRequestLineTest)
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));
     CHECK_TRUE(UriMatched(remoteTarget, uri));
 
-    DestoryUri(remoteTarget);
+    DestoryUri(&remoteTarget);
     DestoryMessage(&bye);
 
 }

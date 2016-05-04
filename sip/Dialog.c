@@ -233,7 +233,7 @@ void DestoryDialog(struct Dialog **dialog)
 {
     if (*dialog != NULL) {
         DestoryDialogId(&(*dialog)->id);
-        DestoryUri((*dialog)->remoteTarget);
+        DestoryUri(&(*dialog)->remoteTarget);
         free(*dialog);
     }
 }

@@ -300,12 +300,13 @@ struct URI *UriDup(struct URI *src)
     return dest;
 }
 
-void DestoryUri(struct URI *uri)
+void DestoryUri(struct URI **uri)
 {
-    if (uri != NULL) {
-        DestoryParameters(uri->parameters);
-        DestoryParameters(uri->headers);
-        free (uri);
+    if (*uri != NULL) {
+        DestoryParameters((*uri)->parameters);
+        DestoryParameters((*uri)->headers);
+        free (*uri);
+        *uri = NULL;
     }
 }
 

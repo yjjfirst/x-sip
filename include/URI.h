@@ -7,7 +7,7 @@ struct URI;
 struct HeaderPattern;
 struct Parameters;
 
-void DestoryUri(struct URI *uri);
+void DestoryUri(struct URI **uri);
 struct URI *CreateEmptyUri();
 struct URI *CreateUri(char *scheme, char *user, char *host, int port);
 struct URI *UriDup(struct URI *src);
