@@ -186,6 +186,7 @@ struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Mes
    
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
+    DialogExtractRemoteTargetFromMessage(dialog, message);
     t = AddServerTransaction(message, (struct TransactionUserNotifiers *)dialog);;
     dialog->transaction = t;
     

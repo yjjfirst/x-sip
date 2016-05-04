@@ -225,7 +225,7 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DestoryMessage(&ok);
 }
 
-IGNORE_TEST(DialogTestGroup, UASDialogRemoteTargetTest)
+TEST(DialogTestGroup, UASDialogRemoteTargetTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     DialogAddServerTransaction(dialog, invite);
