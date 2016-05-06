@@ -43,7 +43,8 @@ enum TransactionEvent {
 
 struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
-struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user);
+struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
+struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user);
 void DestoryTransaction(struct Transaction **t);
 
 int TransactionSendMessage(struct Message *message);
@@ -63,3 +64,4 @@ enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
 struct TransactionUserNotifiers *TransactionGetUser(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);
+

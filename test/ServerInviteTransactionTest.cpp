@@ -19,7 +19,7 @@ TimerCallback RetransmitTimerAction;
 TimerCallback TimeOutTimerAction; 
 TimerCallback WaitAckTimerAction;
 
-struct TransactionUserNotifiers MockUser = {
+struct TransactionUserNotifiers ServerInviteMockUser = {
     .onEvent = NULL,
 };
 
@@ -142,11 +142,11 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
     struct Transaction *PrepareProceedingState()
     {
-        struct TransactionUserNotifiers *user = &MockUser;
+        struct TransactionUserNotifiers *user = &ServerInviteMockUser;
         struct Message *request = CreateMessage();
 
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-        ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
+        ParseMessage(INCOMMING_INVITE_MESSAGE, request);
         struct Transaction *t = AddServerInviteTransaction(request, user);
 
         return t;
@@ -195,13 +195,13 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
 {
-    struct TransactionUserNotifiers *user = &MockUser;
+    struct TransactionUserNotifiers *user = &ServerInviteMockUser;
     struct Message *request = CreateMessage();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
         .withIntParameter("StatusCode", 100)
         .andReturnValue(-1);
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, request);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, request);
     AddServerInviteTransaction(request, user);
 
     CheckNoTransaction();

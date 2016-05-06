@@ -225,6 +225,17 @@ Content-Length:0\r\n";
     DestoryMessage(&message);
 }
 
+TEST(MessageTestGroup, ByeMessageParseRequestLineMethodTest)
+{
+    struct Message *bye = CreateMessage();
+    ParseMessage(BYE_MESSAGE, bye);
+
+    struct RequestLine *rl = MessageGetRequestLine(bye);
+    STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
+
+    DestoryMessage(&bye);
+}
+
 TEST(MessageTestGroup, ResponseMessage2StringTest)
 {
     struct Message *message = CreateMessage();
@@ -298,7 +309,7 @@ TEST(MessageTestGroup, GetRemoteTageTest)
 TEST(MessageTestGroup, GetExpiresTest)
 {
     struct Message *message = CreateMessage();
-    ParseMessage((char *)ADD_BINDING_OK_MESSAGE, message);
+    ParseMessage(ADD_BINDING_OK_MESSAGE, message);
 
     CHECK_EQUAL(3600, MessageGetExpires(message));
     DestoryMessage(&message);
@@ -307,7 +318,7 @@ TEST(MessageTestGroup, GetExpiresTest)
 TEST(MessageTestGroup, GetBranchTest)
 {
     struct Message *localMessage = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
 
     STRCMP_EQUAL("z9hG4bK27dc30b4",MessageGetViaBranch(localMessage));
    
@@ -317,7 +328,7 @@ TEST(MessageTestGroup, GetBranchTest)
 TEST(MessageTestGroup, GetCSeqMethodTest)
 {
     struct Message *localMessage = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, localMessage);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
 
     STRCMP_EQUAL("INVITE",MessageGetCSeqMethod(localMessage));
    

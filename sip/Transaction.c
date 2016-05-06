@@ -297,7 +297,7 @@ void Receive3xxResponse(struct Transaction *t)
     RunFsm(t, TRANSACTION_EVENT_3XX_RECEIVED);
 }
 
-struct Transaction *CreateServerTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     struct Message *trying = BuildTryingMessage(t->request);
@@ -313,6 +313,12 @@ struct Transaction *CreateServerTransaction(struct Message *request, struct Tran
         return NULL;
     }
 
+    return t;
+}
+
+struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CallocTransaction(request, user);
     return t;
 }
 

@@ -240,7 +240,7 @@ TEST(MessageBuilderTestGroup, AckMessageViaTest)
 TEST(MessageBuilderTestGroup, TryingMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     struct Message *trying = BuildTryingMessage(invite);
     struct StatusLine *status = MessageGetStatusLine(trying);
@@ -257,7 +257,7 @@ TEST(MessageBuilderTestGroup, TryingMessageStatusLineTest)
 TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     struct Message *trying = BuildTryingMessage(invite);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
@@ -272,7 +272,7 @@ TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
 TEST(MessageBuilderTestGroup, TryingMessageToWithTagTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
     
     struct Message *trying = BuildTryingMessage(invite);
 
@@ -288,7 +288,7 @@ TEST(MessageBuilderTestGroup, TryingMessageToWithTagTest)
 TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     
     struct Message *trying = BuildTryingMessage(invite);
 
@@ -308,7 +308,7 @@ TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
 TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *trying = BuildTryingMessage(invite);
 
     struct CallIdHeader *inviteCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite);
@@ -323,7 +323,7 @@ TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
 TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *trying = BuildTryingMessage(invite);
     
     struct CSeqHeader *inviteCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite);
@@ -338,7 +338,7 @@ TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
 TEST(MessageBuilderTestGroup, TryingMessageViaTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *trying = BuildTryingMessage(invite);
 
     struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite);
@@ -353,7 +353,7 @@ TEST(MessageBuilderTestGroup, TryingMessageViaTest)
 TEST(MessageBuilderTestGroup, RingingMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *ringing = BuildRingingMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
@@ -368,7 +368,7 @@ TEST(MessageBuilderTestGroup, RingingMessageStatusLineTest)
 TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *ok = Build200OKMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
@@ -383,7 +383,7 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
 TEST(MessageBuilderTestGroup,OKMessageContactHeaderTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *ok = Build200OKMessage(invite);
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     struct URI *uri = ContactHeaderGetUri(c);
@@ -400,7 +400,7 @@ TEST(MessageBuilderTestGroup,OKMessageContactHeaderTest)
 TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
 {
     struct Message *invite = CreateMessage();
-    ParseMessage((char *)INCOMMING_INVITE_MESSAGE, invite);
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     struct Message *moved = Build301Message(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);

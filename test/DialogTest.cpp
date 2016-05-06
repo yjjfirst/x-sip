@@ -147,7 +147,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
 
-    ParseMessage((char *)INVITE_200OK_MESSAGE, ok);
+    ParseMessage(INVITE_200OK_MESSAGE, ok);
     struct ContactHeader *ch = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
 
     CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));

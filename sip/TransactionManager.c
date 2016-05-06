@@ -203,7 +203,7 @@ struct Transaction *AddClientInviteTransaction(struct Message *message, struct T
 
 struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    struct Transaction *t = CreateServerTransaction(message, user);
+    struct Transaction *t = CreateServerInviteTransaction(message, user);
 
     AddTransaction2Manager(t);
     return t;
@@ -211,5 +211,13 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
 
 struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    return NULL;
+    struct Transaction *t = CreateServerNonInviteTransaction(message, user);
+    AddTransaction2Manager(t);
+
+    return t;
 }
+
+
+
+
+
