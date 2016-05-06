@@ -175,6 +175,19 @@ TEST(ViaHeaderTestGroup, ViaParameterUnmatchedTest)
     DestoryViaHeader((struct Header *)via2);
 }
 
+TEST(ViaHeaderTestGroup, ViaHeaderSetParameterTest)
+{
+    struct ViaHeader *via = CreateEmptyViaHeader();
+    char string[] = "Via:SIP/2.0/UDP erlang.bell-telephone.com:5060;branch=z9hG4bK87";
+    Parse(string, via, GetViaPattern());
+
+    STRCMP_EQUAL("z9hG4bK87", ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME));
+    ViaHeaderSetParameter(via, VIA_BRANCH_PARAMETER_NAME, (char *)"1234567890");
+    STRCMP_EQUAL("1234567890", ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME));
+
+    DestoryViaHeader((struct Header *)via);
+}
+
 TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
 {
     struct ViaHeader *src = CreateEmptyViaHeader();
@@ -187,3 +200,4 @@ TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
     DestoryViaHeader((struct Header *)src);
     DestoryViaHeader((struct Header *)dest);
 }
+

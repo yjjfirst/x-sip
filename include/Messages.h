@@ -29,6 +29,7 @@ int MessageGetExpires(struct Message *message);
 struct Header *MessageGetHeader(const char *name, struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);
 char *MessageGetViaBranch(struct Message *message);
+void MessageSetViaBranch(struct Message *message, char *branch);
 char *MessageGetCSeqMethod(struct Message *message);
 
 void MessageAddHeader(struct Message *message, struct Header *header);

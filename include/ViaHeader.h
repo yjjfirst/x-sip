@@ -1,7 +1,6 @@
 #include "Bool.h"
 
-
-#define VIA_BRANCH_PARAMETER_NAME "branch"
+#define VIA_BRANCH_PARAMETER_NAME  (char *)"branch"
 struct ViaHeader;
 struct Header;
 struct URI;
@@ -20,6 +19,7 @@ char *ViaHeaderGetName(struct ViaHeader *via);
 char *ViaHeaderGetParameter(struct ViaHeader *via, char *name);
 struct Parameters *ViaHeaderGetParameters(struct ViaHeader *via);
 
+void ViaHeaderSetParameter(struct ViaHeader *via, char *name, char *value);
 void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri);
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters);
 

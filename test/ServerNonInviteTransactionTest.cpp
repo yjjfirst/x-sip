@@ -10,27 +10,47 @@ extern "C" {
 
 TEST_GROUP(ServerNonInviteTransactionTestGroup)
 {
+    struct Message *request;
+    struct Transaction *transaction;
+    void setup() 
+    {
+        request = CreateMessage();
+        ParseMessage(BYE_MESSAGE, request);
+        transaction = AddServerNonInviteTransaction(request, NULL);
+
+    }
+
+    void teardown() 
+    {
+        EmptyTransactionManager();
+    }
 };
 
 TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateTest)
 {
-    struct Message *request = CreateMessage();    
-    ParseMessage((char *)BYE_MESSAGE,request);
-
-    struct Transaction *t = AddServerNonInviteTransaction(request, NULL);
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
-
-    EmptyTransactionManager();
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(transaction));
+    CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, TransactionGetType(transaction));
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
 {
+    struct Message *newRequest = CreateMessage();
+    ParseMessage(BYE_MESSAGE, newRequest);
+
+    CHECK_TRUE(IfRequestMatchTransaction(transaction, newRequest));
+
+    DestoryMessage(&newRequest);
 }
 
+TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNotMatchTest)
+{
+    char branch[] = "1234567890";
+    struct Message *newRequest = CreateMessage();
 
+    ParseMessage(BYE_MESSAGE, newRequest);
+    MessageSetViaBranch(newRequest, branch); 
+    
+    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
 
-
-
-
-
-
+    DestoryMessage(&newRequest);
+}

@@ -325,6 +325,19 @@ TEST(MessageTestGroup, GetBranchTest)
     DestoryMessage(&localMessage);
 }
 
+TEST(MessageTestGroup, SetBranchTest)
+{
+    char newBranch[] = "0123456789";
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
+    MessageSetViaBranch(localMessage, newBranch);
+
+    STRCMP_EQUAL(newBranch, MessageGetViaBranch(localMessage));
+   
+    DestoryMessage(&localMessage);
+
+}
+
 TEST(MessageTestGroup, GetCSeqMethodTest)
 {
     struct Message *localMessage = CreateMessage();

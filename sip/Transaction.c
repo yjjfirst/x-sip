@@ -173,6 +173,11 @@ int ResendLatestResponse(struct Transaction *t)
     return 0;
 }
 
+BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m)
+{
+    return FALSE;
+}
+
 struct Message *TransactionGetRequest(struct Transaction *t)
 {
     assert (t != NULL);
@@ -201,44 +206,6 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
     t->request = request;
     t->user = user;
     
-    return t;
-}
-
-struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
-{
-    struct Transaction *t = CallocTransaction(request, user);
-    
-    t->state = TRANSACTION_STATE_CALLING;
-    t->type = TRANSACTION_TYPE_CLIENT_INVITE;
-    t->fsm = &ClientInviteTransactionFsm;
-
-    if (SendRequestMessage(t) < 0) {
-        DestoryTransaction(&t);
-        return NULL;
-    }
-
-    ClientNonInviteAddRetransmitTimer(t);
-    AddTimeoutTimer(t);
-
-    return t;
-}
-
-struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
-{
-    struct Transaction *t = CallocTransaction(request, user);
-
-    t->state = TRANSACTION_STATE_TRYING;
-    t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
-    t->fsm = &ClientNonInviteTransactionFsm;
-
-    if (SendRequestMessage(t) < 0) {
-        DestoryTransaction(&t);
-        return NULL;
-    }
-
-    ClientNonInviteAddRetransmitTimer(t);
-    AddTimeoutTimer(t);
-
     return t;
 }
 
@@ -297,6 +264,44 @@ void Receive3xxResponse(struct Transaction *t)
     RunFsm(t, TRANSACTION_EVENT_3XX_RECEIVED);
 }
 
+struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CallocTransaction(request, user);
+    
+    t->state = TRANSACTION_STATE_CALLING;
+    t->type = TRANSACTION_TYPE_CLIENT_INVITE;
+    t->fsm = &ClientInviteTransactionFsm;
+
+    if (SendRequestMessage(t) < 0) {
+        DestoryTransaction(&t);
+        return NULL;
+    }
+
+    ClientNonInviteAddRetransmitTimer(t);
+    AddTimeoutTimer(t);
+
+    return t;
+}
+
+struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+{
+    struct Transaction *t = CallocTransaction(request, user);
+
+    t->state = TRANSACTION_STATE_TRYING;
+    t->type = TRANSACTION_TYPE_CLIENT_NON_INVITE;
+    t->fsm = &ClientNonInviteTransactionFsm;
+
+    if (SendRequestMessage(t) < 0) {
+        DestoryTransaction(&t);
+        return NULL;
+    }
+
+    ClientNonInviteAddRetransmitTimer(t);
+    AddTimeoutTimer(t);
+
+    return t;
+}
+
 struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
@@ -319,6 +324,8 @@ struct Transaction *CreateServerInviteTransaction(struct Message *request, struc
 struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
+    t->type = TRANSACTION_TYPE_SERVER_NON_INVITE;
+    
     return t;
 }
 

@@ -109,6 +109,11 @@ struct Parameters *ViaHeaderGetParameters(struct ViaHeader *via)
     return via->parameters;
 }
 
+void ViaHeaderSetParameter(struct ViaHeader *via, char *name, char *value)
+{
+    AddParameter(via->parameters, name, value); 
+}
+
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters)
 {
     if (via->parameters != NULL)

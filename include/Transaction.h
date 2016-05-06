@@ -55,13 +55,15 @@ void ResponseWith301(struct Transaction *t);
 void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
 
-enum TransactionState TransactionGetState(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
+struct Message *TransactionGetLatestResponse(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);
+enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
+BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
+
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
 void TransactionSetNotifiers(struct Transaction *t, struct TransactionManagerNotifiers *notifiers);
-enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
+enum TransactionState TransactionGetState(struct Transaction *t);
 struct TransactionUserNotifiers *TransactionGetUser(struct Transaction *t);
-struct Message *TransactionGetLatestResponse(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);
 

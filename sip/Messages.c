@@ -177,6 +177,16 @@ char *MessageGetViaBranch(struct Message *message)
                                  VIA_BRANCH_PARAMETER_NAME);
 }
 
+void MessageSetViaBranch(struct Message *message, char *branch)
+{
+    assert (message != NULL);
+    assert (branch != NULL);
+    
+    ViaHeaderSetParameter((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, message),
+                          VIA_BRANCH_PARAMETER_NAME,
+                          branch);
+}
+
 char *MessageGetCSeqMethod(struct Message *message)
 {
     assert (message != NULL);
