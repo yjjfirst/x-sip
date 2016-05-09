@@ -88,6 +88,23 @@ struct URI *RequestLineGetUri(struct RequestLine *r)
     return r->requestUri;
 }
 
+BOOL RequestLineMethodMatched(struct RequestLine *r1, struct RequestLine *r2)
+{
+    assert(r1 != NULL);
+    assert(r2 != NULL);
+
+    if (strcmp(r1->method, SIP_METHOD_NAME_INVITE) == 0
+        && strcmp(r2->method, SIP_METHOD_NAME_ACK) == 0) {
+        return TRUE;
+    }
+    
+    if (strcmp(r1->method, r2->method) != 0) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2)
 {
     assert(r1 != NULL);
@@ -97,7 +114,7 @@ BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2)
         return FALSE;
     }
 
-    if (strcmp(r1->method, r2->method) != 0) {
+    if (!RequestLineMethodMatched(r1, r2)) {
         return FALSE;
     }
 

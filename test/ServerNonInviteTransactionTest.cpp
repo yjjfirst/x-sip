@@ -6,6 +6,10 @@ extern "C" {
 #include "Messages.h"
 #include "TransactionManager.h"
 #include "Transaction.h"
+#include "ViaHeader.h"
+#include "SipMethod.h"
+#include "RequestLine.h"
+#include "MessageBuilder.h"
 }
 
 TEST_GROUP(ServerNonInviteTransactionTestGroup)
@@ -42,7 +46,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
     DestoryMessage(&newRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNotMatchTest)
+TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchTest)
 {
     char branch[] = "1234567890";
     struct Message *newRequest = CreateMessage();
@@ -53,4 +57,41 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNotMatchT
     CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
 
     DestoryMessage(&newRequest);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatchTest)
+{
+    struct Message *newRequest = CreateMessage();
+    ParseMessage(BYE_MESSAGE, newRequest);
+    MessageAddViaParameter(newRequest, VIA_SENDBY_PARAMETER_NAME, (char *)"192.168.10.111:777");
+
+    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
+    DestoryMessage(&newRequest);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatchedTest)
+{
+    struct Message *newRequest = CreateMessage();
+    ParseMessage(BYE_MESSAGE, newRequest);
+    struct RequestLine *rl = MessageGetRequestLine(newRequest);
+    
+    RequestLineSetMethod(rl, (char *)SIP_METHOD_NAME_INVITE);
+    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
+    
+    DestoryMessage(&newRequest);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
+{
+    EmptyTransactionManager();
+
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+    transaction = AddServerInviteTransaction(invite, NULL);
+    
+    struct Message *ack = BuildAckMessageWithinClientTransaction(invite);
+
+    CHECK_TRUE(IfRequestMatchTransaction(transaction, ack));
+
+    DestoryMessage(&ack);
 }

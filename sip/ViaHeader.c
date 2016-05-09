@@ -45,6 +45,21 @@ BOOL ViaHeaderBranchMatchedByString(struct ViaHeader *via, char *string)
     return !strcmp(ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME), string);
 }
 
+BOOL ViaHeaderSendbyMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+{
+    assert (via1 != NULL && via2 != NULL);
+
+    char *sendBy1 = ViaHeaderGetParameter(via1, VIA_SENDBY_PARAMETER_NAME);
+    char *sendBy2 = ViaHeaderGetParameter(via2, VIA_SENDBY_PARAMETER_NAME);
+    
+    if (sendBy1 == NULL && sendBy2 == NULL) return TRUE;
+    if (sendBy1 == NULL && sendBy2 != NULL) return FALSE;
+    if (sendBy1 != NULL && sendBy2 == NULL) return FALSE;
+
+
+    return !strcmp(sendBy1, sendBy2);
+}
+
 BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2)
 {
     assert(via1 != NULL);

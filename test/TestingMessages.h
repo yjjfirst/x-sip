@@ -87,7 +87,7 @@ Content-Length: 284\r\n"
 #define BYE_MESSAGE (char *)"\
 BYE sip:88001@192.168.10.62:5060 SIP/2.0\r\n\
 CSeq: 1 BYE\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK56fb2ea6-fe10-e611-972d-60eb69bfc4e8;rport\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK56fb2ea6-fe10-e611-972d-60eb69bfc4e8;rport;send-by=192.168.10.101\r\n\
 User-Agent: Ekiga/4.0.1\r\n\
 From: <sip:88002@192.168.10.1>;tag=2eb78b83-fe10-e611-972d-60eb69bfc4e8\r\n\
 Call-ID: 32ee1a624979941474ca0eab6d2d2b37@192.168.10.62:5060\r\n\

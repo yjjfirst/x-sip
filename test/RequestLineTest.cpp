@@ -219,3 +219,22 @@ TEST(RequestLineTestGroup, RequestLineDupTest)
     DestoryRequestLine(rl);
     
 }
+
+TEST(RequestLineTestGroup, RequestLineMethodMatchedTest)
+{
+    struct RequestLine *rl = RequestLineDup(RegisterRequestLine);
+
+    CHECK_TRUE(RequestLineMethodMatched(RegisterRequestLine, rl));
+
+    DestoryRequestLine(rl);
+}
+
+TEST(RequestLineTestGroup, RequestLineMethodNonMatchedTest)
+{
+    struct RequestLine *rl = RequestLineDup(RegisterRequestLine);
+    RequestLineSetMethod(rl, (char *)SIP_METHOD_NAME_INFO);
+
+    CHECK_FALSE(RequestLineMethodMatched(RegisterRequestLine, rl));
+
+    DestoryRequestLine(rl);
+}

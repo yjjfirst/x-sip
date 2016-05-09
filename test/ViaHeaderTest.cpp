@@ -116,6 +116,38 @@ TEST(ViaHeaderTestGroup, MatchBranchByStringTest)
     DestoryViaHeader((struct Header *)via1);
 }
 
+TEST(ViaHeaderTestGroup, ViaSendbyMatchedTest)
+{
+    char string[] = "Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK56fb2ea6;rport;send-by=192.168.10.101:5060";
+    struct ViaHeader *via1 = CreateEmptyViaHeader();
+    struct ViaHeader *via2 = CreateEmptyViaHeader();
+
+    Parse(string, via1, GetViaPattern());
+    Parse(string, via2, GetViaPattern());
+    CHECK_TRUE(ViaHeaderSendbyMatched(via1, via2));
+
+    DestoryViaHeader((struct Header *)via1);
+    DestoryViaHeader((struct Header *)via2);
+
+}
+
+TEST(ViaHeaderTestGroup, ViaSendbyUnmatchedTest)
+{
+    char string[] = "Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK56fb2ea6;rport;send-by=192.168.10.101:5060";
+    struct ViaHeader *via1 = CreateEmptyViaHeader();
+    struct ViaHeader *via2 = CreateEmptyViaHeader();
+
+    Parse(string, via1, GetViaPattern());
+    Parse(string, via2, GetViaPattern());
+    ViaHeaderSetParameter(via2, VIA_SENDBY_PARAMETER_NAME, (char *)"192.168.10.111:5061");
+
+    CHECK_FALSE(ViaHeaderSendbyMatched(via1, via2));
+
+    DestoryViaHeader((struct Header *)via1);
+    DestoryViaHeader((struct Header *)via2);
+
+}
+
 TEST(ViaHeaderTestGroup, ViaMatchedTest)
 {
     struct ViaHeader *via1 = CreateEmptyViaHeader();

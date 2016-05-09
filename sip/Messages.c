@@ -209,24 +209,30 @@ void MessageSetCSeqMethod (struct Message *message, char *method)
 }
 
 void MessageSetContentLength(struct Message *message, int length)
-{
-    struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
-    
-    ContentLengthHeaderSetLength(c, length);
-}
+ {
+     struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
 
-BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
-{
-    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
-                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+     ContentLengthHeaderSetLength(c, length);
+ }
 
-}
+ BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
+ {
+     return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+
+ }
 
 BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm)
 {
     return  CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m),
                                     (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, mm));    
 
+}
+
+BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm)
+{
+    return ViaHeaderSendbyMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
 }
 
 void Message2String(char *result, struct Message *message)
