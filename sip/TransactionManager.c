@@ -81,8 +81,7 @@ struct Transaction *MatchTransaction(struct Message *message)
     assert (message != NULL);
     for (; i < length; i++) {
         struct Transaction *tt = GetTransactionByPosition(i);
-        struct Message *request = TransactionGetRequest(tt);
-        if (RequestResponseMatched(request, message))
+        if (IfResponseMatchedTransaction(tt, message))
             t = tt;
     }
     

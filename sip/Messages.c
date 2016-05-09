@@ -215,6 +215,20 @@ void MessageSetContentLength(struct Message *message, int length)
     ContentLengthHeaderSetLength(c, length);
 }
 
+BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
+{
+    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+
+}
+
+BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm)
+{
+    return  CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m),
+                                    (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, mm));    
+
+}
+
 void Message2String(char *result, struct Message *message)
 {
     char *p = result;
@@ -241,16 +255,6 @@ void MessageDump(struct Message *message)
     printf("\n");
     Message2String(messageString, message);
     printf("%s\n",messageString);
-}
-
-BOOL RequestResponseMatched(struct Message *request, struct Message *response)
-{
-    assert (request != NULL);
-    assert (response != NULL);
-    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request),
-                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, response)) 
-        && CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request),
-                                   (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, response));    
 }
 
 struct Message *CreateMessage () 

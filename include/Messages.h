@@ -41,4 +41,5 @@ void  ExtractHeaderName(char *header, char *name);
 void Message2String(char *result, struct Message *message);
 void MessageDump(struct Message *message);
 
-BOOL RequestResponseMatched(struct Message *request, struct Message *response);
+BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm);
+BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm);

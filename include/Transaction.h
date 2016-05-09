@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "Bool.h"
 
 struct Message;
 struct Transaction;
@@ -67,3 +68,4 @@ enum TransactionState TransactionGetState(struct Transaction *t);
 struct TransactionUserNotifiers *TransactionGetUser(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);
 
+BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);

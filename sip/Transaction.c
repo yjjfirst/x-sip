@@ -173,9 +173,24 @@ int ResendLatestResponse(struct Transaction *t)
     return 0;
 }
 
-BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m)
+
+BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response)
 {
-    return FALSE;
+    assert (t != NULL);
+    assert (response != NULL);
+
+    struct Message *request = TransactionGetRequest(t);
+    return MessageViaHeaderBranchMatched(request, response) 
+        && MessageCSeqHeaderMethodMatched(request, response);
+}
+
+BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *request)
+{
+    assert(t != NULL);
+    assert(request != NULL);
+
+    struct Message *origin = TransactionGetRequest(t);
+    return MessageViaHeaderBranchMatched(origin, request);
 }
 
 struct Message *TransactionGetRequest(struct Transaction *t)
