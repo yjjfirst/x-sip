@@ -2,7 +2,7 @@ CC=gcc
 CXX=g++
 
 CPPUTEST_HOME=../cpputest
-CPPFLAGS += -I./ -I../ -I$(CPPUTEST_HOME)/include -I../include -Wall -g
+CPPFLAGS += -I./ -I../ -I$(CPPUTEST_HOME)/include -I../include -I../include/utils -Wall -g
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
 
 .PHONY: all
@@ -19,7 +19,7 @@ CPPFLAGS += -include $(CPPUTEST_HOME)/include/CppUTest/MemoryLeakDetectorNewMacr
 %.o:%.c
 	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)
 
-AllTests: $(TESTSUITE_OBJS) ../sip/libsip.a 
+AllTests: $(TESTSUITE_OBJS) ../sip/libsip.a ../utils/libutils.a
 	$(CXX) -o $@ $^ $(CPPFLAGS) $(LD_LIBRARIES) 
 
 clean:
