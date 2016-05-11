@@ -15,6 +15,7 @@
 #include "StatusLine.h"
 #include "ExpiresHeader.h"
 #include "Parameter.h"
+#include "StringExt.h"
 
 #include "utils/list/include/list.h"
 
@@ -57,7 +58,7 @@ static void DestoryOneHeader(struct Header *header)
 
     assert(header != NULL);
     for (i = 0 ; i < CountHeaderOps(); i++) {
-        if (strcmp (HeaderOps[i].name, header->name) == 0) {
+        if (StrcmpExt (HeaderOps[i].name, header->name) == 0) {
             HeaderOps[i].headerDestroyer(header);
             return;
         }
@@ -103,7 +104,7 @@ struct Header *RawHeadersGetHeader(const char *name, struct Headers *headers)
     length = get_list_len(headers->headerList);
     for (i = 0 ; i < length; i++) {
         struct Header *h = (struct Header *) get_data_at(headers->headerList, i);
-        if (strcmp (name, HeaderGetName(h)) == 0) {
+        if (StrcmpExt (name, HeaderGetName(h)) == 0) {
             header = h;
             break;
         }
@@ -132,7 +133,7 @@ void RawParseHeader(char *string, struct Headers *headers)
     ExtractHeaderName(string, name);
 
     for ( ; i < CountHeaderOps(); i++) {
-        if (strcmp (HeaderOps[i].name , name) == 0)
+        if (StrcmpExt (HeaderOps[i].name , name) == 0)
             put_in_list(&headers->headerList, (void*) HeaderOps[i].headerParser(string));
     }
 
@@ -145,7 +146,7 @@ char *Header2String(char *result, struct Header *header)
     assert(result != NULL);
     assert(header != NULL);
     for ( ; i < CountHeaderOps(); i++) {
-        if (strcmp (HeaderOps[i].name , HeaderGetName(header)) == 0)
+        if (StrcmpExt (HeaderOps[i].name , HeaderGetName(header)) == 0)
             return HeaderOps[i].toString(result, header);        
     }
 

@@ -7,6 +7,7 @@
 #include "ContactHeader.h"
 #include "URI.h"
 #include "Parameter.h"
+#include "StringExt.h"
 
 struct ContactHeader {
     struct Header headerBase;
@@ -195,7 +196,7 @@ BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *h
     if (!UriMatched(header1->uri, header2->uri))
         return FALSE;
 
-    return strcmp(header1->displayName, header2->displayName) == 0;
+    return StrcmpExt(header1->displayName, header2->displayName) == 0;
 }
 
 void GenerateTagImpl(char *tag)

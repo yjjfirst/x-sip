@@ -1,7 +1,7 @@
 CC=gcc
 CXX=g++
 
-CPPFLAGS += -I../include -I..  -Wall -g
+CPPFLAGS += -I../include -I.. -I../include/utils  -Wall -g
 CPPFLAGS += -include ../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros.h
 
 .PYONY: all clean

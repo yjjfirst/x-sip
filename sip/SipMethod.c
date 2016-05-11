@@ -1,6 +1,9 @@
 #include <string.h>
 #include <stdio.h>
+
 #include "SipMethod.h"
+#include "StringExt.h"
+
 #define SIP_METHOD_MAX_LENGTH 32
 
 struct MethodStringMap {
@@ -36,7 +39,7 @@ SIP_METHOD StringMap2MethodNumber(char *methodString)
     struct MethodStringMap *maps = MethodStringMaps;
 
     for ( ;maps->method != SIP_METHOD_NONE; maps++){
-        if (strcmp(maps->stringName, methodString) == 0)
+        if (StrcmpExt(maps->stringName, methodString) == 0)
             return maps->method;
         
     }

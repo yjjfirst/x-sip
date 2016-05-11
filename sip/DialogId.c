@@ -4,7 +4,7 @@
 #include "CallIdHeader.h"
 #include "Messages.h"
 #include "Utils.h"
-
+#include "StringExt.h"
 
 #define TAG_MAX_LENGTH 64
 
@@ -28,9 +28,9 @@ BOOL DialogIdMatched(struct DialogId *id1, struct DialogId *id2)
     assert(id1 != NULL);
     assert(id2 != NULL);
 
-    return !(strcmp(id1->callid, id2->callid)
-             || strcmp(id1->localTag, id2->localTag)
-             || strcmp(id1->remoteTag, id2->remoteTag));
+    return !(StrcmpExt(id1->callid, id2->callid)
+             || StrcmpExt(id1->localTag, id2->localTag)
+             || StrcmpExt(id1->remoteTag, id2->remoteTag));
 }
 
 struct DialogId *CreateEmptyDialogId()

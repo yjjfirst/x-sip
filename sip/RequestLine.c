@@ -7,6 +7,7 @@
 #include "Parser.h"
 #include "Header.h"
 #include "URI.h"
+#include "StringExt.h"
 
 #define SIP_VERSION_LENGTH 16
 
@@ -18,7 +19,7 @@ struct RequestLine {
 
 BOOL RequestLineSipVersionLegal(char *version)
 {
-    if (strcmp (version, SIP_VERSION) == 0)
+    if (StrcmpExt (version, SIP_VERSION) == 0)
         return TRUE;
     return FALSE;
 }
@@ -93,12 +94,12 @@ BOOL RequestLineMethodMatched(struct RequestLine *r1, struct RequestLine *r2)
     assert(r1 != NULL);
     assert(r2 != NULL);
 
-    if (strcmp(r1->method, SIP_METHOD_NAME_INVITE) == 0
-        && strcmp(r2->method, SIP_METHOD_NAME_ACK) == 0) {
+    if (StrcmpExt(r1->method, SIP_METHOD_NAME_INVITE) == 0
+        && StrcmpExt(r2->method, SIP_METHOD_NAME_ACK) == 0) {
         return TRUE;
     }
     
-    if (strcmp(r1->method, r2->method) != 0) {
+    if (StrcmpExt(r1->method, r2->method) != 0) {
         return FALSE;
     }
 
@@ -118,7 +119,7 @@ BOOL RequestLineMatched(struct RequestLine *r1, struct RequestLine *r2)
         return FALSE;
     }
 
-    if (strcmp(r1->sipVersion, r2->sipVersion) != 0){
+    if (StrcmpExt(r1->sipVersion, r2->sipVersion) != 0){
         return FALSE;
     }
     return TRUE;

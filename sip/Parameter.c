@@ -6,7 +6,7 @@
 #include "Parameter.h"
 #include "Utils.h"
 #include "utils/list/include/list.h"
-
+#include "StringExt.h"
 
 #define PARAMETER_MAX_NAME_LENGTH 32
 #define PARAMETER_MAX_VALUE_LENGTH 128
@@ -36,8 +36,8 @@ struct Parameter *ParseParameter(char *s)
 
 BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2)
 {
-    return !(strcmp(p1->name, p2->name) != 0 
-            || strcmp(p1->value, p2->value) != 0);
+    return !(StrcmpExt(p1->name, p2->name) != 0 
+            || StrcmpExt(p1->value, p2->value) != 0);
 }
 
 DEFINE_STRING_MEMBER_READER(struct Parameter, GetParameterName, name);
@@ -91,7 +91,7 @@ int AddParameter(struct Parameters *ps, char *name, char *value)
     int length = ParametersLength(ps);
 
     for ( ; i < length; i ++) {
-        if (strcmp (((struct Parameter *) get_data_at(ps->parameters, i))->name, name) == 0)
+        if (StrcmpExt (((struct Parameter *) get_data_at(ps->parameters, i))->name, name) == 0)
             p = get_data_at (ps->parameters, i);
     }
 
@@ -138,7 +138,7 @@ char *GetParameter(struct Parameters *ps, char *name)
 
     for ( ; i < length; i ++) {
         struct Parameter *p = get_data_at(ps->parameters, i);
-        if (strcmp (p->name, name) == 0)
+        if (StrcmpExt (p->name, name) == 0)
             return p->value;
     }
 

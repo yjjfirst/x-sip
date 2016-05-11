@@ -7,6 +7,7 @@
 #include "Parser.h"
 #include "CSeqHeader.h"
 #include "SipMethod.h"
+#include "StringExt.h"
 
 struct CSeqHeader 
 {
@@ -99,14 +100,14 @@ BOOL CSeqHeaderMethodMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)
 {
     assert(c1 != NULL && c2 != NULL);
 
-    return !strcmp (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
+    return !StrcmpExt (CSeqHeaderGetMethod(c1), CSeqHeaderGetMethod(c2));
 }
 
 BOOL CSeqMethodMatchedByName(struct CSeqHeader *c, char *string)
 {
     assert(c != NULL && string != NULL);
     
-    return !strcmp(CSeqHeaderGetMethod(c), string);
+    return !StrcmpExt(CSeqHeaderGetMethod(c), string);
 }
 
 BOOL CSeqHeadersMatched(struct CSeqHeader *c1, struct CSeqHeader *c2)

@@ -6,6 +6,7 @@
 #include "Header.h"
 #include "Parser.h"
 #include "CallIdHeader.h"
+#include "StringExt.h"
 
 struct CallIdHeader {
     struct Header headerBase;
@@ -57,7 +58,7 @@ BOOL CallIdHeaderMatched(struct CallIdHeader *id1, struct CallIdHeader *id2)
     assert (id1 != NULL);
     assert (id2 != NULL);
 
-    return !strcmp(id1->id, id2->id);
+    return !StrcmpExt(id1->id, id2->id);
 }
 
 char *CallIdHeader2String(char *result, struct Header *id)

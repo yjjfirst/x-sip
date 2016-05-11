@@ -7,6 +7,7 @@
 #include "URI.h"
 #include "Parser.h"
 #include "Parameter.h"
+#include "StringExt.h"
 
 #define URI_MAX_ELEMENT 6
 #define URI_SCHEME_MAX_LENGTH 8
@@ -78,7 +79,7 @@ BOOL HasUser42String(void *u)
 {
     struct URI **uri = (struct URI **)(u);
 
-    if (strcmp("", UriGetUser(*uri)) == 0 )
+    if (StrcmpExt("", UriGetUser(*uri)) == 0 )
         return FALSE;
 
     return TRUE;
@@ -238,9 +239,9 @@ BOOL UriMatched(struct URI *uri, struct URI *uri2)
     if (uri->port != uri2->port) {
         return FALSE;
     }
-    return !(strcmp(uri->user, uri2->user) != 0
-             || strcmp(uri->host, uri2->host) != 0
-             || strcmp(uri->scheme, uri2->scheme) != 0);
+    return !(StrcmpExt(uri->user, uri2->user) != 0
+             || StrcmpExt(uri->host, uri2->host) != 0
+             || StrcmpExt(uri->scheme, uri2->scheme) != 0);
 }
 
 void UriAddParameter(struct URI *uri, char *name, char *value)
