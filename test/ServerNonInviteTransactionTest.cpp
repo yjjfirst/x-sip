@@ -30,12 +30,6 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     }
 };
 
-TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateTest)
-{
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(transaction));
-    CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, TransactionGetType(transaction));
-}
-
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
 {
     struct Message *newRequest = CreateMessage();
@@ -94,4 +88,41 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
     CHECK_TRUE(IfRequestMatchTransaction(transaction, ack));
 
     DestoryMessage(&ack);
+}
+
+//Trying state test
+TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateTest)
+{
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(transaction));
+    CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, TransactionGetType(transaction));
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithInviteTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+    transaction = AddServerNonInviteTransaction(invite, NULL);
+    
+    POINTERS_EQUAL(NULL, transaction);
+    
+    DestoryMessage(&invite);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAckTest)
+{
+    struct Message *ack = CreateMessage();
+    ParseMessage(ACK_MESSAGE, ack);
+    transaction = AddServerNonInviteTransaction(ack, NULL);
+    
+    POINTERS_EQUAL(NULL, transaction);
+    
+    DestoryMessage(&ack);
+}
+
+
+TEST(ServerNonInviteTransactionTestGroup, TryingStateReceive1xxTest)
+{
+    struct Message *trying = BuildTryingMessage(request);
+
+    DestoryMessage(&trying);
 }

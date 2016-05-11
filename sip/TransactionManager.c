@@ -13,6 +13,7 @@
 #include "Messages.h"
 #include "DialogId.h"
 #include "Dialog.h"
+#include "RequestLine.h"
 
 struct TransactionManager {
     struct TransactionManagerNotifiers *notifiers;
@@ -210,7 +211,16 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
 
 struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    struct Transaction *t = CreateServerNonInviteTransaction(message, user);
+    struct Transaction *t;
+
+    if (message == NULL) return NULL;
+
+    struct RequestLine *rl = MessageGetRequestLine(message);
+    if (RequestLineGetMethod(rl) == SIP_METHOD_INVITE 
+        || RequestLineGetMethod(rl) == SIP_METHOD_ACK) 
+        return NULL;
+
+    t = CreateServerNonInviteTransaction(message, user);
     AddTransaction2Manager(t);
 
     return t;

@@ -65,7 +65,7 @@ BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2)
         return FALSE;
     }
 
-    if (strcmp (ViaHeaderGetTransport(via1), ViaHeaderGetTransport(via2)) != 0) {
+    if (StrcmpExt (ViaHeaderGetTransport(via1), ViaHeaderGetTransport(via2)) != 0) {
         return FALSE;
     }
     

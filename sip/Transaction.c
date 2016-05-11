@@ -183,7 +183,7 @@ BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *respons
         && MessageCSeqHeaderMethodMatched(request, response);
 }
 
-BOOL IfRequestMethodMatched(struct Transaction *t, struct Message *request)
+BOOL RequestMethodMatched(struct Transaction *t, struct Message *request)
 {
     struct RequestLine *origin = MessageGetRequestLine(t->request);
     struct RequestLine *new = MessageGetRequestLine(request);
@@ -199,7 +199,7 @@ BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *request)
     struct Message *origin = TransactionGetRequest(t);
     return MessageViaHeaderBranchMatched(origin, request)
         && MessageViaHeaderSendbyMatched(origin, request)
-        && IfRequestMethodMatched(t, request);
+        && RequestMethodMatched(t, request);
 }
 
 struct Message *TransactionGetRequest(struct Transaction *t)

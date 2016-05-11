@@ -79,7 +79,7 @@ void ParseHeader(char *headerString, struct Message *message)
     RawParseHeader(headerString, message->headers);
 }
 
-int ParseMessage(char *string, struct Message *message)
+int ParseMessage(const char *string, struct Message *message)
 {
     char localString[MAX_MESSAGE_LENGTH] = {0};
     char *save_ptr = NULL;
@@ -110,6 +110,7 @@ int ParseMessage(char *string, struct Message *message)
 
 struct RequestLine *MessageGetRequestLine(struct Message *message)
 {
+    assert(message != NULL);
     return message->rr.request;
 }
 

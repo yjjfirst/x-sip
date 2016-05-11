@@ -95,3 +95,14 @@ To: \"88001\" <sip:88001@192.168.10.62>;tag=as5c1841ad\r\n\
 Contact: \"Martin\" <sip:88002@192.168.10.1:5060>\r\n\
 Content-Length: 0\r\n\
 Max-Forwards: 70\r\n"
+
+#define ACK_MESSAGE "\
+ACK sip:3401@10.6.2.10:5060 SIP/2.0\r\n\
+Via: SIP/2.0/UDP  10.6.3.1:5060;branch=z9hG4bKB1C57\r\n\
+From: <sip:4105553501@10.6.3.1>;tag=105741C-1D5E\r\n\
+To: <sip:3401@10.6.2.10>;tag=16777231\r\n\
+Date: Fri, 06 Jan 2006 5:35:13 GMT\r\n\
+Call-ID: E937365B-2C0C11D6-802FA93D-4772A3BB@10.6.3.1\r\n\
+Max-Forwards: 70\r\n\
+CSeq: 101 ACK\r\n\
+Content-Length: 0\r\n"

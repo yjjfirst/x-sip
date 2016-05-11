@@ -10,7 +10,7 @@ enum MESSAGE_TYPE {
 
 struct Message;
 
-int ParseMessage(char *string, struct Message *message);
+int ParseMessage(const char *string, struct Message *message);
 struct Message *CreateMessage();
 void DestoryMessage(struct Message **message);
 
