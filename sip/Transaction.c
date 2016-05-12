@@ -46,6 +46,7 @@ struct Fsm {
 struct Fsm ClientNonInviteTransactionFsm;
 struct Fsm ClientInviteTransactionFsm;
 struct Fsm ServerInviteTransactionFsm;
+struct Fsm ServerNonInviteTransactionFsm;
 
 void TransactionAddResponse(struct Transaction *t, struct Message *message)
 {
@@ -264,6 +265,9 @@ void ResponseWith180Ringing(struct Transaction *t)
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return;
     }
+
+    if (TransactionGetType(t) == TRANSACTION_TYPE_SERVER_NON_INVITE)
+        RunFsm(t, TRANSACTION_EVENT_1XX_SENT);
 }
 
 int SendAckRequest(struct Transaction *t)
@@ -286,6 +290,11 @@ void ReceiveAckRequest(struct Transaction *t)
 void Receive3xxResponse(struct Transaction *t)
 {
     RunFsm(t, TRANSACTION_EVENT_3XX_RECEIVED);
+}
+
+void ReceiveDupRequest(struct Transaction *t, struct Message *message)
+{
+    
 }
 
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
@@ -349,7 +358,8 @@ struct Transaction *CreateServerNonInviteTransaction(struct Message *request, st
 {
     struct Transaction *t = CallocTransaction(request, user);
     t->type = TRANSACTION_TYPE_SERVER_NON_INVITE;
-    
+    t->fsm = &ServerNonInviteTransactionFsm;
+
     return t;
 }
 
@@ -502,6 +512,33 @@ struct Fsm ServerInviteTransactionFsm = {
         &ServerInviteProceedingState,
         &ServerInviteCompletedState,
         &ServerInviteConfirmedState,
+        NULL,
+    }
+};
+
+struct FsmState ServerNonInviteTryingState = {
+    TRANSACTION_STATE_TRYING,
+    {
+        {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FsmState ServerNonInviteProceedingState = {
+    TRANSACTION_STATE_PROCEEDING,
+    {
+        {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct Fsm ServerNonInviteTransactionFsm = {
+    {
+        &ServerNonInviteTryingState,
+        &ServerNonInviteProceedingState,
         NULL,
     }
 };

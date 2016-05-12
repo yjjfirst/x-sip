@@ -32,6 +32,7 @@ enum TransactionEvent {
     TRANSACTION_EVENT_180RINGING_RECEIVED,
     TRANSACTION_EVENT_3XX_RECEIVED,
 
+    TRANSACTION_EVENT_1XX_SENT,
     TRANSACTION_EVENT_200OK_SENT,
     TRANSACTION_EVENT_301MOVED_SENT,
     TRANSACTION_EVENT_INVITE_RECEIVED,
@@ -55,6 +56,7 @@ void ResponseWith301(struct Transaction *t);
 
 void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
+void ReceiveDupRequest(struct Transaction *t, struct Message *message);
 
 struct Message * TransactionGetRequest(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
