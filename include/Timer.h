@@ -10,6 +10,7 @@
 #define INVITE_RESPONSE_RETRANSMIT_INTERVAL T1
 #define WAIT_TIME_FOR_ACK_RECEIPT 64*T1
 #define WAIT_TIME_FOR_ACK_RETRANSMITS T4
+#define WAIT_TIME_FOR_REQUEST_RETRANSMITS 64*T1
 
 typedef void (*TimerCallback)(void *data);
 typedef struct Timer *(*TimerAddFunc)(void *data, int ms, TimerCallback action);

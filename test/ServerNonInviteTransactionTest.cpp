@@ -15,6 +15,15 @@ extern "C" {
 #include "MessageTransport.h"
 }
 
+TimerCallback TimerJAction;
+
+static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action)
+{
+    TimerJAction = action;
+    mock().actualCall("AddTimerMock").withParameter("interval", interval);
+    return NULL;
+}
+
 TEST_GROUP(ServerNonInviteTransactionTestGroup)
 {
     struct Message *request;
@@ -24,7 +33,6 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
         request = CreateMessage();
         ParseMessage(BYE_MESSAGE, request);
         transaction = AddServerNonInviteTransaction(request, NULL);
-
     }
 
     void teardown() 
@@ -162,17 +170,24 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
     DestoryMessage(&dupRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendErrorTest)
+void CheckNoTransaction()
 {
     struct Transaction *t = NULL;
+    t = GetTransaction((char *)"z9hG4bK56fb2ea6-fe10-e611-972d-60eb69bfc4e8", (char *)SIP_METHOD_NAME_BYE);
+    POINTERS_EQUAL(NULL, t);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendErrorTest)
+{
     ResponseWith180Ringing(transaction);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 180).andReturnValue(-1);
     UT_PTR_SET(Transporter, &MockTransporter);
     ResponseWith180Ringing(transaction);
-    t = GetTransaction((char *)"z9hG4bK56fb2ea6-fe10-e611-972d-60eb69bfc4e8", (char *)SIP_METHOD_NAME_BYE);
-    POINTERS_EQUAL(NULL, t);
 
+    CheckNoTransaction();
+
+    mock().checkExpectations();
     mock().clear();
 }
 
@@ -184,13 +199,17 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingState200OKSentTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
 }
 
+void PrepareCompletedState(struct Transaction *transaction)
+{
+    ResponseWith180Ringing(transaction);
+    ResponseWith200OK(transaction);
+}
 //Completed state test
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
 {
     struct Message *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
-    ResponseWith180Ringing(transaction);
-    ResponseWith200OK(transaction);
+    PrepareCompletedState(transaction);
 
     for (int i = 0; i < 20; i++ ){
         ReceiveDupRequest(transaction, dupRequest);
@@ -201,7 +220,75 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
 
 }
 
+TEST(ServerNonInviteTransactionTestGroup, CompletedStateDupRequestTest)
+{
+    PrepareCompletedState(transaction);
+
+    struct Message *dupRequest = CreateMessage();
+    ParseMessage(BYE_MESSAGE, dupRequest);
+
+    UT_PTR_SET(Transporter, &MockTransporter);
+
+    for (int i = 0; i < 20; i ++) {
+        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
+        ReceiveDupRequest(transaction, dupRequest);
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
+        mock().checkExpectations();
+    }
+    mock().clear();
+    DestoryMessage(&dupRequest);
+}
+
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateSendErrorTest)
 {
-    FAIL("");
+    PrepareCompletedState(transaction);
+
+    struct Message *dupRequest = CreateMessage();
+    ParseMessage(BYE_MESSAGE, dupRequest);
+
+    UT_PTR_SET(Transporter, &MockTransporter);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200).andReturnValue(-1);
+    ReceiveDupRequest(transaction, dupRequest);
+
+    CheckNoTransaction();
+
+    mock().checkExpectations();
+    mock().clear();
+    DestoryMessage(&dupRequest);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ToCompletedStateFromProceedingAddTimerTest)
+{
+    UT_PTR_SET(AddTimer, AddTimerMock);
+    mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_REQUEST_RETRANSMITS);
+
+    PrepareCompletedState(transaction);
+    
+    mock().checkExpectations();
+    mock().clear();
+}
+
+TEST(ServerNonInviteTransactionTestGroup, ToCompletedStateFromTryinbgAddTimerTest)
+{
+    UT_PTR_SET(AddTimer, AddTimerMock);
+    mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_REQUEST_RETRANSMITS);
+
+    ResponseWith200OK(transaction);
+    
+    mock().checkExpectations();
+    mock().clear();
+}
+
+TEST(ServerNonInviteTransactionTestGroup, CompletedStateTimerJTest)
+{
+    UT_PTR_SET(AddTimer, AddTimerMock);
+    mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_REQUEST_RETRANSMITS);
+
+    PrepareCompletedState(transaction);
+    TimerJAction(transaction);
+
+    CheckNoTransaction();
+
+    mock().checkExpectations();
+    mock().clear();
 }

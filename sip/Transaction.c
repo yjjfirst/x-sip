@@ -85,6 +85,11 @@ void RetransmitTimerCallback(void *t)
     RunFsm(t, TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED);
 }
 
+void WaitForRequestRetransmitTimerCallback(void *t)
+{
+    RunFsm(t, TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED);
+}
+
 int ResetRetransmitTimer(struct Transaction *t)
 {
     t->retransmits = 0;
@@ -137,6 +142,12 @@ int AddWaitForResponseTimer(struct Transaction *t)
     return 0;
 }
 
+int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
+{
+    AddTimer(t, WAIT_TIME_FOR_REQUEST_RETRANSMITS, WaitForRequestRetransmitTimerCallback);
+    return 0;
+}
+
 int NotifyUser(struct Transaction *t)
 {
     if (t && t->user) {
@@ -170,6 +181,7 @@ int ResendLatestResponse(struct Transaction *t)
 {
     if (TransactionSendMessage(TransactionGetLatestResponse(t)) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+        return -1;
     }
     return 0;
 }
@@ -294,7 +306,7 @@ void Receive3xxResponse(struct Transaction *t)
 
 void ReceiveDupRequest(struct Transaction *t, struct Message *message)
 {
-    
+    ResendLatestResponse(t);
 }
 
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
@@ -520,7 +532,8 @@ struct FsmState ServerNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
         {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
-        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED, {
+                AddServerNonInviteWaitRequestRetransmitTimer}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -530,8 +543,17 @@ struct FsmState ServerNonInviteProceedingState = {
     {
         {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED, {
+                AddServerNonInviteWaitRequestRetransmitTimer }},
         {TRANSACTION_EVENT_MAX}
+    }
+};
+
+struct FsmState ServerNonInviteCompletedState = {
+    TRANSACTION_STATE_COMPLETED,
+    {
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
     }
 };
 
@@ -539,6 +561,7 @@ struct Fsm ServerNonInviteTransactionFsm = {
     {
         &ServerNonInviteTryingState,
         &ServerNonInviteProceedingState,
+        &ServerNonInviteCompletedState,
         NULL,
     }
 };
