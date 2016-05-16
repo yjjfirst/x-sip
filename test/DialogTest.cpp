@@ -68,6 +68,12 @@ static struct MessageTransporter MockTransporterForAck = {
     ReceiveInMessageMock,
 };
 
+TEST(DialogTestGroup, DialogCreateTest)
+{
+    CHECK_EQUAL(DIALOG_STATE_NON_EXIST, DialogGetState(dialog));
+    DestoryMessage(&invite);
+}
+
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
@@ -251,9 +257,14 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerTransaction(dialog, invite); 
     DialogSend200OKResponse(dialog);
 
-    DialogReceiveBye(dialog, NULL);
+    struct Message *bye = BuildByeMessage(dialog);
+    DialogReceiveBye(dialog, bye);
+    DialogSend200OKResponse(dialog);
+
+    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 }

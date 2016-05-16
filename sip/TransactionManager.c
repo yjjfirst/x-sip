@@ -211,10 +211,9 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
 
 struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
+    assert(message != NULL);
+
     struct Transaction *t;
-
-    if (message == NULL) return NULL;
-
     struct RequestLine *rl = MessageGetRequestLine(message);
     if (RequestLineGetMethod(rl) == SIP_METHOD_INVITE 
         || RequestLineGetMethod(rl) == SIP_METHOD_ACK) 

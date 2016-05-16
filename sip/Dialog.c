@@ -120,7 +120,7 @@ void DialogAck(struct Dialog *dialog)
     AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
 }
 
-void DialogHandleInviteClientEvent(struct Transaction *t)
+void DialogHandleClientInviteEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
@@ -133,7 +133,7 @@ void DialogHandleInviteClientEvent(struct Transaction *t)
     }
 }
 
-void DialogHandleNonInviteClientEvent(struct Transaction *t)
+void DialogHandleClientNonInviteEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
@@ -153,9 +153,9 @@ void DialogOnTransactionEvent(struct Transaction *t)
     enum TransactionType type = TransactionGetType(t);
 
     if ( type == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-        DialogHandleNonInviteClientEvent(t);
+        DialogHandleClientNonInviteEvent(t);
     } else if (type == TRANSACTION_TYPE_CLIENT_INVITE){
-        DialogHandleInviteClientEvent(t);
+        DialogHandleClientInviteEvent(t);
     } 
 }
 
@@ -200,9 +200,18 @@ void DialogSend200OKResponse(struct Dialog *dialog)
  
     TransactionAddResponse(dialog->transaction, message);
     TransactionSendMessage(message);
-    DialogIdSetLocalTag(id, MessageGetToTag(message));
-    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    
+    if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        
+        DialogIdSetLocalTag(id, MessageGetToTag(message));
+        DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
+        if (DialogGetRequestMethod(dialog) == SIP_METHOD_BYE) {
+            DialogSetState(dialog, DIALOG_STATE_TERMINATED);
+        }
+    }
+
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
+    
 }
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
