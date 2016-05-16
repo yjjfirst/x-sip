@@ -1,8 +1,8 @@
-struct Dialogs;
+struct DialogManager;
 struct DialogId;
 struct CallIdHeader;
 
-struct Dialog *GetDialogById(struct Dialogs *dialogs, struct DialogId *dialogid);
-struct Dialogs *CreateDialogs();
-void DestoryDialogs(struct Dialogs **dialogs);
-void AddDialog(struct Dialogs *dialogs, struct Dialog *dialog);
+struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dialogid);
+struct DialogManager *CreateDialogs();
+void DestoryDialogs(struct DialogManager **dialogs);
+void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog);

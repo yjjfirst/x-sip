@@ -13,7 +13,7 @@ TEST_GROUP(DialogsTestGroup)
 
 TEST(DialogsTestGroup, CreateDialogsTest)
 {
-    struct Dialogs *dialogs = CreateDialogs();
+    struct DialogManager *dialogs = CreateDialogs();
     
     CHECK_TRUE(dialogs != NULL);
 
@@ -26,6 +26,10 @@ TEST(DialogsTestGroup, AddDialogTest)
     struct DialogId *dialogid = CreateDialogId((char *)"a",(char *) "b",(char *)"c");    
     CreateDialog(dialogid, ua);
            
+    //DialogsGetDialog(dialogid, ua);
     DestoryUserAgent(&ua);
 }
 
+TEST(DialogsTestGroup, RemoveDialTest)
+{
+}

@@ -16,7 +16,7 @@
 struct UserAgent {
     struct Account *account;
     BOOL binded;
-    struct Dialogs *dialogs;
+    struct DialogManager *dialogs;
 };
 
 void UserAgentSetUserName(struct UserAgent *ua, char *user)

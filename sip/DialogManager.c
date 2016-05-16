@@ -9,11 +9,11 @@
 
 #define TAG_MAX_LENGTH 64
 
-struct Dialogs {
+struct DialogManager {
     t_list *dialogList;
 };
 
-struct Dialog *GetDialogById(struct Dialogs *dialogs, struct DialogId *dialogid)
+struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dialogid)
 {
     int length = get_list_len(dialogs->dialogList);
     int i = 0;
@@ -30,20 +30,20 @@ struct Dialog *GetDialogById(struct Dialogs *dialogs, struct DialogId *dialogid)
     return NULL;
 }
 
-void AddDialog(struct Dialogs *dialogs, struct Dialog *dialog)
+void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog)
 {
     put_in_list(&dialogs->dialogList, dialog);
 }
 
-struct Dialogs *CreateDialogs()
+struct DialogManager *CreateDialogs()
 {
-    struct Dialogs *dialogs;
-    dialogs = calloc(1, sizeof (struct Dialogs));
+    struct DialogManager *dialogs;
+    dialogs = calloc(1, sizeof (struct DialogManager));
 
     return dialogs;
 }
 
-void DestoryDialogList(struct Dialogs *dialogs)
+void DestoryDialogList(struct DialogManager *dialogs)
 {
     int length = get_list_len(dialogs->dialogList);
     int i = 0;
@@ -54,7 +54,7 @@ void DestoryDialogList(struct Dialogs *dialogs)
     }
 }
 
-void DestoryDialogs(struct Dialogs **dialogs)
+void DestoryDialogs(struct DialogManager **dialogs)
 {
     if (*dialogs != NULL) {
         DestoryDialogList(*dialogs);
