@@ -45,38 +45,40 @@ BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
 
-BOOL TransactionMatchedById(struct Transaction *t, struct TransactionId *id)
+BOOL TransactionMatchedById(void *t, void *id)
 {
-    return TransactionMatched(t, TransactionIdGetBranch(id), TransactionIdGetMethod(id));
+    struct Transaction *tt = t;
+    struct TransactionId *tid = id;
+    return TransactionMatched((void *)tt, TransactionIdGetBranch(tid), TransactionIdGetMethod(tid));
+}
+
+BOOL TransactionMatchedByAddr(void *t1, void *t2)
+{
+    return t1 == t2;
+}
+
+void _RemoveTransaction(void *id, BOOL (*matched)(void *t1, void *t2))
+{    
+    int i = 0;
+
+    for(; i < CountTransaction(); i++) {
+        struct Transaction *tt = GetTransactionByPosition(i);
+        if (matched(tt, id)) {
+            RemoveTransactionByPosition(i);
+            DestoryTransaction(&tt);
+            break;
+        }
+    }
 }
 
 void RemoveTransactionById(struct TransactionId *id)
 {
-    int i = 0;
-
-    for(; i < CountTransaction(); i++) {
-        struct Transaction *tt = GetTransactionByPosition(i);
-        if (TransactionMatchedById(tt, id)) {
-            RemoveTransactionByPosition(i);
-            DestoryTransaction(&tt);
-            break;
-        }
-    }
-
+    _RemoveTransaction(id, TransactionMatchedById);
 }
 
 void RemoveTransaction(struct Transaction *t)
 {
-    int i = 0;
-
-    for(; i < CountTransaction(); i++) {
-        struct Transaction *tt = GetTransactionByPosition(i);
-        if (tt == t) {
-            RemoveTransactionByPosition(i);
-            DestoryTransaction(&tt);
-            break;
-        }
-    }
+    _RemoveTransaction(t, TransactionMatchedByAddr);
 }
 
 struct Transaction *GetTransaction(char *branch, char *seqMethod)
@@ -96,18 +98,10 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
 
 struct Transaction *MatchTransaction(struct Message *message)
 {
-    int i = 0;
-    int length = CountTransaction();
-    struct Transaction *t = NULL;
+    char *branch = MessageGetViaBranch(message);
+    char *method = MessageGetCSeqMethod(message);
     
-    assert (message != NULL);
-    for (; i < length; i++) {
-        struct Transaction *tt = GetTransactionByPosition(i);
-        if (IfResponseMatchedTransaction(tt, message))
-            t = tt;
-    }
-    
-    return t;
+    return GetTransaction(branch, method);
 }
 
 BOOL TmHandleReponseMessage(struct Message *message)
@@ -205,6 +199,13 @@ void AddTransaction2Manager(struct Transaction *t)
     }
 }
 
+BOOL ValidatedNonInviteMethod(struct Message *message)
+{
+    struct RequestLine *rl = MessageGetRequestLine(message);
+    return  RequestLineGetMethod(rl) != SIP_METHOD_INVITE 
+        &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
+}
+
 struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
@@ -232,21 +233,14 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
 
 struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
 {
-    assert(message != NULL);
+    struct Transaction *t = NULL;
 
-    struct Transaction *t;
-    struct RequestLine *rl = MessageGetRequestLine(message);
-    if (RequestLineGetMethod(rl) == SIP_METHOD_INVITE 
-        || RequestLineGetMethod(rl) == SIP_METHOD_ACK) 
-        return NULL;
+    assert(message != NULL);
+    if (!ValidatedNonInviteMethod(message))    return NULL;
 
     t = CreateServerNonInviteTransaction(message, user);
     AddTransaction2Manager(t);
 
     return t;
 }
-
-
-
-
 
