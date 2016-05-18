@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "Dialogs.h"
+#include "DialogManager.h"
 #include "Dialog.h"
 #include "DialogId.h"
 #include "CallIdHeader.h"
@@ -33,6 +33,17 @@ struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dia
 void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog)
 {
     put_in_list(&dialogs->dialogList, dialog);
+}
+
+bool MatchedDialogId (void *dialog, void *id)
+{
+    return DialogIdMatched(DialogGetId(dialog), id);
+}
+
+void RemoveDialog(struct DialogManager *dialogs, struct DialogId *dialogId)
+{
+    struct Dialog *dialog = del_node_as_arg(&dialogs->dialogList, MatchedDialogId, dialogId);
+    DestoryDialog(&dialog);
 }
 
 struct DialogManager *CreateDialogs()

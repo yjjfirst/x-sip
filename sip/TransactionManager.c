@@ -10,6 +10,7 @@
 #include "TransactionManager.h"
 #include "TransactionNotifiers.h"
 #include "Transaction.h"
+#include "TransactionId.h"
 #include "Messages.h"
 #include "DialogId.h"
 #include "Dialog.h"
@@ -36,6 +37,34 @@ void RemoveTransactionByPosition(int position)
     del_node_at(&TransactionManager.transactions, position);
 }
 
+BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
+{
+    struct Message *request = TransactionGetRequest(t);
+    
+    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
+        && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
+}
+
+BOOL TransactionMatchedById(struct Transaction *t, struct TransactionId *id)
+{
+    return TransactionMatched(t, TransactionIdGetBranch(id), TransactionIdGetMethod(id));
+}
+
+void RemoveTransactionById(struct TransactionId *id)
+{
+    int i = 0;
+
+    for(; i < CountTransaction(); i++) {
+        struct Transaction *tt = GetTransactionByPosition(i);
+        if (TransactionMatchedById(tt, id)) {
+            RemoveTransactionByPosition(i);
+            DestoryTransaction(&tt);
+            break;
+        }
+    }
+
+}
+
 void RemoveTransaction(struct Transaction *t)
 {
     int i = 0;
@@ -50,14 +79,6 @@ void RemoveTransaction(struct Transaction *t)
     }
 }
 
-BOOL MatchTransactionByString(struct Transaction *t, char *branch, char *seqMethod)
-{
-    struct Message *request = TransactionGetRequest(t);
-    
-    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
-        && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
-}
-
 struct Transaction *GetTransaction(char *branch, char *seqMethod)
 {
     int i = 0;
@@ -66,7 +87,7 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
     
     for (; i < length; i ++) {
         struct Transaction *t = GetTransactionByPosition(i);
-        if (MatchTransactionByString(t, branch, seqMethod))
+        if (TransactionMatched(t, branch, seqMethod))
             return t;
     }
 

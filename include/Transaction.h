@@ -59,6 +59,7 @@ void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
 void ReceiveDupRequest(struct Transaction *t, struct Message *message);
 
+struct TransactionId *TransactionGetId(struct Transaction *t);
 struct Message * TransactionGetRequest(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);

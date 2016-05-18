@@ -89,6 +89,12 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     }
 };
+
+TEST(ClientInviteTransactionTestGroup, GetTransactionTest)
+{
+    struct TransactionId *id = TransactionGetId(t);
+    (void) id;
+}
 //Init tests.
 TEST(ClientInviteTransactionTestGroup, CreateInviteTransaction)
 { 

@@ -60,7 +60,9 @@ TEST(TransactionManager, NewTransaction)
     transaction = AddClientNonInviteTransaction(message, NULL);
 
     CHECK_EQUAL(3, CountTransaction());
-    CHECK_FALSE(0 == transaction)
+    CHECK_FALSE(0 == transaction);
+
+    mock().checkExpectations();
 }
 
 TEST(TransactionManager, MatchResponse)
@@ -86,7 +88,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }
 
-TEST(TransactionManager, GetTransactionByTest)
+TEST(TransactionManager, GetTransactionByIdTest)
 {
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[] = "z9hG4bK1491280923";
@@ -100,7 +102,7 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
     struct Message *localMessage = CreateMessage();
     struct TransactionId *tid = CreateTransactionId(); 
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
-    ExtractTransactionIdFromMessage(tid, localMessage);
+    TransactionIdExtract(tid, localMessage);
 
     STRCMP_EQUAL("z9hG4bK27dc30b4",TransactionIdGetBranch(tid));
     STRCMP_EQUAL("INVITE",TransactionIdGetMethod(tid));
@@ -108,4 +110,22 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
     DestoryMessage(&localMessage);
     DestoryTransactionId(&tid);
     DestoryMessage(&message);
+}
+
+TEST(TransactionManager, TransactionIdTest)
+{
+    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct TransactionId *tid = TransactionGetId(t);
+
+    STRCMP_EQUAL(MessageGetViaBranch(message), TransactionIdGetBranch(tid));
+    STRCMP_EQUAL(MessageGetCSeqMethod(message), TransactionIdGetMethod(tid));
+}
+
+TEST(TransactionManager, TransactionRemoveTest)
+{
+    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct TransactionId *tid = TransactionGetId(t);
+
+    RemoveTransactionById(tid);
+    POINTERS_EQUAL(NULL, GetTransaction(TransactionIdGetBranch(tid), TransactionIdGetMethod(tid)));
 }

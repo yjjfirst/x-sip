@@ -3,6 +3,8 @@
 
 #include "Bool.h"
 #include "Transaction.h"
+#include "TransactionId.h"
+#include "TransactionManager.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "MessageTransport.h"
@@ -26,6 +28,7 @@ struct Transaction {
     int retransmits;
     int curEvent;
     enum TransactionType type;
+    struct TransactionId *id;
 };
 
 struct FsmStateEventEntry {
@@ -62,6 +65,12 @@ enum TransactionState TransactionGetState(struct Transaction *t)
 {
     assert(t != NULL);
     return t->state;
+}
+
+struct TransactionId *TransactionGetId(struct Transaction *t)
+{
+    assert(t != NULL);
+    return t->id;
 }
 
 struct Message *TransactionGetLatestResponse(struct Transaction *t)
@@ -240,9 +249,11 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
 {
     struct Transaction *t = calloc(1, sizeof (struct Transaction));
 
+    t->id = CreateTransactionId();
     t->request = request;
     t->user = user;
-    
+    TransactionIdExtract(t->id, request);
+
     return t;
 }
 
@@ -391,6 +402,7 @@ void DestoryTransaction(struct Transaction **t)
     if ( *t != NULL) {
         DestoryMessage(&(*t)->request); 
         DestoryResponseMessage(*t);
+        DestoryTransactionId(&(*t)->id);
         free(*t);
         *t = NULL;
     }

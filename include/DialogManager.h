@@ -6,3 +6,4 @@ struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dia
 struct DialogManager *CreateDialogs();
 void DestoryDialogs(struct DialogManager **dialogs);
 void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog);
+void RemoveDialog(struct DialogManager *dialogs, struct DialogId *dialogId);

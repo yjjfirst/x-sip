@@ -2,6 +2,7 @@
 
 #include "TransactionId.h"
 #include "Messages.h"
+#include "Utils.h"
 
 struct TransactionId {
     char* branch;
@@ -21,15 +22,8 @@ void DestoryTransactionId(struct TransactionId **transactionId)
     }
 }
 
-char *TransactionIdGetBranch(struct TransactionId *transactionId)
-{
-    return transactionId->branch;
-}
-
-char *TransactionIdGetMethod(struct TransactionId *transactionId)
-{
-    return transactionId->method;
-}
+DEFINE_STRING_MEMBER_READER(struct TransactionId, TransactionIdGetBranch, branch);
+DEFINE_STRING_MEMBER_READER(struct TransactionId, TransactionIdGetMethod, method);
 
 void TransactionIdSetBranch(struct TransactionId *transactionId, char *branch)
 {
@@ -41,7 +35,7 @@ void TransactionIdSetMethod(struct TransactionId *transactionId, char *method)
     transactionId->method = method;
 }
 
-void ExtractTransactionIdFromMessage(struct TransactionId *tid, struct Message *message)
+void TransactionIdExtract(struct TransactionId *tid, struct Message *message)
 {
     tid->branch = MessageGetViaBranch(message);
     tid->method = MessageGetCSeqMethod(message);

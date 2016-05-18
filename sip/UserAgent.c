@@ -7,7 +7,7 @@
 #include "ExpiresHeader.h"
 #include "Messages.h"
 #include "Header.h"
-#include "Dialogs.h"
+#include "DialogManager.h"
 #include "Utils.h"
 #include "DialogId.h"
 #include "Dialog.h"
@@ -80,6 +80,11 @@ void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
     assert(dialog != NULL);
 
     AddDialog(ua->dialogs, dialog);
+}
+
+void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id)
+{
+    RemoveDialog(ua->dialogs, id);
 }
 
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)

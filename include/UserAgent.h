@@ -21,6 +21,7 @@ void UserAgentSetUnbinded(struct UserAgent *ua);
 BOOL UserAgentBinded(struct UserAgent *ua);
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid);
 void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog);
+void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id);
 
 struct UserAgent *CreateUserAgent();
 void DestoryUserAgent(struct UserAgent **ua);
