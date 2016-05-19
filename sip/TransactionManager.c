@@ -17,7 +17,7 @@
 #include "RequestLine.h"
 
 struct TransactionManager {
-    struct TransactionManagerNotifiers *notifiers;
+    struct TransactionManagerObserver observer;
     t_list *transactions;
 };
 struct TransactionManager TransactionManager;
@@ -183,18 +183,14 @@ void EmptyTransactionManager()
     DestoryTransactions(&TransactionManager);
 }
 
-struct TransactionManagerNotifiers Notifiers = {
-    .die = RemoveTransaction,
-};
-
 struct TransactionManager TransactionManager = {
-    .notifiers = &Notifiers,
+    {RemoveTransaction},
 };
 
 void AddTransaction2Manager(struct Transaction *t)
 {
     if (t != NULL) {
-        TransactionSetNotifiers(t, TransactionManager.notifiers);
+        TransactionSetObserver(t, &TransactionManager.observer);
         put_in_list(&TransactionManager.transactions, t);
     }
 }
@@ -206,7 +202,7 @@ BOOL ValidatedNonInviteMethod(struct Message *message)
         &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
 }
 
-struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
 
@@ -214,7 +210,7 @@ struct Transaction *AddClientNonInviteTransaction(struct Message *message, struc
     return t;
 }
 
-struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CreateClientInviteTransaction(message, user);
 
@@ -223,7 +219,7 @@ struct Transaction *AddClientInviteTransaction(struct Message *message, struct T
 }
 
 
-struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CreateServerInviteTransaction(message, user);
 
@@ -231,16 +227,15 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
     return t;
 }
 
-struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserNotifiers *user)
+struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
 {
     struct Transaction *t = NULL;
 
     assert(message != NULL);
-    if (!ValidatedNonInviteMethod(message))    return NULL;
+    if (!ValidatedNonInviteMethod(message)) return NULL;
 
     t = CreateServerNonInviteTransaction(message, user);
     AddTransaction2Manager(t);
 
     return t;
 }
-

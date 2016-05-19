@@ -195,7 +195,7 @@ TEST(UserAgentTestGroup, BindingTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     BuildTestingMessage();
-    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -212,7 +212,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     BuildTestingMessage();
-    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);
@@ -223,7 +223,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method",MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildBindingMessage(dialog);
-    t = AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     ReceiveInMessage(revMessage);

@@ -16,7 +16,7 @@
 #include "ContactHeader.h"
 
 struct Dialog {
-    struct TransactionUserNotifiers notifyInterface;  //must be the first field in the struct.
+    struct TransactionUserObserver notifyInterface;  //must be the first field in the struct.
     SIP_METHOD requestMethod;
     struct Transaction *transaction;
     struct DialogId *id;
@@ -117,7 +117,7 @@ void DialogExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message 
 void DialogAck(struct Dialog *dialog)
 {
     struct Message *ack = BuildAckMessage(dialog);
-    AddClientNonInviteTransaction(ack, (struct TransactionUserNotifiers *)dialog);         
+    AddClientNonInviteTransaction(ack, (struct TransactionUserObserver *)dialog);         
 }
 
 void DialogHandleClientInviteEvent(struct Transaction *t)
@@ -167,7 +167,7 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
 
-    t = AddClientInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    t = AddClientInviteTransaction(message, (struct TransactionUserObserver *)dialog);
     dialog->transaction = t;
     dialog->localSeqNumber = MessageGetCSeqNumber(message);
 
@@ -176,7 +176,7 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
 
 struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
-    return AddClientNonInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);
+    return AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 
 struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Message *message)
@@ -187,7 +187,7 @@ struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Mes
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
     DialogExtractRemoteTargetFromMessage(dialog, message);
-    t = AddServerInviteTransaction(message, (struct TransactionUserNotifiers *)dialog);;
+    t = AddServerInviteTransaction(message, (struct TransactionUserObserver *)dialog);;
     dialog->transaction = t;
     
     return t;
@@ -216,7 +216,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
 {
-    AddServerNonInviteTransaction(bye, (struct TransactionUserNotifiers *)dialog);
+    AddServerNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
 }
 
 void DialogTerminate(struct Dialog *dialog)

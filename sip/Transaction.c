@@ -19,12 +19,12 @@
 #define TRANSACTION_ACTIONS_MAX 10
 
 struct Transaction {
-    struct TransactionUserNotifiers *user;
+    struct TransactionUserObserver *user;
     enum TransactionState state;
     struct Fsm *fsm;
     struct Message *request;
     t_list *responses;
-    struct TransactionManagerNotifiers *notifiers;
+    struct TransactionManagerObserver *observer;
     int retransmits;
     int curEvent;
     enum TransactionType type;
@@ -56,9 +56,9 @@ void TransactionAddResponse(struct Transaction *t, struct Message *message)
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetNotifiers(struct Transaction *t, struct TransactionManagerNotifiers *notifiers)
+void TransactionSetObserver(struct Transaction *t, struct TransactionManagerObserver *observer)
 {
-    t->notifiers = notifiers;
+    t->observer = observer;
 }
 
 enum TransactionState TransactionGetState(struct Transaction *t)
@@ -240,12 +240,12 @@ enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
     return t->curEvent;
 }
 
-struct TransactionUserNotifiers *TransactionGetUser(struct Transaction *t)
+struct TransactionUserObserver *TransactionGetUser(struct Transaction *t)
 {
     return t->user;
 }
 
-struct Transaction *CallocTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CallocTransaction(struct Message *request, struct TransactionUserObserver *user)
 {
     struct Transaction *t = calloc(1, sizeof (struct Transaction));
 
@@ -320,7 +320,7 @@ void ReceiveDupRequest(struct Transaction *t, struct Message *message)
     ResendLatestResponse(t);
 }
 
-struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     
@@ -339,7 +339,7 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
     return t;
 }
 
-struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
 
@@ -358,7 +358,7 @@ struct Transaction *CreateClientNonInviteTransaction(struct Message *request, st
     return t;
 }
 
-struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     struct Message *trying = BuildTryingMessage(t->request);
@@ -377,7 +377,7 @@ struct Transaction *CreateServerInviteTransaction(struct Message *request, struc
     return t;
 }
 
-struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserNotifiers *user)
+struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserObserver *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     t->type = TRANSACTION_TYPE_SERVER_NON_INVITE;
@@ -591,8 +591,8 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
 void TransactionTerminate(struct Transaction *t)
 {
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->notifiers != NULL)
-            ((struct Transaction *)t)->notifiers->die(t);
+        if (t != NULL && t->observer != NULL)
+            ((struct Transaction *)t)->observer->die(t);
 }
 
 void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
