@@ -37,7 +37,7 @@ TEST_GROUP(TransactionManager)
     void teardown() {
         mock().clear();
         DestoryUserAgent(&ua);
-        EmptyTransactionManager();
+        RemoveAllTransaction();
     }
 };
 

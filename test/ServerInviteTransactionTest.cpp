@@ -118,7 +118,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
     }
 
     void teardown() {
-        EmptyTransactionManager();
+        RemoveAllTransaction();
         mock().checkExpectations();
         mock().clear();
     }

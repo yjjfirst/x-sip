@@ -203,7 +203,7 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    EmptyTransactionManager();    
+    RemoveAllTransaction();    
 }
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
@@ -219,7 +219,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, UserAgentBinded(ua));
 
-    EmptyTransactionManager();
+    RemoveAllTransaction();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method",MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildBindingMessage(dialog);
@@ -230,7 +230,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(FALSE, UserAgentBinded(ua));
 
     DestoryUserAgent(&ua);
-    EmptyTransactionManager();
+    RemoveAllTransaction();
 }
 
 TEST(UserAgentTestGroup, AddDialogTest)

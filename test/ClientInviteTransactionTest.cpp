@@ -61,7 +61,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         mock().clear();
 
         DestoryUserAgent(&ua);
-        EmptyTransactionManager();
+        RemoveAllTransaction();
     }
     
     void ExpectedNewClientTransaction(SIP_METHOD method)

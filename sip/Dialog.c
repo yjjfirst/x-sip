@@ -14,9 +14,10 @@
 #include "Header.h"
 #include "URI.h"
 #include "ContactHeader.h"
+#include "Session.h"
 
 struct Dialog {
-    struct TransactionUserObserver notifyInterface;  //must be the first field in the struct.
+    struct TransactionUserObserver userOberver;  //must be the first field in the struct.
     SIP_METHOD requestMethod;
     struct Transaction *transaction;
     struct DialogId *id;
@@ -117,7 +118,18 @@ void DialogExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message 
 void DialogAck(struct Dialog *dialog)
 {
     struct Message *ack = BuildAckMessage(dialog);
-    AddClientNonInviteTransaction(ack, (struct TransactionUserObserver *)dialog);         
+    DialogAddClientNonInviteTransaction(dialog, ack);         
+}
+
+void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
+{
+    DialogExtractDialogIdFromMessage(dialog, message);
+    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    DialogExtractRemoteTargetFromMessage(dialog, message);
+
+    DialogAck(dialog);
+
+    CreateSession();
 }
 
 void DialogHandleClientInviteEvent(struct Transaction *t)
@@ -126,10 +138,7 @@ void DialogHandleClientInviteEvent(struct Transaction *t)
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-        DialogExtractDialogIdFromMessage(dialog, message);
-        DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
-        DialogExtractRemoteTargetFromMessage(dialog, message);
-        DialogAck(dialog);
+        DialogClientInviteOkReceived(dialog, message);
     }
 }
 
@@ -179,7 +188,17 @@ struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, s
     return AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 
-struct Transaction *DialogAddServerTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, struct Message *message)
+{
+    struct Transaction *t;
+
+    t = AddServerNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    dialog->transaction = t;
+    
+    return t;
+}
+
+struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Transaction *t = NULL;
@@ -197,26 +216,27 @@ void DialogSend200OKResponse(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Message *message = Build200OKMessage(TransactionGetRequest(dialog->transaction));
- 
-    TransactionAddResponse(dialog->transaction, message);
-    TransactionSendMessage(message);
-    
+
+    dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));     
+    ResponseWith200OK(dialog->transaction);
+
     if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        
         DialogIdSetLocalTag(id, MessageGetToTag(message));
         DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+        CreateSession();
     } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
         if (DialogGetRequestMethod(dialog) == SIP_METHOD_BYE) {
             DialogSetState(dialog, DIALOG_STATE_TERMINATED);
         }
     }
 
-    dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));
-    
+    DestoryMessage(&message);
 }
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
 {
-    AddServerNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
+    DialogAddServerNonInviteTransaction(dialog, bye);
+    DialogSend200OKResponse(dialog);
 }
 
 void DialogTerminate(struct Dialog *dialog)
@@ -236,7 +256,7 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
         dialog->id = dialogid;
     }
     dialog->ua = ua;
-    dialog->notifyInterface.onEvent = DialogOnTransactionEvent;
+    dialog->userOberver.onEvent = DialogOnTransactionEvent;
 
     if (ua != NULL)
         UserAgentAddDialog(ua, dialog);

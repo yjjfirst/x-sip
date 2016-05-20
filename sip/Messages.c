@@ -71,6 +71,8 @@ void MessageAddHeader(struct Message *message, struct Header *header)
 
 struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
+    assert (name != NULL);
+    assert (message != NULL);
     return RawHeadersGetHeader(name, message->headers);
 }
 
@@ -167,7 +169,7 @@ unsigned int MessageGetCSeqNumber(struct Message *message)
 {
     assert (message != NULL);
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
-    
+   
     return CSeqHeaderGetSeq(c);
 }
 

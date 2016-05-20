@@ -234,6 +234,8 @@ void AddResponseHeaders(struct Message *response, struct Message *invite)
 
 struct Message *BuildResponseMessage(struct Message *invite, struct StatusLine *status)
 {
+    assert(invite != NULL);
+    
     struct Message *message = CreateMessage();
     MessageSetStatusLine(message, status);
     AddResponseHeaders(message, invite);
@@ -243,30 +245,40 @@ struct Message *BuildResponseMessage(struct Message *invite, struct StatusLine *
 
 struct Message *BuildTryingMessage(struct Message *invite)
 {
+    assert(invite != NULL);
+
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
     return BuildResponseMessage(invite, status);
 }
 
 struct Message *BuildRingingMessage(struct Message *invite)
 {
+    assert(invite != NULL);
+
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_RINGING, REASON_PHRASE_RINGING); 
     return BuildResponseMessage(invite, status);
 }
 
 struct Message *Build200OKMessage(struct Message *invite)
 {
+    assert(invite != NULL);
+
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
     return BuildResponseMessage(invite, status);
 }
 
 struct Message *Build301Message(struct Message *invite)
 {
+    assert(invite != NULL);
+
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_MOVED_PERMANENTLY, REASON_PHRASE_MOVED_PERMANENTLY);
     return BuildResponseMessage(invite, status);
 }
 
 struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
 {
+    assert(invite != NULL);
+
     struct Message *ack = CreateMessage();
     struct RequestLine *rl = RequestLineDup(MessageGetRequestLine(invite));
     

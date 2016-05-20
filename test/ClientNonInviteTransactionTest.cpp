@@ -91,7 +91,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 
     void teardown()
     {
-        EmptyTransactionManager();
+        RemoveAllTransaction();
         DestoryUserAgent(&ua);
         mock().checkExpectations();
         mock().clear();

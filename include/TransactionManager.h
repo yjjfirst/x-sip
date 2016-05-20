@@ -4,7 +4,7 @@ struct Message;
 struct UserAgent;
 struct TransactionUserObserver;
 
-void EmptyTransactionManager();
+void RemoveAllTransaction();
 int MessageReceived(char *string);
 struct TransactionId *TransactionIdExtract(struct TransactionId *tid, struct Message *message);
 
