@@ -34,13 +34,18 @@ TEST_GROUP(SessionTestGroup)
     }
 };
 
-struct Session *CreateSessionMock()
+static struct Session *CreateSessionMock()
 {
     mock().actualCall("CreateSession");
     return NULL;
 }
 
-IGNORE_TEST(SessionTestGroup, CreateSessionStructTest)
+void DestorySessionMock(struct Session **session)
+{
+    mock().actualCall("DestorySession");
+}
+
+TEST(SessionTestGroup, CreateSessionStructTest)
 {
     struct Session *session = CreateSession();
     CHECK_TRUE(session != NULL);
@@ -53,12 +58,12 @@ IGNORE_TEST(SessionTestGroup, CreateSessionStructTest)
 
 TEST(SessionTestGroup, UACCreateSessionTest)
 {
-    DialogAddClientInviteTransaction(dialog, invite);
-
     struct Message *ok = Build200OKMessage(invite);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
+
+    DialogAddClientInviteTransaction(dialog, invite);
     DialogClientInviteOkReceived(dialog, ok);
     
     DestoryMessage(&ok);
@@ -67,16 +72,45 @@ TEST(SessionTestGroup, UACCreateSessionTest)
 
 TEST(SessionTestGroup, UASCreateSessionTest)
 {
-    DialogAddServerInviteTransaction(dialog, invite);
-
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
+
+    DialogAddServerInviteTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 }
 
+TEST(SessionTestGroup, UACDestorySessionTest)
+{
+    UT_PTR_SET(CreateSession, CreateSessionMock);
+    UT_PTR_SET(DestorySession,DestorySessionMock);
 
+    DialogAddServerInviteTransaction(dialog, invite);
+ 
+    mock().expectOneCall("CreateSession");
+    DialogSend200OKResponse(dialog);
 
+    mock().expectOneCall("DestorySession");
+    DialogTerminate(dialog);    
 
+    RemoveAllTransaction();
+}
 
+TEST(SessionTestGroup, UASDestorySessionTest)
+{
+    struct Message *ok = Build200OKMessage(invite);
 
+    UT_PTR_SET(CreateSession, CreateSessionMock);
+    UT_PTR_SET(DestorySession,DestorySessionMock);
 
+    DialogAddClientInviteTransaction(dialog, invite);
+
+    mock().expectOneCall("CreateSession");
+    DialogClientInviteOkReceived(dialog, ok);
+
+    mock().expectOneCall("DestorySession");
+    struct Message *bye = BuildByeMessage(dialog);
+    DialogReceiveBye(dialog, bye);
+
+    DestoryMessage(&ok);
+    RemoveAllTransaction();
+}

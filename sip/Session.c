@@ -3,7 +3,7 @@ struct Session {
 
 struct Session *CreateSessionImpl()
 {
-    return NULL;
+    return calloc(1, sizeof(struct Session));
 }
 
 void DestorySessionImpl(struct Session **s)

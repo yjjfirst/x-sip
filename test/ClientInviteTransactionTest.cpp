@@ -17,6 +17,7 @@ extern "C" {
 #include "Provision.h"
 #include "UserAgentManager.h"
 #include "Timer.h"
+#include "Session.h"
 }
 
 TimerCallback TimerACallbackFunc;
@@ -101,9 +102,16 @@ TEST(ClientInviteTransactionTestGroup, CreateInviteTransaction)
     CHECK_EQUAL(TRANSACTION_STATE_CALLING, TransactionGetState(t));
 }
 
+static struct Session *CreateSessionMock()
+{
+    return NULL;
+}
+
 //Calling state tests.
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
 {
+    UT_PTR_SET(CreateSession, CreateSessionMock);
+
     char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);

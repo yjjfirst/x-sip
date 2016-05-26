@@ -126,7 +126,7 @@ void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message
     DialogExtractDialogIdFromMessage(dialog, message);
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     DialogExtractRemoteTargetFromMessage(dialog, message);
-
+    
     DialogAck(dialog);
 
     CreateSession();
@@ -237,6 +237,8 @@ void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
 {
     DialogAddServerNonInviteTransaction(dialog, bye);
     DialogSend200OKResponse(dialog);
+
+    DestorySession(NULL);
 }
 
 void DialogTerminate(struct Dialog *dialog)
@@ -244,6 +246,8 @@ void DialogTerminate(struct Dialog *dialog)
     struct Message *bye = BuildByeMessage(dialog);
     DialogAddClientNonInviteTransaction(dialog, bye);
     dialog->state = DIALOG_STATE_TERMINATED;
+
+    DestorySession(NULL);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

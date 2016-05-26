@@ -19,6 +19,12 @@ extern "C" {
 #include "Header.h"
 #include "ContactHeader.h"
 #include "CallIdHeader.h"
+#include "Session.h"
+}
+
+static struct Session *CreateSessionMock()
+{
+    return NULL;
 }
 
 TEST_GROUP(DialogTestGroup)
@@ -31,6 +37,7 @@ TEST_GROUP(DialogTestGroup)
     {
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+        UT_PTR_SET(CreateSession, CreateSessionMock);
 
         ua = BuildUserAgent();
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
