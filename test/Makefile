@@ -27,6 +27,5 @@ clean:
 	-@rm -f *.o
 	-@rm -f AllTests
 
--include $(TEST_SRCS:%.cpp=%.d)
--include $(PRODUCT_SRCS:%.c=%.d)
+-include $(TESTSUITE_SRCS:%.cpp=%.d)
 -include ../make.common
