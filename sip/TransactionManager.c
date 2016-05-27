@@ -150,7 +150,7 @@ BOOL MessageReceived(char *string)
     if (ParseMessage(string, message) < 0) {
         return FALSE;
     }
-    
+
     if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
         garbage = !TmHandleReponseMessage(message);
     } else if (MessageGetType(message) == MESSAGE_TYPE_REQUEST){
@@ -161,7 +161,7 @@ BOOL MessageReceived(char *string)
         DestoryMessage(&message);
         return FALSE;
     }
-    
+
     return TRUE;
 }
 

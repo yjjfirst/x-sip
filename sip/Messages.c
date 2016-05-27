@@ -81,17 +81,16 @@ void ParseHeader(char *headerString, struct Message *message)
     RawParseHeader(headerString, message->headers);
 }
 
-int ParseMessage(const char *string, struct Message *message)
+int ParseHeaders(char *localString, struct Message *message)
 {
-    char localString[MAX_MESSAGE_LENGTH] = {0};
     char *save_ptr = NULL;
-
-    if (strlen(string) == 0) {
+    char *line = NULL;
+    
+    if (strlen(localString) == 0) {
         return -1;
     }
 
-    strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
-    char *line = strtok_r(localString, CRLF, &save_ptr);
+    line = strtok_r(localString, CRLF, &save_ptr);
     
     if (ParseMessageType(line) == MESSAGE_TYPE_REQUEST) {
         message->type = MESSAGE_TYPE_REQUEST;
@@ -106,6 +105,33 @@ int ParseMessage(const char *string, struct Message *message)
         ParseHeader(line, message);
         line = strtok_r(NULL, CRLF, &save_ptr);
     }
+    
+    return 0;
+}
+
+int ParseContent(char *string, unsigned int length)
+{
+    return 0;
+}
+
+int ParseMessage(const char *string, struct Message *message)
+{    
+    int error = 0;
+    char *content;
+    char localString[MAX_MESSAGE_LENGTH] = {0};
+    
+    assert(string != NULL);
+    assert(message != NULL);
+
+    strncpy(localString, string, MAX_MESSAGE_LENGTH - 1);
+    content = strstr(localString, CRLFCRLF);    
+    if (content != NULL) {
+        *content = 0;
+        content += 4;
+    }
+    
+    if ((error = ParseHeaders(localString, message)) < 0)
+        return error;
     
     return 0;
 }
@@ -212,18 +238,26 @@ void MessageSetCSeqMethod (struct Message *message, char *method)
 }
 
 void MessageSetContentLength(struct Message *message, int length)
- {
-     struct ContentLengthHeader *c = (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
+{
+    struct ContentLengthHeader *c = 
+        (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
+    
+    ContentLengthHeaderSetLength(c, length);
+}
 
-     ContentLengthHeaderSetLength(c, length);
- }
+unsigned int MessageGetContentLength(struct Message *message)
+{
+    struct ContentLengthHeader *c = 
+        (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
+    return ContentLengthHeaderGetLength(c);
+}
 
- BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
- {
-     return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
-                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
-
- }
+BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
+{
+    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+    
+}
 
 BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm)
 {
@@ -249,7 +283,7 @@ void Message2String(char *result, struct Message *message)
         p = RequestLine2String(p, MessageGetRequestLine(message));
     } else {
         p = StatusLine2String(p, MessageGetStatusLine(message));
-    }
+    } 
     
     RawHeaders2String(p, message->headers);
 

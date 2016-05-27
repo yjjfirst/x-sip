@@ -1,5 +1,6 @@
 #define SPACE 0x20
 #define CRLF        "\r\n"
+#define CRLFCRLF    "\r\n\r\n"
 #define SEMICOLON   0x3b
 #define COLON       0x3a
 #define AT          0x40

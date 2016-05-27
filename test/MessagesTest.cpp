@@ -267,6 +267,25 @@ TEST(MessageTestGroup, EmptyMessageParseTest)
     DestoryMessage(&message);
 }
 
+TEST(MessageTestGroup, GetContentLengthTest)
+{
+    struct Message *message = CreateMessage();
+    char string[] = "\
+SIP/2.0 180 Ringing\r\n\
+Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
+To:\"Bob\"<sip:bob@biloxi.com>;tag=a6c85cf\r\n\
+From:\"Alice\"<sip:alice@atlanta.com>;tag=1928301774\r\n\
+Call-ID:a84b4c76e66710\r\n\
+Contact:<sip:bob@192.0.2.4>\r\n\
+CSeq:314159 INVITE\r\n\
+Content-Length:100\r\n";
+    ParseMessage(string, message);
+    CHECK_EQUAL(100, MessageGetContentLength(message));
+
+    DestoryMessage(&message);
+
+}
+
 TEST(MessageTestGroup, SetContentLengthTest)
 {
     struct Message *message = CreateMessage();
@@ -345,5 +364,30 @@ TEST(MessageTestGroup, GetCSeqMethodTest)
 
     STRCMP_EQUAL("INVITE",MessageGetCSeqMethod(localMessage));
    
+    DestoryMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, ParseMessageWithWrongHeaderTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(MESSAGE_WITH_WRONG_HEADER, localMessage);
+
+    DestoryMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, ParseMessageWithLongHeaderNameTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(MESSAGE_WITH_LONG_HEADER_NAME, localMessage);
+
+    DestoryMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, ParseMessageWithContentTest)
+{
+    struct Message *localMessage = CreateMessage();
+
+    ParseMessage(MESSAGE_WITH_CONTENT, localMessage);
+    
     DestoryMessage(&localMessage);
 }

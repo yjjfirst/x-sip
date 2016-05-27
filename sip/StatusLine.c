@@ -58,6 +58,8 @@ void StatusLineSetReasonPhrase(struct StatusLine *s, char *reasonPhrase)
 
 char *StatusLine2String(char *result, struct StatusLine *s)
 {
+    assert (result != NULL);
+    assert (s != NULL);
     return ToString(result, s, StatusLinePattern);
 }
 

@@ -117,17 +117,24 @@ struct Header *RawHeadersGetHeader(const char *name, struct Headers *headers)
 void ExtractHeaderName(char *header, char *name)
 {
     char *end = strchr (header, COLON);
+    int srcLength;
+    int length;
+
+    if (end == NULL) return;
 
     end --;
+
     while (*end == SPACE) end --;
     while (*header == SPACE) header ++;
-
-    strncpy(name, header, end - header + 1);
+    srcLength = end - header + 1;
+    length = srcLength < HEADER_NAME_MAX_LENGTH? srcLength : HEADER_NAME_MAX_LENGTH;
+    
+    strncpy(name, header, length);
 }
 
 void RawParseHeader(char *string, struct Headers *headers)
 {
-    char name[32] = {0};
+    char name[HEADER_NAME_MAX_LENGTH] = {0};
     int i = 0;
     
     ExtractHeaderName(string, name);
