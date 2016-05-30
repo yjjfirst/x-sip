@@ -1,4 +1,5 @@
 #include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
 
 extern "C" {
 #include <stdio.h>
@@ -18,6 +19,7 @@ extern "C" {
 #include "TestingMessages.h"
 #include "URI.h"
 #include "RequestLine.h"
+#include "Sdp.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -286,6 +288,25 @@ Content-Length:100\r\n";
 
 }
 
+TEST(MessageTestGroup, GetContentLengthMessageWithNoContentLengthHeader)
+{
+    struct Message *message = CreateMessage();
+    char string[] = "\
+SIP/2.0 180 Ringing\r\n\
+Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
+To:\"Bob\"<sip:bob@biloxi.com>;tag=a6c85cf\r\n\
+From:\"Alice\"<sip:alice@atlanta.com>;tag=1928301774\r\n        \
+Call-ID:a84b4c76e66710\r\n                              \
+Contact:<sip:bob@192.0.2.4>\r\n                 \
+CSeq:314159 INVITE\r\n";
+    ParseMessage(string, message);
+    CHECK_EQUAL(0, MessageGetContentLength(message));
+
+    DestoryMessage(&message);
+
+
+}
+
 TEST(MessageTestGroup, SetContentLengthTest)
 {
     struct Message *message = CreateMessage();
@@ -382,12 +403,30 @@ TEST(MessageTestGroup, ParseMessageWithLongHeaderNameTest)
 
     DestoryMessage(&localMessage);
 }
+ 
+int ParseSdpMock(char *content, unsigned int length)
+{
+    char con[8] = {0};
+    
+    mock().actualCall("ParseSdp").withParameter("length", length);
+    strncpy(con, content, 3);
+
+    STRCMP_EQUAL("v=0", con);
+    CHECK_EQUAL(435, strlen(content));
+
+    return 0;
+}
 
 TEST(MessageTestGroup, ParseMessageWithContentTest)
 {
     struct Message *localMessage = CreateMessage();
 
-    ParseMessage(MESSAGE_WITH_CONTENT, localMessage);
+    UT_PTR_SET(ParseSdp, ParseSdpMock);
+    mock().expectOneCall("ParseSdp").withParameter("length", 435);
     
+    ParseMessage(MESSAGE_WITH_CONTENT, localMessage);
+
+    mock().checkExpectations();
+    mock().clear();
     DestoryMessage(&localMessage);
 }

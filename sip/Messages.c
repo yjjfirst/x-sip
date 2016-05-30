@@ -16,6 +16,7 @@
 #include "ExpiresHeader.h"
 #include "Parameter.h"
 #include "RequestLine.h"
+#include "Sdp.h"
 
 struct Message {
     union {
@@ -109,8 +110,9 @@ int ParseHeaders(char *localString, struct Message *message)
     return 0;
 }
 
-int ParseContent(char *string, unsigned int length)
+int ParseContent(char *content, unsigned int length)
 {
+    ParseSdp(content, length);
     return 0;
 }
 
@@ -127,11 +129,14 @@ int ParseMessage(const char *string, struct Message *message)
     content = strstr(localString, CRLFCRLF);    
     if (content != NULL) {
         *content = 0;
-        content += 4;
+        content += strlen(CRLFCRLF);
     }
     
     if ((error = ParseHeaders(localString, message)) < 0)
         return error;
+
+    if (content != NULL && MessageGetContentLength(message) != 0)
+        ParseContent(content, MessageGetContentLength(message));
     
     return 0;
 }
@@ -246,10 +251,14 @@ void MessageSetContentLength(struct Message *message, int length)
 }
 
 unsigned int MessageGetContentLength(struct Message *message)
-{
+{    
     struct ContentLengthHeader *c = 
         (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
-    return ContentLengthHeaderGetLength(c);
+
+    if (c == NULL) 
+        return 0;
+    else
+        return ContentLengthHeaderGetLength(c);
 }
 
 BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
