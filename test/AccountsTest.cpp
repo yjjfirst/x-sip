@@ -10,13 +10,34 @@ TEST_GROUP(AccountsTestGroup)
     struct Account *account;
     void setup() 
     {
-        account = CreateAccount();
+        account = CreateEmptyAccount();
+    }
+
+    void teardown()
+    {
     }
 };
 
-TEST(AccountsTestGroup, AccountCreateTest)
+TEST(AccountsTestGroup, EmptyAccountCreateTest)
 {
     CHECK_TRUE(account != NULL); 
+    DestoryAccount(&account);
+}
+
+TEST(AccountsTestGroup, AccountCreateTest)
+{
+    struct Account *acc = CreateAccount(
+                                        (char *)"88001", 
+                                        (char *)"88001", 
+                                        (char *)"192.168.10.62", 
+                                        (char *)"192.168.10.72");
+
+    STRCMP_EQUAL("88001", AccountGetUserName(acc));
+    STRCMP_EQUAL("88001", AccountGetAuthName(acc));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(acc));
+    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(acc));
+
+    DestoryAccount(&acc);
     DestoryAccount(&account);
 }
 

@@ -17,5 +17,6 @@ char *AccountGetProxy(struct Account *account);
 void AccountSetRegistrar(struct Account *account, char *registrar);
 char *AccountGetRegistrar(struct Account *account);
 
-struct Account *CreateAccount();
+struct Account *CreateEmptyAccount();
+struct Account *CreateAccount(char *username, char *authname, char *proxy, char *registrar);
 void DestoryAccount(struct Account **account);

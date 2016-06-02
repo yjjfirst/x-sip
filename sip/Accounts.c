@@ -21,9 +21,21 @@ DEFINE_STRING_MEMBER_READER(struct Account, AccountGetProxy, proxy);
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetRegistrar, registrar, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetRegistrar, registrar);
 
-struct Account *CreateAccount()
+struct Account *CreateEmptyAccount()
 {
     struct Account *account = calloc(1, sizeof(struct Account));
+    return account;
+}
+
+struct Account *CreateAccount(char *username, char *authname, char *proxy, char *registrar)
+{
+    struct Account *account = calloc(1, sizeof(struct Account));
+
+    AccountSetUserName(account, username);
+    AccountSetAuthName(account, authname);
+    AccountSetProxy(account, proxy);
+    AccountSetRegistrar(account, registrar);
+
     return account;
 }
 

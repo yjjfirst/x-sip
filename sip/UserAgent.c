@@ -98,7 +98,7 @@ struct UserAgent *CreateUserAgent()
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
     ua->dialogs = CreateDialogs();
-    ua->account = CreateAccount();
+    ua->account = CreateEmptyAccount();
     return ua;
 }
 
