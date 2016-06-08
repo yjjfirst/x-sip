@@ -24,6 +24,13 @@ struct Account *GetAccount(struct AccountManager *am, int pos)
     return get_data_at(am->accounts, pos);
 }
 
+void RemoveAccount(struct AccountManager *am, int pos)
+{
+    struct Account *a = (struct Account *)get_data_at(am->accounts, pos);
+    DestoryAccount(&a);
+    del_node_at(&am->accounts, pos);
+}
+
 void ClearAccount(struct AccountManager *am)
 {
     int i = 0;
@@ -42,3 +49,8 @@ int TotalAccount(struct AccountManager *am)
     return get_list_len(am->accounts);
 }
 
+void AccountInitImpl(struct AccountManager *am)
+{
+}
+
+void (*AccountInit)(struct AccountManager *am) = AccountInitImpl;
