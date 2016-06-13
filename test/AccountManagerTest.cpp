@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 extern "C" {
+#include <stdio.h>
 #include "Accounts.h"
 #include "AccountManager.h"
 }
@@ -29,33 +30,32 @@ void AddThirdAccount(struct AccountManager *am)
     AddAccount(am, third);
 }
 
+void AddFirstAccount(struct AccountManager *am)
+{
+    struct Account *first;
+    first = CreateAccount(
+                          (char *)"88001", 
+                          (char *)"88001", 
+                          (char *)"192.168.10.62", 
+                          (char *)"192.168.10.72");
+
+    AddAccount(am, first);
+}
+
 TEST_GROUP(AccountManagerTestGroup)
 {
     struct AccountManager *am;
-    struct Account *account;
 
     void setup()
     {
         am = AccountManagerGet();
-        account = CreateAccount(
-                                (char *)"88001", 
-                                (char *)"88001", 
-                                (char *)"192.168.10.62", 
-                                (char *)"192.168.10.72");
-        AddFirstAccount();
-
+        ::AddFirstAccount(am);
     }
 
     void teardown()
     {
         ClearAccount(am);
     }
-
-    void AddFirstAccount()
-    {
-        AddAccount(am, account);
-    }
-
 };
 
 TEST(AccountManagerTestGroup, AccountManagerGetTest)
@@ -123,6 +123,7 @@ TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
 
 void AccountInitMock(struct AccountManager *am)
 {
+    AddFirstAccount(am);
     AddSecondAccount(am);
     AddThirdAccount(am);
 }
@@ -131,26 +132,32 @@ TEST(AccountManagerTestGroup, InitTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
 
+    ClearAccount(am);
+
     AccountInit(am);
     CHECK_EQUAL(3, TotalAccount(am));
 
     struct Account *a = GetAccount(am, 0);
     STRCMP_EQUAL("88001", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
+    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
+
 
     a = GetAccount(am,1);
     STRCMP_EQUAL("88002", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
+    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
 
     a = GetAccount(am,2);
     STRCMP_EQUAL("88003", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
-
+    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
 }
 
 TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
+    ClearAccount(am);
 
     AccountInit(am);
     CHECK_EQUAL(3, TotalAccount(am));
@@ -163,7 +170,7 @@ TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
     
 }
 
-IGNORE_TEST(AccountManagerTestGroup, AccountRegisterTest)
+TEST(AccountManagerTestGroup, AccountRegisterTest)
 {
-    AddAccount(am, account);
+    
 }

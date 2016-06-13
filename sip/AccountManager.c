@@ -1,4 +1,3 @@
-
 #include "AccountManager.h"
 #include "Accounts.h"
 #include "utils/list/include/list.h"

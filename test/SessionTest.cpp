@@ -19,7 +19,7 @@ TEST_GROUP(SessionTestGroup)
 
     void setup() 
     {
-        ua = BuildUserAgent();    
+        ua = BuildUserAgent(NULL);    
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, (char *)"88002");
         invite = BuildInviteMessage(dialog);

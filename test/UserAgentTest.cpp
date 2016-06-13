@@ -32,7 +32,7 @@ TEST_GROUP(UserAgentTestGroup)
 
     void BuildTestingMessage()
     {
-        ua = BuildUserAgent();
+        ua = BuildUserAgent(NULL);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, GetUserName(0));
         message = BuildBindingMessage(dialog);
@@ -139,56 +139,6 @@ TEST(UserAgentTestGroup, SetAuthNameTest)
     DestoryUserAgent(&ua);
 }
 
-TEST(UserAgentTestGroup, BindingsRequestLineTest)
-{
-    BuildTestingMessage();
-
-    struct RequestLine *rl = MessageGetRequestLine(message);
-    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(rl));
-    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
-
-    struct URI *uri = RequestLineGetUri(rl);
-    STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
-    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
-
-    DestoryTestingMessage();
-}
-
-TEST(UserAgentTestGroup, BindingsToHeaderTest)
-{
-    BuildTestingMessage();
-
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message); 
-    struct URI *uri = ContactHeaderGetUri(to);
-
-    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
-
-    DestoryTestingMessage();
-}
-
-TEST(UserAgentTestGroup, BindingsFromHeaderTest)
-{
-    BuildTestingMessage();
-
-    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message); 
-    struct URI *uri = ContactHeaderGetUri(from);
-
-    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
-    DestoryTestingMessage();
-}
-
-TEST(UserAgentTestGroup, BindingsContactHeaderTest)
-{
-    BuildTestingMessage();
-
-    struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message); 
-    struct URI *uri = ContactHeaderGetUri(contact);
-
-    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
-
-    DestoryTestingMessage();
-}
-
 TEST(UserAgentTestGroup, BindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
@@ -235,7 +185,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
 TEST(UserAgentTestGroup, AddDialogTest)
 {
-    ua = BuildUserAgent();
+    ua = BuildUserAgent(NULL);
     struct DialogId *dialogid = CreateDialogId((char *)"1", (char *)"2",(char *)"3");
     dialog = CreateDialog(dialogid, ua);
 

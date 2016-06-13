@@ -33,7 +33,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct Message *inviteMessage;
     void setup()
     {
-        ua = BuildUserAgent();
+        ua = BuildUserAgent(NULL);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
 
         DialogSetToUser(dialog, GetUserName(0));
@@ -533,4 +533,39 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest
     STRCMP_EQUAL(SIP_METHOD_NAME_ACK, CSeqHeaderGetMethod(seq));
     
     DestoryMessage(&ack);
+}
+
+TEST(MessageBuilderTestGroup, BindingsRequestLineTest)
+{
+    struct RequestLine *rl = MessageGetRequestLine(m);
+    STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(rl));
+    STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
+
+    struct URI *uri = RequestLineGetUri(rl);
+    STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
+    STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
+}
+
+TEST(MessageBuilderTestGroup, BindingsToHeaderTest)
+{
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, m); 
+    struct URI *uri = ContactHeaderGetUri(to);
+
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+}
+
+TEST(MessageBuilderTestGroup, BindingsFromHeaderTest)
+{
+    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, m); 
+    struct URI *uri = ContactHeaderGetUri(from);
+
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+}
+
+TEST(MessageBuilderTestGroup, BindingsContactHeaderTest)
+{
+    struct ContactHeader *contact = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, m); 
+    struct URI *uri = ContactHeaderGetUri(contact);
+
+    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 }

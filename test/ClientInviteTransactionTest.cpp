@@ -50,7 +50,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
 
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
-        ua = BuildUserAgent();
+        ua = BuildUserAgent(NULL);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
         t = AddClientInviteTransaction(message,(struct TransactionUserObserver *) dialog);
