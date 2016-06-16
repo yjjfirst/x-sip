@@ -7,6 +7,7 @@ struct Account {
     char authName[AUTH_NAME_MAX_LENGTH];
     char proxy[PROXY_MAX_LENGTH];
     char registrar[REGISTRAR_MAX_LENGTH];
+    BOOL binded;
 };
 
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetUserName, userName, USER_NAME_MAX_LENGTH);
@@ -25,6 +26,21 @@ struct Account *CreateEmptyAccount()
 {
     struct Account *account = calloc(1, sizeof(struct Account));
     return account;
+}
+
+BOOL AccountBinded(struct Account *account)
+{
+    return account->binded;
+}
+
+void AccountSetBinded(struct Account *account)
+{
+    account->binded = TRUE;
+}
+
+void AccountSetUnbinded(struct Account *account)
+{
+    account->binded = FALSE;
 }
 
 struct Account *CreateAccount(char *username, char *authname, char *proxy, char *registrar)

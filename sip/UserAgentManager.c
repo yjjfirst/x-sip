@@ -2,16 +2,13 @@
 #include "UserAgent.h"
 #include "Provision.h"
 
-struct UserAgent *BuildUserAgent(struct Account *account)
+struct UserAgent *BuildUserAgent(int account)
 {
     struct UserAgent *ua = CreateUserAgent();
     
-    if (account == NULL) {
-        UserAgentSetUserName(ua, GetUserName(0));
-        UserAgentSetRegistrar(ua, GetRegistrar(0));
-        UserAgentSetProxy(ua, GetProxy(0));
-    } else {
-    }
+    UserAgentSetUserName(ua, GetUserName(account));
+    UserAgentSetRegistrar(ua, GetRegistrar(account));
+    UserAgentSetProxy(ua, GetProxy(account));
 
     return ua;
 }

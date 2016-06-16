@@ -39,7 +39,7 @@ TEST_GROUP(DialogTestGroup)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(CreateSession, CreateSessionMock);
 
-        ua = BuildUserAgent(NULL);
+        ua = BuildUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);
         ok = Build200OKMessage(invite);

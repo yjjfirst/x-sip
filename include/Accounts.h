@@ -1,3 +1,5 @@
+#include "Bool.h"
+
 #define USER_NAME_MAX_LENGTH 64
 #define AUTH_NAME_MAX_LENGTH 64
 #define PROXY_MAX_LENGTH 64
@@ -16,6 +18,11 @@ char *AccountGetProxy(struct Account *account);
 
 void AccountSetRegistrar(struct Account *account, char *registrar);
 char *AccountGetRegistrar(struct Account *account);
+
+BOOL AccountBinded(struct Account *account);
+void AccountSetBinded(struct Account *account);
+void AccountSetUnbinded(struct Account *account);
+
 
 struct Account *CreateEmptyAccount();
 struct Account *CreateAccount(char *username, char *authname, char *proxy, char *registrar);

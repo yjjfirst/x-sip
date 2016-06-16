@@ -11,7 +11,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
 
 TEST(UserAgentManagerTestGroup, AddUserAgentTest)
 {
-    struct UserAgent *ua = BuildUserAgent(NULL);
+    struct UserAgent *ua = BuildUserAgent(0);
     //    struct UserAgent *uaGetBack = NULL;
 
     AddUserAgent(ua);

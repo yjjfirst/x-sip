@@ -33,7 +33,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct Message *inviteMessage;
     void setup()
     {
-        ua = BuildUserAgent(NULL);
+        ua = BuildUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
 
         DialogSetToUser(dialog, GetUserName(0));

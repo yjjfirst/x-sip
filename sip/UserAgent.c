@@ -15,7 +15,6 @@
 
 struct UserAgent {
     struct Account *account;
-    BOOL binded;
     struct DialogManager *dialogs;
 };
 
@@ -59,19 +58,30 @@ char *UserAgentGetRegistrar(struct UserAgent *ua)
     return AccountGetRegistrar(ua->account);
 }
 
+struct Account *UserAgentGetAccount(struct UserAgent *ua)
+{
+    assert(ua != NULL);
+    return ua->account;
+}
+
 BOOL UserAgentBinded(struct UserAgent *ua)
 {
-    return ua->binded;
+    struct Account *account = ua->account;
+    return AccountBinded(account);
 }
 
 void UserAgentSetBinded(struct UserAgent *ua)
-{
-    ua->binded = TRUE;
+{    
+    assert(ua != NULL);
+    struct Account *account = ua->account;
+    AccountSetBinded(account);
 }
 
 void UserAgentSetUnbinded(struct UserAgent *ua)
 {
-    ua->binded = FALSE;
+    assert(ua != NULL);
+    struct Account *account = ua->account;
+    AccountSetUnbinded(account);
 }
 
 void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
