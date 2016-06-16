@@ -5,11 +5,6 @@
 struct UserAgent *BuildUserAgent(int account)
 {
     struct UserAgent *ua = CreateUserAgent(0);
-
-    UserAgentSetUserName(ua, GetUserName(account));
-    UserAgentSetRegistrar(ua, GetRegistrar(account));
-    UserAgentSetProxy(ua, GetProxy(account));
-
     return ua;
 }
 

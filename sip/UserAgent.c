@@ -19,19 +19,9 @@ struct UserAgent {
     struct DialogManager *dialogs;
 };
 
-void UserAgentSetUserName(struct UserAgent *ua, char *user)
-{
-    AccountSetUserName(ua->account, user);
-}
-
 char *UserAgentGetUserName(struct UserAgent *ua)
 {
     return AccountGetUserName(ua->account);
-}
-
-void UserAgentSetAuthName(struct UserAgent *ua, char *authName)
-{
-    AccountSetAuthName(ua->account, authName);
 }
 
 char *UserAgentGetAuthName(struct UserAgent *ua)
@@ -39,19 +29,9 @@ char *UserAgentGetAuthName(struct UserAgent *ua)
     return AccountGetAuthName(ua->account);
 }
 
-void UserAgentSetProxy(struct UserAgent *ua, char *proxy)
-{
-    AccountSetProxy(ua->account, proxy);
-}
-
 char *UserAgentGetProxy(struct UserAgent *ua)
 {
     return AccountGetProxy(ua->account);
-}
-
-void UserAgentSetRegistrar(struct UserAgent *ua, char *registrar)
-{
-    AccountSetRegistrar(ua->account, registrar);
 }
 
 char *UserAgentGetRegistrar(struct UserAgent *ua)
