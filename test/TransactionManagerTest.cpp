@@ -2,10 +2,12 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+
 #include "Messages.h"
 #include "TransactionManager.h"
 #include "MessageBuilder.h"
@@ -14,6 +16,7 @@ extern "C" {
 #include "TransactionId.h"
 #include "UserAgent.h"
 #include "Dialog.h"
+#include "AccountManager.h"
 }
 
 TEST_GROUP(TransactionManager)
@@ -26,15 +29,17 @@ TEST_GROUP(TransactionManager)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(Transporter, &MockTransporter);
 
+        AccountInitMock();
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-        ua = CreateUserAgent();
+        ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildBindingMessage(dialog);
 
     }
 
     void teardown() {
+        ClearAccount();
         mock().clear();
         DestoryUserAgent(&ua);
         RemoveAllTransaction();

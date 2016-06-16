@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "AccountManager.h"
 #include "Accounts.h"
 #include "utils/list/include/list.h"
@@ -8,33 +9,33 @@ struct AccountManager {
 
 struct AccountManager AccountManager;
 
-struct AccountManager *AccountManagerGet()
+void AddAccount(struct Account *account)
 {
-    return &AccountManager;
-}
-
-void AddAccount(struct AccountManager *am, struct Account *account)
-{
+    struct AccountManager *am = &AccountManager;
     put_in_list(&am->accounts, account);
 }
 
-struct Account *GetAccount(struct AccountManager *am, int pos)
+struct Account *GetAccount(int pos)
 {
+    struct AccountManager *am = &AccountManager;
     return get_data_at(am->accounts, pos);
 }
 
-void RemoveAccount(struct AccountManager *am, int pos)
+void RemoveAccount(int pos)
 {
+    struct AccountManager *am = &AccountManager;
     struct Account *a = (struct Account *)get_data_at(am->accounts, pos);
     DestoryAccount(&a);
     del_node_at(&am->accounts, pos);
 }
 
-void ClearAccount(struct AccountManager *am)
+void ClearAccount()
 {
     int i = 0;
+    struct AccountManager *am = &AccountManager;
     int len = get_list_len(am->accounts);
 
+    assert(am != NULL);
     for (; i < len; i++) {
         struct Account *a = (struct Account *)get_data_at(am->accounts, i);
         DestoryAccount(&a);
@@ -43,13 +44,14 @@ void ClearAccount(struct AccountManager *am)
     destroy_list(&am->accounts, NULL);
 }
 
-int TotalAccount(struct AccountManager *am)
+int TotalAccount()
 {
+    struct AccountManager *am = &AccountManager;
     return get_list_len(am->accounts);
 }
 
-void AccountInitImpl(struct AccountManager *am)
+void AccountInitImpl()
 {
 }
 
-void (*AccountInit)(struct AccountManager *am) = AccountInitImpl;
+void (*AccountInit)() = AccountInitImpl;

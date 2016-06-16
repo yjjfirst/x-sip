@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "AccountManager.h"
 #include "UserAgent.h"
 #include "Transaction.h"
 #include "ExpiresHeader.h"
@@ -104,18 +105,19 @@ struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
     return GetDialogById(ua->dialogs, callid);
 }
 
-struct UserAgent *CreateUserAgent()
+struct UserAgent *CreateUserAgent(int account)
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
+    struct Account *acc = GetAccount(account);
     ua->dialogs = CreateDialogs();
-    ua->account = CreateEmptyAccount();
+    ua->account = acc;
+
     return ua;
 }
 
 void DestoryUserAgent(struct UserAgent **ua)
 {
     if (*ua != NULL) {
-        DestoryAccount(&(*ua)->account);
         DestoryDialogs(&(*ua)->dialogs);
         free(*ua);
         *ua = NULL;

@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include "Session.h"
@@ -9,6 +10,7 @@ extern "C" {
 #include "UserAgentManager.h"
 #include "UserAgent.h"
 #include "TransactionManager.h"
+#include "AccountManager.h"
 }
 
 TEST_GROUP(SessionTestGroup)
@@ -19,6 +21,7 @@ TEST_GROUP(SessionTestGroup)
 
     void setup() 
     {
+        AccountInitMock();
         ua = BuildUserAgent(0);    
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, (char *)"88002");
@@ -27,8 +30,9 @@ TEST_GROUP(SessionTestGroup)
 
     void teardown()
     {
+        ClearAccount();
         DestoryUserAgent(&ua);
-
+        
         mock().checkExpectations();
         mock().clear();
     }

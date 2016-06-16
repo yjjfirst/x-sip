@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -18,6 +19,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "StatusLine.h"
 #include "Dialog.h"
+#include "AccountManager.h"
 }
 
 static TimerCallback TimerECallbackFunc;
@@ -84,13 +86,15 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
 
-        ua = CreateUserAgent();
+        AccountInitMock();
+        ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         m = BuildBindingMessage(dialog);
     }
 
     void teardown()
     {
+        ClearAccount();
         RemoveAllTransaction();
         DestoryUserAgent(&ua);
         mock().checkExpectations();

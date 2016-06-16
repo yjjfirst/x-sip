@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -20,6 +21,7 @@ extern "C" {
 #include "ContactHeader.h"
 #include "CallIdHeader.h"
 #include "Session.h"
+#include "AccountManager.h"
 }
 
 static struct Session *CreateSessionMock()
@@ -39,6 +41,7 @@ TEST_GROUP(DialogTestGroup)
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(CreateSession, CreateSessionMock);
 
+        AccountInitMock();
         ua = BuildUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);
@@ -48,6 +51,7 @@ TEST_GROUP(DialogTestGroup)
 
     void teardown()
     {
+        ClearAccount();
         RemoveAllTransaction();
         DestoryUserAgent(&ua);
         DestoryMessage(&ok);

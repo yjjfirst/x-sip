@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -7,7 +8,7 @@ extern "C" {
 #include "AccountManager.h"
 }
 
-void AddSecondAccount(struct AccountManager *am)
+void AddSecondAccount()
 {
     struct Account *second;
     second = CreateAccount(
@@ -15,10 +16,10 @@ void AddSecondAccount(struct AccountManager *am)
                            (char *)"88002", 
                            (char *)"192.168.10.62", 
                            (char *)"192.168.10.72");
-    AddAccount(am, second);
+    AddAccount(second);
 }
 
-void AddThirdAccount(struct AccountManager *am)
+void AddThirdAccount()
 {
     struct Account *third;
     third = CreateAccount(
@@ -27,10 +28,10 @@ void AddThirdAccount(struct AccountManager *am)
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
 
-    AddAccount(am, third);
+    AddAccount(third);
 }
 
-void AddFirstAccount(struct AccountManager *am)
+void AddFirstAccount()
 {
     struct Account *first;
     first = CreateAccount(
@@ -39,116 +40,109 @@ void AddFirstAccount(struct AccountManager *am)
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
 
-    AddAccount(am, first);
+    AddAccount(first);
+}
+
+void AccountInitMock()
+{
+    AddFirstAccount();
+    AddSecondAccount();
+    AddThirdAccount();
 }
 
 TEST_GROUP(AccountManagerTestGroup)
 {
-    struct AccountManager *am;
-
     void setup()
     {
-        am = AccountManagerGet();
-        ::AddFirstAccount(am);
+        ClearAccount();
+        ::AddFirstAccount();
     }
 
     void teardown()
     {
-        ClearAccount(am);
+        ClearAccount();
     }
 };
 
-TEST(AccountManagerTestGroup, AccountManagerGetTest)
-{
-    CHECK_TRUE(am != NULL);
-}
-
 TEST(AccountManagerTestGroup, AddOneAccountTest)
 {
-    struct Account *retrived = GetAccount(am, 0);
+    struct Account *retrived = GetAccount(0);
 
     STRCMP_EQUAL("88001", AccountGetUserName(retrived));
     STRCMP_EQUAL("88001", AccountGetAuthName(retrived));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(retrived));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(retrived));
-    CHECK_EQUAL(1, TotalAccount(am));
+    CHECK_EQUAL(1, TotalAccount());
 
 }
 
 TEST(AccountManagerTestGroup, AddTwoAccountsTest)
 {
-    AddSecondAccount(am);
-    CHECK_EQUAL(2, TotalAccount(am));
+    AddSecondAccount();
+    CHECK_EQUAL(2, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, AddThreeAccountsTest)
 {
-    AddSecondAccount(am);
-    AddThirdAccount(am);
-    CHECK_EQUAL(3, TotalAccount(am));
+    AddSecondAccount();
+    AddThirdAccount();
+    CHECK_EQUAL(3, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, ClearAccountTest)
 {
-    ClearAccount(am);
-    CHECK_EQUAL(0, TotalAccount(am));
+    ClearAccount();
+    CHECK_EQUAL(0, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, ClearMulitAccountTest)
 {
-    AddSecondAccount(am);
-    AddThirdAccount(am);
-    ClearAccount(am);
-    CHECK_EQUAL(0, TotalAccount(am));
+    AddSecondAccount();
+    AddThirdAccount();
+    ClearAccount();
+    CHECK_EQUAL(0, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, RemoveAccountTest)
 {
-    RemoveAccount(am, 0);
-    CHECK_EQUAL(0, TotalAccount(am));
+    RemoveAccount(0);
+    CHECK_EQUAL(0, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
 {
-    AddSecondAccount(am);
-    AddThirdAccount(am);
+    AddSecondAccount();
+    AddThirdAccount();
 
-    RemoveAccount(am, 0);
-    CHECK_EQUAL(2, TotalAccount(am));
-    RemoveAccount(am, 0);
-    CHECK_EQUAL(1, TotalAccount(am));
-    RemoveAccount(am, 0);
-    CHECK_EQUAL(0, TotalAccount(am));
-}
-
-void AccountInitMock(struct AccountManager *am)
-{
-    AddFirstAccount(am);
-    AddSecondAccount(am);
-    AddThirdAccount(am);
+    RemoveAccount(0);
+    CHECK_EQUAL(2, TotalAccount());
+    RemoveAccount(0);
+    CHECK_EQUAL(1, TotalAccount());
+    RemoveAccount(0);
+    CHECK_EQUAL(0, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, InitTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
 
-    ClearAccount(am);
+    ClearAccount();
 
-    AccountInit(am);
-    CHECK_EQUAL(3, TotalAccount(am));
+    AccountInit();
+    CHECK_EQUAL(3, TotalAccount());
 
-    struct Account *a = GetAccount(am, 0);
+    struct Account *a = GetAccount( 0);
     STRCMP_EQUAL("88001", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
 
 
-    a = GetAccount(am,1);
+    a = GetAccount(1);
     STRCMP_EQUAL("88002", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
 
-    a = GetAccount(am,2);
+    a = GetAccount(2);
     STRCMP_EQUAL("88003", AccountGetUserName(a));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
@@ -157,15 +151,15 @@ TEST(AccountManagerTestGroup, InitTest)
 TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
-    ClearAccount(am);
+    ClearAccount();
 
-    AccountInit(am);
-    CHECK_EQUAL(3, TotalAccount(am));
+    AccountInit();
+    CHECK_EQUAL(3, TotalAccount());
 
-    struct Account *a = GetAccount(am, -100);
+    struct Account *a = GetAccount( -100);
     POINTERS_EQUAL(NULL, a);
     
-    a = GetAccount(am, 100);
+    a = GetAccount(100);
     POINTERS_EQUAL(NULL, a);
     
 }

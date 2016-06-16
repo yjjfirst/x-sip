@@ -1,6 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TransportMock.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -18,6 +19,7 @@ extern "C" {
 #include "UserAgentManager.h"
 #include "Timer.h"
 #include "Session.h"
+#include "AccountManager.h"
 }
 
 TimerCallback TimerACallbackFunc;
@@ -50,6 +52,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
 
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
+        AccountInitMock();
         ua = BuildUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
@@ -58,6 +61,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     }
 
     void teardown() {
+        ClearAccount();
         mock().checkExpectations();
         mock().clear();
 

@@ -1,11 +1,13 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TransportMock.h"
+#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
 #include <string.h>
 
+#include "AccountManager.h"
 #include "UserAgent.h"
 #include "Accounts.h"
 #include "UserAgentManager.h"
@@ -44,17 +46,19 @@ TEST_GROUP(UserAgentTestGroup)
     {
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
+        AccountInitMock();
     }
 
     void teardown()
     {
+        ClearAccount();
         mock().clear();
     }    
 };
 
 TEST(UserAgentTestGroup, CreateUserAgentTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
 
     CHECK_TRUE(ua != NULL);
     DestoryUserAgent(&ua);
@@ -63,7 +67,7 @@ TEST(UserAgentTestGroup, CreateUserAgentTest)
 
 TEST(UserAgentTestGroup, SetUserNameTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
     
     UserAgentSetUserName(ua, (char *)"User Name");
     STRCMP_EQUAL("User Name", UserAgentGetUserName(ua));
@@ -73,7 +77,7 @@ TEST(UserAgentTestGroup, SetUserNameTest)
 
 TEST(UserAgentTestGroup, SetVeryLongUserNameTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
     char userName[] = "1234567890123456789012345678901234567890123456789012345678901234asdf";
 
     UserAgentSetUserName(ua, userName);
@@ -84,7 +88,7 @@ TEST(UserAgentTestGroup, SetVeryLongUserNameTest)
 
 TEST(UserAgentTestGroup, SetProxyTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
     
     UserAgentSetProxy(ua, (char *)"proxy.server.domain");
 
@@ -94,7 +98,7 @@ TEST(UserAgentTestGroup, SetProxyTest)
 
 TEST(UserAgentTestGroup, SetVeryLongProxyTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
     char proxy[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
     
     UserAgentSetProxy(ua, (char *)proxy);
@@ -106,7 +110,7 @@ TEST(UserAgentTestGroup, SetVeryLongProxyTest)
 
 TEST(UserAgentTestGroup, SetRegisterTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
 
     UserAgentSetRegistrar(ua, (char *)"registrar.domain");
     STRCMP_EQUAL("registrar.domain", UserAgentGetRegistrar(ua));
@@ -116,7 +120,7 @@ TEST(UserAgentTestGroup, SetRegisterTest)
 
 TEST(UserAgentTestGroup, SetVeryLongRegistrarTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
     char registrar[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
     UserAgentSetRegistrar(ua, registrar);
     STRCMP_CONTAINS(UserAgentGetRegistrar(ua), registrar);
@@ -127,7 +131,7 @@ TEST(UserAgentTestGroup, SetVeryLongRegistrarTest)
 
 TEST(UserAgentTestGroup, SetAuthNameTest)
 {
-    struct UserAgent *ua = CreateUserAgent();
+    struct UserAgent *ua = CreateUserAgent(0);
    
     UserAgentSetAuthName(ua, (char *)"Auth Name");
     STRCMP_EQUAL("Auth Name", UserAgentGetAuthName(ua));
@@ -155,7 +159,7 @@ TEST(UserAgentTestGroup, BindingTest)
     RemoveAllTransaction();    
 }
 
-IGNORE_TEST(UserAgentTestGroup, RemoveBindingTest)
+TEST(UserAgentTestGroup, RemoveBindingTest)
 {
     char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
