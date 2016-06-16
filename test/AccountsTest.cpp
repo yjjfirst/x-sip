@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 
 extern "C" {
+#include <string.h>
 #include "Accounts.h"
 };
 
@@ -96,5 +97,39 @@ TEST(AccountsTestGroup, AccountSetRegistrarTest)
 
     AccountSetRegistrar(account, ar);
     STRCMP_EQUAL(ar, AccountGetRegistrar(account));
+    DestoryAccount(&account);
+}
+
+
+TEST(AccountsTestGroup, SetVeryLongUserNameTest)
+{
+    char userName[] = "1234567890123456789012345678901234567890123456789012345678901234asdf";
+
+    AccountSetUserName(account, userName);
+
+    STRCMP_CONTAINS(AccountGetUserName(account), userName);
+    CHECK_EQUAL(USER_NAME_MAX_LENGTH - 1, strlen(AccountGetUserName(account)));
+    DestoryAccount(&account);
+}
+
+TEST(AccountsTestGroup, SetVeryLongProxyTest)
+{
+    char proxy[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
+    
+    AccountSetProxy(account, (char *)proxy);
+
+    STRCMP_CONTAINS(AccountGetProxy(account), proxy);
+    CHECK_EQUAL(PROXY_MAX_LENGTH - 1, strlen(AccountGetProxy(account)));
+    DestoryAccount(&account);
+}
+
+TEST(AccountsTestGroup, SetVeryLongRegistrarTest)
+{
+    char registrar[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
+
+    AccountSetRegistrar(account, registrar);
+    STRCMP_CONTAINS(AccountGetRegistrar(account), registrar);
+    CHECK_EQUAL(REGISTRAR_MAX_LENGTH -1 , strlen(AccountGetRegistrar(account)));
+
     DestoryAccount(&account);
 }
