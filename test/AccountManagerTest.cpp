@@ -8,29 +8,6 @@ extern "C" {
 #include "AccountManager.h"
 }
 
-void AddSecondAccount()
-{
-    struct Account *second;
-    second = CreateAccount(
-                           (char *)"88002", 
-                           (char *)"88002", 
-                           (char *)"192.168.10.62", 
-                           (char *)"192.168.10.72");
-    AddAccount(second);
-}
-
-void AddThirdAccount()
-{
-    struct Account *third;
-    third = CreateAccount(
-                          (char *)"88003", 
-                          (char *)"88003", 
-                          (char *)"192.168.10.62", 
-                          (char *)"192.168.10.72");
-
-    AddAccount(third);
-}
-
 void AddFirstAccount()
 {
     struct Account *first;
@@ -41,6 +18,29 @@ void AddFirstAccount()
                           (char *)"192.168.10.72");
 
     AddAccount(first);
+}
+
+int AddSecondAccount()
+{
+    struct Account *second;
+    second = CreateAccount(
+                           (char *)"88002", 
+                           (char *)"88002", 
+                           (char *)"192.168.10.62", 
+                           (char *)"192.168.10.72");
+    return AddAccount(second);
+}
+
+int AddThirdAccount()
+{
+    struct Account *third;
+    third = CreateAccount(
+                          (char *)"88003", 
+                          (char *)"88003", 
+                          (char *)"192.168.10.62", 
+                          (char *)"192.168.10.72");
+
+    return AddAccount(third);
 }
 
 void AccountInitMock()
@@ -164,7 +164,17 @@ TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
     
 }
 
-TEST(AccountManagerTestGroup, AccountRegisterTest)
+TEST(AccountManagerTestGroup, AddAccountReturnTest)
 {
-    
+    CHECK_EQUAL(1,AddSecondAccount());
+    CHECK_EQUAL(2,AddThirdAccount());
+}
+
+IGNORE_TEST(AccountManagerTestGroup, BindAccountTest)
+{
+    BindAccount(0);
+
+    struct Account *account = GetAccount(0);
+
+    CHECK_EQUAL(TRUE, AccountBinded(account));
 }

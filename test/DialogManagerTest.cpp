@@ -23,7 +23,7 @@ TEST(DialogsTestGroup, CreateDialogsTest)
 TEST(DialogsTestGroup, AddDialogTest)
 {
     struct UserAgent *ua =  CreateUserAgent(0);
-    struct DialogId *dialogid = CreateDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
     struct Dialog *dialog = CreateDialog(dialogid, ua);
            
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
@@ -33,7 +33,7 @@ TEST(DialogsTestGroup, AddDialogTest)
 TEST(DialogsTestGroup, RemoveDialogTest)
 {
     struct UserAgent *ua =  CreateUserAgent(0);
-    struct DialogId *dialogid = CreateDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
     CreateDialog(dialogid, ua);
 
     UserAgentRemoveDialog(ua, dialogid);
@@ -45,8 +45,8 @@ TEST(DialogsTestGroup, RemoveDialogTest)
 TEST(DialogsTestGroup, RemoveDialogWithWrongId)
 {
     struct UserAgent *ua =  CreateUserAgent(0);
-    struct DialogId *dialogid = CreateDialogId((char *)"a",(char *) "b",(char *)"c");    
-    struct DialogId *dialogid2 = CreateDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
     struct Dialog *dialog = CreateDialog(dialogid, ua);
 
     UserAgentRemoveDialog(ua, dialogid2);

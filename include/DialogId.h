@@ -1,7 +1,8 @@
 #include "Bool.h"
 struct Message;
 struct DialogId *CreateEmptyDialogId();
-struct DialogId *CreateDialogId(char *callid, char *localTag, char *remoteTag);
+struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteTag);
+struct DialogId *CreateDialogId();
 struct DialogId *CreateDialogIdFromMessage(struct Message *message);
 void DestoryDialogId(struct DialogId **id);
 

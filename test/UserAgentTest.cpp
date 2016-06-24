@@ -116,7 +116,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 TEST(UserAgentTestGroup, AddDialogTest)
 {
     ua = BuildUserAgent(0);
-    struct DialogId *dialogid = CreateDialogId((char *)"1", (char *)"2",(char *)"3");
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
     dialog = CreateDialog(dialogid, ua);
 
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);

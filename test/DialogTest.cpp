@@ -120,11 +120,10 @@ TEST(DialogTestGroup, UACDialogIdTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
-   
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage(revMessage);
     
-    STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));    
+    STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 

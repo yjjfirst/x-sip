@@ -35,7 +35,6 @@ TEST_GROUP(TransactionManager)
         ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildBindingMessage(dialog);
-
     }
 
     void teardown() {

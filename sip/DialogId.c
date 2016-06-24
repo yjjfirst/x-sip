@@ -39,7 +39,7 @@ struct DialogId *CreateEmptyDialogId()
     return dialogid;
 }
 
-struct DialogId *CreateDialogId(char *callid, char *localTag, char *remoteTag)
+struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteTag)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
     DialogIdSetCallId(dialogid, callid);
@@ -49,11 +49,32 @@ struct DialogId *CreateDialogId(char *callid, char *localTag, char *remoteTag)
     return dialogid;
 }
 
+char *GenerateCallId()
+{
+    return "97295390";
+}
+
+char *GenerateLocalTag()
+{
+    return "1234567890";
+}
+
+struct DialogId *CreateDialogId()
+{
+    return CreateFixedDialogId(GenerateCallId(),
+                               GenerateLocalTag(),
+                               "");    
+}
+
 void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *message)
 {
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
-    DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
-    DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
+    if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
+        DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
+        DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
+    } else {
+        DialogIdSetRemoteTag(dialogid, MessageGetFromTag(message));
+    }
 }
 
 struct DialogId *CreateDialogIdFromMessage(struct Message *message)

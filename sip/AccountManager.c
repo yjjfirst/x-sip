@@ -1,6 +1,10 @@
 #include <assert.h>
 #include "AccountManager.h"
 #include "Accounts.h"
+#include "UserAgentManager.h"
+#include "Dialog.h"
+#include "MessageBuilder.h"
+#include "Messages.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -9,10 +13,15 @@ struct AccountManager {
 
 struct AccountManager AccountManager;
 
-void AddAccount(struct Account *account)
+int AddAccount(struct Account *account)
 {
     struct AccountManager *am = &AccountManager;
-    put_in_list(&am->accounts, account);
+    int pos;
+
+    put_in_list(&am->accounts, account);    
+    pos = get_list_len(am->accounts) - 1; 
+
+    return pos;
 }
 
 struct Account *GetAccount(int pos)
@@ -48,6 +57,10 @@ int TotalAccount()
 {
     struct AccountManager *am = &AccountManager;
     return get_list_len(am->accounts);
+}
+
+void BindAccount(int account)
+{
 }
 
 void AccountInitImpl()

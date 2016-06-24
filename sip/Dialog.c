@@ -126,7 +126,6 @@ void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message
     DialogExtractDialogIdFromMessage(dialog, message);
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     DialogExtractRemoteTargetFromMessage(dialog, message);
-    
     DialogAck(dialog);
 
     CreateSession();
@@ -255,10 +254,11 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
 
     if (dialogid == NULL) {
-        dialog->id = CreateEmptyDialogId();
+        dialog->id = CreateDialogId();
     } else {
         dialog->id = dialogid;
     }
+
     dialog->ua = ua;
     dialog->userOberver.onEvent = DialogOnTransactionEvent;
 

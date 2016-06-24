@@ -91,8 +91,9 @@ struct Header *BuildRequestMaxForwardsHeader(struct Dialog *dialog)
 }
 
 struct Header *BuildRequestCallIdHeader(struct Dialog *dialog)
-{
-    struct CallIdHeader *id = CreateCallIdHeader(GenerateCallIdString());
+{    
+    struct DialogId *dialogid = DialogGetId(dialog);
+    struct CallIdHeader *id = CreateCallIdHeader(DialogIdGetCallId(dialogid));
     return (struct Header *)id;
 }
 
