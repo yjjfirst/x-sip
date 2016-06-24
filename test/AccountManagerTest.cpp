@@ -175,5 +175,6 @@ IGNORE_TEST(AccountManagerTestGroup, BindAccountTest)
     struct Account *account = GetAccount(0);
 
     BindAccount(0);
+    
     CHECK_EQUAL(TRUE, AccountBinded(account));
 }

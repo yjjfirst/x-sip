@@ -47,7 +47,6 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     struct Transaction *t;
     struct Dialog *dialog;
     void setup(){
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
 

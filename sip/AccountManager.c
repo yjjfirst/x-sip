@@ -6,6 +6,7 @@
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "UserAgent.h"
+#include "TransactionManager.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -62,11 +63,11 @@ int TotalAccount()
 
 void BindAccount(int account)
 {
-    /* struct Account *a = GetAccount(account); */
-    /* struct UserAgent *ua = CreateUserAgent(account); */
-    /* struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua); */
+    struct UserAgent *ua = CreateUserAgent(account);
+    struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua);
+    struct Message *message = BuildBindingMessage(dialog);
 
-    
+    AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 
 void AccountInitImpl()

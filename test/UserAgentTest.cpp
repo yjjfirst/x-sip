@@ -45,7 +45,6 @@ TEST_GROUP(UserAgentTestGroup)
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         AccountInitMock();
     }
 

@@ -26,7 +26,6 @@ TEST_GROUP(TransactionManager)
     struct Message *message;
     
     void setup() {
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(Transporter, &MockTransporter);
 
         AccountInitMock();

@@ -113,7 +113,6 @@ static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action
 TEST_GROUP(ServerInviteTransactionTestGroup)
 {
     void setup(){
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(Transporter, &MockTransporter);
     }
 

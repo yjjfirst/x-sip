@@ -84,7 +84,6 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
     {
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(AddTimer, AddTimerMock);
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
 
         AccountInitMock();
         ua = CreateUserAgent(0);

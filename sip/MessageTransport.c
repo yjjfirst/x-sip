@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "MessageTransport.h"
+#include "TransactionManager.h"
 
 int DummySend(char *message)
 {
@@ -31,10 +32,5 @@ BOOL ReceiveInMessage(char *message)
     return ReceiveMessageCallback(message);
 }
 
-int ReceiveMessageCallbackImpl (char *message) 
-{
-    return 0;
-}
-
 struct MessageTransporter *Transporter = &DummyTransporter;
-MessageHandler ReceiveMessageCallback =  ReceiveMessageCallbackImpl;
+MessageHandler ReceiveMessageCallback =  MessageReceived;

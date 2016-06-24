@@ -38,7 +38,6 @@ TEST_GROUP(DialogTestGroup)
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
-        UT_PTR_SET(ReceiveMessageCallback, MessageReceived);
         UT_PTR_SET(CreateSession, CreateSessionMock);
 
         AccountInitMock();
