@@ -30,7 +30,7 @@ TEST_GROUP(UserAgentTestGroup)
 
     void BuildTestingMessage()
     {
-        ua = BuildUserAgent(0);
+        ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, GetUserName(0));
         message = BuildBindingMessage(dialog);
@@ -115,7 +115,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
 
 TEST(UserAgentTestGroup, AddDialogTest)
 {
-    ua = BuildUserAgent(0);
+    ua = CreateUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
     dialog = CreateDialog(dialogid, ua);
 

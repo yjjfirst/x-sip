@@ -53,7 +53,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
 
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
         AccountInitMock();
-        ua = BuildUserAgent(0);
+        ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 
         t = AddClientInviteTransaction(message,(struct TransactionUserObserver *) dialog);

@@ -172,9 +172,8 @@ TEST(AccountManagerTestGroup, AddAccountReturnTest)
 
 IGNORE_TEST(AccountManagerTestGroup, BindAccountTest)
 {
-    BindAccount(0);
-
     struct Account *account = GetAccount(0);
 
+    BindAccount(0);
     CHECK_EQUAL(TRUE, AccountBinded(account));
 }

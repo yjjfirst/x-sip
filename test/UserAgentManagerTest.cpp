@@ -22,7 +22,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
 
 TEST(UserAgentManagerTestGroup, AddUserAgentTest)
 {
-    struct UserAgent *ua = BuildUserAgent(0);
+    struct UserAgent *ua = CreateUserAgent(0);
     AddUserAgent(ua);    
     DestoryUserAgent(&ua);
 }

@@ -5,6 +5,7 @@
 #include "Dialog.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
+#include "UserAgent.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -61,6 +62,11 @@ int TotalAccount()
 
 void BindAccount(int account)
 {
+    /* struct Account *a = GetAccount(account); */
+    /* struct UserAgent *ua = CreateUserAgent(account); */
+    /* struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua); */
+
+    
 }
 
 void AccountInitImpl()

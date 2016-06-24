@@ -36,7 +36,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     void setup()
     {
         AccountInitMock();
-        ua = BuildUserAgent(0);
+        ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
 
         DialogSetToUser(dialog, GetUserName(0));
