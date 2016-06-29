@@ -59,7 +59,7 @@ OBJ		=	$(SRCS:.c=.o)
 
 CC		?=	gcc
 
-CFLAGS		+=	-W -Wall -ansi -pedantic -ggdb #
+CFLAGS		+=	-W -Wall -ansi -pedantic -ggdb -include ../../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros.h
 
 INCLUDE		=	-Iinclude
 

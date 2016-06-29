@@ -77,6 +77,7 @@ void RawDestoryHeaders(struct Headers *headers)
         DestoryOneHeader(header);
     }
 
+    destroy_list(&headers->headerList, NULL);
     free(headers);    
 }
 

@@ -63,6 +63,8 @@ void DestoryDialogList(struct DialogManager *dialogs)
         struct Dialog *dialog = get_data_at(dialogs->dialogList, i);
         DestoryDialog(&dialog);
     }
+
+    destroy_list(&dialogs->dialogList, NULL);
 }
 
 void DestoryDialogs(struct DialogManager **dialogs)

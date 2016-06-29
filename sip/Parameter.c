@@ -239,5 +239,6 @@ void DestoryParameters(struct Parameters *ps)
         free(p);
     }
 
+    destroy_list(&ps->parameters, NULL);
     free(ps);
 }

@@ -112,7 +112,7 @@ BOOL TmHandleReponseMessage(struct Message *message)
 
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
-        
+    
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
         if (statusCode == 200) {

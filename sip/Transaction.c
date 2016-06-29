@@ -157,6 +157,8 @@ int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
     return 0;
 }
 
+extern void DialogOnTransactionEvent(struct Transaction *t);
+
 int NotifyUser(struct Transaction *t)
 {
     if (t && t->user) {
@@ -395,6 +397,8 @@ void DestoryResponseMessage(struct Transaction *t)
         struct Message *message = get_data_at(t->responses, i);
         DestoryMessage(&message);
     }
+
+    destroy_list(&t->responses, NULL);
 }
 
 void DestoryTransaction(struct Transaction **t)

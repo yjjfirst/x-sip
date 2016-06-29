@@ -9,13 +9,16 @@ extern "C" {
 
 TEST_GROUP(UserAgentManagerTestGroup)
 {
+    struct UserAgentManager *uam;
     void setup() 
     {
+        uam = CreateUserAgentManager();
         AccountInitMock();
     }
     
     void teardown()
     {
+        DestoryUserAgentManager(&uam);
         ClearAccount();
     }
 };
@@ -23,16 +26,18 @@ TEST_GROUP(UserAgentManagerTestGroup)
 TEST(UserAgentManagerTestGroup, AddUserAgentTest)
 {
     struct UserAgent *ua = CreateUserAgent(0);
-    AddUserAgent(ua);    
-    DestoryUserAgent(&ua);
+    AddUserAgent(uam, ua);    
+    
+    CHECK_EQUAL(1, CountUserAgent(uam));
 }
 
-
-
-
-
-
-
-
-
-
+TEST(UserAgentManagerTestGroup, AddTwoUserAgentTest)
+{
+    struct UserAgent *ua1 = CreateUserAgent(0);
+    struct UserAgent *ua2 = CreateUserAgent(1);
+    
+    AddUserAgent(uam, ua1);    
+    AddUserAgent(uam, ua2);    
+    
+    CHECK_EQUAL(2, CountUserAgent(uam));
+}

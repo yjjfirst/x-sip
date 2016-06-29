@@ -66,7 +66,7 @@ void BindAccount(int account)
     struct UserAgent *ua = CreateUserAgent(account);
     struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua);
     struct Message *message = BuildBindingMessage(dialog);
-
+    
     AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 

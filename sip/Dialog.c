@@ -146,7 +146,7 @@ void DialogHandleClientNonInviteEvent(struct Transaction *t)
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-
+    
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
         if (MessageGetExpires(message) != 0) {
             UserAgentSetBinded(ua);

@@ -1,11 +1,15 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "AccountMock.h"
+#include "TransportMock.h"
+#include "TestingMessages.h"
 
 extern "C" {
 #include <stdio.h>
 #include "Accounts.h"
 #include "AccountManager.h"
+#include "Messages.h"
+#include "MessageTransport.h"
 }
 
 void AddFirstAccount()
@@ -54,6 +58,7 @@ TEST_GROUP(AccountManagerTestGroup)
 {
     void setup()
     {
+        UT_PTR_SET(Transporter, &MockTransporter);
         ClearAccount();
         ::AddFirstAccount();
     }
@@ -172,9 +177,15 @@ TEST(AccountManagerTestGroup, AddAccountReturnTest)
 
 IGNORE_TEST(AccountManagerTestGroup, BindAccountTest)
 {
+    char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
 
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
     BindAccount(0);
     
+    ReceiveInMessage(string);
     CHECK_EQUAL(TRUE, AccountBinded(account));
+    mock().checkExpectations();
+    mock().clear();
 }
