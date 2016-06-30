@@ -1,5 +1,5 @@
 struct TransactionId *CreateTransactionId();
-void DestoryTransactionId(struct TransactionId **transactionId);
+void DestroyTransactionId(struct TransactionId **transactionId);
 
 char *TransactionIdGetBranch(struct TransactionId *transactionId);
 char *TransactionIdGetMethod(struct TransactionId *transactionId);

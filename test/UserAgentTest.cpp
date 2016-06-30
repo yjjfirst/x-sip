@@ -36,10 +36,10 @@ TEST_GROUP(UserAgentTestGroup)
         message = BuildBindingMessage(dialog);
     }
 
-    void DestoryTestingMessage()
+    void DestroyTestingMessage()
     {
-        DestoryMessage(&message);
-        DestoryUserAgent(&ua);
+        DestroyMessage(&message);
+        DestroyUserAgent(&ua);
     }
 
     void setup()
@@ -60,7 +60,7 @@ TEST(UserAgentTestGroup, CreateUserAgentTest)
     struct UserAgent *ua = CreateUserAgent(0);
 
     CHECK_TRUE(ua != NULL);
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
     CHECK(ua == NULL);
 }
 
@@ -80,7 +80,7 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
     RemoveAllTransaction();    
 }
 
@@ -108,7 +108,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     ReceiveInMessage(revMessage);
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
     RemoveAllTransaction();
 }
 
@@ -121,6 +121,6 @@ TEST(UserAgentTestGroup, AddDialogTest)
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
 
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
 }
 

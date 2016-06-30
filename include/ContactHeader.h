@@ -10,7 +10,7 @@ struct ContactHeader *CreateContactHeader();
 struct ContactHeader *CreateToHeader();
 struct ContactHeader *CreateFromHeader();
 struct ContactHeader *ContactHeaderDup(struct ContactHeader *src);
-void DestoryContactHeader(struct Header *to);
+void DestroyContactHeader(struct Header *to);
 struct Header *ParseContactHeader(char *string);
 
 char *ContactHeaderGetName(struct ContactHeader *Header);

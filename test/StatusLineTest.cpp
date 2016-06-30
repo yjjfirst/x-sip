@@ -18,7 +18,7 @@ TEST(StatusLineTestGroup, StatusLineParseTest)
     CHECK_EQUAL(180, StatusLineGetStatusCode(s));
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
 
-    DestoryStatusLine(s);
+    DestroyStatusLine(s);
 }
 
 TEST(StatusLineTestGroup, StatusLine2StringTest)
@@ -31,7 +31,7 @@ TEST(StatusLineTestGroup, StatusLine2StringTest)
     StatusLine2String(result, s);
     STRCMP_EQUAL(string, result);    
 
-    DestoryStatusLine(s);
+    DestroyStatusLine(s);
 
 }
 
@@ -41,7 +41,7 @@ TEST(StatusLineTestGroup, Create100StatusLineTest)
     CHECK_EQUAL(100, StatusLineGetStatusCode(s));
     STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(s));
 
-    DestoryStatusLine(s);
+    DestroyStatusLine(s);
 }
 
 TEST(StatusLineTestGroup, Create180StatusLineTest)
@@ -50,7 +50,7 @@ TEST(StatusLineTestGroup, Create180StatusLineTest)
     CHECK_EQUAL(180, StatusLineGetStatusCode(s));
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
 
-    DestoryStatusLine(s);
+    DestroyStatusLine(s);
 }
 
 TEST(StatusLineTestGroup, StatusLineCreateTest)
@@ -59,6 +59,6 @@ TEST(StatusLineTestGroup, StatusLineCreateTest)
     CHECK_EQUAL(180, StatusLineGetStatusCode(s));
     STRCMP_EQUAL("", StatusLineGetReasonPhrase(s));
 
-    DestoryStatusLine(s);
+    DestroyStatusLine(s);
 }
 

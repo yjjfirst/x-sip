@@ -36,7 +36,7 @@ void RemoveAccount(int pos)
 {
     struct AccountManager *am = &AccountManager;
     struct Account *a = (struct Account *)get_data_at(am->accounts, pos);
-    DestoryAccount(&a);
+    DestroyAccount(&a);
     del_node_at(&am->accounts, pos);
 }
 
@@ -49,7 +49,7 @@ void ClearAccount()
     assert(am != NULL);
     for (; i < len; i++) {
         struct Account *a = (struct Account *)get_data_at(am->accounts, i);
-        DestoryAccount(&a);
+        DestroyAccount(&a);
     }
     
     destroy_list(&am->accounts, NULL);

@@ -14,5 +14,5 @@ TEST(MediaSessionTestGroup, CreateMediaSessionTest)
     struct MediaSession *ms = CreateMediaSession();
 
     CHECK_TRUE(ms != NULL);
-    DestoryMediaSession(&ms);
+    DestroyMediaSession(&ms);
 }

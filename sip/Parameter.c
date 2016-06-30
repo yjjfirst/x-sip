@@ -192,7 +192,7 @@ struct Parameter *CreateParameter(char *name, char *value)
     return p;
 }
 
-void DestoryParameter(struct Parameter *p)
+void DestroyParameter(struct Parameter *p)
 {
     if (p != NULL)
         free(p);
@@ -228,7 +228,7 @@ struct Parameters *ParametersDup(struct Parameters *src)
     return dest;
 }
 
-void DestoryParameters(struct Parameters *ps)
+void DestroyParameters(struct Parameters *ps)
 {
     if (ps == NULL) return;
 

@@ -95,7 +95,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
     {
         ClearAccount();
         RemoveAllTransaction();
-        DestoryUserAgent(&ua);
+        DestroyUserAgent(&ua);
         mock().checkExpectations();
         mock().clear();
     }

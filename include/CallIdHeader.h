@@ -8,7 +8,7 @@ struct Header;
 struct CallIdHeader *CreateCallIdHeader(char *idString);
 struct CallIdHeader *CreateEmptyCallIdHeader();
 struct CallIdHeader *CallIdHeaderDup(struct CallIdHeader *src);
-void DestoryCallIdHeader(struct Header *id);
+void DestroyCallIdHeader(struct Header *id);
 struct HeaderPattern *GetCallIdPattern();
 struct Header *ParseCallIdHeader(char *string);
 

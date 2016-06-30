@@ -106,7 +106,7 @@ struct URI *ViaHeaderGetUri(struct ViaHeader *via)
 void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri)
 {
     if (via->uri != NULL)
-        DestoryUri(&via->uri);
+        DestroyUri(&via->uri);
     via->uri = uri;
 }
 
@@ -128,7 +128,7 @@ void ViaHeaderSetParameter(struct ViaHeader *via, char *name, char *value)
 void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters)
 {
     if (via->parameters != NULL)
-        DestoryParameters(via->parameters);
+        DestroyParameters(via->parameters);
     via->parameters = parameters;
 }
 
@@ -170,8 +170,8 @@ struct ViaHeader *ViaHeaderDup(struct ViaHeader *src)
 {
     struct ViaHeader *dest = CreateEmptyViaHeader();
     
-    DestoryUri(&dest->uri);
-    DestoryParameters(dest->parameters);
+    DestroyUri(&dest->uri);
+    DestroyParameters(dest->parameters);
 
     memcpy(dest, src, sizeof(struct ViaHeader));
     
@@ -180,12 +180,12 @@ struct ViaHeader *ViaHeaderDup(struct ViaHeader *src)
     return dest;
 }
 
-void DestoryViaHeader(struct Header *via)
+void DestroyViaHeader(struct Header *via)
 {
     struct ViaHeader *v = (struct ViaHeader *)via;
     if (v != NULL) {
-        DestoryUri(&v->uri);
-        DestoryParameters(v->parameters);
+        DestroyUri(&v->uri);
+        DestroyParameters(v->parameters);
         free(v);
     }
 }

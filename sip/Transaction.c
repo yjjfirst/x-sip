@@ -331,7 +331,7 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
     t->fsm = &ClientInviteTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {
-        DestoryTransaction(&t);
+        DestroyTransaction(&t);
         return NULL;
     }
 
@@ -350,7 +350,7 @@ struct Transaction *CreateClientNonInviteTransaction(struct Message *request, st
     t->fsm = &ClientNonInviteTransactionFsm;
 
     if (SendRequestMessage(t) < 0) {
-        DestoryTransaction(&t);
+        DestroyTransaction(&t);
         return NULL;
     }
 
@@ -372,7 +372,7 @@ struct Transaction *CreateServerInviteTransaction(struct Message *request, struc
 
     if (TransactionSendMessage(trying) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        DestoryTransaction(&t);
+        DestroyTransaction(&t);
         return NULL;
     }
 
@@ -388,25 +388,25 @@ struct Transaction *CreateServerNonInviteTransaction(struct Message *request, st
     return t;
 }
 
-void DestoryResponseMessage(struct Transaction *t)
+void DestroyResponseMessage(struct Transaction *t)
 {
     int length = get_list_len(t->responses);
     int i = 0;
 
     for (; i < length; i ++) {
         struct Message *message = get_data_at(t->responses, i);
-        DestoryMessage(&message);
+        DestroyMessage(&message);
     }
 
     destroy_list(&t->responses, NULL);
 }
 
-void DestoryTransaction(struct Transaction **t)
+void DestroyTransaction(struct Transaction **t)
 {
     if ( *t != NULL) {
-        DestoryMessage(&(*t)->request); 
-        DestoryResponseMessage(*t);
-        DestoryTransactionId(&(*t)->id);
+        DestroyMessage(&(*t)->request); 
+        DestroyResponseMessage(*t);
+        DestroyTransactionId(&(*t)->id);
         free(*t);
         *t = NULL;
     }

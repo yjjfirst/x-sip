@@ -12,7 +12,7 @@ struct Message;
 
 int ParseMessage(const char *string, struct Message *message);
 struct Message *CreateMessage();
-void DestoryMessage(struct Message **message);
+void DestroyMessage(struct Message **message);
 
 enum MESSAGE_TYPE MessageGetType(struct Message *message);
 void MessageSetType(struct Message *message, enum MESSAGE_TYPE type);

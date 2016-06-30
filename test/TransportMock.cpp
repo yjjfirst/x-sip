@@ -28,13 +28,13 @@ int SendOutMessageMock(char *message)
     type = MessageGetType(m);
     if (type == MESSAGE_TYPE_REQUEST) {
         method = RequestLineGetMethod(MessageGetRequestLine(m));
-        DestoryMessage(&m);
+        DestroyMessage(&m);
         return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(method)).
             returnIntValue();
     } else { 
         statusCode = StatusLineGetStatusCode(MessageGetStatusLine(m));
-        DestoryMessage(&m);
+        DestroyMessage(&m);
         return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
             withIntParameter("StatusCode", statusCode).
             returnIntValue();

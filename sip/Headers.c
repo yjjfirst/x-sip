@@ -31,15 +31,15 @@ struct HeaderOp {
 };
 
 struct HeaderOp HeaderOps[] = {
-    {HEADER_NAME_VIA, ParseViaHeader, DestoryViaHeader, ViaHeader2String},
-    {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestoryMaxForwardsHeader,MaxForwards2String},
-    {HEADER_NAME_TO, ParseContactHeader, DestoryContactHeader,ContactHeader2String},
-    {HEADER_NAME_FROM, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
-    {HEADER_NAME_CONTACT, ParseContactHeader, DestoryContactHeader, ContactHeader2String},
-    {HEADER_NAME_CALLID, ParseCallIdHeader, DestoryCallIdHeader, CallIdHeader2String},
-    {HEADER_NAME_CSEQ, ParseCSeqHeader, DestoryCSeqHeader, CSeq2String},
-    {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestoryContentLengthHeader, ContentLengthHeader2String},
-    {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestoryExpiresHeader, ExpiresHeader2String},
+    {HEADER_NAME_VIA, ParseViaHeader, DestroyViaHeader, ViaHeader2String},
+    {HEADER_NAME_MAX_FORWARDS, ParseMaxForwardsHeader, DestroyMaxForwardsHeader,MaxForwards2String},
+    {HEADER_NAME_TO, ParseContactHeader, DestroyContactHeader,ContactHeader2String},
+    {HEADER_NAME_FROM, ParseContactHeader, DestroyContactHeader, ContactHeader2String},
+    {HEADER_NAME_CONTACT, ParseContactHeader, DestroyContactHeader, ContactHeader2String},
+    {HEADER_NAME_CALLID, ParseCallIdHeader, DestroyCallIdHeader, CallIdHeader2String},
+    {HEADER_NAME_CSEQ, ParseCSeqHeader, DestroyCSeqHeader, CSeq2String},
+    {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestroyContentLengthHeader, ContentLengthHeader2String},
+    {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestroyExpiresHeader, ExpiresHeader2String},
 };
 
 struct Headers *CreateHeaders()
@@ -52,7 +52,7 @@ int CountHeaderOps()
     return sizeof(HeaderOps)/sizeof(struct HeaderOp);    
 }
 
-static void DestoryOneHeader(struct Header *header)
+static void DestroyOneHeader(struct Header *header)
 {
     int i;
 
@@ -65,7 +65,7 @@ static void DestoryOneHeader(struct Header *header)
     }
 }
 
-void RawDestoryHeaders(struct Headers *headers)
+void RawDestroyHeaders(struct Headers *headers)
 {
     int length = get_list_len(headers->headerList);
     int i ;
@@ -74,7 +74,7 @@ void RawDestoryHeaders(struct Headers *headers)
     assert(headers != NULL);
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(headers->headerList, i);
-        DestoryOneHeader(header);
+        DestroyOneHeader(header);
     }
 
     destroy_list(&headers->headerList, NULL);

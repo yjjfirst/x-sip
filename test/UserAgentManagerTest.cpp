@@ -18,7 +18,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
     
     void teardown()
     {
-        DestoryUserAgentManager(&uam);
+        DestroyUserAgentManager(&uam);
         ClearAccount();
     }
 };

@@ -22,7 +22,7 @@ TEST(DialogIdTestGroup, CreateDialogIdTest)
     STRCMP_EQUAL("2", DialogIdGetLocalTag(dialogId));
     STRCMP_EQUAL("3", DialogIdGetRemoteTag(dialogId));
 
-    DestoryDialogId(&dialogId);
+    DestroyDialogId(&dialogId);
 }
 
 TEST(DialogIdTestGroup, DialogIdEqualTest)
@@ -32,8 +32,8 @@ TEST(DialogIdTestGroup, DialogIdEqualTest)
 
     CHECK_TRUE(DialogIdMatched(id1, id2));
 
-    DestoryDialogId(&id1);
-    DestoryDialogId(&id2);
+    DestroyDialogId(&id1);
+    DestroyDialogId(&id2);
 }
 
 TEST(DialogIdTestGroup, DialogIdUnequalTest)
@@ -43,8 +43,8 @@ TEST(DialogIdTestGroup, DialogIdUnequalTest)
 
     CHECK_FALSE(DialogIdMatched(id1, id2));
 
-    DestoryDialogId(&id1);
-    DestoryDialogId(&id2);
+    DestroyDialogId(&id1);
+    DestroyDialogId(&id2);
 }
 
 TEST(DialogIdTestGroup, DialogIdUnequalTest1)
@@ -54,8 +54,8 @@ TEST(DialogIdTestGroup, DialogIdUnequalTest1)
 
     CHECK_FALSE(DialogIdMatched(id1, id2));
 
-    DestoryDialogId(&id1);
-    DestoryDialogId(&id2);
+    DestroyDialogId(&id1);
+    DestroyDialogId(&id2);
 }
 
 TEST(DialogIdTestGroup, DialogIdUnequalTest2)
@@ -65,8 +65,8 @@ TEST(DialogIdTestGroup, DialogIdUnequalTest2)
 
     CHECK_FALSE(DialogIdMatched(id1, id2));
 
-    DestoryDialogId(&id1);
-    DestoryDialogId(&id2);
+    DestroyDialogId(&id1);
+    DestroyDialogId(&id2);
 }
 
 TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
@@ -80,8 +80,8 @@ TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
     STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetLocalTag(dialogid));
     STRCMP_EQUAL(MessageGetToTag(message), DialogIdGetRemoteTag(dialogid));
     
-    DestoryDialogId(&dialogid);
-    DestoryMessage(&message);
+    DestroyDialogId(&dialogid);
+    DestroyMessage(&message);
 }
 
 TEST(DialogIdTestGroup, BuildDialogIdFromRequestTest)
@@ -94,8 +94,8 @@ TEST(DialogIdTestGroup, BuildDialogIdFromRequestTest)
     STRCMP_EQUAL(MessageGetCallId(message), DialogIdGetCallId(dialogid));
     STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetRemoteTag(dialogid));
     
-    DestoryDialogId(&dialogid);
-    DestoryMessage(&message);
+    DestroyDialogId(&dialogid);
+    DestroyMessage(&message);
 }
 
 TEST(DialogIdTestGroup, GenerateCallIdTest)
@@ -103,7 +103,7 @@ TEST(DialogIdTestGroup, GenerateCallIdTest)
     struct DialogId *dialogid = CreateDialogId();
     
     CHECK_TRUE(strlen(DialogIdGetCallId(dialogid)) != 0);
-    DestoryDialogId(&dialogid);
+    DestroyDialogId(&dialogid);
 }
 
 TEST(DialogIdTestGroup, GenerateLocalTagTest)
@@ -111,5 +111,5 @@ TEST(DialogIdTestGroup, GenerateLocalTagTest)
     struct DialogId *dialogid = CreateDialogId();
     
     CHECK_TRUE(strlen(DialogIdGetLocalTag(dialogid)) != 0);
-    DestoryDialogId(&dialogid);
+    DestroyDialogId(&dialogid);
 }

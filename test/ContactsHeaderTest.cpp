@@ -36,7 +36,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderParseTest)
 
     STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
-    DestoryContactHeader((struct Header *)toHeader);
+    DestroyContactHeader((struct Header *)toHeader);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderWithSpaceParseTest)
@@ -52,7 +52,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderWithSpaceParseTest)
 
     STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
-    DestoryContactHeader((struct Header *)toHeader);
+    DestroyContactHeader((struct Header *)toHeader);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderQuotedDisplayNameParseTest)
@@ -68,7 +68,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 
     STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
-    DestoryContactHeader((struct Header *)toHeader);
+    DestroyContactHeader((struct Header *)toHeader);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderNoDisplayNameParseTest)
@@ -84,7 +84,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderNoDisplayNameParseTest)
 
     STRCMP_EQUAL("287447", ContactHeaderGetParameter(toHeader, HEADER_PARAMETER_NAME_TAG));
     
-    DestoryContactHeader((struct Header *)toHeader);
+    DestroyContactHeader((struct Header *)toHeader);
     
 }
 
@@ -97,7 +97,7 @@ TEST(ContactHeaderTestGroup, ContactParseTest)
     STRCMP_EQUAL("Contact", ContactHeaderGetName(contact));
     UriCheck(contact);
 
-    DestoryContactHeader((struct Header *)contact);
+    DestroyContactHeader((struct Header *)contact);
 }
 
 TEST(ContactHeaderTestGroup, Contact2StringTest)
@@ -110,7 +110,7 @@ TEST(ContactHeaderTestGroup, Contact2StringTest)
     ContactHeader2String(result,(struct Header *) contact);
     STRCMP_EQUAL("Contact:<sip:alice@pc33.atlanta.com>", result);
 
-    DestoryContactHeader((struct Header *)contact);
+    DestroyContactHeader((struct Header *)contact);
 }
 
 TEST(ContactHeaderTestGroup, ContactWithQuotedDisplayName2StringTest)
@@ -123,7 +123,7 @@ TEST(ContactHeaderTestGroup, ContactWithQuotedDisplayName2StringTest)
     ContactHeader2String(result, (struct Header *)toHeader);
     STRCMP_EQUAL(toString, result);
     
-    DestoryContactHeader((struct Header *)toHeader);
+    DestroyContactHeader((struct Header *)toHeader);
 }
 
 TEST(ContactHeaderTestGroup, ContactStartWithSpaceParseTest)
@@ -132,7 +132,7 @@ TEST(ContactHeaderTestGroup, ContactStartWithSpaceParseTest)
     char contactString[] = "Contact: <sip:bob@192.0.2.4>";
 
     Parse((char *)contactString, toHeader, GetContactHeaderPattern(contactString));
-    DestoryContactHeader((struct Header *)toHeader);    
+    DestroyContactHeader((struct Header *)toHeader);    
 }
 
 TEST(ContactHeaderTestGroup, CreateToHeaderTest)
@@ -141,7 +141,7 @@ TEST(ContactHeaderTestGroup, CreateToHeaderTest)
 
     STRCMP_EQUAL("To", ContactHeaderGetName(toHeader));
 
-    DestoryContactHeader( (struct Header *)toHeader);
+    DestroyContactHeader( (struct Header *)toHeader);
 }
 
 TEST(ContactHeaderTestGroup, CreateFromHeaderTest)
@@ -150,7 +150,7 @@ TEST(ContactHeaderTestGroup, CreateFromHeaderTest)
 
     STRCMP_EQUAL("From", ContactHeaderGetName(from));
 
-    DestoryContactHeader( (struct Header *)from);
+    DestroyContactHeader( (struct Header *)from);
 
 }
 
@@ -160,7 +160,7 @@ TEST(ContactHeaderTestGroup, CreateContactHeaderTest)
 
     STRCMP_EQUAL("Contact", ContactHeaderGetName(c));
 
-    DestoryContactHeader( (struct Header *)c);
+    DestroyContactHeader( (struct Header *)c);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderMatchedTest)
@@ -173,8 +173,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderMatchedTest)
     Parse((char *)toString, header2, GetContactHeaderPattern(toString));
     CHECK_TRUE(ContactHeaderMatched(header1, header2));
     
-    DestoryContactHeader((struct Header *)header1);
-    DestoryContactHeader((struct Header *)header2);
+    DestroyContactHeader((struct Header *)header1);
+    DestroyContactHeader((struct Header *)header2);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderDisplayNameUnmatchedTest)
@@ -188,8 +188,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderDisplayNameUnmatchedTest)
     Parse((char *)toString2, header2, GetContactHeaderPattern(toString2));
     CHECK_FALSE(ContactHeaderMatched(header1, header2));
     
-    DestoryContactHeader((struct Header *)header1);
-    DestoryContactHeader((struct Header *)header2);
+    DestroyContactHeader((struct Header *)header1);
+    DestroyContactHeader((struct Header *)header2);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderUriUnmatchedTest)
@@ -203,8 +203,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderUriUnmatchedTest)
     Parse((char *)toString2, header2, GetContactHeaderPattern(toString2));
     CHECK_FALSE(ContactHeaderMatched(header1, header2));
     
-    DestoryContactHeader((struct Header *)header1);
-    DestoryContactHeader((struct Header *)header2);
+    DestroyContactHeader((struct Header *)header1);
+    DestroyContactHeader((struct Header *)header2);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderParametersUnmatchedTest)
@@ -218,8 +218,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderParametersUnmatchedTest)
     Parse((char *)toString2, header2, GetContactHeaderPattern(toString2));
     CHECK_FALSE(ContactHeaderMatched(header1, header2));
     
-    DestoryContactHeader((struct Header *)header1);
-    DestoryContactHeader((struct Header *)header2);
+    DestroyContactHeader((struct Header *)header1);
+    DestroyContactHeader((struct Header *)header2);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
@@ -231,8 +231,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
     struct ContactHeader *headerDup = ContactHeaderDup(header);
     CHECK_TRUE(ContactHeaderMatched(header, headerDup));
 
-    DestoryContactHeader((struct Header *)headerDup);
-    DestoryContactHeader((struct Header *)header);
+    DestroyContactHeader((struct Header *)headerDup);
+    DestroyContactHeader((struct Header *)header);
 }
 
 TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
@@ -246,7 +246,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
 
     CHECK_EQUAL(0, ParametersLength(ps));
     
-    DestoryContactHeader((struct Header *)header);
+    DestroyContactHeader((struct Header *)header);
 }
 
 void GenerateTagMock(char *tag)

@@ -30,7 +30,7 @@ struct Header *ParseExpiresHeader(char *string)
     return (struct Header *)e;
 }
    
-void DestoryExpiresHeader (struct Header *header)
+void DestroyExpiresHeader (struct Header *header)
 {
     free(header);
 }

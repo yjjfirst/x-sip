@@ -31,7 +31,7 @@ int SendOut100TryingMock(char *message)
     
     CHECK_EQUAL(100, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(sl));
-    DestoryMessage(&m);
+    DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
@@ -50,7 +50,7 @@ int SendOut180RingingMock(char *message)
 
     CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
-    DestoryMessage(&m);
+    DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
@@ -69,7 +69,7 @@ int SendOut301Mock(char *message)
 
     CHECK_EQUAL(STATUS_CODE_MOVED_PERMANENTLY, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
-    DestoryMessage(&m);
+    DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
@@ -88,7 +88,7 @@ int SendOut200OKMock(char *message)
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
-    DestoryMessage(&m);
+    DestroyMessage(&m);
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }
 

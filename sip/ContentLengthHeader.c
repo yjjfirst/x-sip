@@ -21,7 +21,7 @@ struct HeaderPattern *GetContentLengthHeaderPattern()
     return ContentLengthHeaderPattern;
 }
 
-DEFINE_DESTROYER(struct Header, DestoryContentLengthHeader)
+DEFINE_DESTROYER(struct Header, DestroyContentLengthHeader)
 
 struct ContentLengthHeader *CreateContentLengthHeader ()
 { 

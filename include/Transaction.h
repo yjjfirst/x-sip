@@ -48,7 +48,7 @@ struct Transaction *CreateClientNonInviteTransaction(struct Message *request, st
 struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
 struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
 struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
-void DestoryTransaction(struct Transaction **t);
+void DestroyTransaction(struct Transaction **t);
 
 int TransactionSendMessage(struct Message *message);
 void ResponseWith180Ringing(struct Transaction *t);

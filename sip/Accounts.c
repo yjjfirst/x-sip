@@ -55,7 +55,7 @@ struct Account *CreateAccount(char *username, char *authname, char *proxy, char 
     return account;
 }
 
-void DestoryAccount(struct Account **account)
+void DestroyAccount(struct Account **account)
 {
     if (*account != NULL) {
         free(*account);

@@ -1,4 +1,4 @@
 
 
 extern struct Session *(*CreateSession)();
-extern void (*DestorySession)(struct Session **session);
+extern void (*DestroySession)(struct Session **session);

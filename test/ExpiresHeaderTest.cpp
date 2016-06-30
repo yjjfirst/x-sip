@@ -19,7 +19,7 @@ TEST(ExpiresHeaderTestGroup, ExpiresHeaderParseTest)
     Parse(string, e, GetExpiresPattern());
     STRCMP_EQUAL("Expires", ExpiresHeaderGetName(e));
     CHECK_EQUAL(7200, ExpiresHeaderGetExpires(e));
-    DestoryExpiresHeader((struct Header *)e);
+    DestroyExpiresHeader((struct Header *)e);
 }
 
 TEST(ExpiresHeaderTestGroup, ExpiresHeader2String)
@@ -31,5 +31,5 @@ TEST(ExpiresHeaderTestGroup, ExpiresHeader2String)
     Parse(string, e, GetExpiresPattern());
     ExpiresHeader2String(result, (struct Header *)e);
 
-    DestoryExpiresHeader((struct Header *)e);
+    DestroyExpiresHeader((struct Header *)e);
 }

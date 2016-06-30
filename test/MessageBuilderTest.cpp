@@ -49,9 +49,9 @@ TEST_GROUP(MessageBuilderTestGroup)
     void teardown()
     {
         ClearAccount();
-        DestoryMessage(&m);
-        DestoryMessage(&inviteMessage);
-        DestoryUserAgent(&ua);
+        DestroyMessage(&m);
+        DestroyMessage(&inviteMessage);
+        DestroyUserAgent(&ua);
     }
 };
 
@@ -62,11 +62,11 @@ TEST(MessageBuilderTestGroup, MessageTypeTest)
 
     struct Message *tmpMessage = CreateMessage();
     CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
-    DestoryMessage(&tmpMessage);
+    DestroyMessage(&tmpMessage);
 
     tmpMessage = BuildAckMessage(dialog);
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
-    DestoryMessage(&tmpMessage);
+    DestroyMessage(&tmpMessage);
 }
 
 TEST(MessageBuilderTestGroup, RequestLineTest)
@@ -201,7 +201,7 @@ TEST(MessageBuilderTestGroup, AckMessageRequestLineTest)
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(requestLine));
     CHECK_TRUE(UriMatched(uri, inviteUri));
 
-    DestoryMessage(&ackMessage);
+    DestroyMessage(&ackMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageCallIdTest)
@@ -209,7 +209,7 @@ TEST(MessageBuilderTestGroup, AckMessageCallIdTest)
     struct Message *ackMessage = BuildAckMessage(dialog);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ackMessage));
-    DestoryMessage(&ackMessage);
+    DestroyMessage(&ackMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageFromTest)
@@ -219,7 +219,7 @@ TEST(MessageBuilderTestGroup, AckMessageFromTest)
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
     CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
 
-    DestoryMessage(&ackMessage);
+    DestroyMessage(&ackMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageCSeqTest)
@@ -228,7 +228,7 @@ TEST(MessageBuilderTestGroup, AckMessageCSeqTest)
 
     CHECK_EQUAL(MessageGetCSeqNumber(ackMessage),MessageGetCSeqNumber(inviteMessage));
 
-    DestoryMessage(&ackMessage);
+    DestroyMessage(&ackMessage);
 }
 
 TEST(MessageBuilderTestGroup, AckMessageViaTest)
@@ -238,7 +238,7 @@ TEST(MessageBuilderTestGroup, AckMessageViaTest)
     struct ViaHeader *ackVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
 
     CHECK_TRUE(ViaHeaderMatched(ackVia, inviteVia));
-    DestoryMessage(&ackMessage);
+    DestroyMessage(&ackMessage);
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageStatusLineTest)
@@ -254,8 +254,8 @@ TEST(MessageBuilderTestGroup, TryingMessageStatusLineTest)
     CHECK_EQUAL(100, StatusLineGetStatusCode(status));
     STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(status));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
@@ -269,8 +269,8 @@ TEST(MessageBuilderTestGroup, TryingMessageFromHeaderTest)
 
     CHECK_TRUE(ContactHeaderMatched(inviteFrom, tryingFrom));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageToWithTagTest)
@@ -285,8 +285,8 @@ TEST(MessageBuilderTestGroup, TryingMessageToWithTagTest)
 
     CHECK_TRUE(ContactHeaderMatched(inviteTo, tryingTo));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);    
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);    
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
@@ -305,8 +305,8 @@ TEST(MessageBuilderTestGroup, TryingMessageToWithNoTagTest)
     CHECK_FALSE(ContactHeaderMatched(inviteTo, tryingTo));
     CHECK_TRUE(UriMatched(inviteToUri, tryingToUri));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);    
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);    
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
@@ -320,8 +320,8 @@ TEST(MessageBuilderTestGroup, TryingMessageCallIdTest)
     
     CHECK_TRUE(CallIdHeaderMatched(inviteCallId, tryingCallId));
     
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);    
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);    
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
@@ -335,8 +335,8 @@ TEST(MessageBuilderTestGroup, TryingMessageCSeqTest)
 
     CHECK_TRUE(CSeqHeadersMatched(inviteCSeq, tryingCSeq));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);
 }
 
 TEST(MessageBuilderTestGroup, TryingMessageViaTest)
@@ -350,8 +350,8 @@ TEST(MessageBuilderTestGroup, TryingMessageViaTest)
     
     CHECK_TRUE(ViaHeaderMatched(inviteVia, tryingVia));
 
-    DestoryMessage(&trying);
-    DestoryMessage(&invite);    
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);    
 }
 
 TEST(MessageBuilderTestGroup, RingingMessageStatusLineTest)
@@ -365,8 +365,8 @@ TEST(MessageBuilderTestGroup, RingingMessageStatusLineTest)
     CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
 
-    DestoryMessage(&invite);
-    DestoryMessage(&ringing);
+    DestroyMessage(&invite);
+    DestroyMessage(&ringing);
 }
 
 TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
@@ -380,8 +380,8 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
 
-    DestoryMessage(&invite);
-    DestoryMessage(&ok);
+    DestroyMessage(&invite);
+    DestroyMessage(&ok);
 }
 
 TEST(MessageBuilderTestGroup,OKMessageContactHeaderTest)
@@ -397,8 +397,8 @@ TEST(MessageBuilderTestGroup,OKMessageContactHeaderTest)
     STRCMP_EQUAL(GetLocalIpAddr(), UriGetHost(uri));
     CHECK_EQUAL(LOCAL_PORT, UriGetPort(uri));
 
-    DestoryMessage(&invite);
-    DestoryMessage(&ok);
+    DestroyMessage(&invite);
+    DestroyMessage(&ok);
 }
 
 TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
@@ -412,8 +412,8 @@ TEST(MessageBuilderTestGroup, 301MessageStatueLineTest)
     CHECK_EQUAL(301, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
 
-    DestoryMessage(&invite);
-    DestoryMessage(&moved);
+    DestroyMessage(&invite);
+    DestroyMessage(&moved);
 
 }
 
@@ -443,8 +443,8 @@ TEST(MessageBuilderTestGroup, ByeMessageToHeaderTest)
     CHECK_TRUE(UriMatched(uri, remoteUri));
     STRCMP_EQUAL(DialogGetRemoteTag(dialog), ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG));
 
-    DestoryUri(&remoteUri);
-    DestoryMessage(&bye);
+    DestroyUri(&remoteUri);
+    DestroyMessage(&bye);
 }
 
 struct URI *dialog_remote_target;
@@ -470,8 +470,8 @@ TEST(MessageBuilderTestGroup, ByeMessageRequestLineTest)
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));
     CHECK_TRUE(UriMatched(remoteTarget, uri));
 
-    DestoryUri(&remoteTarget);
-    DestoryMessage(&bye);
+    DestroyUri(&remoteTarget);
+    DestroyMessage(&bye);
 
 }
 
@@ -481,7 +481,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ack));    
 
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionRequestUriTest)
@@ -492,7 +492,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionRequestUriTe
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
     CHECK_TRUE(UriMatched(RequestLineGetUri(MessageGetRequestLine(inviteMessage)), RequestLineGetUri(rl)));
 
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTest)
@@ -502,7 +502,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTe
     CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
                                     (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,ack)));
 
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
@@ -515,8 +515,8 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
     CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO,inviteMessage), 
                                     toHeaderOfAck));
 
-    DestoryMessage(&ack);
-    DestoryContactHeader((struct Header *)toHeaderOfAck);
+    DestroyMessage(&ack);
+    DestroyContactHeader((struct Header *)toHeaderOfAck);
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
@@ -526,7 +526,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
     CHECK_TRUE(ViaHeaderMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
                                 (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ack)));
 
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest)
@@ -536,7 +536,7 @@ TEST(MessageBuilderTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest
     struct CSeqHeader *seq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
     STRCMP_EQUAL(SIP_METHOD_NAME_ACK, CSeqHeaderGetMethod(seq));
     
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 TEST(MessageBuilderTestGroup, BindingsRequestLineTest)

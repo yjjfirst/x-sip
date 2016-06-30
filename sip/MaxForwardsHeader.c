@@ -69,7 +69,7 @@ struct MaxForwardsHeader *CreateMaxForwardsHeader()
     return m;
 }
 
-void DestoryMaxForwardsHeader(struct Header *m)
+void DestroyMaxForwardsHeader(struct Header *m)
 {
     if (m != NULL) {
         free(m);

@@ -39,7 +39,7 @@ TEST_GROUP(TransactionManager)
     void teardown() {
         ClearAccount();
         mock().clear();
-        DestoryUserAgent(&ua);
+        DestroyUserAgent(&ua);
         RemoveAllTransaction();
     }
 };
@@ -110,9 +110,9 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
     STRCMP_EQUAL("z9hG4bK27dc30b4",TransactionIdGetBranch(tid));
     STRCMP_EQUAL("INVITE",TransactionIdGetMethod(tid));
    
-    DestoryMessage(&localMessage);
-    DestoryTransactionId(&tid);
-    DestoryMessage(&message);
+    DestroyMessage(&localMessage);
+    DestroyTransactionId(&tid);
+    DestroyMessage(&message);
 }
 
 TEST(TransactionManager, TransactionIdTest)

@@ -31,7 +31,7 @@ TEST_GROUP(SessionTestGroup)
     void teardown()
     {
         ClearAccount();
-        DestoryUserAgent(&ua);
+        DestroyUserAgent(&ua);
         
         mock().checkExpectations();
         mock().clear();
@@ -44,9 +44,9 @@ static struct Session *CreateSessionMock()
     return NULL;
 }
 
-void DestorySessionMock(struct Session **session)
+void DestroySessionMock(struct Session **session)
 {
-    mock().actualCall("DestorySession");
+    mock().actualCall("DestroySession");
 }
 
 TEST(SessionTestGroup, CreateSessionStructTest)
@@ -54,10 +54,10 @@ TEST(SessionTestGroup, CreateSessionStructTest)
     struct Session *session = CreateSession();
     CHECK_TRUE(session != NULL);
 
-    DestorySession(&session);
+    DestroySession(&session);
     POINTERS_EQUAL(NULL, session);
 
-    DestoryMessage(&invite);
+    DestroyMessage(&invite);
 }
 
 TEST(SessionTestGroup, UACCreateSessionTest)
@@ -70,7 +70,7 @@ TEST(SessionTestGroup, UACCreateSessionTest)
     DialogAddClientInviteTransaction(dialog, invite);
     DialogClientInviteOkReceived(dialog, ok);
     
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
     RemoveAllTransaction();
 }
 
@@ -83,38 +83,38 @@ TEST(SessionTestGroup, UASCreateSessionTest)
     DialogSend200OKResponse(dialog);
 }
 
-TEST(SessionTestGroup, UACDestorySessionTest)
+TEST(SessionTestGroup, UACDestroySessionTest)
 {
     UT_PTR_SET(CreateSession, CreateSessionMock);
-    UT_PTR_SET(DestorySession,DestorySessionMock);
+    UT_PTR_SET(DestroySession,DestroySessionMock);
 
     DialogAddServerInviteTransaction(dialog, invite);
  
     mock().expectOneCall("CreateSession");
     DialogSend200OKResponse(dialog);
 
-    mock().expectOneCall("DestorySession");
+    mock().expectOneCall("DestroySession");
     DialogTerminate(dialog);    
 
     RemoveAllTransaction();
 }
 
-TEST(SessionTestGroup, UASDestorySessionTest)
+TEST(SessionTestGroup, UASDestroySessionTest)
 {
     struct Message *ok = Build200OKMessage(invite);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
-    UT_PTR_SET(DestorySession,DestorySessionMock);
+    UT_PTR_SET(DestroySession,DestroySessionMock);
 
     DialogAddClientInviteTransaction(dialog, invite);
 
     mock().expectOneCall("CreateSession");
     DialogClientInviteOkReceived(dialog, ok);
 
-    mock().expectOneCall("DestorySession");
+    mock().expectOneCall("DestroySession");
     struct Message *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
 
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
     RemoveAllTransaction();
 }

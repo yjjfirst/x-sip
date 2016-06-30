@@ -73,4 +73,4 @@ struct StatusLine *CreateStatusLine(int statusCode, const char *reasonPhrase)
     return s;
 }
 
-DEFINE_DESTROYER(struct StatusLine, DestoryStatusLine)
+DEFINE_DESTROYER(struct StatusLine, DestroyStatusLine)

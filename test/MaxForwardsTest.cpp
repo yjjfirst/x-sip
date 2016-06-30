@@ -19,7 +19,7 @@ TEST(MaxForwardsTestGroup, MaxForwardsParseTest)
     STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(maxForwards));
     CHECK_EQUAL(69, MaxForwardsGetMaxForwards(maxForwards));
 
-    DestoryMaxForwardsHeader((struct Header *)maxForwards);
+    DestroyMaxForwardsHeader((struct Header *)maxForwards);
 }
 
 TEST(MaxForwardsTestGroup, MaxForwards2StringTest)
@@ -32,7 +32,7 @@ TEST(MaxForwardsTestGroup, MaxForwards2StringTest)
     MaxForwards2String(result,(struct Header *) maxForwards);
     STRCMP_EQUAL(maxForwardsString, result);
 
-    DestoryMaxForwardsHeader((struct Header *)maxForwards);
+    DestroyMaxForwardsHeader((struct Header *)maxForwards);
 }
 
 

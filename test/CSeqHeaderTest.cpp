@@ -30,7 +30,7 @@ TEST(CSeqTestGroup, CSeqParseTest)
     CHECK_EQUAL(1826, CSeqHeaderGetSeq(c));
     STRCMP_EQUAL("REGISTER", CSeqHeaderGetMethod(c));
 
-    DestoryCSeqHeader((struct Header *)c);
+    DestroyCSeqHeader((struct Header *)c);
 }
 
 TEST(CSeqTestGroup, CSeq2StringTest)
@@ -43,7 +43,7 @@ TEST(CSeqTestGroup, CSeq2StringTest)
     CSeq2String(result,(struct Header *) c);
     STRCMP_EQUAL(header, result);
 
-    DestoryCSeqHeader((struct Header *)c);
+    DestroyCSeqHeader((struct Header *)c);
 }
 
 TEST(CSeqTestGroup, MethodMatchedTest)
@@ -53,8 +53,8 @@ TEST(CSeqTestGroup, MethodMatchedTest)
 
     CHECK_TRUE(CSeqHeaderMethodMatched(c1, c2));
     
-    DestoryCSeqHeader((struct Header *)c1);    
-    DestoryCSeqHeader((struct Header *)c2);    
+    DestroyCSeqHeader((struct Header *)c1);    
+    DestroyCSeqHeader((struct Header *)c2);    
 }
 
 TEST(CSeqTestGroup, MethodUnMatchedTest)
@@ -64,8 +64,8 @@ TEST(CSeqTestGroup, MethodUnMatchedTest)
 
     CHECK_FALSE(CSeqHeaderMethodMatched(c1, c2));
     
-    DestoryCSeqHeader((struct Header *)c1);    
-    DestoryCSeqHeader((struct Header *)c2);    
+    DestroyCSeqHeader((struct Header *)c1);    
+    DestroyCSeqHeader((struct Header *)c2);    
 }
 
 TEST(CSeqTestGroup, MethodMatchedByString)
@@ -77,7 +77,7 @@ TEST(CSeqTestGroup, MethodMatchedByString)
     CSeqHeaderSetMethod(c1, (char *)SIP_METHOD_NAME_INVITE);
     CHECK_FALSE(CSeqMethodMatchedByName(c1, (char *)SIP_METHOD_NAME_REGISTER));
 
-    DestoryCSeqHeader((struct Header *)c1);    
+    DestroyCSeqHeader((struct Header *)c1);    
 
 }
 
@@ -88,8 +88,8 @@ TEST(CSeqTestGroup, CSeqHeadersMatchedTest)
 
     CHECK_TRUE(CSeqHeadersMatched(c1, c2));
     
-    DestoryCSeqHeader((struct Header *)c1);    
-    DestoryCSeqHeader((struct Header *)c2);    
+    DestroyCSeqHeader((struct Header *)c1);    
+    DestroyCSeqHeader((struct Header *)c2);    
 
 }
 
@@ -100,8 +100,8 @@ TEST(CSeqTestGroup, CSeqHeadersUnmatchedTest)
 
     CHECK_FALSE(CSeqHeadersMatched(c1, c2));
     
-    DestoryCSeqHeader((struct Header *)c1);    
-    DestoryCSeqHeader((struct Header *)c2);    
+    DestroyCSeqHeader((struct Header *)c1);    
+    DestroyCSeqHeader((struct Header *)c2);    
 }
 
 TEST(CSeqTestGroup, CSeqHeaderDupTest)
@@ -111,6 +111,6 @@ TEST(CSeqTestGroup, CSeqHeaderDupTest)
 
     CHECK_TRUE(CSeqHeadersMatched(src, dest));
 
-    DestoryCSeqHeader((struct Header *)src);
-    DestoryCSeqHeader((struct Header *)dest);
+    DestroyCSeqHeader((struct Header *)src);
+    DestroyCSeqHeader((struct Header *)dest);
 }

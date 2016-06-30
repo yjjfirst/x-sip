@@ -31,7 +31,7 @@ char *DialogGetToUser(struct Dialog *dialog);
 void DialogSetToUser(struct Dialog *dialog, char *to);
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
-void DestoryDialog(struct Dialog **dialog);
+void DestroyDialog(struct Dialog **dialog);
 void DialogTerminate(struct Dialog *dialog);
 
 

@@ -17,7 +17,7 @@ TEST(ContentLengthHeaderTestGroup, ContentLengthHeaderParseTest)
     Parse(header, c, GetContentLengthHeaderPattern());
     STRCMP_EQUAL("Content-Length", ContentLengthHeaderGetName(c));
     CHECK_EQUAL(1024, ContentLengthHeaderGetLength(c));
-    DestoryContentLengthHeader((struct Header *)c);
+    DestroyContentLengthHeader((struct Header *)c);
 }
 
 TEST(ContentLengthHeaderTestGroup, ContentLengthHeader2StringTest)
@@ -30,5 +30,5 @@ TEST(ContentLengthHeaderTestGroup, ContentLengthHeader2StringTest)
     ContentLengthHeader2String(result, (struct Header *)c);
     STRCMP_EQUAL(header, result);
 
-    DestoryContentLengthHeader((struct Header *)c);
+    DestroyContentLengthHeader((struct Header *)c);
 }

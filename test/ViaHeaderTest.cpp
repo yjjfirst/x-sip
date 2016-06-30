@@ -26,7 +26,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
     CHECK_EQUAL(5060, UriGetPort(u));
 
     STRCMP_EQUAL("z9hG4bK87",ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
-    DestoryViaHeader((struct Header *)via);
+    DestroyViaHeader((struct Header *)via);
 } 
 
 TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
@@ -42,7 +42,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
     STRCMP_EQUAL("erlang.bell-telephone.com", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
 
-    DestoryViaHeader((struct Header *)via);
+    DestroyViaHeader((struct Header *)via);
 } 
 
 TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
@@ -63,7 +63,7 @@ TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
 
     STRCMP_EQUAL("Via:SIP/2.0/UDP erlang.bell-telephone.com:5060", result);
 
-    DestoryViaHeader((struct Header *)via);
+    DestroyViaHeader((struct Header *)via);
 }
 
 TEST(ViaHeaderTestGroup, UnMatchedBranchTest)
@@ -79,8 +79,8 @@ TEST(ViaHeaderTestGroup, UnMatchedBranchTest)
 
     CHECK_FALSE(ViaHeaderBranchMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 
 }
 
@@ -97,8 +97,8 @@ TEST(ViaHeaderTestGroup, MatchedBranchTest)
 
     CHECK_TRUE(ViaHeaderBranchMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 }
 
 TEST(ViaHeaderTestGroup, MatchBranchByStringTest)
@@ -113,7 +113,7 @@ TEST(ViaHeaderTestGroup, MatchBranchByStringTest)
     AddParameter(ps, (char *)VIA_BRANCH_PARAMETER_NAME, (char *)"12345678");
     CHECK_FALSE(ViaHeaderBranchMatchedByString(via1, (char *)"z9hG4bK87"));
 
-    DestoryViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via1);
 }
 
 TEST(ViaHeaderTestGroup, ViaSendbyMatchedTest)
@@ -126,8 +126,8 @@ TEST(ViaHeaderTestGroup, ViaSendbyMatchedTest)
     Parse(string, via2, GetViaPattern());
     CHECK_TRUE(ViaHeaderSendbyMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 
 }
 
@@ -143,8 +143,8 @@ TEST(ViaHeaderTestGroup, ViaSendbyUnmatchedTest)
 
     CHECK_FALSE(ViaHeaderSendbyMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 
 }
 
@@ -158,8 +158,8 @@ TEST(ViaHeaderTestGroup, ViaMatchedTest)
 
     CHECK_TRUE(ViaHeaderMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 }
 
 TEST(ViaHeaderTestGroup, ViaUriUnmatchedTest)
@@ -173,8 +173,8 @@ TEST(ViaHeaderTestGroup, ViaUriUnmatchedTest)
 
     CHECK_FALSE(ViaHeaderMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 }
 
 TEST(ViaHeaderTestGroup, ViaTransportUnmatchedTest)
@@ -188,8 +188,8 @@ TEST(ViaHeaderTestGroup, ViaTransportUnmatchedTest)
 
     CHECK_FALSE(ViaHeaderMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 }
 
 TEST(ViaHeaderTestGroup, ViaParameterUnmatchedTest)
@@ -203,8 +203,8 @@ TEST(ViaHeaderTestGroup, ViaParameterUnmatchedTest)
 
     CHECK_FALSE(ViaHeaderMatched(via1, via2));
 
-    DestoryViaHeader((struct Header *)via1);
-    DestoryViaHeader((struct Header *)via2);
+    DestroyViaHeader((struct Header *)via1);
+    DestroyViaHeader((struct Header *)via2);
 }
 
 TEST(ViaHeaderTestGroup, ViaHeaderSetParameterTest)
@@ -217,7 +217,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderSetParameterTest)
     ViaHeaderSetParameter(via, VIA_BRANCH_PARAMETER_NAME, (char *)"1234567890");
     STRCMP_EQUAL("1234567890", ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME));
 
-    DestoryViaHeader((struct Header *)via);
+    DestroyViaHeader((struct Header *)via);
 }
 
 TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
@@ -229,7 +229,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
     struct ViaHeader *dest = ViaHeaderDup(src);
     CHECK_TRUE(ViaHeaderMatched(src, dest));
 
-    DestoryViaHeader((struct Header *)src);
-    DestoryViaHeader((struct Header *)dest);
+    DestroyViaHeader((struct Header *)src);
+    DestroyViaHeader((struct Header *)dest);
 }
 

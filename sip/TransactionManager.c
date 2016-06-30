@@ -65,7 +65,7 @@ void _RemoveTransaction(void *id, BOOL (*matched)(void *t1, void *t2))
         struct Transaction *tt = GetTransactionByPosition(i);
         if (matched(tt, id)) {
             RemoveTransactionByPosition(i);
-            DestoryTransaction(&tt);
+            DestroyTransaction(&tt);
             break;
         }
     }
@@ -136,7 +136,7 @@ BOOL TmHandleRequestMessage(struct Message *message)
         AddServerInviteTransaction(message, NULL);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE_RECEIVED);
-        DestoryMessage(&message);
+        DestroyMessage(&message);
     }
 
     return TRUE;
@@ -158,21 +158,21 @@ BOOL MessageReceived(char *string)
     }
     
     if (garbage) {
-        DestoryMessage(&message);
+        DestroyMessage(&message);
         return FALSE;
     }
 
     return TRUE;
 }
 
-void DestoryTransactions(struct TransactionManager *manager)
+void DestroyTransactions(struct TransactionManager *manager)
 {
     int i = 0;
     int length = CountTransaction();
 
     for ( ; i < length; i++) {
         struct Transaction *t = GetTransactionByPosition(i);
-        DestoryTransaction((struct Transaction **)&t);
+        DestroyTransaction((struct Transaction **)&t);
     }
 
     destroy_list(&manager->transactions, NULL);
@@ -180,7 +180,7 @@ void DestoryTransactions(struct TransactionManager *manager)
 
 void RemoveAllTransaction()
 {
-    DestoryTransactions(&TransactionManager);
+    DestroyTransactions(&TransactionManager);
 }
 
 struct TransactionManager TransactionManager = {

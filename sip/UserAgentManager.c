@@ -30,13 +30,13 @@ void ClearUserAgentManager(struct UserAgentManager *uam)
     
     for (; i < len; i ++) {
         struct UserAgent *ua = get_data_at(uam->userAgents, i);
-        DestoryUserAgent(&ua);
+        DestroyUserAgent(&ua);
     }
     
     destroy_list(&uam->userAgents, NULL);
 }
 
-void DestoryUserAgentManager(struct UserAgentManager **uam)
+void DestroyUserAgentManager(struct UserAgentManager **uam)
 {
     if (*uam == NULL) return;
     

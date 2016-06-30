@@ -52,8 +52,8 @@ TEST_GROUP(DialogTestGroup)
     {
         ClearAccount();
         RemoveAllTransaction();
-        DestoryUserAgent(&ua);
-        DestoryMessage(&ok);
+        DestroyUserAgent(&ua);
+        DestroyMessage(&ok);
         mock().checkExpectations();
         mock().clear();
     }
@@ -69,7 +69,7 @@ int SendOutAckMessageMock(char *message)
     mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
 
     CHECK_EQUAL(SIP_METHOD_ACK, RequestLineGetMethod(MessageGetRequestLine(m)));
-    DestoryMessage(&m);
+    DestroyMessage(&m);
 
     return 0;
 }
@@ -82,7 +82,7 @@ static struct MessageTransporter MockTransporterForAck = {
 TEST(DialogTestGroup, DialogCreateTest)
 {
     CHECK_EQUAL(DIALOG_STATE_NON_EXIST, DialogGetState(dialog));
-    DestoryMessage(&invite);
+    DestroyMessage(&invite);
 }
 
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
@@ -126,7 +126,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 
-    DestoryMessage(&originInvite);
+    DestroyMessage(&originInvite);
 }
 
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
@@ -167,7 +167,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     struct ContactHeader *ch = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
 
     CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UACDialogConfirmedTest)
@@ -197,7 +197,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
 
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogIdTest)
@@ -214,8 +214,8 @@ TEST(DialogTestGroup, UASDialogIdTest)
     STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), DialogIdGetRemoteTag(DialogGetId(dialog)));
     STRCMP_EQUAL(CallIdHeaderGetId(id), DialogIdGetCallId(DialogGetId(dialog)));
 
-    DestoryContactHeader((struct Header *)from);
-    DestoryCallIdHeader((struct Header *)id);
+    DestroyContactHeader((struct Header *)from);
+    DestroyCallIdHeader((struct Header *)id);
 }
 
 TEST(DialogTestGroup, UASDialogConfirmedTest)
@@ -227,7 +227,7 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
@@ -240,7 +240,7 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(seq, DialogGetRemoteSeqNumber(dialog));
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
@@ -252,7 +252,7 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
-    DestoryMessage(&ok);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogRemoteTargetTest)
@@ -267,8 +267,8 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
 
     CHECK_TRUE(UriMatched(uri, DialogGetRemoteTarget(dialog)));
 
-    DestoryUri(&uri);
-    DestoryMessage(&ok);
+    DestroyUri(&uri);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogTerminateTest)

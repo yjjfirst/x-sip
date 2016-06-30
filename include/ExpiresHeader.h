@@ -2,7 +2,7 @@ struct ExpiresHeader;
 struct Header;
 
 struct ExpiresHeader *CreateExpiresHeader(int expires);
-void DestoryExpiresHeader(struct Header *e);
+void DestroyExpiresHeader(struct Header *e);
 struct HeaderPattern *GetExpiresPattern();
 
 char *ExpiresHeaderGetName(struct ExpiresHeader *e);

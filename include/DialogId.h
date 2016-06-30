@@ -4,7 +4,7 @@ struct DialogId *CreateEmptyDialogId();
 struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteTag);
 struct DialogId *CreateDialogId();
 struct DialogId *CreateDialogIdFromMessage(struct Message *message);
-void DestoryDialogId(struct DialogId **id);
+void DestroyDialogId(struct DialogId **id);
 
 char *DialogIdGetCallId(struct DialogId *dialid);
 void DialogIdSetCallId(struct DialogId *dialid, char *callId);

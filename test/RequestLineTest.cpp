@@ -33,8 +33,8 @@ TEST_GROUP(RequestLineTestGroup)
 
     void teardown()
     {
-        DestoryRequestLine(RegisterRequestLine);
-        DestoryRequestLine(InviteRequestLine);
+        DestroyRequestLine(RegisterRequestLine);
+        DestroyRequestLine(InviteRequestLine);
     }
 };
 
@@ -64,7 +64,7 @@ TEST(RequestLineTestGroup, LongMethodParseTest)
     struct RequestLine *r = CreateEmptyRequestLine();
 
     CHECK_EQUAL(-1, ParseRequestLine(string, r));
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, CreateRequestLineTest)
@@ -77,7 +77,7 @@ TEST(RequestLineTestGroup, CreateRequestLineTest)
     RequestLineSetMethod(r, (char *)"INVITE");
     STRCMP_EQUAL("INVITE", RequestLineGetMethodName(r));
 
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
@@ -86,7 +86,7 @@ TEST(RequestLineTestGroup, RequestLineWrongMethodTest)
     RequestLineSetMethod(r, (char *)"aaaaaaa");
 
     STRCMP_EQUAL("", RequestLineGetMethodName(r));
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
@@ -95,7 +95,7 @@ TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 
     RequestLineSetSipVersion(r, (char *)"SIP/2.0");
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(r));
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, RequestLineSetUriTest)
@@ -112,7 +112,7 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
     STRCMP_EQUAL("peter", UriGetUser(u));
     STRCMP_EQUAL("192.168.10.62", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, RequestLine2StringTest)
@@ -134,7 +134,7 @@ TEST(RequestLineTestGroup, RequestLine2StringTest)
     RequestLine2String(string, r);
     STRCMP_EQUAL("INVITE sips:192.168.10.62:5060 SIP/2.0", string);
 
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
@@ -154,7 +154,7 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
     STRCMP_EQUAL("registrar.biloxi.com", UriGetHost(u));
     CHECK_EQUAL(0, UriGetPort(u));
 
-    DestoryRequestLine(r);
+    DestroyRequestLine(r);
 }
 
 TEST(RequestLineTestGroup, SetMethodTest)
@@ -164,7 +164,7 @@ TEST(RequestLineTestGroup, SetMethodTest)
 
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, RequestLineGetMethodName(rl));
 
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineMatchedTest)
@@ -175,7 +175,7 @@ TEST(RequestLineTestGroup, RequestLineMatchedTest)
     ParseRequestLine(requestLine, rl);
     CHECK_TRUE(RequestLineMatched(rl, RegisterRequestLine));
     
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineUriUnmatchedTest)
@@ -186,7 +186,7 @@ TEST(RequestLineTestGroup, RequestLineUriUnmatchedTest)
     ParseRequestLine(requestLine, rl);
     CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
     
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineMethodUnmatchedTest)
@@ -197,7 +197,7 @@ TEST(RequestLineTestGroup, RequestLineMethodUnmatchedTest)
     ParseRequestLine(requestLine, rl);
     CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
     
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineVersionUnmatchedTest)
@@ -208,7 +208,7 @@ TEST(RequestLineTestGroup, RequestLineVersionUnmatchedTest)
     ParseRequestLine(requestLine, rl);
     CHECK_FALSE(RequestLineMatched(rl, RegisterRequestLine));
     
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineDupTest)
@@ -216,7 +216,7 @@ TEST(RequestLineTestGroup, RequestLineDupTest)
     struct RequestLine *rl = RequestLineDup(RegisterRequestLine);
 
     CHECK_TRUE(RequestLineMatched(RegisterRequestLine, rl));
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
     
 }
 
@@ -226,7 +226,7 @@ TEST(RequestLineTestGroup, RequestLineMethodMatchedTest)
 
     CHECK_TRUE(RequestLineMethodMatched(RegisterRequestLine, rl));
 
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }
 
 TEST(RequestLineTestGroup, RequestLineMethodNonMatchedTest)
@@ -236,5 +236,5 @@ TEST(RequestLineTestGroup, RequestLineMethodNonMatchedTest)
 
     CHECK_FALSE(RequestLineMethodMatched(RegisterRequestLine, rl));
 
-    DestoryRequestLine(rl);
+    DestroyRequestLine(rl);
 }

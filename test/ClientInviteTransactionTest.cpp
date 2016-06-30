@@ -64,7 +64,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         mock().checkExpectations();
         mock().clear();
 
-        DestoryUserAgent(&ua);
+        DestroyUserAgent(&ua);
         RemoveAllTransaction();
     }
     

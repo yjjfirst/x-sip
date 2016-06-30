@@ -6,7 +6,7 @@ struct Session *CreateSessionImpl()
     return calloc(1, sizeof(struct Session));
 }
 
-void DestorySessionImpl(struct Session **s)
+void DestroySessionImpl(struct Session **s)
 {
     if (s == NULL) return;
 
@@ -15,7 +15,7 @@ void DestorySessionImpl(struct Session **s)
 }
 
 struct Session *(*CreateSession)() = CreateSessionImpl;
-void (*DestorySession)(struct Session **session) = DestorySessionImpl;
+void (*DestroySession)(struct Session **session) = DestroySessionImpl;
 
 
 

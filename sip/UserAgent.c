@@ -95,10 +95,10 @@ struct UserAgent *CreateUserAgent(int account)
     return ua;
 }
 
-void DestoryUserAgent(struct UserAgent **ua)
+void DestroyUserAgent(struct UserAgent **ua)
 {
     if (*ua != NULL) {
-        DestoryDialogs(&(*ua)->dialogs);
+        DestroyDialogs(&(*ua)->dialogs);
         free(*ua);
         *ua = NULL;
     }

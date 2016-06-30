@@ -9,7 +9,7 @@ struct MediaSession *CreateMediaSessionImpl()
     return ms;
 }
 
-void DestoryMediaSessionImpl(struct MediaSession **ms)
+void DestroyMediaSessionImpl(struct MediaSession **ms)
 {
     if (*ms != NULL) {
         free(*ms);
@@ -18,4 +18,4 @@ void DestoryMediaSessionImpl(struct MediaSession **ms)
 }
 
 struct MediaSession *(*CreateMediaSession)() = CreateMediaSessionImpl;
-void (*DestoryMediaSession)(struct MediaSession **ms) = DestoryMediaSessionImpl;
+void (*DestroyMediaSession)(struct MediaSession **ms) = DestroyMediaSessionImpl;

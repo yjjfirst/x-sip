@@ -77,7 +77,7 @@ int RequestLineSetUri(struct RequestLine *r, struct URI *u)
     assert(u != NULL);
     
     if (r->requestUri != NULL)
-        DestoryUri(&r->requestUri);
+        DestroyUri(&r->requestUri);
     r->requestUri = u;
 
     return 0;
@@ -160,10 +160,10 @@ struct RequestLine *CreateEmptyRequestLine()
     return requestLine;
 }
 
-void DestoryRequestLine(struct RequestLine *requestLine)
+void DestroyRequestLine(struct RequestLine *requestLine)
 {
     if (requestLine != NULL) {
-        DestoryUri(&requestLine->requestUri);
+        DestroyUri(&requestLine->requestUri);
         free(requestLine);
     }
 }

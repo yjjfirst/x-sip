@@ -48,7 +48,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
 
     CHECK_TRUE(IfRequestMatchTransaction(transaction, newRequest));
 
-    DestoryMessage(&newRequest);
+    DestroyMessage(&newRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchTest)
@@ -61,7 +61,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchT
     
     CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
 
-    DestoryMessage(&newRequest);
+    DestroyMessage(&newRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatchTest)
@@ -71,7 +71,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatch
     MessageAddViaParameter(newRequest, VIA_SENDBY_PARAMETER_NAME, (char *)"192.168.10.111:777");
 
     CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
-    DestoryMessage(&newRequest);
+    DestroyMessage(&newRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatchedTest)
@@ -83,7 +83,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatche
     RequestLineSetMethod(rl, (char *)SIP_METHOD_NAME_INVITE);
     CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
     
-    DestoryMessage(&newRequest);
+    DestroyMessage(&newRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
@@ -98,7 +98,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 
     CHECK_TRUE(IfRequestMatchTransaction(transaction, ack));
 
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 //Match request to transaction test
@@ -110,7 +110,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithIn
     
     POINTERS_EQUAL(NULL, transaction);
     
-    DestoryMessage(&invite);
+    DestroyMessage(&invite);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAckTest)
@@ -121,7 +121,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAc
     
     POINTERS_EQUAL(NULL, transaction);
     
-    DestoryMessage(&ack);
+    DestroyMessage(&ack);
 }
 
 //Trying state test
@@ -153,7 +153,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
         ResponseWith180Ringing(transaction);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(transaction));
     }
-    DestoryMessage(&trying);
+    DestroyMessage(&trying);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
@@ -167,7 +167,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(transaction));
     }
 
-    DestoryMessage(&dupRequest);
+    DestroyMessage(&dupRequest);
 }
 
 void CheckNoTransaction()
@@ -216,7 +216,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
     }
 
-    DestoryMessage(&dupRequest);
+    DestroyMessage(&dupRequest);
 
 }
 
@@ -236,7 +236,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateDupRequestTest)
         mock().checkExpectations();
     }
     mock().clear();
-    DestoryMessage(&dupRequest);
+    DestroyMessage(&dupRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateSendErrorTest)
@@ -254,7 +254,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateSendErrorTest)
 
     mock().checkExpectations();
     mock().clear();
-    DestoryMessage(&dupRequest);
+    DestroyMessage(&dupRequest);
 }
 
 TEST(ServerNonInviteTransactionTestGroup, ToCompletedStateFromProceedingAddTimerTest)

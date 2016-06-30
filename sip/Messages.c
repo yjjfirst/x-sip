@@ -317,19 +317,19 @@ struct Message *CreateMessage ()
     return message;
 }
 
-void DestoryMessage (struct Message **message) 
+void DestroyMessage (struct Message **message) 
 {  
     assert(message != NULL);
 
     if ((*message) == ((void *)0)) return;
 
     if ((*message)->type == MESSAGE_TYPE_REQUEST) {
-        DestoryRequestLine((*message)->rr.request);
+        DestroyRequestLine((*message)->rr.request);
     } else {
-        DestoryStatusLine((*message)->rr.status);
+        DestroyStatusLine((*message)->rr.status);
     }
 
-    RawDestoryHeaders((*message)->headers);
+    RawDestroyHeaders((*message)->headers);
     free(*message);
     *message = NULL;
 }

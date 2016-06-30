@@ -63,7 +63,7 @@ TEST(MessageTestGroup, RegisterRequestLineParseTest)
     STRCMP_EQUAL("registrar.munich.de", UriGetHost(uri));
     STRCMP_EQUAL("", UriGetUser(uri));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, ViaHeaderParseTest)
@@ -79,7 +79,7 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
     STRCMP_EQUAL("200.201.202.203", UriGetHost(ViaHeaderGetUri(via)));
     CHECK_EQUAL(5060, UriGetPort(ViaHeaderGetUri(via)));
     STRCMP_EQUAL("z9hG4bKus19", ViaHeaderGetParameter(via, (char *)"branch"));
-    DestoryMessage(&message);    
+    DestroyMessage(&message);    
 }
 
 TEST(MessageTestGroup, MaxForwardsParseTest)
@@ -92,7 +92,7 @@ TEST(MessageTestGroup, MaxForwardsParseTest)
     STRCMP_EQUAL("Max-Forwards", MaxForwardsGetName(m));
     CHECK_EQUAL(70, MaxForwardsGetMaxForwards(m));
     
-    DestoryMessage(&message);    
+    DestroyMessage(&message);    
 
 }
 
@@ -106,7 +106,7 @@ TEST(MessageTestGroup, ToParseTest)
     STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(to));
     UriCheck(to);
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, FromParseTest)
@@ -120,7 +120,7 @@ TEST(MessageTestGroup, FromParseTest)
     UriCheck(from);
     STRCMP_EQUAL("3431", ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 
 }
 
@@ -137,7 +137,7 @@ TEST(MessageTestGroup, ContactParseTest)
     STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
     STRCMP_EQUAL("200.201.202.203", UriGetHost(uri));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, CallIdParseTest)
@@ -148,7 +148,7 @@ TEST(MessageTestGroup, CallIdParseTest)
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader("Call-ID", message);
     STRCMP_EQUAL("Call-ID", CallIdHeaderGetName(id));
     STRCMP_EQUAL("23@200.201.202.203", CallIdHeaderGetId(id));
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 } 
 
 TEST(MessageTestGroup, CSeqParseTest)
@@ -161,7 +161,7 @@ TEST(MessageTestGroup, CSeqParseTest)
     CHECK_EQUAL(1, CSeqHeaderGetSeq(c));
     STRCMP_EQUAL("REGISTER", CSeqHeaderGetMethod(c));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, ContentLengthParseTest)
@@ -173,14 +173,14 @@ TEST(MessageTestGroup, ContentLengthParseTest)
     STRCMP_EQUAL("Content-Length", ContentLengthHeaderGetName(c));
     CHECK_EQUAL(0, ContentLengthHeaderGetLength(c));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, CreateMessageTest)
 {
     struct Message *message = CreateMessage();
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, Message2StringTest)
@@ -192,7 +192,7 @@ TEST(MessageTestGroup, Message2StringTest)
     Message2String(result, message);
     STRCMP_EQUAL(messageString, result);
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, ExtractHeaderNameTest)
@@ -224,7 +224,7 @@ Content-Length:0\r\n";
     CHECK_EQUAL(180, StatusLineGetStatusCode(s));
     STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, ByeMessageParseRequestLineMethodTest)
@@ -235,7 +235,7 @@ TEST(MessageTestGroup, ByeMessageParseRequestLineMethodTest)
     struct RequestLine *rl = MessageGetRequestLine(bye);
     STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
 
-    DestoryMessage(&bye);
+    DestroyMessage(&bye);
 }
 
 TEST(MessageTestGroup, ResponseMessage2StringTest)
@@ -256,7 +256,7 @@ Content-Length:0\r\n";
     Message2String(result, message);
     STRCMP_EQUAL(string,result);
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, EmptyMessageParseTest)
@@ -266,7 +266,7 @@ TEST(MessageTestGroup, EmptyMessageParseTest)
     
     CHECK_EQUAL(-1,ParseMessage(string, message));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetContentLengthTest)
@@ -284,7 +284,7 @@ Content-Length:100\r\n";
     ParseMessage(string, message);
     CHECK_EQUAL(100, MessageGetContentLength(message));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 
 }
 
@@ -302,7 +302,7 @@ CSeq:314159 INVITE\r\n";
     ParseMessage(string, message);
     CHECK_EQUAL(0, MessageGetContentLength(message));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 
 
 }
@@ -316,7 +316,7 @@ TEST(MessageTestGroup, SetContentLengthTest)
     CHECK_EQUAL(1024, ContentLengthHeaderGetLength(
                     (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message)));
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetCallIdTest)
@@ -325,7 +325,7 @@ TEST(MessageTestGroup, GetCallIdTest)
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("23@200.201.202.203", MessageGetCallId(message));
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetLocalTageTest)
@@ -334,7 +334,7 @@ TEST(MessageTestGroup, GetLocalTageTest)
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("3431", MessageGetFromTag(message));
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetRemoteTageTest)
@@ -343,7 +343,7 @@ TEST(MessageTestGroup, GetRemoteTageTest)
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("4321", MessageGetToTag(message));
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetExpiresTest)
@@ -352,7 +352,7 @@ TEST(MessageTestGroup, GetExpiresTest)
     ParseMessage(ADD_BINDING_OK_MESSAGE, message);
 
     CHECK_EQUAL(3600, MessageGetExpires(message));
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, GetBranchTest)
@@ -362,7 +362,7 @@ TEST(MessageTestGroup, GetBranchTest)
 
     STRCMP_EQUAL("z9hG4bK27dc30b4",MessageGetViaBranch(localMessage));
    
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 }
 
 TEST(MessageTestGroup, SetBranchTest)
@@ -374,7 +374,7 @@ TEST(MessageTestGroup, SetBranchTest)
 
     STRCMP_EQUAL(newBranch, MessageGetViaBranch(localMessage));
    
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 
 }
 
@@ -385,7 +385,7 @@ TEST(MessageTestGroup, GetCSeqMethodTest)
 
     STRCMP_EQUAL("INVITE",MessageGetCSeqMethod(localMessage));
    
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 }
 
 TEST(MessageTestGroup, ParseMessageWithWrongHeaderTest)
@@ -393,7 +393,7 @@ TEST(MessageTestGroup, ParseMessageWithWrongHeaderTest)
     struct Message *localMessage = CreateMessage();
     ParseMessage(MESSAGE_WITH_WRONG_HEADER, localMessage);
 
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 }
 
 TEST(MessageTestGroup, ParseMessageWithLongHeaderNameTest)
@@ -401,7 +401,7 @@ TEST(MessageTestGroup, ParseMessageWithLongHeaderNameTest)
     struct Message *localMessage = CreateMessage();
     ParseMessage(MESSAGE_WITH_LONG_HEADER_NAME, localMessage);
 
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 }
  
 int ParseSdpMock(char *content, unsigned int length)
@@ -428,5 +428,5 @@ TEST(MessageTestGroup, ParseMessageWithContentTest)
 
     mock().checkExpectations();
     mock().clear();
-    DestoryMessage(&localMessage);
+    DestroyMessage(&localMessage);
 }

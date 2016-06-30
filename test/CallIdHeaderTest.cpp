@@ -18,7 +18,7 @@ TEST(CallIdHeaderTestGroup, CallIdHeaderParseTest)
     STRCMP_EQUAL("Call-ID", CallIdHeaderGetName(id));
     STRCMP_EQUAL("843E@TTT.COM", CallIdHeaderGetId(id));
 
-    DestoryCallIdHeader((struct Header *)id);
+    DestroyCallIdHeader((struct Header *)id);
 }
 
 TEST(CallIdHeaderTestGroup, CallIdHeader2StringTest)
@@ -31,7 +31,7 @@ TEST(CallIdHeaderTestGroup, CallIdHeader2StringTest)
     CallIdHeader2String(result, (struct Header *)id);
     STRCMP_EQUAL(callidString, result);
 
-    DestoryCallIdHeader((struct Header *)id);
+    DestroyCallIdHeader((struct Header *)id);
 }
 
 TEST(CallIdHeaderTestGroup, CallIdHeaderDupTest)
@@ -44,8 +44,8 @@ TEST(CallIdHeaderTestGroup, CallIdHeaderDupTest)
     
     CHECK_TRUE(CallIdHeaderMatched(src, dest));
 
-    DestoryCallIdHeader((struct Header *)dest);
-    DestoryCallIdHeader((struct Header *)src);
+    DestroyCallIdHeader((struct Header *)dest);
+    DestroyCallIdHeader((struct Header *)src);
 }
 
 TEST(CallIdHeaderTestGroup, CallIdHeaderMatchedTest)
@@ -60,8 +60,8 @@ TEST(CallIdHeaderTestGroup, CallIdHeaderMatchedTest)
 
     CHECK_TRUE(CallIdHeaderMatched(id1, id2));
     
-    DestoryCallIdHeader((struct Header *)id1);
-    DestoryCallIdHeader((struct Header *)id2);
+    DestroyCallIdHeader((struct Header *)id1);
+    DestroyCallIdHeader((struct Header *)id2);
 }
 
 TEST(CallIdHeaderTestGroup, CallIdHeaderUnmatchedTest)
@@ -77,6 +77,6 @@ TEST(CallIdHeaderTestGroup, CallIdHeaderUnmatchedTest)
 
     CHECK_FALSE(CallIdHeaderMatched(id1, id2));
     
-    DestoryCallIdHeader((struct Header *)id1);
-    DestoryCallIdHeader((struct Header *)id2);
+    DestroyCallIdHeader((struct Header *)id1);
+    DestroyCallIdHeader((struct Header *)id2);
 }

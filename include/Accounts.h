@@ -26,4 +26,4 @@ void AccountSetUnbinded(struct Account *account);
 
 struct Account *CreateEmptyAccount();
 struct Account *CreateAccount(char *username, char *authname, char *proxy, char *registrar);
-void DestoryAccount(struct Account **account);
+void DestroyAccount(struct Account **account);

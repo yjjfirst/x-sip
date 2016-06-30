@@ -5,7 +5,7 @@ struct CSeqHeader;
 struct HeaderPattern *GetCSeqHeaderPattern();
 struct CSeqHeader *CreateCSeqHeader(int seq, char *method);
 struct CSeqHeader *CSeqHeaderDup(struct CSeqHeader *src);
-void DestoryCSeqHeader(struct Header *c);
+void DestroyCSeqHeader(struct Header *c);
 struct Header *ParseCSeqHeader(char *string);
 
 char *CSeqHeaderGetName(struct CSeqHeader *c);

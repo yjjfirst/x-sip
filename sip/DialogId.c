@@ -84,7 +84,7 @@ struct DialogId *CreateDialogIdFromMessage(struct Message *message)
     return dialogid;
 }
 
-void DestoryDialogId(struct DialogId **id)
+void DestroyDialogId(struct DialogId **id)
 {
     if(*id != NULL)
         free(*id);

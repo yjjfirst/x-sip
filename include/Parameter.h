@@ -7,14 +7,14 @@ struct Parameters;
  */
 struct Parameter *CreateEmptyParameter();
 struct Parameter *CreateParameter(char *name, char *value);
-void DestoryParameter(struct Parameter *p);
+void DestroyParameter(struct Parameter *p);
 BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2);
 /*
  *Function for parameters struct.
  */
 struct Parameters *CreateParameters();
 struct Parameters *ParametersDup(struct Parameters *src);
-void DestoryParameters(struct Parameters *ps);
+void DestroyParameters(struct Parameters *ps);
 int ParseParameters(char *string, void *target);
 int ParseParametersExt(char *string, void *target);
 char *GetParameter(struct Parameters *p, char *name);

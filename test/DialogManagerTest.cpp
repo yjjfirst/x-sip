@@ -17,7 +17,7 @@ TEST(DialogsTestGroup, CreateDialogsTest)
     
     CHECK_TRUE(dialogs != NULL);
 
-    DestoryDialogs(&dialogs);
+    DestroyDialogs(&dialogs);
 }
 
 TEST(DialogsTestGroup, AddDialogTest)
@@ -27,7 +27,7 @@ TEST(DialogsTestGroup, AddDialogTest)
     struct Dialog *dialog = CreateDialog(dialogid, ua);
            
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
 }
 
 TEST(DialogsTestGroup, RemoveDialogTest)
@@ -39,7 +39,7 @@ TEST(DialogsTestGroup, RemoveDialogTest)
     UserAgentRemoveDialog(ua, dialogid);
     POINTERS_EQUAL(NULL, UserAgentGetDialog(ua, dialogid));
 
-    DestoryUserAgent(&ua);
+    DestroyUserAgent(&ua);
 }
 
 TEST(DialogsTestGroup, RemoveDialogWithWrongId)
@@ -52,6 +52,6 @@ TEST(DialogsTestGroup, RemoveDialogWithWrongId)
     UserAgentRemoveDialog(ua, dialogid2);
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
 
-    DestoryUserAgent(&ua);
-    DestoryDialogId(&dialogid2);
+    DestroyUserAgent(&ua);
+    DestroyDialogId(&dialogid2);
 }

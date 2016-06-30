@@ -43,7 +43,7 @@ bool MatchedDialogId (void *dialog, void *id)
 void RemoveDialog(struct DialogManager *dialogs, struct DialogId *dialogId)
 {
     struct Dialog *dialog = del_node_as_arg(&dialogs->dialogList, MatchedDialogId, dialogId);
-    DestoryDialog(&dialog);
+    DestroyDialog(&dialog);
 }
 
 struct DialogManager *CreateDialogs()
@@ -54,23 +54,23 @@ struct DialogManager *CreateDialogs()
     return dialogs;
 }
 
-void DestoryDialogList(struct DialogManager *dialogs)
+void DestroyDialogList(struct DialogManager *dialogs)
 {
     int length = get_list_len(dialogs->dialogList);
     int i = 0;
     
     for (; i < length; i++) {
         struct Dialog *dialog = get_data_at(dialogs->dialogList, i);
-        DestoryDialog(&dialog);
+        DestroyDialog(&dialog);
     }
 
     destroy_list(&dialogs->dialogList, NULL);
 }
 
-void DestoryDialogs(struct DialogManager **dialogs)
+void DestroyDialogs(struct DialogManager **dialogs)
 {
     if (*dialogs != NULL) {
-        DestoryDialogList(*dialogs);
+        DestroyDialogList(*dialogs);
         free(*dialogs);
     }
 }

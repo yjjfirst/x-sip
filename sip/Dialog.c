@@ -229,7 +229,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
         }
     }
 
-    DestoryMessage(&message);
+    DestroyMessage(&message);
 }
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
@@ -237,7 +237,7 @@ void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
     DialogAddServerNonInviteTransaction(dialog, bye);
     DialogSend200OKResponse(dialog);
 
-    DestorySession(NULL);
+    DestroySession(NULL);
 }
 
 void DialogTerminate(struct Dialog *dialog)
@@ -246,7 +246,7 @@ void DialogTerminate(struct Dialog *dialog)
     DialogAddClientNonInviteTransaction(dialog, bye);
     dialog->state = DIALOG_STATE_TERMINATED;
 
-    DestorySession(NULL);
+    DestroySession(NULL);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
@@ -268,11 +268,11 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     return dialog;
 }
 
-void DestoryDialog(struct Dialog **dialog)
+void DestroyDialog(struct Dialog **dialog)
 {
     if (*dialog != NULL) {
-        DestoryDialogId(&(*dialog)->id);
-        DestoryUri(&(*dialog)->remoteTarget);
+        DestroyDialogId(&(*dialog)->id);
+        DestroyUri(&(*dialog)->remoteTarget);
         free(*dialog);
     }
 }

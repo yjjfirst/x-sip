@@ -13,7 +13,7 @@ struct HeaderPattern *GetViaPattern();
 struct ViaHeader *CreateEmptyViaHeader();
 struct ViaHeader *CreateViaHeader(struct URI *uri);
 struct ViaHeader *ViaHeaderDup(struct ViaHeader *src);
-void DestoryViaHeader(struct Header *via);
+void DestroyViaHeader(struct Header *via);
 struct Header *ParseViaHeader(char *string);
 
 struct URI *ViaHeaderGetUri(struct ViaHeader *via);

@@ -28,7 +28,7 @@ struct HeaderPattern *GetCSeqHeaderPattern()
     return CSeqHeaderPattern;
 }
 
-DEFINE_DESTROYER(struct Header, DestoryCSeqHeader);
+DEFINE_DESTROYER(struct Header, DestroyCSeqHeader);
 
 struct Header *ParseCSeqHeader(char *string)
 {

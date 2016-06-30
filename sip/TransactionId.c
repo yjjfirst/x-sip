@@ -14,7 +14,7 @@ struct TransactionId *CreateTransactionId()
     return calloc(1, sizeof(struct TransactionId));
 }
 
-void DestoryTransactionId(struct TransactionId **transactionId)
+void DestroyTransactionId(struct TransactionId **transactionId)
 {
     if (*transactionId != NULL) {
         free(*transactionId);

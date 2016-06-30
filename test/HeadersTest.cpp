@@ -14,7 +14,7 @@ TEST_GROUP(HeadersTestGroup)
     }
 
     void teardown() {
-        RawDestoryHeaders(headers);
+        RawDestroyHeaders(headers);
     }
 };
 

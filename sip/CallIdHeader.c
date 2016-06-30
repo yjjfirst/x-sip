@@ -97,4 +97,4 @@ struct CallIdHeader *CallIdHeaderDup(struct CallIdHeader *src)
     return dest;
 }
 
-DEFINE_DESTROYER(struct Header, DestoryCallIdHeader)
+DEFINE_DESTROYER(struct Header, DestroyCallIdHeader)

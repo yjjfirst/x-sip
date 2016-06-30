@@ -22,7 +22,7 @@ TEST_GROUP(AccountsTestGroup)
 TEST(AccountsTestGroup, EmptyAccountCreateTest)
 {
     CHECK_TRUE(account != NULL); 
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, AccountCreateTest)
@@ -38,13 +38,13 @@ TEST(AccountsTestGroup, AccountCreateTest)
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(acc));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(acc));
 
-    DestoryAccount(&acc);
-    DestoryAccount(&account);
+    DestroyAccount(&acc);
+    DestroyAccount(&account);
 }
 
-TEST(AccountsTestGroup, AccountDestoryTest)
+TEST(AccountsTestGroup, AccountDestroyTest)
 {
-    DestoryAccount(&account);    
+    DestroyAccount(&account);    
     CHECK_TRUE(account == NULL);
 }
 
@@ -58,7 +58,7 @@ TEST(AccountsTestGroup, AccountSetUserTest)
 
     AccountSetUserName(account, anotherUser);
     STRCMP_EQUAL(anotherUser, AccountGetUserName(account));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, AccountSetAuthNameTest)
@@ -71,7 +71,7 @@ TEST(AccountsTestGroup, AccountSetAuthNameTest)
 
     AccountSetAuthName(account, anotherUser);
     STRCMP_EQUAL(anotherUser, AccountGetAuthName(account));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, AccountSetProxyTest)
@@ -84,7 +84,7 @@ TEST(AccountsTestGroup, AccountSetProxyTest)
 
     AccountSetProxy(account, anotherProxy);
     STRCMP_EQUAL(anotherProxy, AccountGetProxy(account));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, AccountSetRegistrarTest)
@@ -97,7 +97,7 @@ TEST(AccountsTestGroup, AccountSetRegistrarTest)
 
     AccountSetRegistrar(account, ar);
     STRCMP_EQUAL(ar, AccountGetRegistrar(account));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 
@@ -109,7 +109,7 @@ TEST(AccountsTestGroup, SetVeryLongUserNameTest)
 
     STRCMP_CONTAINS(AccountGetUserName(account), userName);
     CHECK_EQUAL(USER_NAME_MAX_LENGTH - 1, strlen(AccountGetUserName(account)));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, SetVeryLongProxyTest)
@@ -120,7 +120,7 @@ TEST(AccountsTestGroup, SetVeryLongProxyTest)
 
     STRCMP_CONTAINS(AccountGetProxy(account), proxy);
     CHECK_EQUAL(PROXY_MAX_LENGTH - 1, strlen(AccountGetProxy(account)));
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
 
 TEST(AccountsTestGroup, SetVeryLongRegistrarTest)
@@ -131,5 +131,5 @@ TEST(AccountsTestGroup, SetVeryLongRegistrarTest)
     STRCMP_CONTAINS(AccountGetRegistrar(account), registrar);
     CHECK_EQUAL(REGISTRAR_MAX_LENGTH -1 , strlen(AccountGetRegistrar(account)));
 
-    DestoryAccount(&account);
+    DestroyAccount(&account);
 }
