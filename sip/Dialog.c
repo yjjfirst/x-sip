@@ -274,5 +274,6 @@ void DestroyDialog(struct Dialog **dialog)
         DestroyDialogId(&(*dialog)->id);
         DestroyUri(&(*dialog)->remoteTarget);
         free(*dialog);
+        *dialog = NULL;
     }
 }

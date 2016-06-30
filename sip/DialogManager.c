@@ -65,6 +65,7 @@ void DestroyDialogList(struct DialogManager *dialogs)
     }
 
     destroy_list(&dialogs->dialogList, NULL);
+    dialogs->dialogList = NULL;
 }
 
 void DestroyDialogs(struct DialogManager **dialogs)

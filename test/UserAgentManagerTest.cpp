@@ -9,16 +9,14 @@ extern "C" {
 
 TEST_GROUP(UserAgentManagerTestGroup)
 {
-    struct UserAgentManager *uam;
     void setup() 
     {
-        uam = CreateUserAgentManager();
         AccountInitMock();
     }
     
     void teardown()
     {
-        DestroyUserAgentManager(&uam);
+        ClearUserAgentManager();
         ClearAccount();
     }
 };
@@ -26,9 +24,9 @@ TEST_GROUP(UserAgentManagerTestGroup)
 TEST(UserAgentManagerTestGroup, AddUserAgentTest)
 {
     struct UserAgent *ua = CreateUserAgent(0);
-    AddUserAgent(uam, ua);    
+    AddUserAgent(ua);    
     
-    CHECK_EQUAL(1, CountUserAgent(uam));
+    CHECK_EQUAL(1, CountUserAgent());
 }
 
 TEST(UserAgentManagerTestGroup, AddTwoUserAgentTest)
@@ -36,8 +34,8 @@ TEST(UserAgentManagerTestGroup, AddTwoUserAgentTest)
     struct UserAgent *ua1 = CreateUserAgent(0);
     struct UserAgent *ua2 = CreateUserAgent(1);
     
-    AddUserAgent(uam, ua1);    
-    AddUserAgent(uam, ua2);    
+    AddUserAgent(ua1);    
+    AddUserAgent(ua2);    
     
-    CHECK_EQUAL(2, CountUserAgent(uam));
+    CHECK_EQUAL(2, CountUserAgent());
 }

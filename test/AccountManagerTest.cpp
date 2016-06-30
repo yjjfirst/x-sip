@@ -10,6 +10,8 @@ extern "C" {
 #include "AccountManager.h"
 #include "Messages.h"
 #include "MessageTransport.h"
+#include "UserAgentManager.h"
+extern void RemoveAllTransaction();
 }
 
 void AddFirstAccount()
@@ -175,17 +177,21 @@ TEST(AccountManagerTestGroup, AddAccountReturnTest)
     CHECK_EQUAL(2,AddThirdAccount());
 }
 
-IGNORE_TEST(AccountManagerTestGroup, BindAccountTest)
+TEST(AccountManagerTestGroup, BindAccountTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
 
     mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
-    BindAccount(0);
-    
+
+    BindAccount(0);    
     ReceiveInMessage(string);
     CHECK_EQUAL(TRUE, AccountBinded(account));
+
+    ClearUserAgentManager();
+    RemoveAllTransaction();
+
     mock().checkExpectations();
     mock().clear();
 }

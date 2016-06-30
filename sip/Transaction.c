@@ -595,8 +595,9 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
 void TransactionTerminate(struct Transaction *t)
 {
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->observer != NULL)
+        if (t != NULL && t->observer != NULL) {
             ((struct Transaction *)t)->observer->die(t);
+        }
 }
 
 void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "AccountManager.h"
 #include "UserAgent.h"
 #include "Provision.h"
@@ -7,25 +9,25 @@ struct UserAgentManager {
     t_list *userAgents;
 };
 
-int AddUserAgent(struct UserAgentManager *uam, struct UserAgent *ua)
+struct UserAgentManager UserAgentManager;
+int AddUserAgent(struct UserAgent *ua)
 {
+    struct UserAgentManager *uam = &UserAgentManager;
+    
     put_in_list(&uam->userAgents, ua);
     return get_list_len(uam->userAgents);
 }
 
-int CountUserAgent(struct UserAgentManager *uam)
+int CountUserAgent()
 {
+    struct UserAgentManager *uam = &UserAgentManager;
     return get_list_len(uam->userAgents);
 }
 
-struct UserAgentManager *CreateUserAgentManager()
-{
-    return calloc(1, sizeof(struct UserAgentManager));
-}
-
-void ClearUserAgentManager(struct UserAgentManager *uam)
+void ClearUserAgentManager()
 {
     int i = 0;
+    struct UserAgentManager *uam = &UserAgentManager;   
     int len = CountUserAgent(uam);
     
     for (; i < len; i ++) {
@@ -34,14 +36,6 @@ void ClearUserAgentManager(struct UserAgentManager *uam)
     }
     
     destroy_list(&uam->userAgents, NULL);
-}
-
-void DestroyUserAgentManager(struct UserAgentManager **uam)
-{
-    if (*uam == NULL) return;
-    
-    ClearUserAgentManager(*uam);
-    free(*uam);
-    *uam = NULL;
+    uam->userAgents = NULL;
 }
 
