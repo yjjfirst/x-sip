@@ -88,7 +88,7 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
         AccountInitMock();
         ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
-        m = BuildBindingMessage(dialog);
+        m = BuildAddBindingMessage(dialog);
     }
 
     void teardown()

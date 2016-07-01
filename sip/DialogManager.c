@@ -73,5 +73,6 @@ void DestroyDialogs(struct DialogManager **dialogs)
     if (*dialogs != NULL) {
         DestroyDialogList(*dialogs);
         free(*dialogs);
+        *dialogs = NULL;
     }
 }

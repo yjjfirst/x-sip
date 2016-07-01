@@ -33,7 +33,7 @@ TEST_GROUP(UserAgentTestGroup)
         ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, GetUserName(0));
-        message = BuildBindingMessage(dialog);
+        message = BuildAddBindingMessage(dialog);
     }
 
     void DestroyTestingMessage()
@@ -101,7 +101,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     RemoveAllTransaction();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method",MethodMap2String(SIP_METHOD_REGISTER));
-    message = BuildBindingMessage(dialog);
+    message = BuildAddBindingMessage(dialog);
     t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);

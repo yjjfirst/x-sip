@@ -30,16 +30,19 @@ struct Account *CreateEmptyAccount()
 
 BOOL AccountBinded(struct Account *account)
 {
+    assert(account != NULL);
     return account->binded;
 }
 
 void AccountSetBinded(struct Account *account)
 {
+    assert(account != NULL);
     account->binded = TRUE;
 }
 
 void AccountSetUnbinded(struct Account *account)
 {
+    assert(account != NULL);
     account->binded = FALSE;
 }
 

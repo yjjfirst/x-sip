@@ -6,7 +6,8 @@ struct Message;
 struct UserAgent;
 struct Dialog;
 
-struct Message *BuildBindingMessage(struct Dialog *dialog);
+struct Message *BuildRemoveBindingMessage(struct Dialog *dialog);
+struct Message *BuildAddBindingMessage(struct Dialog *dialog);
 struct Message *BuildInviteMessage(struct Dialog *dialog);
 struct Message *BuildAckMessage(struct Dialog *dialog);
 struct Message *BuildByeMessage(struct Dialog *dialog);

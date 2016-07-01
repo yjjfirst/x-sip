@@ -40,7 +40,7 @@ TEST_GROUP(MessageBuilderTestGroup)
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
 
         DialogSetToUser(dialog, GetUserName(0));
-        m = BuildBindingMessage(dialog);
+        m = BuildAddBindingMessage(dialog);
 
         DialogSetToUser(dialog, (char *)"88002");
         inviteMessage = BuildInviteMessage(dialog);
@@ -572,4 +572,13 @@ TEST(MessageBuilderTestGroup, BindingsContactHeaderTest)
     struct URI *uri = ContactHeaderGetUri(contact);
 
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+}
+
+TEST(MessageBuilderTestGroup, UnbindingMessage)
+{
+    struct Message *remove = BuildRemoveBindingMessage(dialog);
+    struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
+    
+    CHECK_EQUAL(0, ExpiresHeaderGetExpires(e));
+    DestroyMessage(&remove);
 }

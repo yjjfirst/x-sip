@@ -138,12 +138,22 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
     return message;
 }
 
-struct Message *BuildBindingMessage(struct Dialog *dialog)
+struct Message *BuildAddBindingMessage(struct Dialog *dialog)
 {
     struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
     MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
 
     return binding;
+}
+
+struct Message *BuildRemoveBindingMessage(struct Dialog *dialog)
+{
+    struct Message *remove = BuildAddBindingMessage(dialog);
+    struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
+    
+    ExpiresHeaderSetExpires(e, 0);
+
+    return remove;
 }
 
 struct Message *BuildInviteMessage(struct Dialog *dialog)

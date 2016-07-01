@@ -33,7 +33,7 @@ TEST_GROUP(TransactionManager)
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         ua = CreateUserAgent(0);
         dialog = CreateDialog(NULL_DIALOG_ID, ua);
-        message = BuildBindingMessage(dialog);
+        message = BuildAddBindingMessage(dialog);
     }
 
     void teardown() {
@@ -53,13 +53,13 @@ TEST(TransactionManager, NewTransaction)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-    message = BuildBindingMessage(dialog);
+    message = BuildAddBindingMessage(dialog);
     transaction = AddClientNonInviteTransaction(message, NULL);
     CHECK_EQUAL(2, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-    message = BuildBindingMessage(dialog);
+    message = BuildAddBindingMessage(dialog);
     transaction = AddClientNonInviteTransaction(message, NULL);
 
     CHECK_EQUAL(3, CountTransaction());

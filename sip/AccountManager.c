@@ -61,11 +61,22 @@ int TotalAccount()
     return get_list_len(am->accounts);
 }
 
-void BindAccount(int account)
+void AccountAddBinding(int account)
 {
     struct UserAgent *ua = CreateUserAgent(account);
     struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua);
-    struct Message *message = BuildBindingMessage(dialog);
+    struct Message *message = BuildAddBindingMessage(dialog);
+
+    AddUserAgent(ua);
+    AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+
+}
+
+void AccountRemoveBinding(int account)
+{
+    struct UserAgent *ua = CreateUserAgent(account);
+    struct Dialog *dialog = CreateDialog(NULL_DIALOG_ID, ua);
+    struct Message *message = BuildRemoveBindingMessage(dialog);
 
     AddUserAgent(ua);
     AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);

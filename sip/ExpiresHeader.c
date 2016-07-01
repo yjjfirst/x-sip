@@ -59,6 +59,12 @@ int ExpiresHeaderGetExpires(struct ExpiresHeader *e)
     return e->expires;
 }
 
+void ExpiresHeaderSetExpires(struct ExpiresHeader *e, int expires)
+{
+    assert(e != NULL);
+    SetIntegerField((void *)e, expires, &ExpiresHeaderPattern[1]);
+}
+
 char *ExpiresHeader2String(char *result, struct Header *e)
 {
     return ToString(result, e, GetExpiresPattern());
