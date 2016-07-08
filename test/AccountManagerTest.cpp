@@ -177,7 +177,7 @@ TEST(AccountManagerTestGroup, AddAccountReturnTest)
     CHECK_EQUAL(2,AddThirdAccount());
 }
 
-TEST(AccountManagerTestGroup, BindAccountTest)
+TEST(AccountManagerTestGroup, AccountAddBindingTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
@@ -196,14 +196,15 @@ TEST(AccountManagerTestGroup, BindAccountTest)
     mock().clear();
 }
 
-IGNORE_TEST(AccountManagerTestGroup, UnbindAccountTest)
+TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 {
     char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
 
     AccountSetBinded(account);
+    
     mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
 
     AccountRemoveBinding(0);    
     ReceiveInMessage(string);
