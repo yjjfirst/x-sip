@@ -2,6 +2,6 @@ struct UserAgent;
 struct Account;
 struct UserAgentManager;
 
-int AddUserAgent(struct UserAgent *ua);
+struct UserAgent *AddUserAgent(int ua);
 int CountUserAgent();
 void ClearUserAgentManager();

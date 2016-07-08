@@ -10,12 +10,15 @@ struct UserAgentManager {
 };
 
 struct UserAgentManager UserAgentManager;
-int AddUserAgent(struct UserAgent *ua)
+
+struct UserAgent *AddUserAgent(int ua)
 {
+    struct UserAgent *userAgent = CreateUserAgent(ua);
     struct UserAgentManager *uam = &UserAgentManager;
     
-    put_in_list(&uam->userAgents, ua);
-    return get_list_len(uam->userAgents);
+    put_in_list(&uam->userAgents, userAgent);
+
+    return userAgent;
 }
 
 int CountUserAgent()
