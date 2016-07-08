@@ -21,12 +21,13 @@ TEST_GROUP(CallManagerTestGroup)
     
     void teardown()
     {
-        ClearAccount();
+        ClearAccountManager();
+        ClearTransactionManager();
         ClearUserAgentManager();
     }
 };
 
-IGNORE_TEST(CallManagerTestGroup, CallOutSendInviteTest)
+TEST(CallManagerTestGroup, CallOutSendInviteTest)
 {
     char dest[] = "88002";
     char account = 0;

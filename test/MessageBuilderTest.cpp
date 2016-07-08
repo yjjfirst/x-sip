@@ -48,7 +48,7 @@ TEST_GROUP(MessageBuilderTestGroup)
 
     void teardown()
     {
-        ClearAccount();
+        ClearAccountManager();
         DestroyMessage(&m);
         DestroyMessage(&inviteMessage);
         DestroyUserAgent(&ua);

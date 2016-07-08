@@ -11,7 +11,7 @@ extern "C" {
 #include "Messages.h"
 #include "MessageTransport.h"
 #include "UserAgentManager.h"
-extern void RemoveAllTransaction();
+extern void ClearTransactionManager();
 }
 
 void AddFirstAccount()
@@ -61,13 +61,13 @@ TEST_GROUP(AccountManagerTestGroup)
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
-        ClearAccount();
+        ClearAccountManager();
         ::AddFirstAccount();
     }
 
     void teardown()
     {
-        ClearAccount();
+        ClearAccountManager();
     }
 };
 
@@ -98,7 +98,7 @@ TEST(AccountManagerTestGroup, AddThreeAccountsTest)
 
 TEST(AccountManagerTestGroup, ClearAccountTest)
 {
-    ClearAccount();
+    ClearAccountManager();
     CHECK_EQUAL(0, TotalAccount());
 }
 
@@ -106,7 +106,7 @@ TEST(AccountManagerTestGroup, ClearMulitAccountTest)
 {
     AddSecondAccount();
     AddThirdAccount();
-    ClearAccount();
+    ClearAccountManager();
     CHECK_EQUAL(0, TotalAccount());
 }
 
@@ -133,7 +133,7 @@ TEST(AccountManagerTestGroup, InitTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
 
-    ClearAccount();
+    ClearAccountManager();
 
     AccountInit();
     CHECK_EQUAL(3, TotalAccount());
@@ -158,7 +158,7 @@ TEST(AccountManagerTestGroup, InitTest)
 TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 {
     UT_PTR_SET(AccountInit, AccountInitMock);
-    ClearAccount();
+    ClearAccountManager();
 
     AccountInit();
     CHECK_EQUAL(3, TotalAccount());
@@ -190,7 +190,7 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
     ClearUserAgentManager();
-    RemoveAllTransaction();
+    ClearTransactionManager();
 
     mock().checkExpectations();
     mock().clear();
@@ -212,7 +212,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
     ClearUserAgentManager();
-    RemoveAllTransaction();
+    ClearTransactionManager();
 
     mock().checkExpectations();
     mock().clear();

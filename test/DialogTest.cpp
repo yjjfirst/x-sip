@@ -50,8 +50,8 @@ TEST_GROUP(DialogTestGroup)
 
     void teardown()
     {
-        ClearAccount();
-        RemoveAllTransaction();
+        ClearAccountManager();
+        ClearTransactionManager();
         DestroyUserAgent(&ua);
         DestroyMessage(&ok);
         mock().checkExpectations();

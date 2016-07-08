@@ -30,7 +30,7 @@ TEST_GROUP(SessionTestGroup)
 
     void teardown()
     {
-        ClearAccount();
+        ClearAccountManager();
         DestroyUserAgent(&ua);
         
         mock().checkExpectations();
@@ -71,7 +71,7 @@ TEST(SessionTestGroup, UACCreateSessionTest)
     DialogClientInviteOkReceived(dialog, ok);
     
     DestroyMessage(&ok);
-    RemoveAllTransaction();
+    ClearTransactionManager();
 }
 
 TEST(SessionTestGroup, UASCreateSessionTest)
@@ -96,7 +96,7 @@ TEST(SessionTestGroup, UACDestroySessionTest)
     mock().expectOneCall("DestroySession");
     DialogTerminate(dialog);    
 
-    RemoveAllTransaction();
+    ClearTransactionManager();
 }
 
 TEST(SessionTestGroup, UASDestroySessionTest)
@@ -116,5 +116,5 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     DialogReceiveBye(dialog, bye);
 
     DestroyMessage(&ok);
-    RemoveAllTransaction();
+    ClearTransactionManager();
 }

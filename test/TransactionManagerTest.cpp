@@ -37,10 +37,10 @@ TEST_GROUP(TransactionManager)
     }
 
     void teardown() {
-        ClearAccount();
+        ClearAccountManager();
         mock().clear();
         DestroyUserAgent(&ua);
-        RemoveAllTransaction();
+        ClearTransactionManager();
     }
 };
 

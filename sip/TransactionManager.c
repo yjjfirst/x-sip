@@ -178,7 +178,7 @@ void DestroyTransactions(struct TransactionManager *manager)
     destroy_list(&manager->transactions, NULL);
 }
 
-void RemoveAllTransaction()
+void ClearTransactionManager()
 {
     DestroyTransactions(&TransactionManager);
 }

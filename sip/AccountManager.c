@@ -40,7 +40,7 @@ void RemoveAccount(int pos)
     del_node_at(&am->accounts, pos);
 }
 
-void ClearAccount()
+void ClearAccountManager()
 {
     int i = 0;
     struct AccountManager *am = &AccountManager;

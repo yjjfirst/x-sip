@@ -37,7 +37,7 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
 
     void teardown() 
     {
-        RemoveAllTransaction();
+        ClearTransactionManager();
     }
 };
 
@@ -88,7 +88,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatche
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 {
-    RemoveAllTransaction();
+    ClearTransactionManager();
 
     struct Message *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);

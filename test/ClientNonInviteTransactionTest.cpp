@@ -93,8 +93,8 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 
     void teardown()
     {
-        ClearAccount();
-        RemoveAllTransaction();
+        ClearAccountManager();
+        ClearTransactionManager();
         DestroyUserAgent(&ua);
         mock().checkExpectations();
         mock().clear();

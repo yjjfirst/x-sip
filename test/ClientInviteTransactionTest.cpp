@@ -60,12 +60,12 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     }
 
     void teardown() {
-        ClearAccount();
+        ClearAccountManager();
         mock().checkExpectations();
         mock().clear();
 
         DestroyUserAgent(&ua);
-        RemoveAllTransaction();
+        ClearTransactionManager();
     }
     
     void ExpectedNewClientTransaction(SIP_METHOD method)

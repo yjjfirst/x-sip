@@ -50,7 +50,7 @@ TEST_GROUP(UserAgentTestGroup)
 
     void teardown()
     {
-        ClearAccount();
+        ClearAccountManager();
         mock().clear();
     }    
 };
@@ -81,7 +81,7 @@ TEST(UserAgentTestGroup, BindingTest)
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
     DestroyUserAgent(&ua);
-    RemoveAllTransaction();    
+    ClearTransactionManager();    
 }
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
@@ -98,7 +98,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
-    RemoveAllTransaction();
+    ClearTransactionManager();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method",MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildAddBindingMessage(dialog);
@@ -109,7 +109,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
     DestroyUserAgent(&ua);
-    RemoveAllTransaction();
+    ClearTransactionManager();
 }
 
 TEST(UserAgentTestGroup, AddDialogTest)
