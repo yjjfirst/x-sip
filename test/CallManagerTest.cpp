@@ -44,7 +44,6 @@ TEST(CallManagerTestGroup, CallOutSendInviteTest)
 
 TEST(CallManagerTestGroup, CallOutSuccessTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     char dest[] = "88002";
     char account = 0;
 
@@ -53,7 +52,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
     CallOut(account, dest);
-    ReceiveInMessage(stringReceived);
+    ReceiveInMessage();
 
     mock().checkExpectations();
     mock().clear();

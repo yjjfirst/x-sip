@@ -87,8 +87,6 @@ TEST(DialogTestGroup, DialogCreateTest)
 
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
@@ -96,7 +94,7 @@ TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
     AddClientInviteTransaction(invite, (struct TransactionUserObserver *)dialog);
     UT_PTR_SET(Transporter, &MockTransporterForAck);
 
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
 }
 
 TEST(DialogTestGroup, AddTransactionTest)
@@ -109,7 +107,6 @@ TEST(DialogTestGroup, AddTransactionTest)
 
 TEST(DialogTestGroup, UACDialogIdTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
     char okString[MAX_MESSAGE_LENGTH] = {0};
     struct Message *originInvite = BuildInviteMessage(dialog);
 
@@ -120,7 +117,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
     DialogAddClientInviteTransaction(dialog, invite);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
     
     STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
@@ -139,21 +136,18 @@ TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 
 TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
 }
 
 TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
     struct Message *ok = CreateMessage();
   
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
@@ -161,7 +155,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
  
     DialogAddClientInviteTransaction(dialog, invite);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
 
     ParseMessage(INVITE_200OK_MESSAGE, ok);
     struct ContactHeader *ch = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
@@ -172,14 +166,12 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 
 TEST(DialogTestGroup, UACDialogConfirmedTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
 

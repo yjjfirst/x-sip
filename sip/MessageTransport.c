@@ -5,6 +5,7 @@
 
 #include "MessageTransport.h"
 #include "TransactionManager.h"
+#include "Messages.h"
 
 int DummySend(char *message)
 {
@@ -26,10 +27,11 @@ int SendOutMessage(char *message)
     return Transporter->sender(message);
 }
 
-BOOL ReceiveInMessage(char *message)
+BOOL ReceiveInMessage()
 {
-    Transporter->receiver(message);
-    return ReceiveMessageCallback(message);
+    char received[MAX_MESSAGE_LENGTH] = {0};
+    Transporter->receiver(received);
+    return ReceiveMessageCallback(received);
 }
 
 struct MessageTransporter *Transporter = &DummyTransporter;

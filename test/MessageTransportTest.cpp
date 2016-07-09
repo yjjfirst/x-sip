@@ -27,16 +27,11 @@ TEST_GROUP(MessageTransportTestGroup)
 
 TEST(MessageTransportTestGroup, ReceiveMessageTest)
 {
-    char message[64] = {0};
-    char Message4ReceivingTest[] = "Receiving test string";
-
-
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
 
-    ReceiveInMessage(message);
+    ReceiveInMessage();
 
-    STRCMP_EQUAL(Message4ReceivingTest, message);
     mock().checkExpectations();
 }
 

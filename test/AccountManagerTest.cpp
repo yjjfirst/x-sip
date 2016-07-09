@@ -179,14 +179,13 @@ TEST(AccountManagerTestGroup, AddAccountReturnTest)
 
 TEST(AccountManagerTestGroup, AccountAddBindingTest)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
 
     mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
 
     AccountAddBinding(0);    
-    ReceiveInMessage(string);
+    ReceiveInMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
     ClearUserAgentManager();
@@ -198,7 +197,6 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
 
 TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
     struct Account *account = GetAccount(0);
 
     AccountSetBinded(account);
@@ -207,7 +205,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
 
     AccountRemoveBinding(0);    
-    ReceiveInMessage(string);
+    ReceiveInMessage();
 
     CHECK_EQUAL(FALSE, AccountBinded(account));
 

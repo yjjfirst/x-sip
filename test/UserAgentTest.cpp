@@ -66,7 +66,6 @@ TEST(UserAgentTestGroup, CreateUserAgentTest)
 
 TEST(UserAgentTestGroup, BindingTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     BuildTestingMessage();
@@ -75,7 +74,7 @@ TEST(UserAgentTestGroup, BindingTest)
     struct Account *account = UserAgentGetAccount(ua);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, AccountBinded(account));
@@ -86,15 +85,13 @@ TEST(UserAgentTestGroup, BindingTest)
 
 TEST(UserAgentTestGroup, RemoveBindingTest)
 {
-    char revMessage[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     BuildTestingMessage();
     struct Transaction *t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
     struct Account *account = UserAgentGetAccount(ua);
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
@@ -105,7 +102,7 @@ TEST(UserAgentTestGroup, RemoveBindingTest)
     t = AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
-    ReceiveInMessage(revMessage);
+    ReceiveInMessage();
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
     DestroyUserAgent(&ua);

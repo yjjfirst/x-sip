@@ -77,11 +77,9 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
 
     void PrepareProceedingState()
     {
-        char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
         
-        ReceiveInMessage(stringReceived);    
+        ReceiveInMessage();    
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
     }
@@ -115,12 +113,10 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
 {
     UT_PTR_SET(CreateSession, CreateSessionMock);
 
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
 
     ExpectedNewClientTransaction(SIP_METHOD_ACK);
-    ReceiveInMessage(stringReceived);    
+    ReceiveInMessage();    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
 }
 
@@ -131,14 +127,12 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive100Test)
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-    ReceiveInMessage(stringReceived);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
-    ReceiveInMessage(stringReceived);    
+    ReceiveInMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
@@ -180,25 +174,22 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState3xxReceiveTest)
 
 TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
-    
     PrepareProceedingState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
 
-    ReceiveInMessage(stringReceived);    
+    ReceiveInMessage();    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
  
 }
 
 TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     int i = 0;
 
     for (; i < 20; i++) {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-        ReceiveInMessage(stringReceived);
+        ReceiveInMessage();
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
     }
 }

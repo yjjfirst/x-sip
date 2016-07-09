@@ -182,13 +182,12 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 //Create transaction tests.
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
 
     UT_PTR_SET(Transporter, &MockTransporterFor100Trying);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage(stringReceived); 
+    ReceiveInMessage(); 
     CheckOnlyOneTransactionMatched();
 }
 
@@ -209,7 +208,6 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
 //Proceeding state tests.
 TEST(ServerInviteTransactionTestGroup, ProceedingStateReceiveInviteTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     PrepareProceedingState();
 
     CheckOnlyOneTransactionMatched();
@@ -217,13 +215,13 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateReceiveInviteTest)
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    ReceiveInMessage(stringReceived); 
+    ReceiveInMessage(); 
     CheckOnlyOneTransactionMatched();
     
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    ReceiveInMessage(stringReceived); 
+    ReceiveInMessage(); 
     CheckOnlyOneTransactionMatched();
 }
 
@@ -313,29 +311,27 @@ TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
 //Completed State tests
 TEST(ServerInviteTransactionTestGroup, CompletedStateReceiceInviteStateTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     struct Transaction *t = PrepareCompletedState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage(stringReceived);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage(stringReceived);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 
 }
 
 TEST(ServerInviteTransactionTestGroup, CompletedStateSendResponseErrorTest)
 {
-    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
     PrepareCompletedState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    ReceiveInMessage(stringReceived);
+    ReceiveInMessage();
 
     CheckNoTransaction(); 
 }

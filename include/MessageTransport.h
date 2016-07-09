@@ -12,7 +12,7 @@ struct MessageTransporter {
 void AddMessageTransporter(char *name ,MessageSender s, MessageReceiver r);
 void RemoveMessageTransporter(char *name);
 BOOL ReceiveMessage(char *message);
-BOOL ReceiveInMessage(char *message);
+BOOL ReceiveInMessage();
 int SendOutMessage(char *message);
 int SendMessage(char *message);
 

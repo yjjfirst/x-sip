@@ -70,23 +70,21 @@ TEST(TransactionManager, NewTransaction)
 
 TEST(TransactionManager, MatchResponse)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddClientNonInviteTransaction(message, NULL);
-    CHECK_TRUE(ReceiveInMessage(string));
+    CHECK_TRUE(ReceiveInMessage());
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
     struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
     enum TransactionState s;
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
-    ReceiveInMessage(string);
+    ReceiveInMessage();
     s = TransactionGetState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }

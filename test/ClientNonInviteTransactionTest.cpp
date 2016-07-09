@@ -66,10 +66,8 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 
     void PrepareProceedingState()
     {
-        char string[MAX_MESSAGE_LENGTH] = {0};
-        
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-        ReceiveInMessage(string);
+        ReceiveInMessage();
         s = TransactionGetState(t);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
         
@@ -117,13 +115,11 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive1xxTest)
 
 TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive2xxTest)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
-
     PrepareTryingState(0);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
-    ReceiveInMessage(string);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 }
 
@@ -229,15 +225,13 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
 //Completed state
 TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
-    
     PrepareTryingState(0);
     PrepareProceedingState();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);   
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
-    ReceiveInMessage(string);
+    ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 
     TimerKCallbackFunc(t);
@@ -247,19 +241,17 @@ TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
 //Other tests.
 TEST(ClientNotInviteTransactionTestGroup, GetLatestResponse)
 {
-    char string[MAX_MESSAGE_LENGTH] = {0};
-
     PrepareTryingState(0);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-    ReceiveInMessage(string);
+    ReceiveInMessage();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-    ReceiveInMessage(string);
+    ReceiveInMessage();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
-    ReceiveInMessage(string);
+    ReceiveInMessage();
 
     struct Message *latestResponse = TransactionGetLatestResponse(t);
     struct StatusLine *sl = MessageGetStatusLine(latestResponse);
