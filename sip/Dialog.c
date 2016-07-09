@@ -18,16 +18,17 @@
 
 struct Dialog {
     struct TransactionUserObserver userOberver;  //must be the first field in the struct.
-    SIP_METHOD requestMethod;
     struct Transaction *transaction;
     struct DialogId *id;
+    struct UserAgent *ua;
+    struct Session *session;
+    struct URI *remoteTarget;
+
+    SIP_METHOD requestMethod;
     unsigned int localSeqNumber;
     unsigned int remoteSeqNumber;
-    struct URI *remoteTarget;
     enum DIALOG_STATE state;
-    struct UserAgent *ua;
     char to[USER_NAME_MAX_LENGTH];
-    
 };
 
 struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
@@ -128,7 +129,7 @@ void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message
     DialogExtractRemoteTargetFromMessage(dialog, message);
     DialogAck(dialog);
 
-    CreateSession();
+    dialog->session = CreateSession();
 }
 
 void DialogHandleClientInviteEvent(struct Transaction *t)
@@ -222,7 +223,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
     if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        
         DialogIdSetLocalTag(id, MessageGetToTag(message));
         DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
-        CreateSession();
+        dialog->session = CreateSession();
     } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
         if (DialogGetRequestMethod(dialog) == SIP_METHOD_BYE) {
             DialogSetState(dialog, DIALOG_STATE_TERMINATED);
@@ -236,8 +237,6 @@ void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
 {
     DialogAddServerNonInviteTransaction(dialog, bye);
     DialogSend200OKResponse(dialog);
-
-    DestroySession(NULL);
 }
 
 void DialogTerminate(struct Dialog *dialog)
@@ -245,8 +244,6 @@ void DialogTerminate(struct Dialog *dialog)
     struct Message *bye = BuildByeMessage(dialog);
     DialogAddClientNonInviteTransaction(dialog, bye);
     dialog->state = DIALOG_STATE_TERMINATED;
-
-    DestroySession(NULL);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
@@ -270,10 +267,12 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
 
 void DestroyDialog(struct Dialog **dialog)
 {
-    if (*dialog != NULL) {
-        DestroyDialogId(&(*dialog)->id);
-        DestroyUri(&(*dialog)->remoteTarget);
-        free(*dialog);
-        *dialog = NULL;
+    struct Dialog *d = *dialog;
+    if (d != NULL) {
+        DestroyDialogId(&d->id);
+        DestroyUri(&d->remoteTarget);
+        DestroySession(&d->session);
+        free(d);
+        d = NULL;
     }
 }

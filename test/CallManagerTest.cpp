@@ -2,6 +2,7 @@
 #include "CppUTestExt/MockSupport.h"
 #include "AccountMock.h"
 #include "TransportMock.h"
+#include "TestingMessages.h"
 
 extern "C" {
 #include "UserAgentManager.h"
@@ -9,6 +10,7 @@ extern "C" {
 #include "Call.h"
 #include "MessageTransport.h"
 #include "TransactionManager.h"
+#include "Messages.h"
 }
 
 TEST_GROUP(CallManagerTestGroup)
@@ -38,4 +40,22 @@ TEST(CallManagerTestGroup, CallOutSendInviteTest)
 
     mock().checkExpectations();
     mock().clear();
+}
+
+TEST(CallManagerTestGroup, CallOutSuccessTest)
+{
+    char stringReceived[MAX_MESSAGE_LENGTH] = {0};
+    char dest[] = "88002";
+    char account = 0;
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
+
+    CallOut(account, dest);
+    ReceiveInMessage(stringReceived);
+
+    mock().checkExpectations();
+    mock().clear();
+    
 }
