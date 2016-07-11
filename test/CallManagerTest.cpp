@@ -54,7 +54,15 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     CallOut(account, dest);
     ReceiveInMessage();
 
+    CHECK_EQUAL(1, CountUserAgent());
+    //    struct UserAgent *ua = GetUserAgent(0);
+
     mock().checkExpectations();
     mock().clear();
+    
+}
+
+TEST(CallManagerTestGroup, ActiveHangupTest)
+{
     
 }

@@ -70,9 +70,10 @@ void DestroyDialogList(struct DialogManager *dialogs)
 
 void DestroyDialogs(struct DialogManager **dialogs)
 {
-    if (*dialogs != NULL) {
-        DestroyDialogList(*dialogs);
-        free(*dialogs);
-        *dialogs = NULL;
+    struct DialogManager *dm = *dialogs;
+    if (dm != NULL) {
+        DestroyDialogList(dm);
+        free(dm);
+        dm = NULL;
     }
 }

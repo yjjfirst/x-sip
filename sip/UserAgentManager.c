@@ -11,20 +11,26 @@ struct UserAgentManager {
 
 struct UserAgentManager UserAgentManager;
 
-struct UserAgent *AddUserAgent(int ua)
+struct UserAgent *AddUserAgent(int account)
 {
-    struct UserAgent *userAgent = CreateUserAgent(ua);
+    struct UserAgent *ua = CreateUserAgent(account);
     struct UserAgentManager *uam = &UserAgentManager;
     
-    put_in_list(&uam->userAgents, userAgent);
+    put_in_list(&uam->userAgents, ua);
 
-    return userAgent;
+    return ua;
 }
 
 int CountUserAgent()
 {
     struct UserAgentManager *uam = &UserAgentManager;
     return get_list_len(uam->userAgents);
+}
+
+struct UserAgent *GetUserAgent(int pos)
+{
+    struct UserAgentManager *uam = &UserAgentManager;
+    return get_data_at(uam->userAgents, pos);
 }
 
 void ClearUserAgentManager()
@@ -41,4 +47,3 @@ void ClearUserAgentManager()
     destroy_list(&uam->userAgents, NULL);
     uam->userAgents = NULL;
 }
-
