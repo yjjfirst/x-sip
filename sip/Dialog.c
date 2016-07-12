@@ -246,7 +246,7 @@ void DialogTerminate(struct Dialog *dialog)
     dialog->state = DIALOG_STATE_TERMINATED;
 }
 
-struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
+struct Dialog *CreateDialog(struct DialogId *dialogid)
 {
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
 
@@ -256,8 +256,16 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
         dialog->id = dialogid;
     }
 
-    dialog->ua = ua;
     dialog->userOberver.onEvent = DialogOnTransactionEvent;
+
+    return dialog;
+}
+
+struct Dialog *AddNewDialog(struct DialogId *dialogid, struct UserAgent *ua)
+{
+    struct Dialog *dialog = CreateDialog(dialogid);
+
+    dialog->ua = ua;
 
     if (ua != NULL)
         UserAgentAddDialog(ua, dialog);

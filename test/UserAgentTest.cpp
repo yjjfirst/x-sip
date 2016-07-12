@@ -31,7 +31,7 @@ TEST_GROUP(UserAgentTestGroup)
     void BuildTestingMessage()
     {
         ua = CreateUserAgent(0);
-        dialog = CreateDialog(NULL_DIALOG_ID, ua);
+        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, GetUserName(0));
         message = BuildAddBindingMessage(dialog);
     }
@@ -113,7 +113,7 @@ TEST(UserAgentTestGroup, AddDialogTest)
 {
     ua = CreateUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = CreateDialog(dialogid, ua);
+    dialog = AddNewDialog(dialogid, ua);
 
     CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
     POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
@@ -125,7 +125,7 @@ TEST(UserAgentTestGroup, CountDialogTest)
 {
     ua = AddUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = CreateDialog(dialogid, ua);
+    dialog = AddNewDialog(dialogid, ua);
 
     CHECK_EQUAL(1, UserAgentCountDialogs(ua));
 
@@ -137,7 +137,7 @@ TEST(UserAgentTestGroup, GetDialogManagerTest)
 {
     ua = AddUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = CreateDialog(dialogid, ua);
+    dialog = AddNewDialog(dialogid, ua);
 
     CHECK_FALSE(UserAgentGetDialogManager(ua) == NULL);
 

@@ -23,7 +23,7 @@ TEST_GROUP(SessionTestGroup)
     {
         AccountInitMock();
         ua = CreateUserAgent(0);    
-        dialog = CreateDialog(NULL_DIALOG_ID, ua);
+        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, (char *)"88002");
         invite = BuildInviteMessage(dialog);
     }

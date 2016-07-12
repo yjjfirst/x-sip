@@ -32,7 +32,7 @@ TEST_GROUP(TransactionManager)
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         ua = CreateUserAgent(0);
-        dialog = CreateDialog(NULL_DIALOG_ID, ua);
+        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         message = BuildAddBindingMessage(dialog);
     }
 

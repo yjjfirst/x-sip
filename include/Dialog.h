@@ -30,7 +30,7 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog);
 char *DialogGetToUser(struct Dialog *dialog);
 void DialogSetToUser(struct Dialog *dialog, char *to);
 
-struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
+struct Dialog *AddNewDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestroyDialog(struct Dialog **dialog);
 void DialogTerminate(struct Dialog *dialog);
 

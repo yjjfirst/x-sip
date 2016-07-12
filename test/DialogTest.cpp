@@ -42,7 +42,7 @@ TEST_GROUP(DialogTestGroup)
 
         AccountInitMock();
         ua = CreateUserAgent(0);
-        dialog = CreateDialog(NULL_DIALOG_ID, ua);
+        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);
         ok = Build200OKMessage(invite);
         
