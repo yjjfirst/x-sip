@@ -6,6 +6,7 @@
 
 extern "C" {
 #include "UserAgentManager.h"
+#include "UserAgent.h"
 #include "AccountManager.h"
 #include "Call.h"
 #include "MessageTransport.h"
@@ -55,14 +56,16 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     ReceiveInMessage();
 
     CHECK_EQUAL(1, CountUserAgent());
-    //    struct UserAgent *ua = GetUserAgent(0);
+
+    struct UserAgent *ua = GetUserAgent(0);
+    CHECK_EQUAL(1, UserAgentCountDialogs(ua));
 
     mock().checkExpectations();
     mock().clear();
     
 }
 
-TEST(CallManagerTestGroup, ActiveHangupTest)
+IGNORE_TEST(CallManagerTestGroup, ActiveHangupTest)
 {
     
 }

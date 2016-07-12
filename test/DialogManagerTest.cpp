@@ -55,3 +55,18 @@ TEST(DialogsTestGroup, RemoveDialogWithWrongId)
     DestroyUserAgent(&ua);
     DestroyDialogId(&dialogid2);
 }
+
+TEST(DialogsTestGroup, CountDialogsTest)
+{
+    struct UserAgent *ua =  CreateUserAgent(0);
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
+
+    CreateDialog(dialogid, ua);
+    CHECK_EQUAL(1, CountDialogs(UserAgentGetDialogManager(ua)));
+
+    CreateDialog(dialogid2, ua);
+    CHECK_EQUAL(2, CountDialogs(UserAgentGetDialogManager(ua)));
+    
+    DestroyUserAgent(&ua);
+}

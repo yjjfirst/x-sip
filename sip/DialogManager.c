@@ -35,6 +35,13 @@ void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog)
     put_in_list(&dialogs->dialogList, dialog);
 }
 
+int CountDialogs(struct DialogManager *dialogs)
+{
+    assert(dialogs != NULL);
+ 
+    return get_list_len(dialogs->dialogList);
+}
+
 bool MatchedDialogId (void *dialog, void *id)
 {
     return DialogIdMatched(DialogGetId(dialog), id);

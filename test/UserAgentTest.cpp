@@ -121,3 +121,25 @@ TEST(UserAgentTestGroup, AddDialogTest)
     DestroyUserAgent(&ua);
 }
 
+TEST(UserAgentTestGroup, CountDialogTest)
+{
+    ua = AddUserAgent(0);
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
+    dialog = CreateDialog(dialogid, ua);
+
+    CHECK_EQUAL(1, UserAgentCountDialogs(ua));
+
+    ClearUserAgentManager();
+    
+}
+
+TEST(UserAgentTestGroup, GetDialogManagerTest)
+{
+    ua = AddUserAgent(0);
+    struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
+    dialog = CreateDialog(dialogid, ua);
+
+    CHECK_FALSE(UserAgentGetDialogManager(ua) == NULL);
+
+    ClearUserAgentManager();
+}

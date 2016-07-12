@@ -75,7 +75,17 @@ void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
 
 void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id)
 {
+    assert(ua != NULL);
+    assert(id != NULL);
+
     RemoveDialog(ua->dialogs, id);
+}
+
+struct DialogManager *UserAgentGetDialogManager(struct UserAgent *ua)
+{
+    assert(ua != NULL);
+
+    return ua->dialogs;
 }
 
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
@@ -83,6 +93,13 @@ struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
     assert(ua != NULL);
     assert(callid != NULL);
     return GetDialogById(ua->dialogs, callid);
+}
+
+int UserAgentCountDialogs(struct UserAgent *ua)
+{
+    assert (ua != NULL);
+
+    return CountDialogs(ua->dialogs);
 }
 
 struct UserAgent *CreateUserAgent(int account)
