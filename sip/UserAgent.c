@@ -88,11 +88,19 @@ struct DialogManager *UserAgentGetDialogManager(struct UserAgent *ua)
     return ua->dialogs;
 }
 
-struct Dialog *UserAgentGetDialog(struct UserAgent *ua, struct DialogId *callid)
+struct Dialog *UserAgentGetDialogById(struct UserAgent *ua, struct DialogId *callid)
 {
     assert(ua != NULL);
     assert(callid != NULL);
+
     return GetDialogById(ua->dialogs, callid);
+}
+
+struct Dialog *UserAgentGetDialog(struct UserAgent *ua, int pos)
+{
+    assert(ua != NULL);
+
+    return GetDialog(ua->dialogs, pos);
 }
 
 int UserAgentCountDialogs(struct UserAgent *ua)

@@ -27,6 +27,9 @@ TEST_GROUP(CallManagerTestGroup)
         ClearAccountManager();
         ClearTransactionManager();
         ClearUserAgentManager();
+
+        mock().checkExpectations();
+        mock().clear();
     }
 };
 
@@ -38,9 +41,6 @@ TEST(CallManagerTestGroup, CallOutSendInviteTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
 
     CallOut(account, dest);
-
-    mock().checkExpectations();
-    mock().clear();
 }
 
 TEST(CallManagerTestGroup, CallOutSuccessTest)
@@ -52,20 +52,25 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
-    CallOut(account, dest);
+    struct UserAgent *ua = CallOut(account, dest);
     ReceiveInMessage();
 
     CHECK_EQUAL(1, CountUserAgent());
-
-    struct UserAgent *ua = GetUserAgent(0);
     CHECK_EQUAL(1, UserAgentCountDialogs(ua));
-
-    mock().checkExpectations();
-    mock().clear();
-    
 }
 
 IGNORE_TEST(CallManagerTestGroup, ActiveHangupTest)
 {
+    char dest[] = "88002";
+    char account = 0;
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
+
+    struct UserAgent *ua = CallOut(account, dest);
+    ReceiveInMessage();
+    EndCall(ua);
     
+    CHECK_EQUAL(0, UserAgentCountDialogs(ua));
 }

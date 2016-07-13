@@ -115,8 +115,8 @@ TEST(UserAgentTestGroup, AddDialogTest)
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
     dialog = AddNewDialog(dialogid, ua);
 
-    CHECK_TRUE(UserAgentGetDialog(ua, dialogid) != NULL);
-    POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, dialogid));
+    CHECK_TRUE(UserAgentGetDialogById(ua, dialogid) != NULL);
+    POINTERS_EQUAL(dialog, UserAgentGetDialogById(ua, dialogid));
 
     DestroyUserAgent(&ua);
 }
@@ -141,5 +141,14 @@ TEST(UserAgentTestGroup, GetDialogManagerTest)
 
     CHECK_FALSE(UserAgentGetDialogManager(ua) == NULL);
 
+    ClearUserAgentManager();
+}
+
+TEST(UserAgentTestGroup, GetDialogTest)
+{
+    ua = AddUserAgent(0);
+    dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    
+    POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, 0));
     ClearUserAgentManager();
 }

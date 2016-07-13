@@ -30,6 +30,11 @@ struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dia
     return NULL;
 }
 
+struct Dialog *GetDialog(struct DialogManager *dm, int pos)
+{
+    return get_data_at(dm->dialogList, pos);
+}
+
 void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog)
 {
     put_in_list(&dialogs->dialogList, dialog);
