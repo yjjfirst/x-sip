@@ -1,8 +1,11 @@
+#include <stdio.h>
+
 #include "UserAgentManager.h"
 #include "UserAgent.h"
 #include "Dialog.h"
 #include "MessageBuilder.h"
 #include "TransactionManager.h"
+#include "Messages.h"
 
 struct UserAgent *CallOut(int account, char *dest)
 {
@@ -19,6 +22,6 @@ void EndCall(struct UserAgent *ua)
 {
     struct Dialog *dialog = UserAgentGetDialog(ua, 0);
     struct Message *bye = BuildByeMessage(dialog);
-    
+
     AddClientInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
 }

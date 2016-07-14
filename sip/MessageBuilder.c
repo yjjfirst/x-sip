@@ -233,23 +233,23 @@ void AddResponseContactHeader(struct Message *response, struct Message *invite)
     
 }
 
-void AddResponseHeaders(struct Message *response, struct Message *invite)
+void AddResponseHeaders(struct Message *response, struct Message *request)
 {
-    AddResponseViaHeader(response, invite);
-    AddResponseFromHeader(response, invite);
-    AddResponseToHeader(response, invite);
-    AddResponseCallIdHeader(response, invite);
-    AddResponseCSeqHeader(response, invite);
-    AddResponseContactHeader(response, invite);
+    AddResponseViaHeader(response, request);
+    AddResponseFromHeader(response, request);
+    AddResponseToHeader(response, request);
+    AddResponseCallIdHeader(response, request);
+    AddResponseCSeqHeader(response, request);
+    AddResponseContactHeader(response, request);
 }
 
-struct Message *BuildResponseMessage(struct Message *invite, struct StatusLine *status)
+struct Message *BuildResponseMessage(struct Message *request, struct StatusLine *status)
 {
-    assert(invite != NULL);
+    assert(request != NULL);
     
     struct Message *message = CreateMessage();
     MessageSetStatusLine(message, status);
-    AddResponseHeaders(message, invite);
+    AddResponseHeaders(message, request);
 
     return message;  
 }
@@ -270,12 +270,12 @@ struct Message *BuildRingingMessage(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *Build200OKMessage(struct Message *invite)
+struct Message *Build200OKMessage(struct Message *request)
 {
-    assert(invite != NULL);
+    assert(request != NULL);
 
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
-    return BuildResponseMessage(invite, status);
+    return BuildResponseMessage(request, status);
 }
 
 struct Message *Build301Message(struct Message *invite)

@@ -35,19 +35,34 @@ struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
 {
     return NULL;
 }
-struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
+
+char *DialogGetCallIdImpl(struct Dialog *dialog)
+{
+    return DialogIdGetCallId(dialog->id);
+}
 
 char *DialogGetRemoteTagImpl(struct Dialog *dialog)
 {
-    return "";
+    assert(dialog != NULL);
+    return DialogIdGetRemoteTag(dialog->id);
 }
-char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
+
+char *DialogGetLocalTagImpl(struct Dialog *dialog)
+{
+    assert(dialog != NULL);
+    return DialogIdGetLocalTag(dialog->id);
+}
 
 struct URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->remoteTarget;
 }
+
+char *(*DialogGetCallId)(struct Dialog *dialog) = DialogGetCallIdImpl;
+char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
+char *(*DialogGetLocalTag)(struct Dialog *dialog) = DialogGetLocalTagImpl;
+struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
 struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
 
 
