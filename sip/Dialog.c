@@ -134,7 +134,8 @@ void DialogExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message 
 void DialogAck(struct Dialog *dialog)
 {
     struct Message *ack = BuildAckMessage(dialog);
-    DialogAddClientNonInviteTransaction(dialog, ack);         
+    TransactionSendMessage(ack);
+    DestroyMessage(&ack);
 }
 
 void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
@@ -164,6 +165,7 @@ void DialogHandleClientNonInviteEvent(struct Transaction *t)
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     
     if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
+
         if (MessageGetExpires(message) != 0) {
             UserAgentSetBinded(ua);
         } else {

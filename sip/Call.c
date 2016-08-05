@@ -23,5 +23,5 @@ void EndCall(struct UserAgent *ua)
     struct Dialog *dialog = UserAgentGetDialog(ua, 0);
     struct Message *bye = BuildByeMessage(dialog);
 
-    AddClientInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
+    AddClientNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
 }

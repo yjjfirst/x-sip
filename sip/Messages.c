@@ -48,6 +48,12 @@ enum MESSAGE_TYPE ParseMessageType(char *line)
     }
 }
 
+SIP_METHOD MessageGetMethod(struct Message *message)
+{
+    struct RequestLine *rl = MessageGetRequestLine(message);
+    return RequestLineGetMethod(rl);
+}
+
 void MessageParseRequestLine(char *string, struct Message *message)
 {
     struct RequestLine *requestLine = CreateEmptyRequestLine();

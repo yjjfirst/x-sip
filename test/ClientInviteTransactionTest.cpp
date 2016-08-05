@@ -114,10 +114,11 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
     UT_PTR_SET(CreateSession, CreateSessionMock);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK);
 
-    ExpectedNewClientTransaction(SIP_METHOD_ACK);
     ReceiveInMessage();    
     POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    CHECK_EQUAL(0, CountTransaction());
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive100Test)

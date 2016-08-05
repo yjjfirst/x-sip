@@ -42,6 +42,17 @@ Contact: <sip:88002@192.168.10.62:5060>\r\n\
 Content-Type: application/sdp\r\n\
 Content-Length: 289\r\n"
 
+#define BYE_200OK_MESSAGE (char *)"\
+SIP/2.0 200 OK\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1069855717\r\n\
+To: <sip:88002@192.168.10.62>;tag=as6151ad25\r\n\
+Call-ID: 97295390\r\n\
+CSeq: 20 BYE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Type: application/sdp\r\n\
+Content-Length: 289\r\n"
+
 #define INVITE_100TRYING_MESSAGE (char *)"\
 SIP/2.0 100 Trying\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\

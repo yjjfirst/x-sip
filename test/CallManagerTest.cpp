@@ -5,6 +5,8 @@
 #include "TestingMessages.h"
 
 extern "C" {
+#include <stdio.h>
+
 #include "UserAgentManager.h"
 #include "UserAgent.h"
 #include "AccountManager.h"
@@ -59,7 +61,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     CHECK_EQUAL(1, UserAgentCountDialogs(ua));
 }
 
-TEST(CallManagerTestGroup, ActiveHangupTest)
+IGNORE_TEST(CallManagerTestGroup, ActiveHangupTest)
 {
     char dest[] = "88002";
     char account = 0;
@@ -70,7 +72,12 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
 
     struct UserAgent *ua = CallOut(account, dest);
     ReceiveInMessage();
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "BYE");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BYE_200OK_MESSAGE);
     EndCall(ua);
+
+    ReceiveInMessage();
     
     CHECK_EQUAL(0, UserAgentCountDialogs(ua));
 }

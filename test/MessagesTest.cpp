@@ -430,3 +430,39 @@ TEST(MessageTestGroup, ParseMessageWithContentTest)
     mock().clear();
     DestroyMessage(&localMessage);
 }
+
+TEST(MessageTestGroup, GetInviteRequestMethodTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
+
+    CHECK_EQUAL(SIP_METHOD_INVITE, MessageGetMethod(localMessage));
+    DestroyMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, GetRegisterRequestMethodTest)
+{
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(messageString, localMessage);
+
+    CHECK_EQUAL(SIP_METHOD_REGISTER, MessageGetMethod(localMessage));
+    DestroyMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, GetNonRequestMethodTest)
+{
+    char string[] = "\
+SIP/2.0 180 Ringing\r\n\
+Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
+To:Bob <sip:bob@biloxi.com>;tag=a6c85cf\r\n\
+From:Alice <sip:alice@atlanta.com>;tag=1928301774\r\n\
+Call-ID:a84b4c76e66710\r\n\
+Contact:<sip:bob@192.0.2.4>\r\n\
+CSeq:314159 INVITE\r\n\
+Content-Length:0\r\n";
+    struct Message *localMessage = CreateMessage();
+    ParseMessage(string, localMessage);
+
+    CHECK_EQUAL(SIP_METHOD_NONE, MessageGetMethod(localMessage));
+    DestroyMessage(&localMessage);
+}

@@ -1,4 +1,5 @@
 #include "Bool.h"
+#include "SipMethod.h"
 
 #define MAX_MESSAGE_LENGTH 2048
 
@@ -15,6 +16,7 @@ struct Message *CreateMessage();
 void DestroyMessage(struct Message **message);
 
 enum MESSAGE_TYPE MessageGetType(struct Message *message);
+SIP_METHOD MessageGetMethod(struct Message *message);
 void MessageSetType(struct Message *message, enum MESSAGE_TYPE type);
 struct RequestLine *MessageGetRequestLine(struct Message *message);
 struct StatusLine *MessageGetStatusLine(struct Message *message);

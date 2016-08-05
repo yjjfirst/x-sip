@@ -20,7 +20,7 @@ TimerCallback TimeOutTimerAction;
 TimerCallback WaitAckTimerAction;
 
 struct TransactionUserObserver ServerInviteMockUser = {
-    .onEvent = NULL,
+    NULL
 };
 
 int SendOut100TryingMock(char *message)
