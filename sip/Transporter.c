@@ -18,21 +18,34 @@ int DummyReceive(char *message)
 }
 
 struct MessageTransporter DummyTransporter = {
-    .sender = DummySend,
-    .receiver = DummyReceive,
+    .send = DummySend,
+    .receive = DummyReceive,
 };
 
 int SendOutMessage(char *message)
 {
-    return Transporter->sender(message);
+    return Transporter->send(message);
 }
 
 BOOL ReceiveInMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
-    Transporter->receiver(received);
+    Transporter->receive(received);
     return ReceiveMessageCallback(received);
 }
 
+struct MessageTransporter *SetTransporter(struct MessageTransporter *t)
+{
+    struct MessageTransporter *pre = Transporter;
+
+    Transporter = t;
+    return pre;
+}
+
+struct MessageTransporter *GetTransporter()
+{
+    return Transporter;
+}
+
 struct MessageTransporter *Transporter = &DummyTransporter;
-MessageHandler ReceiveMessageCallback =  MessageReceived;
+MessageHandle ReceiveMessageCallback =  MessageReceived;

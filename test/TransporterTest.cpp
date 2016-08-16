@@ -15,11 +15,6 @@ int MessageHandleMock(char *message)
 
 TEST_GROUP(MessageTransportTestGroup)
 {
-
-    void setup() {
-        UT_PTR_SET(Transporter, &MockTransporter);
-        UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
-    }
     void teardown() {
         mock().clear();
     }
@@ -27,6 +22,9 @@ TEST_GROUP(MessageTransportTestGroup)
 
 TEST(MessageTransportTestGroup, ReceiveMessageTest)
 {
+    UT_PTR_SET(Transporter, &MockTransporter);
+    UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
+
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
 
@@ -39,7 +37,18 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 {
     char message[32] = "Sending test string";
 
+    UT_PTR_SET(Transporter, &MockTransporter);
+    UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "");
     SendOutMessage(message);
     mock().checkExpectations();
+}
+
+TEST(MessageTransportTestGroup, SetTransporterTest)
+{
+    struct MessageTransporter *pre = SetTransporter(&MockTransporter);
+                   
+    POINTERS_EQUAL(&MockTransporter, GetTransporter());
+    POINTERS_EQUAL(&MockTransporter, SetTransporter(pre));   
 }

@@ -1,20 +1,18 @@
 #include "Bool.h"
 
-typedef int (*MessageSender) (char *message);
-typedef int (*MessageReceiver) (char *message);
-typedef int (*MessageHandler) (char *message);
+typedef int (*MessageSend) (char *message);
+typedef int (*MessageReceive) (char *message);
+typedef int (*MessageHandle) (char *message);
 
 struct MessageTransporter {
-    MessageSender sender;
-    MessageReceiver receiver;
+    MessageSend send;
+    MessageReceive receive;
 };
 
-void AddMessageTransporter(char *name ,MessageSender s, MessageReceiver r);
-void RemoveMessageTransporter(char *name);
-BOOL ReceiveMessage(char *message);
 BOOL ReceiveInMessage();
 int SendOutMessage(char *message);
-int SendMessage(char *message);
+struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
+struct MessageTransporter *GetTransporter();
 
-extern MessageHandler ReceiveMessageCallback;
+extern MessageHandle ReceiveMessageCallback;
 extern struct MessageTransporter *Transporter;
