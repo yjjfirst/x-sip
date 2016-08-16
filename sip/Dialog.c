@@ -148,7 +148,7 @@ void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message
     dialog->session = CreateSession();
 }
 
-void DialogHandleClientInviteEvent(struct Transaction *t)
+void HandleClientInviteEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
@@ -158,30 +158,34 @@ void DialogHandleClientInviteEvent(struct Transaction *t)
     }
 }
 
-void DialogHandleClientNonInviteEvent(struct Transaction *t)
+void HandleClientNonInviteEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-
-        if (MessageGetExpires(message) != 0) {
-            UserAgentSetBinded(ua);
-        } else {
-            UserAgentSetUnbinded(ua);
+    if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_REGISTER) {
+        if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
+            if (MessageGetExpires(message) != 0) {
+                UserAgentSetBinded(ua);
+            } else {
+                UserAgentSetUnbinded(ua);
+            }
         }
+    } else if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_BYE) {
+        UserAgentRemoveDialog(ua, DialogGetId(dialog));
     }
+    
 }
 
-void DialogOnTransactionEvent(struct Transaction *t)
+void OnTransactionEvent(struct Transaction *t)
 {
     enum TransactionType type = TransactionGetType(t);
 
     if ( type == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-        DialogHandleClientNonInviteEvent(t);
+        HandleClientNonInviteEvent(t);
     } else if (type == TRANSACTION_TYPE_CLIENT_INVITE){
-        DialogHandleClientInviteEvent(t);
+        HandleClientInviteEvent(t);
     } 
 }
 
@@ -274,7 +278,7 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     }
 
     dialog->ua = ua;
-    dialog->userOberver.onEvent = DialogOnTransactionEvent;
+    dialog->userOberver.onEvent = OnTransactionEvent;
 
     return dialog;
 }

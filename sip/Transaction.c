@@ -157,7 +157,7 @@ int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
     return 0;
 }
 
-extern void DialogOnTransactionEvent(struct Transaction *t);
+extern void OnTransactionEvent(struct Transaction *t);
 
 int NotifyUser(struct Transaction *t)
 {

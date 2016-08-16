@@ -61,7 +61,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     CHECK_EQUAL(1, UserAgentCountDialogs(ua));
 }
 
-IGNORE_TEST(CallManagerTestGroup, ActiveHangupTest)
+TEST(CallManagerTestGroup, ActiveHangupTest)
 {
     char dest[] = "88002";
     char account = 0;
