@@ -7,7 +7,7 @@
 #include "TransactionManager.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "StatusLine.h"
 #include "RequestLine.h"
 #include "Header.h"

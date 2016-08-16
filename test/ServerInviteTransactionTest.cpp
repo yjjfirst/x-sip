@@ -7,7 +7,7 @@ extern "C" {
 #include <stdio.h>
 #include <assert.h>
 #include "Messages.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "TransactionManager.h"
 #include "Transaction.h"
 #include "UserAgent.h"

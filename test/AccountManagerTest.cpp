@@ -9,7 +9,7 @@ extern "C" {
 #include "Accounts.h"
 #include "AccountManager.h"
 #include "Messages.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "UserAgentManager.h"
 extern void ClearTransactionManager();
 }

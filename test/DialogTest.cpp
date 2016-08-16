@@ -14,7 +14,7 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "TransactionManager.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "RequestLine.h"
 #include "URI.h"
 #include "Header.h"

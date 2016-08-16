@@ -12,7 +12,7 @@ extern "C" {
 #include "SipMethod.h"
 #include "RequestLine.h"
 #include "MessageBuilder.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 }
 
 TimerCallback TimerJAction;

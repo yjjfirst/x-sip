@@ -11,7 +11,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "AccountManager.h"
 #include "Call.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "TransactionManager.h"
 #include "Messages.h"
 }

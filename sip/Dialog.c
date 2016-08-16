@@ -10,7 +10,7 @@
 #include "Messages.h"
 #include "Transaction.h"
 #include "MessageBuilder.h"
-#include "MessageTransport.h"
+#include "Transporter.h"
 #include "Header.h"
 #include "URI.h"
 #include "ContactHeader.h"

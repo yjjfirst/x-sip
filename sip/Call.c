@@ -25,3 +25,4 @@ void EndCall(struct UserAgent *ua)
 
     AddClientNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
 }
+

@@ -4,7 +4,7 @@
 
 extern "C" {
 #include <string.h>
-#include "MessageTransport.h"
+#include "Transporter.h"
 }
 
 int MessageHandleMock(char *message)
