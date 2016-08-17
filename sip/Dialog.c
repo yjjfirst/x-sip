@@ -158,22 +158,36 @@ void HandleClientInviteEvent(struct Transaction *t)
     }
 }
 
-void HandleClientNonInviteEvent(struct Transaction *t)
+void HandleRegisterEvent (struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
+
+    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {    
+        if (MessageGetExpires(message) != 0) {
+            UserAgentSetBinded(ua);
+        } else {
+            UserAgentSetUnbinded(ua);
+        }
+    }
+}
+
+void HandleByeEvent(struct Transaction *t)
+{
+    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+
+    UserAgentRemoveDialog(ua, DialogGetId(dialog));
+}
+
+void HandleClientNonInviteEvent(struct Transaction *t)
+{
     
     if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_REGISTER) {
-        if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-            if (MessageGetExpires(message) != 0) {
-                UserAgentSetBinded(ua);
-            } else {
-                UserAgentSetUnbinded(ua);
-            }
-        }
+        HandleRegisterEvent(t);
     } else if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_BYE) {
-        UserAgentRemoveDialog(ua, DialogGetId(dialog));
+        HandleByeEvent(t);
     }
     
 }
