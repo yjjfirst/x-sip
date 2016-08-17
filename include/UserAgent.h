@@ -27,5 +27,8 @@ struct Dialog *UserAgentGetDialog(struct UserAgent *ua, int pos);
 void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog);
 void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id);
 
+void UserAgentMakeCall(struct UserAgent *ua);
+void UserAgentEndCall(struct UserAgent *ua);
+
 struct UserAgent *CreateUserAgent(int account);
 void DestroyUserAgent(struct UserAgent **ua);

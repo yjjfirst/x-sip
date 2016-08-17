@@ -110,6 +110,18 @@ int UserAgentCountDialogs(struct UserAgent *ua)
     return CountDialogs(ua->dialogs);
 }
 
+void UserAgentMakeCall(struct UserAgent *ua)
+{
+    struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    DialogInvite(dialog);
+}
+
+void UserAgentEndCall(struct UserAgent *ua)
+{
+    struct Dialog *dialog = UserAgentGetDialog(ua, 0);
+    DialogBye(dialog);
+}
+
 struct UserAgent *CreateUserAgent(int account)
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));

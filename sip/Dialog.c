@@ -267,6 +267,18 @@ void DialogTerminate(struct Dialog *dialog)
     dialog->state = DIALOG_STATE_TERMINATED;
 }
 
+void DialogInvite(struct Dialog *dialog)
+{
+    struct Message *invite = BuildInviteMessage(dialog);
+    AddClientInviteTransaction(invite, (struct TransactionUserObserver *)dialog);
+}
+
+void DialogBye(struct Dialog *dialog)
+{
+    struct Message *bye = BuildByeMessage(dialog);
+    AddClientNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
+}
+
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
 {
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
