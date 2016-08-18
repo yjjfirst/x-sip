@@ -15,6 +15,7 @@
 #include "URI.h"
 #include "ContactHeader.h"
 #include "Session.h"
+#include "CallEvents.h"
 
 struct Dialog {
     struct TransactionUserObserver userOberver;  //must be the first field in the struct.
@@ -118,13 +119,13 @@ void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
     dialog->state = state;
 }
 
-void DialogExtractDialogIdFromMessage(struct Dialog *dialog, struct Message *message)
+void ExtractDialogIdFromMessage(struct Dialog *dialog, struct Message *message)
 {
     struct DialogId *dialogid = DialogGetId(dialog);
     DialogIdExtractFromMessage(dialogid, message);                    
 }
 
-void DialogExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message *message)
+void ExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message *message)
 {
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message);
     struct URI *uri = ContactHeaderGetUri(c);
@@ -140,10 +141,13 @@ void DialogAck(struct Dialog *dialog)
 
 void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
 {
-    DialogExtractDialogIdFromMessage(dialog, message);
+    ExtractDialogIdFromMessage(dialog, message);
     DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
-    DialogExtractRemoteTargetFromMessage(dialog, message);
+    ExtractRemoteTargetFromMessage(dialog, message);
     DialogAck(dialog);
+
+    if (NotifyClient != NULL)
+        NotifyClient(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
 
     dialog->session = CreateSession();
 }
@@ -240,7 +244,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, stru
    
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
-    DialogExtractRemoteTargetFromMessage(dialog, message);
+    ExtractRemoteTargetFromMessage(dialog, message);
     t = AddServerInviteTransaction(message, (struct TransactionUserObserver *)dialog);;
     dialog->transaction = t;
     

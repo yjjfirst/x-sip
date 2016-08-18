@@ -6,7 +6,9 @@
 
 extern "C" {
 #include <stdio.h>
-
+#include <assert.h>
+    
+#include "CallEvents.h"
 #include "UserAgentManager.h"
 #include "UserAgent.h"
 #include "AccountManager.h"
@@ -34,6 +36,12 @@ TEST_GROUP(CallManagerTestGroup)
         mock().clear();
     }
 };
+
+void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
+{
+    mock().actualCall("NotifyClient").withParameter("event", event)
+        .withParameter("UserAgent", ua);
+}
 
 TEST(CallManagerTestGroup, CallOutSendInviteTest)
 {
@@ -80,4 +88,23 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
     ReceiveInMessage();
     
     CHECK_EQUAL(0, UserAgentCountDialogs(ua));
+}
+
+TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
+{
+    char dest[] = "88002";
+    char account = 0;
+
+    UT_PTR_SET(NotifyClient, NotifyClientMock);
+    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
+    
+    struct UserAgent *ua = CallOut(account, dest);
+
+    mock().expectOneCall("NotifyClient").withParameter("event", CALL_ESTABLISHED)
+        .withParameter("UserAgent", ua);
+
+    ReceiveInMessage();
 }
