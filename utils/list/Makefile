@@ -59,7 +59,7 @@ OBJ		=	$(SRCS:.c=.o)
 
 CC		?=	gcc
 
-feq ($(strip $(TEST)), test)
+ifeq ($(strip $(TEST)), test)
 CFLAGS		+=	-W -Wall -ansi -pedantic -ggdb -include ../../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros.h
 else
 CFLAGS		+=	-W -Wall -ansi -pedantic -ggdb -include stdlib.h 
