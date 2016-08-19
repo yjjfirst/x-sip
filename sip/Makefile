@@ -1,8 +1,10 @@
-CC=gcc
-CXX=g++
-
 CPPFLAGS += -I../include -I.. -I../include/utils  -Wall -g
+
+ifeq ($(strip $(TEST)), test)
 CPPFLAGS += -include ../cpputest/include/CppUTest/MemoryLeakDetectorMallocMacros.h
+else
+CPPFLAGS += -include stdlib.h
+endif
 
 .PYONY: all clean
 

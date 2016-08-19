@@ -1,6 +1,3 @@
-CC=gcc
-CXX=g++
-
 CPPUTEST_HOME=../cpputest
 CPPFLAGS += -I./ -I../ -I$(CPPUTEST_HOME)/include -I../include -I../include/utils -Wall -g
 LD_LIBRARIES = -L$(CPPUTEST_HOME)/lib -lCppUTest -lCppUTestExt
