@@ -65,7 +65,7 @@ Content-Length: 0\r\n"
 
 #define INVITE_180RINGING_MESSAGE (char *)"\
 SIP/2.0 180 Ringing\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1441229791;received=192.168.10.1;rport=5061\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
 From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
 To: <sip:88002@192.168.10.62>;tag=as5cde26a4\r\n\
 Call-ID: 778885328\r\n\

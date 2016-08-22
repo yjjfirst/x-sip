@@ -6,6 +6,7 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "Messages.h"
 #include "MessageBuilder.h"
 #include "UserAgent.h"
@@ -49,7 +50,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     void setup(){
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
-
+        
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
         AccountInitMock();
         ua = CreateUserAgent(0);
@@ -112,7 +113,7 @@ static struct Session *CreateSessionMock()
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
 {
     UT_PTR_SET(CreateSession, CreateSessionMock);
-
+    
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK);
 
@@ -135,6 +136,22 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
     ReceiveInMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+}
+
+TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Without100ReceivedTest)
+{
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    ReceiveInMessage();    
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+}
+
+IGNORE_TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
+{
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    
+    ReceiveInMessage();
+    ReceiveInMessage();    
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateTimerATest)

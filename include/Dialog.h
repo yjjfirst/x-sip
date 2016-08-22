@@ -46,3 +46,5 @@ struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, s
 void DialogSend200OKResponse(struct Dialog *dialog);
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message);
+
+extern void (*OnTransactionEvent)(struct Transaction *t);

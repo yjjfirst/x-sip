@@ -2,6 +2,7 @@
 #include <assert.h>
 
 #include "Bool.h"
+#include "Dialog.h"
 #include "Transaction.h"
 #include "TransactionId.h"
 #include "TransactionManager.h"
@@ -157,12 +158,10 @@ int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
     return 0;
 }
 
-extern void OnTransactionEvent(struct Transaction *t);
-
 int NotifyUser(struct Transaction *t)
 {
     if (t && t->user) {
-        t->user->onEvent(t);
+        OnTransactionEvent(t);
     }
     return 0;
 }
@@ -465,6 +464,7 @@ struct FsmState ClientInviteCallingState = {
     {
         {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{NotifyUser,}},
         {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -482,6 +482,7 @@ struct FsmState ClientInviteProceedingState = {
         {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_100TRYING_RECEIVED, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_MAX},
     }
 };

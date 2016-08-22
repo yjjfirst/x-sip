@@ -121,7 +121,9 @@ BOOL TmHandleReponseMessage(struct Message *message)
         else if (statusCode == 100) {
             RunFsm(t, TRANSACTION_EVENT_100TRYING_RECEIVED);
         }
-        
+        else if (statusCode == 180) {
+            RunFsm(t, TRANSACTION_EVENT_180RINGING_RECEIVED);
+        }
         return TRUE;
     }
 

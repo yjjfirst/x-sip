@@ -192,11 +192,11 @@ void HandleClientNonInviteEvent(struct Transaction *t)
         HandleRegisterEvent(t);
     } else if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_BYE) {
         HandleByeEvent(t);
-    }
+    } 
     
 }
 
-void OnTransactionEvent(struct Transaction *t)
+void OnTransactionEventImpl(struct Transaction *t)
 {
     enum TransactionType type = TransactionGetType(t);
 
@@ -206,6 +206,8 @@ void OnTransactionEvent(struct Transaction *t)
         HandleClientInviteEvent(t);
     } 
 }
+
+void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;
 
 struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
