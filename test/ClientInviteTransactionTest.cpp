@@ -41,6 +41,11 @@ static struct Timer *AddTimerMock(void *p, int interval, TimerCallback action)
     return NULL;
 }
 
+void OnEventMock(struct Transaction *t)
+{    
+    mock().actualCall("NotifyUser");
+}
+
 TEST_GROUP(ClientInviteTransactionTestGroup)
 {
     struct UserAgent *ua;
@@ -61,12 +66,12 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     }
 
     void teardown() {
-        ClearAccountManager();
-        mock().checkExpectations();
-        mock().clear();
-
         DestroyUserAgent(&ua);
         ClearTransactionManager();
+        ClearAccountManager();
+        
+        mock().checkExpectations();
+        mock().clear();
     }
     
     void ExpectedNewClientTransaction(SIP_METHOD method)
@@ -145,10 +150,13 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Without100ReceivedT
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
-IGNORE_TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
+TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
 {
+    UT_PTR_SET(OnTransactionEvent, OnEventMock);
+
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall("NotifyUser");
     
     ReceiveInMessage();
     ReceiveInMessage();    
