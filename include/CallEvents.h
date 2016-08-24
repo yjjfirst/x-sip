@@ -1,5 +1,6 @@
 enum CALL_EVENT {
     CALL_ESTABLISHED,
+    CALL_REMOTE_RINGING,
 };
 
 struct UserAgent;

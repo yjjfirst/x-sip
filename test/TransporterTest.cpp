@@ -52,3 +52,20 @@ TEST(MessageTransportTestGroup, SetTransporterTest)
     POINTERS_EQUAL(&MockTransporter, GetTransporter());
     POINTERS_EQUAL(&MockTransporter, SetTransporter(pre));   
 }
+
+struct MessageTransporter NullTransporter = {
+    NULL,
+    NULL,
+};
+
+TEST(MessageTransportTestGroup, NullSendTest)
+{
+    char message[32] = "Sending test string";
+
+    UT_PTR_SET(Transporter, &NullTransporter);
+    
+    CHECK_EQUAL(-1, SendOutMessage(message));
+    CHECK_EQUAL(FALSE, ReceiveInMessage());
+
+    mock().checkExpectations();
+}

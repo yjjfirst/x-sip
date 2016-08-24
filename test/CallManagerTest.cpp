@@ -108,3 +108,22 @@ TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
 
     ReceiveInMessage();
 }
+
+
+TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
+{
+    char dest[] = "88002";
+    char account = 0;
+
+    UT_PTR_SET(NotifyClient, NotifyClientMock);
+    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    
+    struct UserAgent *ua = CallOut(account, dest);
+
+    mock().expectOneCall("NotifyClient").withParameter("event", CALL_REMOTE_RINGING)
+        .withParameter("UserAgent", ua);
+
+    ReceiveInMessage();
+}

@@ -5,7 +5,6 @@
 #include "DialogId.h"
 #include "UserAgent.h"
 #include "Accounts.h"
-#include "TransactionNotifiers.h"
 #include "TransactionManager.h"
 #include "Messages.h"
 #include "Transaction.h"
@@ -18,7 +17,6 @@
 #include "CallEvents.h"
 
 struct Dialog {
-    struct TransactionUserObserver userOberver;  //must be the first field in the struct.
     struct Transaction *transaction;
     struct DialogId *id;
     struct UserAgent *ua;
@@ -139,11 +137,12 @@ void DialogAck(struct Dialog *dialog)
     DestroyMessage(&ack);
 }
 
-void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
+void ClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
 {
     ExtractDialogIdFromMessage(dialog, message);
-    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     ExtractRemoteTargetFromMessage(dialog, message);
+
+    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
     DialogAck(dialog);
 
     if (NotifyClient != NULL)
@@ -152,13 +151,22 @@ void DialogClientInviteOkReceived(struct Dialog *dialog, struct Message *message
     dialog->session = CreateSession();
 }
 
+void ClientInviteRingingReceived(struct Dialog *dialog, struct Message *message)
+{
+    if (NotifyClient != NULL)
+        NotifyClient(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
+}
+
 void HandleClientInviteEvent(struct Transaction *t)
 {
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+    enum TransactionEvent event = TransactionGetCurrentEvent(t);
     
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {
-        DialogClientInviteOkReceived(dialog, message);
+    if (event == TRANSACTION_EVENT_200OK_RECEIVED) {
+        ClientInviteOkReceived(dialog, message);
+    } else if (event == TRANSACTION_EVENT_180RINGING_RECEIVED) {
+        ClientInviteRingingReceived(dialog, message);
     }
 }
 
@@ -310,7 +318,6 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     }
 
     dialog->ua = ua;
-    dialog->userOberver.onEvent = OnTransactionEvent;
 
     return dialog;
 }

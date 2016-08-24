@@ -24,12 +24,17 @@ struct MessageTransporter DummyTransporter = {
 
 int SendOutMessage(char *message)
 {
+    if (Transporter->send == NULL) return -1;
+    
     return Transporter->send(message);
 }
 
 BOOL ReceiveInMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
+
+    if (Transporter->receive == NULL) return FALSE;
+    
     Transporter->receive(received);
     return ReceiveMessageCallback(received);
 }

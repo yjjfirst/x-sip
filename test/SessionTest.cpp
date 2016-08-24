@@ -68,7 +68,7 @@ TEST(SessionTestGroup, UACCreateSessionTest)
     mock().expectOneCall("CreateSession");
 
     DialogAddClientInviteTransaction(dialog, invite);
-    DialogClientInviteOkReceived(dialog, ok);
+    ClientInviteOkReceived(dialog, ok);
     
     DestroyMessage(&ok);
     ClearTransactionManager();
@@ -109,7 +109,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     DialogAddClientInviteTransaction(dialog, invite);
 
     mock().expectOneCall("CreateSession");
-    DialogClientInviteOkReceived(dialog, ok);
+    ClientInviteOkReceived(dialog, ok);
 
     mock().expectOneCall("DestroySession");
     struct Message *bye = BuildByeMessage(dialog);
