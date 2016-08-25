@@ -6,21 +6,7 @@
 #include "Transporter.h"
 #include "TransactionManager.h"
 #include "Messages.h"
-
-int DummySend(char *message)
-{
-    return 0;
-}
-
-int DummyReceive(char *message)
-{
-    return 0;
-}
-
-struct MessageTransporter DummyTransporter = {
-    .send = DummySend,
-    .receive = DummyReceive,
-};
+#include "TransporterUdp.h"
 
 int SendOutMessage(char *message)
 {
@@ -52,5 +38,5 @@ struct MessageTransporter *GetTransporter()
     return Transporter;
 }
 
-struct MessageTransporter *Transporter = &DummyTransporter;
+struct MessageTransporter *Transporter = &UdpTransporter;
 MessageHandle ReceiveMessageCallback =  MessageReceived;

@@ -30,6 +30,8 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     struct Transaction *transaction;
     void setup() 
     {
+        UT_PTR_SET(Transporter, &DummyTransporter);
+
         request = CreateMessage();
         ParseMessage(BYE_MESSAGE, request);
         transaction = AddServerNonInviteTransaction(request, NULL);

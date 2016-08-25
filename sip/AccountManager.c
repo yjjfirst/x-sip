@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include "AccountManager.h"
 #include "Accounts.h"
 #include "UserAgentManager.h"

@@ -45,3 +45,18 @@ struct MessageTransporter MockTransporter = {
     SendOutMessageMock,
     ReceiveInMessageMock,
 };
+
+int DummySend(char *message)
+{
+    return 0;
+}
+
+int DummyReceive(char *message)
+{
+    return 0;
+}
+
+struct MessageTransporter DummyTransporter = {
+    .send = DummySend,
+    .receive = DummyReceive,
+};

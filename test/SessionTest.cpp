@@ -1,5 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "TransportMock.h"
 
 extern "C" {
 #include "Session.h"
@@ -10,6 +11,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "TransactionManager.h"
 #include "AccountManager.h"
+#include "Transporter.h"
 }
 
 TEST_GROUP(SessionTestGroup)
@@ -20,6 +22,8 @@ TEST_GROUP(SessionTestGroup)
 
     void setup() 
     {
+        UT_PTR_SET(Transporter, &DummyTransporter);
+
         AccountInit();
         ua = CreateUserAgent(0);    
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
