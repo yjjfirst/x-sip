@@ -169,8 +169,8 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
 {
     struct Account *account = GetAccount(0);
 
-    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(ADD_BINDING_OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
 
     AccountAddBinding(0);    
     ReceiveInMessage();
@@ -189,13 +189,28 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 
     AccountSetBinded(account);
     
-    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "REGISTER");
-    mock().expectOneCall("ReceiveInMessageMock").andReturnValue(REMOVE_BINDING_OK_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
 
     AccountRemoveBinding(0);    
     ReceiveInMessage();
 
     CHECK_EQUAL(FALSE, AccountBinded(account));
+
+    ClearUserAgentManager();
+    ClearTransactionManager();
+
+    mock().checkExpectations();
+    mock().clear();
+}
+
+TEST(AccountManagerTestGroup, BindAllAccountsTest)
+{
+    ClearAccountManager();
+    AccountInit();
+
+    mock().expectNCalls(TotalAccount(), SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    BindAllAccounts();
 
     ClearUserAgentManager();
     ClearTransactionManager();

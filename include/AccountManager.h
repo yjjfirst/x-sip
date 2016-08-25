@@ -7,5 +7,6 @@ void ClearAccountManager();
 int TotalAccount();
 void AccountAddBinding(int account);
 void AccountRemoveBinding(int account);
+void BindAllAccounts();
 
 extern void (*AccountInit)();

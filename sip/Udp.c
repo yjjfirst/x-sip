@@ -8,17 +8,22 @@
 #include <stdlib.h>
 
 #include "Transporter.h"
+#include "TransporterUdp.h"
 
 #define MAXLINE 80
 #define SERV_PORT 5060
 
-static int sockfd;
+static int sockfd = -1;
 
 int UdpSendMessage(char *message)
 {
     struct sockaddr_in dest_addr;
     int slen = sizeof(dest_addr);
-    
+
+    if (sockfd == -1) {
+        UdpTransporterInit();
+    }
+    printf("asdfasdfas\n");
     dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(5060);
     inet_aton("192.168.10.62", &dest_addr.sin_addr);

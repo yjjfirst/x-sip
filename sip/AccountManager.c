@@ -80,6 +80,15 @@ void AccountRemoveBinding(int account)
     AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 
+void BindAllAccounts()
+{
+    int i = 0;
+
+    for (; i < TotalAccount(); i++) {
+        AccountAddBinding(i);
+    }
+}
+
 void AddFirstAccount()
 {
     struct Account *first;
