@@ -1,5 +1,4 @@
 #include "CppUTest/TestHarness.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include "UserAgent.h"
@@ -11,7 +10,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
 {
     void setup() 
     {
-        AccountInitMock();
+        AccountInit();
     }
     
     void teardown()

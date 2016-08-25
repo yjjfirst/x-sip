@@ -79,8 +79,46 @@ void AccountRemoveBinding(int account)
     AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
 }
 
+void AddFirstAccount()
+{
+    struct Account *first;
+    first = CreateAccount(
+                          (char *)"88001", 
+                          (char *)"88001", 
+                          (char *)"192.168.10.62", 
+                          (char *)"192.168.10.72");
+
+    AddAccount(first);
+}
+
+int AddSecondAccount()
+{
+    struct Account *second;
+    second = CreateAccount(
+                           (char *)"88002", 
+                           (char *)"88002", 
+                           (char *)"192.168.10.62", 
+                           (char *)"192.168.10.72");
+    return AddAccount(second);
+}
+
+int AddThirdAccount()
+{
+    struct Account *third;
+    third = CreateAccount(
+                          (char *)"88003", 
+                          (char *)"88003", 
+                          (char *)"192.168.10.62", 
+                          (char *)"192.168.10.72");
+
+    return AddAccount(third);
+}
+
 void AccountInitImpl()
 {
+    AddFirstAccount();
+    AddSecondAccount();
+    AddThirdAccount();
 }
 
 void (*AccountInit)() = AccountInitImpl;

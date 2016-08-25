@@ -1,7 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TransportMock.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -57,7 +56,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
         
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
-        AccountInitMock();
+        AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog); 

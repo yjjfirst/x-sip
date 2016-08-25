@@ -1,7 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TransportMock.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -45,7 +44,7 @@ TEST_GROUP(UserAgentTestGroup)
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
-        AccountInitMock();
+        AccountInit();
     }
 
     void teardown()

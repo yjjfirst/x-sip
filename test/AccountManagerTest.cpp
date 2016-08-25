@@ -1,6 +1,5 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "AccountMock.h"
 #include "TransportMock.h"
 #include "TestingMessages.h"
 
@@ -22,7 +21,6 @@ void AddFirstAccount()
                           (char *)"88001", 
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
-
     AddAccount(first);
 }
 
@@ -47,13 +45,6 @@ int AddThirdAccount()
                           (char *)"192.168.10.72");
 
     return AddAccount(third);
-}
-
-void AccountInitMock()
-{
-    AddFirstAccount();
-    AddSecondAccount();
-    AddThirdAccount();
 }
 
 TEST_GROUP(AccountManagerTestGroup)
@@ -131,8 +122,6 @@ TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
 
 TEST(AccountManagerTestGroup, InitTest)
 {
-    UT_PTR_SET(AccountInit, AccountInitMock);
-
     ClearAccountManager();
 
     AccountInit();
@@ -157,7 +146,6 @@ TEST(AccountManagerTestGroup, InitTest)
 
 TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 {
-    UT_PTR_SET(AccountInit, AccountInitMock);
     ClearAccountManager();
 
     AccountInit();

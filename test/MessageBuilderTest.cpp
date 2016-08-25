@@ -1,5 +1,4 @@
 #include "CppUTest/TestHarness.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -35,7 +34,7 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct Message *inviteMessage;
     void setup()
     {
-        AccountInitMock();
+        AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
 

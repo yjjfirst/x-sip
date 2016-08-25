@@ -1,6 +1,5 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include "Session.h"
@@ -21,7 +20,7 @@ TEST_GROUP(SessionTestGroup)
 
     void setup() 
     {
-        AccountInitMock();
+        AccountInit();
         ua = CreateUserAgent(0);    
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, (char *)"88002");

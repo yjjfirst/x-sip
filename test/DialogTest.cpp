@@ -2,7 +2,6 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -40,7 +39,7 @@ TEST_GROUP(DialogTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(CreateSession, CreateSessionMock);
 
-        AccountInitMock();
+        AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);

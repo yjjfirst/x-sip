@@ -1,6 +1,5 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "AccountMock.h"
 #include "TransportMock.h"
 #include "TestingMessages.h"
 
@@ -23,7 +22,7 @@ TEST_GROUP(CallManagerTestGroup)
     void setup() 
     {
         UT_PTR_SET(Transporter, &MockTransporter);
-        AccountInitMock();
+        AccountInit();
     }
     
     void teardown()

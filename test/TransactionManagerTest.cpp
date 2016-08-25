@@ -2,7 +2,6 @@
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
 #include "TransportMock.h"
-#include "AccountMock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -28,7 +27,7 @@ TEST_GROUP(TransactionManager)
     void setup() {
         UT_PTR_SET(Transporter, &MockTransporter);
 
-        AccountInitMock();
+        AccountInit();
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         ua = CreateUserAgent(0);
