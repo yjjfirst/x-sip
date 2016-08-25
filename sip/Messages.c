@@ -299,8 +299,14 @@ void Message2String(char *result, struct Message *message)
     } else {
         p = StatusLine2String(p, MessageGetStatusLine(message));
     } 
+
+    *p++ = '\r';
+    *p++ = '\n';
     
-    RawHeaders2String(p, message->headers);
+    p = RawHeaders2String(p, message->headers);
+    
+    *p++ = '\r';
+    *p++ = '\n';
 
     return ;
 }

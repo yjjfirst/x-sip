@@ -36,7 +36,7 @@ From:\"Werner Heisenberg\"<sip:werner.heisenberg@munich.de>;tag=3431\r\n\
 Call-ID:23@200.201.202.203\r\n\
 CSeq:1 REGISTER\r\n\
 Contact:<sip:werner.heisenberg@200.201.202.203>\r\n\
-Content-Length:0\r\n");
+Content-Length:0\r\n\r\n");
     }
     
     void UriCheck(struct ContactHeader *header)
@@ -195,6 +195,25 @@ TEST(MessageTestGroup, Message2StringTest)
     DestroyMessage(&message);
 }
 
+TEST(MessageTestGroup, Message2StringEndWithCRLFCRLF)
+{
+    struct Message *message = CreateMessage();
+    char result[1024] = {0};
+    int last;
+
+    ParseMessage(messageString, message);
+    Message2String(result, message);
+    last = strlen(result) - 1;
+    
+    CHECK_EQUAL('\r', result[last - 3]);
+    CHECK_EQUAL('\n', result[last - 2]);
+    CHECK_EQUAL('\r', result[last - 1]);
+    CHECK_EQUAL('\n', result[last]);
+    
+    DestroyMessage(&message);
+    
+}
+
 TEST(MessageTestGroup, ExtractHeaderNameTest)
 {
     char header[] = "Via: SIP/2.0/UDP 200.201.202.203:5060;branch=z9hG4bKus19";
@@ -249,7 +268,7 @@ From:\"Alice\"<sip:alice@atlanta.com>;tag=1928301774\r\n\
 Call-ID:a84b4c76e66710\r\n\
 Contact:<sip:bob@192.0.2.4>\r\n\
 CSeq:314159 INVITE\r\n\
-Content-Length:0\r\n";
+Content-Length:0\r\n\r\n";
     char result[1024] = {0};
 
     ParseMessage(string, message);

@@ -168,15 +168,12 @@ char *RawHeaders2String(char *result, struct Headers *headers)
     struct Header *header = NULL;
     char *p = result;
 
-    *p++ = '\r';
-    *p++ = '\n';
-
     for (i = 0 ; i < length; i++) {        
         header = (struct Header *) get_data_at(headers->headerList, i);
         p = Header2String(p, header);
         *p ++ = '\r';
         *p ++ = '\n';
     }
-
+    
     return p;
 }
