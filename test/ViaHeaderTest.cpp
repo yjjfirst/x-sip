@@ -1,7 +1,9 @@
 #include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
 
 extern "C" {
 #include <string.h>
+#include <stdio.h>
 #include "Parser.h"
 #include "ViaHeader.h"
 #include "URI.h"
@@ -233,3 +235,17 @@ TEST(ViaHeaderTestGroup, ViaHeaderDupTest)
     DestroyViaHeader((struct Header *)dest);
 }
 
+TEST(ViaHeaderTestGroup, GenerateBranchTest)
+{
+    char branch[32];
+
+    GenerateBranch(branch);
+
+    STRNCMP_EQUAL(VIA_BRANCH_COOKIE, branch, VIA_BRANCH_COOKIE_LENGTH);
+    
+    for (int i = VIA_BRANCH_COOKIE_LENGTH; i < VIA_BRANCH_LENGTH; i++) {        
+        CHECK_TRUE( isdigit(branch[i]));
+    }
+
+    CHECK_EQUAL(VIA_BRANCH_LENGTH, strlen(branch));
+}

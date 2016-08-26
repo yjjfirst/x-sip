@@ -3,6 +3,10 @@
 #define VIA_BRANCH_PARAMETER_NAME  (char *)"branch"
 #define VIA_SENDBY_PARAMETER_NAME  (char *)"send-by"
 
+#define VIA_BRANCH_LENGTH 17
+#define VIA_BRANCH_COOKIE_LENGTH 7
+#define VIA_BRANCH_COOKIE "z9hG4bK"
+
 struct ViaHeader;
 struct Header;
 struct URI;

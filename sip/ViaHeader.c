@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <time.h>
 
 #include "ViaHeader.h"
 #include "Header.h"
@@ -148,7 +149,16 @@ char *ViaHeader2String(char *result, struct Header *via)
 
 void GenerateBranchImpl(char *branch)
 {
-    
+    assert(branch != NULL);
+
+    strcpy(branch, VIA_BRANCH_COOKIE);
+
+    srand(time(NULL));
+    for (int i = VIA_BRANCH_COOKIE_LENGTH; i < VIA_BRANCH_LENGTH; i++) {
+        branch[i] = 48 + rand() % 10 ;
+    }
+
+    branch[VIA_BRANCH_LENGTH] = 0; 
 }
 
 void (*GenerateBranch)(char *branch) = GenerateBranchImpl;
