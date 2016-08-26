@@ -225,7 +225,7 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
 
-    t = AddClientInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    t = AddClientInviteTransaction(message, (struct TransactionUser *)dialog);
     dialog->transaction = t;
     dialog->localSeqNumber = MessageGetCSeqNumber(message);
 
@@ -234,14 +234,14 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
 
 struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
-    return AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    return AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
 }
 
 struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, struct Message *message)
 {
     struct Transaction *t;
 
-    t = AddServerNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    t = AddServerNonInviteTransaction(message, (struct TransactionUser *)dialog);
     dialog->transaction = t;
     
     return t;
@@ -255,7 +255,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, stru
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
     ExtractRemoteTargetFromMessage(dialog, message);
-    t = AddServerInviteTransaction(message, (struct TransactionUserObserver *)dialog);;
+    t = AddServerInviteTransaction(message, (struct TransactionUser *)dialog);;
     dialog->transaction = t;
     
     return t;
@@ -264,7 +264,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, stru
 void DialogSend200OKResponse(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
-    struct Message *message = Build200OKMessage(TransactionGetRequest(dialog->transaction));
+    struct Message *message = Build200OkMessage(TransactionGetRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));     
     ResponseWith200OK(dialog->transaction);
@@ -298,13 +298,13 @@ void DialogTerminate(struct Dialog *dialog)
 void DialogInvite(struct Dialog *dialog)
 {
     struct Message *invite = BuildInviteMessage(dialog);
-    AddClientInviteTransaction(invite, (struct TransactionUserObserver *)dialog);
+    AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
 }
 
 void DialogBye(struct Dialog *dialog)
 {
     struct Message *bye = BuildByeMessage(dialog);
-    AddClientNonInviteTransaction(bye, (struct TransactionUserObserver *)dialog);
+    AddClientNonInviteTransaction(bye, (struct TransactionUser *)dialog);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

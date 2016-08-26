@@ -4,6 +4,6 @@ struct TransactionManagerObserver  {
     void (*die)(struct Transaction *t);
 };
 
-struct TransactionUserObserver {
+struct TransactionUser {
     void (*onEvent) (struct Transaction *t);
 };

@@ -4,7 +4,7 @@
 struct Message;
 struct Transaction;
 struct TransactionManagerObserver;
-struct TransactionUserObserver;
+struct TransactionUser;
 
 typedef int (*TransactionAction)(struct Transaction *t);
 
@@ -44,10 +44,10 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
-struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
-struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
-struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUserObserver *user);
+struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUser *user);
+struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUser *user);
+struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUser *user);
+struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUser *user);
 void DestroyTransaction(struct Transaction **t);
 
 int TransactionSendMessage(struct Message *message);
@@ -69,7 +69,7 @@ BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
 void TransactionSetObserver(struct Transaction *t, struct TransactionManagerObserver *notifiers);
 enum TransactionState TransactionGetState(struct Transaction *t);
-struct TransactionUserObserver *TransactionGetUser(struct Transaction *t);
+struct TransactionUser *TransactionGetUser(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);
 
 BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);

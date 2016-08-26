@@ -204,7 +204,7 @@ BOOL ValidatedNonInviteMethod(struct Message *message)
         &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
 }
 
-struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
+struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
 
@@ -212,7 +212,7 @@ struct Transaction *AddClientNonInviteTransaction(struct Message *message, struc
     return t;
 }
 
-struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
+struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateClientInviteTransaction(message, user);
 
@@ -221,7 +221,7 @@ struct Transaction *AddClientInviteTransaction(struct Message *message, struct T
 }
 
 
-struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
+struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateServerInviteTransaction(message, user);
 
@@ -229,7 +229,7 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
     return t;
 }
 
-struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUserObserver *user)
+struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUser *user)
 {
     struct Transaction *t = NULL;
 

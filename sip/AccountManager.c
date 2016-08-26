@@ -68,7 +68,7 @@ void AccountAddBinding(int account)
     struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
     struct Message *message = BuildAddBindingMessage(dialog);
 
-    AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
 }
 
 void AccountRemoveBinding(int account)
@@ -77,7 +77,7 @@ void AccountRemoveBinding(int account)
     struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
     struct Message *message = BuildRemoveBindingMessage(dialog);
 
-    AddClientNonInviteTransaction(message, (struct TransactionUserObserver *)dialog);
+    AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
 }
 
 void BindAllAccounts()

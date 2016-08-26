@@ -45,7 +45,7 @@ TEST_GROUP(DialogTestGroup)
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);
-        ok = Build200OKMessage(invite);
+        ok = Build200OkMessage(invite);
         
     }
 
@@ -92,7 +92,7 @@ TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
    
-    AddClientInviteTransaction(invite, (struct TransactionUserObserver *)dialog);
+    AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
     UT_PTR_SET(Transporter, &MockTransporterForAck);
 
     ReceiveInMessage();
@@ -110,8 +110,9 @@ TEST(DialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
     struct Message *originInvite = BuildInviteMessage(dialog);
-
-    Message2String(okString, ok);
+    struct Message *localOk = Build200OkMessage(originInvite);
+    
+    Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
@@ -122,17 +123,18 @@ TEST(DialogTestGroup, UACDialogIdTest)
     
     STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetRemoteTag(DialogGetId(dialog)));    
+    STRCMP_EQUAL(MessageGetToTag(localOk), DialogIdGetRemoteTag(DialogGetId(dialog)));    
 
     DestroyMessage(&originInvite);
+    DestroyMessage(&localOk);
 }
 
 TEST(DialogTestGroup, UACDialogIdDelegateTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
     struct Message *originInvite = BuildInviteMessage(dialog);
-
-    Message2String(okString, ok);
+    struct Message *localOk = Build200OkMessage(originInvite);
+    Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
@@ -140,12 +142,13 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
 
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage();
-    
+
     STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogGetLocalTag(dialog));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogGetCallId(dialog));
-    STRCMP_EQUAL(MessageGetToTag(ok), DialogGetRemoteTag(dialog));    
+    STRCMP_EQUAL(MessageGetToTag(localOk), DialogGetRemoteTag(dialog));    
 
     DestroyMessage(&originInvite);
+    DestroyMessage(&localOk);
 
 }
 

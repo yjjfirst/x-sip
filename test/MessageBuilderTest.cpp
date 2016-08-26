@@ -377,7 +377,7 @@ TEST(MessageBuilderTestGroup, OKMessageStatusLineTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OKMessage(invite);
+    struct Message *ok = Build200OkMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
@@ -392,7 +392,7 @@ TEST(MessageBuilderTestGroup,OKMessageContactHeaderTest)
 {
     struct Message *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OKMessage(invite);
+    struct Message *ok = Build200OkMessage(invite);
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     struct URI *uri = ContactHeaderGetUri(c);
     

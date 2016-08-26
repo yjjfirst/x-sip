@@ -249,17 +249,14 @@ TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
     DestroyContactHeader((struct Header *)header);
 }
 
-void GenerateTagMock(char *tag)
-{
-    strcpy(tag, "abcdefghijk");
-}
-
 TEST(ContactHeaderTestGroup, GenerateTagTest)
 {
-    char tag[MAX_TAG_LENGTH] = {0};
-
-    UT_PTR_SET(GenerateTag, GenerateTagMock);
-    GenerateTag(tag);
+    char tag[MAX_TAG_LENGTH + 1] = {0};
+    char tag1[MAX_TAG_LENGTH + 1] = {0};
     
-    STRCMP_EQUAL("abcdefghijk", tag);
+    GenerateTag(tag);
+    GenerateTag(tag1);
+    
+    CHECK_EQUAL(MAX_TAG_LENGTH, strlen(tag));
+    CHECK_FALSE(0 == strcmp(tag, tag1))
 }

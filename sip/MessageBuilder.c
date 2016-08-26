@@ -52,8 +52,10 @@ struct Header *BuildRequestFromHeader(struct Dialog *dialog)
     struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), UserAgentGetProxy(ua), 0);
     struct ContactHeader *from = CreateFromHeader();
     struct Parameters *ps = ContactHeaderGetParameters(from);
+    char tag[MAX_TAG_LENGTH +1] = {0};
 
-    AddParameter(ps, HEADER_PARAMETER_NAME_TAG, "1069855717");
+    GenerateTag(tag);
+    AddParameter(ps, HEADER_PARAMETER_NAME_TAG, tag);
     ContactHeaderSetUri(from, uri);
     
     return (struct Header *)from;
@@ -273,7 +275,7 @@ struct Message *BuildRingingMessage(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *Build200OKMessage(struct Message *request)
+struct Message *Build200OkMessage(struct Message *request)
 {
     assert(request != NULL);
 

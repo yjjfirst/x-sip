@@ -8,6 +8,7 @@
 #include "URI.h"
 #include "Parameter.h"
 #include "StringExt.h"
+#include "System.h"
 
 struct ContactHeader {
     struct Header headerBase;
@@ -201,8 +202,14 @@ BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *h
 
 void GenerateTagImpl(char *tag)
 {
-    strncpy(tag, "1234567890", MAX_TAG_LENGTH-1);
+    srand(GetSeed());
+    for (int i = 0 ; i < MAX_TAG_LENGTH; i ++) {
+        tag[i] = 48 + rand() % 10;
+    }
+
+    tag[MAX_TAG_LENGTH] = 0;
 }
+
 void (*GenerateTag)(char *tag) = GenerateTagImpl;
 
 struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)

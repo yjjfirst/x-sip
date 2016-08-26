@@ -1,6 +1,6 @@
 #include "Bool.h"
 
-#define MAX_TAG_LENGTH 64
+#define MAX_TAG_LENGTH 10
 
 struct ContactHeader;
 struct Parameters;

@@ -10,6 +10,7 @@
 #include "URI.h"
 #include "Parameter.h"
 #include "StringExt.h"
+#include "System.h"
 
 #define TRANSPORT_PROTOCOL_NAME_MAX_LENGTH 32
 
@@ -153,7 +154,8 @@ void GenerateBranchImpl(char *branch)
 
     strcpy(branch, VIA_BRANCH_COOKIE);
 
-    srand(time(NULL));
+
+    srand(GetSeed());    
     for (int i = VIA_BRANCH_COOKIE_LENGTH; i < VIA_BRANCH_LENGTH; i++) {
         branch[i] = 48 + rand() % 10 ;
     }
