@@ -1,6 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include "Session.h"

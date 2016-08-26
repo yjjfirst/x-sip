@@ -36,10 +36,13 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 struct Header *BuildRequestViaHeader(struct Dialog *dialog)
 {
     struct URI *uri = CreateUri("", "", GetLocalIpAddr(), LOCAL_PORT);
-    struct ViaHeader *via = CreateViaHeader(uri);
-    
+    struct ViaHeader *via = CreateViaHeader(uri);    
     struct Parameters *ps = ViaHeaderGetParameters(via);
-    AddParameter(ps, VIA_BRANCH_PARAMETER_NAME, "z9hG4bK1491280923"); 
+    char branch[32];
+
+    GenerateBranch(branch);
+    AddParameter(ps, VIA_BRANCH_PARAMETER_NAME, branch); 
+
     return (struct Header *)via;
 }
 

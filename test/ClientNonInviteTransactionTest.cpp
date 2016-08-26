@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -19,6 +19,7 @@ extern "C" {
 #include "StatusLine.h"
 #include "Dialog.h"
 #include "AccountManager.h"
+#include "ViaHeader.h"
 }
 
 static TimerCallback TimerECallbackFunc;
@@ -44,7 +45,8 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
     enum TransactionState s;
     struct UserAgent *ua;
     struct Dialog *dialog;
-
+    char branch[64];
+    
     struct Transaction *PrepareTryingState(int sendExpected)
     {
         if (sendExpected != -1) {
@@ -74,18 +76,21 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 
     void CheckNoTransaction()
     {
-        POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+        POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
     }
 
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(AddTimer, AddTimerMock);
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         m = BuildAddBindingMessage(dialog);
+
+        strcpy(branch, MessageGetViaBranch(m));
     }
 
     void teardown()
@@ -151,7 +156,7 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateTimerFTest)
 TEST(ClientNotInviteTransactionTestGroup, TryingStateEnterSendOutMessageError)
 {
     PrepareTryingState(-1);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
 }
 
 TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
@@ -163,7 +168,7 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
         .andReturnValue(-1);
     TimerECallbackFunc(t);
 
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
     CHECK_EQUAL(0, CountTransaction());    
 }
 
@@ -217,7 +222,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
         .andReturnValue(-1);
     TimerECallbackFunc(t);
 
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
     CHECK_EQUAL(0, CountTransaction());
 }
 
@@ -234,7 +239,7 @@ TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 
     TimerKCallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_REGISTER));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
 }
 
 //Other tests.

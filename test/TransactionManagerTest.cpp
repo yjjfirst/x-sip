@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -16,6 +16,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "Dialog.h"
 #include "AccountManager.h"
+#include "ViaHeader.h"
 }
 
 TEST_GROUP(TransactionManager)
@@ -26,6 +27,7 @@ TEST_GROUP(TransactionManager)
     
     void setup() {
         UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
         AccountInit();
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
@@ -91,7 +93,9 @@ TEST(TransactionManager, BranchNonMatchTest)
 TEST(TransactionManager, GetTransactionByIdTest)
 {
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
-    char branch[] = "z9hG4bK1491280923";
+    char branch[64];
+
+    strcpy(branch, MessageGetViaBranch(message));
     struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
 
     POINTERS_EQUAL(t, GetTransaction(branch, seqMethod));

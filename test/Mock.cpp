@@ -1,6 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -60,3 +60,8 @@ struct MessageTransporter DummyTransporter = {
     .send = DummySend,
     .receive = DummyReceive,
 };
+
+void GenerateBranchMock(char *branch)
+{
+    strcpy(branch, "z9hG4bK1491280923");
+}

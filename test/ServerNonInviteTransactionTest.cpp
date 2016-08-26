@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>

@@ -1,6 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -20,6 +20,7 @@ extern "C" {
 #include "Timer.h"
 #include "Session.h"
 #include "AccountManager.h"
+#include "ViaHeader.h"
 }
 
 TimerCallback TimerACallbackFunc;
@@ -51,9 +52,12 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     struct Message *message;
     struct Transaction *t;
     struct Dialog *dialog;
+
+    char branch[64];
     void setup(){
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
         
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
         AccountInit();
@@ -62,6 +66,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         message = BuildInviteMessage(dialog); 
         t = AddClientInviteTransaction(message,(struct TransactionUserObserver *) dialog);
 
+        strcpy(branch, MessageGetViaBranch(message));
     }
 
     void teardown() {
@@ -121,8 +126,9 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK);
 
-    ReceiveInMessage();    
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    ReceiveInMessage();
+
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
     CHECK_EQUAL(0, CountTransaction());
 }
 
@@ -180,7 +186,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateTimerATest)
 TEST(ClientInviteTransactionTestGroup, CallingStateTimerBTest)
 {
     TimerBCallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingState3xxReceiveTest)
@@ -204,7 +210,7 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
 
     ReceiveInMessage();    
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
  
 }
 
@@ -241,12 +247,12 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateTransportErrorTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK).andReturnValue(-1);
     Receive3xxResponse(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));    
 }
 
 TEST(ClientInviteTransactionTestGroup, CompletedStateTimerDTest)
 {
     PrepareCompletedState();
     TimerDCallbackFunc(t);
-    POINTERS_EQUAL(NULL, GetTransaction((char *)"z9hG4bK1491280923", (char *)SIP_METHOD_NAME_INVITE));    
+    POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));    
 }

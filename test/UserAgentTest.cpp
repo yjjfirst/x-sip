@@ -1,6 +1,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -19,6 +19,7 @@ extern "C" {
 #include "DialogId.h"
 #include "Dialog.h"
 #include "Provision.h"
+#include "ViaHeader.h"
 }
 
 TEST_GROUP(UserAgentTestGroup)
@@ -44,6 +45,8 @@ TEST_GROUP(UserAgentTestGroup)
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
+
         AccountInit();
     }
 

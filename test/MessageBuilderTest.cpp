@@ -1,7 +1,9 @@
 #include "CppUTest/TestHarness.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
+#include <string.h>
 
 #include "URI.h"
 #include "RequestLine.h"
@@ -25,7 +27,6 @@ extern "C" {
 #include "AccountManager.h"
 }
 
-
 TEST_GROUP(MessageBuilderTestGroup)
 {
     struct UserAgent *ua;
@@ -34,6 +35,8 @@ TEST_GROUP(MessageBuilderTestGroup)
     struct Message *inviteMessage;
     void setup()
     {
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
+        
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
@@ -102,13 +105,15 @@ TEST(MessageBuilderTestGroup, ToHeaderTest)
 TEST(MessageBuilderTestGroup, ViaHeaderTest)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, m);
+    char branch[64];
     
+    GenerateBranch(branch);
     MessageAddViaParameter(m, (char *)"rport", (char *)"");
 
     STRCMP_EQUAL(HEADER_NAME_VIA, ViaHeaderGetName(via));
     STRCMP_EQUAL(GetLocalIpAddr(), UriGetHost(ViaHeaderGetUri(via)));
     STRCMP_EQUAL("", ViaHeaderGetParameter(via, (char *)"rport"));
-    STRCMP_EQUAL("z9hG4bK1491280923", ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
+    STRCMP_EQUAL(branch, ViaHeaderGetParameter(via, (char *)VIA_BRANCH_PARAMETER_NAME));
 
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 }

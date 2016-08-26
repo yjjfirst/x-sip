@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "TestingMessages.h"
-#include "TransportMock.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
@@ -21,6 +21,7 @@ extern "C" {
 #include "CallIdHeader.h"
 #include "Session.h"
 #include "AccountManager.h"
+#include "ViaHeader.h"
 }
 
 static struct Session *CreateSessionMock()
@@ -38,6 +39,7 @@ TEST_GROUP(DialogTestGroup)
     {
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(CreateSession, CreateSessionMock);
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
         AccountInit();
         ua = CreateUserAgent(0);

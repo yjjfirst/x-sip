@@ -3,7 +3,6 @@
 #define VIA_BRANCH_PARAMETER_NAME  (char *)"branch"
 #define VIA_SENDBY_PARAMETER_NAME  (char *)"send-by"
 
-
 struct ViaHeader;
 struct Header;
 struct URI;
@@ -32,3 +31,4 @@ BOOL ViaHeaderBranchMatchedByString(struct ViaHeader *via, char *string);
 BOOL ViaHeaderSendbyMatched(struct ViaHeader *via1, struct ViaHeader *via2);
 BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2);
 
+extern void (*GenerateBranch)(char *branch);

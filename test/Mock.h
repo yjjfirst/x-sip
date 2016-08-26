@@ -5,5 +5,7 @@ struct MessageTransporter;
 int ReceiveInMessageMock(char *message);
 int SendOutMessageMock(char *message);
 
+void GenerateBranchMock(char *branch);
+
 extern struct MessageTransporter MockTransporter;
 extern struct MessageTransporter DummyTransporter;

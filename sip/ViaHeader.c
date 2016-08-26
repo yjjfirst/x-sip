@@ -146,6 +146,13 @@ char *ViaHeader2String(char *result, struct Header *via)
     return ToString(result, via, GetViaPattern());
 }
 
+void GenerateBranchImpl(char *branch)
+{
+    
+}
+
+void (*GenerateBranch)(char *branch) = GenerateBranchImpl;
+
 struct ViaHeader *CreateEmptyViaHeader()
 {
     struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
@@ -189,3 +196,4 @@ void DestroyViaHeader(struct Header *via)
         free(v);
     }
 }
+
