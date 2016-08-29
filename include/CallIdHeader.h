@@ -17,4 +17,4 @@ char *CallIdHeaderGetName(struct CallIdHeader *id);
 
 BOOL CallIdHeaderMatched(struct CallIdHeader *id1, struct CallIdHeader *id2);
 char *CallIdHeader2String(char *result, struct Header *id);
-char *GenerateCallIdString();
+void GenerateCallIdString();

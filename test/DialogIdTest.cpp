@@ -100,15 +100,15 @@ TEST(DialogIdTestGroup, BuildDialogIdFromRequestTest)
 
 TEST(DialogIdTestGroup, GenerateCallIdTest)
 {
-    struct DialogId *dialogid = CreateDialogId();
+    struct DialogId *dialogid = CreateEmptyDialogId();
     
-    CHECK_TRUE(strlen(DialogIdGetCallId(dialogid)) != 0);
+    CHECK_TRUE(strlen(DialogIdGetCallId(dialogid)) == 0);
     DestroyDialogId(&dialogid);
 }
 
 TEST(DialogIdTestGroup, GenerateLocalTagTest)
 {
-    struct DialogId *dialogid = CreateDialogId();
+    struct DialogId *dialogid = CreateEmptyDialogId();
     
     CHECK_TRUE(strlen(DialogIdGetLocalTag(dialogid)) == 0);
     DestroyDialogId(&dialogid);

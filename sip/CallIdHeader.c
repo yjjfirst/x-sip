@@ -7,6 +7,7 @@
 #include "Parser.h"
 #include "CallIdHeader.h"
 #include "StringExt.h"
+#include "System.h"
 
 struct CallIdHeader {
     struct Header headerBase;
@@ -71,9 +72,16 @@ struct HeaderPattern *GetCallIdPattern()
     return CallIdHeaderPattern;
 }
 
-char *GenerateCallIdString()
+void GenerateCallIdString(char *id)
 {
-    return "97295390";
+    assert (id != NULL); 
+
+    srand(GetSeed());
+    for (int i = 0; i < 8; i ++) {
+        id[i] = 48 + rand() % 10;
+    }
+
+    id[8] = 0;
 }
 
 struct CallIdHeader *CreateEmptyCallIdHeader()
@@ -83,10 +91,19 @@ struct CallIdHeader *CreateEmptyCallIdHeader()
 
 struct CallIdHeader *CreateCallIdHeader (char *idString) 
 { 
+    assert(idString != NULL);
+
     struct CallIdHeader *header = CreateEmptyCallIdHeader();
 
     CallIdHeaderSetName(header);
+
+    if (strlen(idString) == 0)
+    {
+        GenerateCallIdString(idString);
+    }
+
     CallIdHeaderSetID(header, idString);
+    
     return header;
 }
 

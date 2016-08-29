@@ -2,7 +2,6 @@
 struct Message;
 struct DialogId *CreateEmptyDialogId();
 struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteTag);
-struct DialogId *CreateDialogId();
 struct DialogId *CreateDialogIdFromMessage(struct Message *message);
 void DestroyDialogId(struct DialogId **id);
 

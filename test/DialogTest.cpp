@@ -147,7 +147,6 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
 
     DestroyMessage(&originInvite);
     DestroyMessage(&localOk);
-
 }
 
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)

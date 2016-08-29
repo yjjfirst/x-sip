@@ -319,7 +319,7 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     struct Dialog *dialog = calloc(1, sizeof(struct Dialog));
 
     if (dialogid == NULL) {
-        dialog->id = CreateDialogId();
+        dialog->id = CreateEmptyDialogId();
     } else {
         dialog->id = dialogid;
     }

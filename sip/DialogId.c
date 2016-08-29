@@ -49,23 +49,6 @@ struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteT
     return dialogid;
 }
 
-char *GenerateCallId()
-{
-    return "97295390";
-}
-
-char *GenerateLocalTag()
-{
-    return "1234567890";
-}
-
-struct DialogId *CreateDialogId()
-{
-    return CreateFixedDialogId(GenerateCallId(),
-                               "",
-                               "");    
-}
-
 void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *message)
 {
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
