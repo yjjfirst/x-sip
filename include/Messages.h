@@ -35,6 +35,9 @@ char *MessageGetViaBranch(struct Message *message);
 void MessageSetViaBranch(struct Message *message, char *branch);
 char *MessageGetCSeqMethod(struct Message *message);
 
+struct Transaction *MessageBelongTo(struct Message *message);
+void MessageSetOwner(struct Message *message, struct Transaction *t);
+
 void MessageAddViaParameter(struct Message *message, char *name, char *value);
 void MessageSetCSeqMethod (struct Message *message, char *method);
 void MessageSetContentLength(struct Message *message, int length);
@@ -48,3 +51,4 @@ void MessageDump(struct Message *message);
 BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm);
 BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm);
 BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm);
+

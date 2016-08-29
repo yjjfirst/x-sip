@@ -34,7 +34,6 @@ TEST_GROUP(DialogTestGroup)
     struct UserAgent *ua;
     struct Dialog *dialog;
     struct Message *invite;
-    struct Message *ok;
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
@@ -45,7 +44,6 @@ TEST_GROUP(DialogTestGroup)
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog);
-        ok = Build200OkMessage(invite);
         
     }
 
@@ -54,7 +52,7 @@ TEST_GROUP(DialogTestGroup)
         ClearAccountManager();
         ClearTransactionManager();
         DestroyUserAgent(&ua);
-        DestroyMessage(&ok);
+
         mock().checkExpectations();
         mock().clear();
     }
@@ -214,8 +212,6 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
     DialogTerminate(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
-
-    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogIdTest)
@@ -226,14 +222,16 @@ TEST(DialogTestGroup, UASDialogIdTest)
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     DialogAddServerInviteTransaction(dialog, invite);
+    struct Message *ok = Build200OkMessage(invite);
     DialogSend200OKResponse(dialog);
-
+    
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
     STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), DialogIdGetRemoteTag(DialogGetId(dialog)));
     STRCMP_EQUAL(CallIdHeaderGetId(id), DialogIdGetCallId(DialogGetId(dialog)));
 
     DestroyContactHeader((struct Header *)from);
     DestroyCallIdHeader((struct Header *)id);
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogConfirmedTest)
@@ -245,7 +243,6 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
-    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
@@ -258,7 +255,6 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(seq, DialogGetRemoteSeqNumber(dialog));
-    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
@@ -270,7 +266,6 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
-    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogRemoteTargetTest)
@@ -286,7 +281,6 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
     CHECK_TRUE(UriMatched(uri, DialogGetRemoteTarget(dialog)));
 
     DestroyUri(&uri);
-    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, UASDialogTerminateTest)
@@ -301,4 +295,12 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     struct Message *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
+}
+
+TEST(DialogTestGroup, SetLocalTagTest)
+{
+    DialogSetLocalTag(dialog, "testtag123456");
+
+    STRCMP_EQUAL(DialogGetLocalTag(dialog), "testtag123456");
+    DestroyMessage(&invite);
 }

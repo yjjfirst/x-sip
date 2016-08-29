@@ -62,7 +62,7 @@ char *GenerateLocalTag()
 struct DialogId *CreateDialogId()
 {
     return CreateFixedDialogId(GenerateCallId(),
-                               GenerateLocalTag(),
+                               "",
                                "");    
 }
 

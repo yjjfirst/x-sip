@@ -110,6 +110,6 @@ TEST(DialogIdTestGroup, GenerateLocalTagTest)
 {
     struct DialogId *dialogid = CreateDialogId();
     
-    CHECK_TRUE(strlen(DialogIdGetLocalTag(dialogid)) != 0);
+    CHECK_TRUE(strlen(DialogIdGetLocalTag(dialogid)) == 0);
     DestroyDialogId(&dialogid);
 }

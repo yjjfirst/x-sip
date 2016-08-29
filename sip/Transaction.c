@@ -254,8 +254,9 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
     t->id = CreateTransactionId();
     t->request = request;
     t->user = user;
-    TransactionIdExtract(t->id, request);
 
+    TransactionIdExtract(t->id, request);
+    MessageSetOwner(request, t);
     return t;
 }
 

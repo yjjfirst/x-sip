@@ -67,7 +67,6 @@ struct Message * TransactionGetRequest(struct Transaction *t);
 struct Message *TransactionGetLatestResponse(struct Transaction *t);
 void TransactionAddResponse(struct Transaction *t, struct Message *message);
 enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
-BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
 
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
 void TransactionSetObserver(struct Transaction *t, struct TransactionManager *manager);
@@ -76,3 +75,4 @@ struct TransactionUser *TransactionGetUser(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);
 
 BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);
+BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);

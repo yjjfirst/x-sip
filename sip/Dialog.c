@@ -99,6 +99,12 @@ unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog)
     return dialog->localSeqNumber;
 }
 
+void DialogSetLocalTag(struct Dialog *dialog, const char *localTag)
+{
+    struct DialogId *id = DialogGetId(dialog);
+    DialogIdSetLocalTag(id, (char *)localTag);
+}
+
 unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog)
 {
     assert(dialog != NULL);
@@ -255,6 +261,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, stru
     DialogIdSetRemoteTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
     ExtractRemoteTargetFromMessage(dialog, message);
+
     t = AddServerInviteTransaction(message, (struct TransactionUser *)dialog);;
     dialog->transaction = t;
     

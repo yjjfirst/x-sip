@@ -19,6 +19,7 @@
 #include "Sdp.h"
 
 struct Message {
+    struct Transaction *transaction;
     union {
         struct RequestLine *request;
         struct StatusLine *status;
@@ -285,6 +286,16 @@ BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm)
 {
     return ViaHeaderSendbyMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+}
+
+struct Transaction *MessageBelongTo(struct Message *message)
+{
+    return message->transaction;
+}
+
+void MessageSetOwner(struct Message *message, struct Transaction *t)
+{
+    message->transaction = t;
 }
 
 void Message2String(char *result, struct Message *message)

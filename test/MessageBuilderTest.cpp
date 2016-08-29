@@ -221,8 +221,9 @@ TEST(MessageBuilderTestGroup, AckMessageFromTest)
     struct Message *ackMessage = BuildAckMessage(dialog);
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
-    CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
 
+    CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
+    
     DestroyMessage(&ackMessage);
 }
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "StatusLine.h"
 #include "RequestLine.h"
@@ -18,6 +19,7 @@
 #include "Dialog.h"
 #include "DialogId.h"
 #include "Provision.h"
+#include "Transaction.h"
 
 struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
@@ -54,7 +56,13 @@ struct Header *BuildRequestFromHeader(struct Dialog *dialog)
     struct Parameters *ps = ContactHeaderGetParameters(from);
     char tag[MAX_TAG_LENGTH +1] = {0};
 
-    GenerateTag(tag);
+    if (strlen(DialogGetLocalTag(dialog)) == 0){
+        GenerateTag(tag);
+        DialogSetLocalTag(dialog, tag);
+    } else {
+        strcpy(tag, DialogGetLocalTag(dialog));
+    }
+
     AddParameter(ps, HEADER_PARAMETER_NAME_TAG, tag);
     ContactHeaderSetUri(from, uri);
     
@@ -171,7 +179,7 @@ struct Message *BuildInviteMessage(struct Dialog *dialog)
 struct Message *BuildAckMessage(struct Dialog *dialog)
 {
     struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
-    MessageSetRemoteTag(ack, DialogIdGetRemoteTag(DialogGetId(dialog)));
+    MessageSetRemoteTag(ack, DialogGetRemoteTag(dialog));
     return ack;
 }
 
@@ -199,17 +207,42 @@ void AddResponseFromHeader(struct Message *response, struct Message *invite)
     MessageAddHeader(response, (struct Header *)from);
 }
 
+void BuildResponseToTag(char *tag, struct Message *invite)
+{
+    struct Dialog *dialog = NULL;    
+    struct Transaction *t = MessageBelongTo(invite);
+
+    if (t == NULL) {
+        GenerateTag(tag);
+        return;
+    }
+
+    dialog = (struct Dialog *)TransactionGetUser(t);
+    if (dialog == NULL) {
+        GenerateTag(tag);
+        return;        
+    }
+
+    if (strlen(DialogGetLocalTag(dialog)) != 0) {
+        strcpy(tag, DialogGetLocalTag(dialog));
+    } else {
+        GenerateTag(tag);
+        DialogSetLocalTag(dialog, tag);
+    }
+}
+
 void AddResponseToHeader(struct Message *response, struct Message *invite)
 {
     char tag[MAX_TAG_LENGTH] = {0};
-
     struct ContactHeader *to =
         ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
 
-    GenerateTag(tag);
+    BuildResponseToTag(tag, invite);
+    
     if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
         ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
     }
+    
     MessageAddHeader(response, (struct Header *)to);
 }
 
