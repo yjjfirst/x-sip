@@ -14,14 +14,13 @@
 #include "Header.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
-#include "TransactionNotifiers.h"
 #include "utils/list/include/list.h"
 
 #define TRANSACTION_ACTIONS_MAX 10
 
 struct Transaction {
     struct TransactionUser *user;
-    struct TransactionManagerObserver *observer;
+    struct TransactionManager *manager;
     struct TransactionId *id;
     enum TransactionType type;
 
@@ -59,9 +58,9 @@ void TransactionAddResponse(struct Transaction *t, struct Message *message)
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetObserver(struct Transaction *t, struct TransactionManagerObserver *observer)
+void TransactionSetObserver(struct Transaction *t, struct TransactionManager *observer)
 {
-    t->observer = observer;
+    t->manager = observer;
 }
 
 enum TransactionState TransactionGetState(struct Transaction *t)
@@ -598,8 +597,8 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
 void TransactionTerminate(struct Transaction *t)
 {
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->observer != NULL) {
-            ((struct Transaction *)t)->observer->die(t);
+        if (t != NULL && t->manager != NULL) {
+            RemoveTransaction(t);
         }
 }
 

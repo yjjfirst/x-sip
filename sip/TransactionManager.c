@@ -8,7 +8,6 @@
 #include "Header.h"
 #include "StatusLine.h"
 #include "TransactionManager.h"
-#include "TransactionNotifiers.h"
 #include "Transaction.h"
 #include "TransactionId.h"
 #include "Messages.h"
@@ -17,9 +16,10 @@
 #include "RequestLine.h"
 
 struct TransactionManager {
-    struct TransactionManagerObserver observer;
+    void (*die)(struct Transaction *t);
     t_list *transactions;
 };
+
 struct TransactionManager TransactionManager;
 
 int CountTransaction()
@@ -186,13 +186,13 @@ void ClearTransactionManager()
 }
 
 struct TransactionManager TransactionManager = {
-    {RemoveTransaction},
+    RemoveTransaction,
 };
 
 void AddTransaction2Manager(struct Transaction *t)
 {
     if (t != NULL) {
-        TransactionSetObserver(t, &TransactionManager.observer);
+        TransactionSetObserver(t, &TransactionManager);
         put_in_list(&TransactionManager.transactions, t);
     }
 }

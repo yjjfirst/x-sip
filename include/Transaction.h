@@ -3,10 +3,13 @@
 
 struct Message;
 struct Transaction;
-struct TransactionManagerObserver;
 struct TransactionUser;
+struct TransactionManager;
 
 typedef int (*TransactionAction)(struct Transaction *t);
+
+struct TransactionUser {
+};
 
 enum TransactionState {
     TRANSACTION_STATE_TRYING, 
@@ -67,7 +70,7 @@ enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
 BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
 
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
-void TransactionSetObserver(struct Transaction *t, struct TransactionManagerObserver *notifiers);
+void TransactionSetObserver(struct Transaction *t, struct TransactionManager *manager);
 enum TransactionState TransactionGetState(struct Transaction *t);
 struct TransactionUser *TransactionGetUser(struct Transaction *t);
 enum TransactionType TransactionGetType(struct Transaction *t);

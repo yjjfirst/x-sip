@@ -11,7 +11,6 @@ extern "C" {
 #include "TransactionManager.h"
 #include "Transaction.h"
 #include "UserAgent.h"
-#include "TransactionNotifiers.h"
 #include "StatusLine.h"
 }
 
@@ -20,7 +19,6 @@ TimerCallback TimeOutTimerAction;
 TimerCallback WaitAckTimerAction;
 
 struct TransactionUser ServerInviteMockUser = {
-    NULL
 };
 
 int SendOut100TryingMock(char *message)
