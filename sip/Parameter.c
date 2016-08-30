@@ -47,6 +47,7 @@ int ParametersLength(struct Parameters *ps)
 {
     return get_list_len(ps->parameters);
 }
+
 /*
  * Only call this function when parse parameters stand alone.
  */
@@ -56,14 +57,21 @@ int ParseParametersExt(char *s, void *target)
     char *localString = calloc(1, strlen(s) + 1);    
     char *paramStart;
     char *save_ptr = NULL;
-   
+    char *separater = NULL;
+    
     strcpy(localString, s);
 
-    paramStart = strtok_r(localString, ";", &save_ptr);
+    if (strchr(localString, SEMICOLON) != NULL) {
+        separater = ";";
+    } else {
+        separater = ",";
+    }
+    
+    paramStart = strtok_r(localString, separater, &save_ptr);
 
     while(paramStart) {
         put_in_list(&p->parameters, ParseParameter(paramStart));
-        paramStart = strtok_r(NULL, ";", &save_ptr);
+        paramStart = strtok_r(NULL, separater, &save_ptr);
     }
     
     free(localString);
@@ -133,6 +141,9 @@ BOOL ParametersMatched(struct Parameters *ps1, struct Parameters *ps2)
 
 char *GetParameter(struct Parameters *ps, char *name)
 {
+    assert(ps != NULL);
+    assert(name != NULL);
+
     int i = 0;
     int length = ParametersLength(ps);
 
