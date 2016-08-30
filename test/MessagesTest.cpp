@@ -20,6 +20,8 @@ extern "C" {
 #include "URI.h"
 #include "RequestLine.h"
 #include "Sdp.h"
+#include "WWW_AuthenticationHeader.h"
+#include "Parameter.h"
 }
 
 TEST_GROUP(MessageTestGroup)
@@ -484,4 +486,31 @@ Content-Length:0\r\n";
 
     CHECK_EQUAL(SIP_METHOD_NONE, MessageGetMethod(localMessage));
     DestroyMessage(&localMessage);
+}
+
+TEST(MessageTestGroup, AuthHeaderParseTest)
+{
+    char string[] = "\
+SIP/2.0 401 Unauthorized\r\n                                            \
+Via: SIP/2.0/UDP 192.168.10.1:5064;branch=z9hG4bK747007504;received=192.168.10.1;rport=5064\r\n \
+From: <sip:88004@192.168.10.62>;tag=959424103\r\n                       \
+To: <sip:88004@192.168.10.62>;tag=as7a073fad\r\n                        \
+Call-ID: 1966073125\r\n                                                 \
+CSeq: 1 REGISTER\r\n                                                    \
+Server: Asterisk PBX 1.8.12.2\r\n                                       \
+Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH\r\n \
+Supported: replaces, timer\r\n                                          \
+WWW-Authenticate: Digest algorithm=MD5, realm=\"asterisk\", nonce=\"1cd2586e\"\r\n \
+Content-Length: 0\r\n\\r\n";
+    struct Message *message = CreateMessage();
+
+    ParseMessage(string, message);
+    struct AuthHeader *auth = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_WWW_AUTHENTICATE, message);
+    struct Parameters *ps = AuthHeaderGetParameters(auth);
+
+    STRCMP_EQUAL("MD5", GetParameter(ps, (char *)"algorithm"));
+    STRCMP_EQUAL("\"asterisk\"", GetParameter(ps, (char *)"realm"));
+    STRCMP_EQUAL("\"1cd2586e\"", GetParameter(ps, (char *)"nonce"));
+    
+    DestroyMessage(&message);
 }

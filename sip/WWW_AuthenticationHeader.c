@@ -37,6 +37,22 @@ struct Parameters *AuthHeaderGetParameters(struct AuthHeader *authHeader)
     return authHeader->parameters;
 }
 
+char *AuthHeader2String(char *result, struct Header *auth)
+{
+    assert(result != NULL);
+    assert(auth != NULL);
+    
+    char *end = ToString(result, auth, AuthHeaderPattern);
+    int len = strlen(result);
+
+    for (int i = 0; i < len; i++) {
+        if (result[i] == SEMICOLON)
+            result[i] =',';
+    }
+    
+    return end;
+}
+
 struct Header *ParseAuthHeader(char *string)
 {
     struct AuthHeader *authHeader = CreateAuthHeader();

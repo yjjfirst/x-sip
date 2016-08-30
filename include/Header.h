@@ -8,7 +8,7 @@
 #define HEADER_NAME_CSEQ "CSeq"
 #define HEADER_NAME_CONTENT_LENGTH "Content-Length"
 #define HEADER_NAME_EXPIRES "Expires"
-
+#define HEADER_NAME_WWW_AUTHENTICATE "WWW-Authenticate"
 
 #define HEADER_PARAMETER_NAME_TAG ((char *)"tag")
 #define HEADER_NAME_MAX_LENGTH 32

@@ -81,6 +81,7 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
 {
     assert (name != NULL);
     assert (message != NULL);
+
     return RawHeadersGetHeader(name, message->headers);
 }
 

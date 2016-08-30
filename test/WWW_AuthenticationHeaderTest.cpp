@@ -55,5 +55,11 @@ TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderParametersTest)
 
 TEST(WWW_AuthenticationTestGroup, AuthHeader2StringTest)
 {
-    FAIL("To string is next\n");
+    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(AuthString);
+    char result[128] = {0};
+    
+    AuthHeader2String(result, (struct Header *)authHeader);
+
+    STRCMP_EQUAL(AuthString, result);
+    DestroyAuthHeader((struct Header *)authHeader);
 }

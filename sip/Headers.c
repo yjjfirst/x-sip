@@ -14,6 +14,7 @@
 #include "ContentLengthHeader.h"
 #include "StatusLine.h"
 #include "ExpiresHeader.h"
+#include "WWW_AuthenticationHeader.h"
 #include "Parameter.h"
 #include "StringExt.h"
 
@@ -40,6 +41,7 @@ struct HeaderOp HeaderOps[] = {
     {HEADER_NAME_CSEQ, ParseCSeqHeader, DestroyCSeqHeader, CSeq2String},
     {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestroyContentLengthHeader, ContentLengthHeader2String},
     {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestroyExpiresHeader, ExpiresHeader2String},
+    {HEADER_NAME_WWW_AUTHENTICATE, ParseAuthHeader, DestroyAuthHeader, AuthHeader2String},
 };
 
 struct Headers *CreateHeaders()
