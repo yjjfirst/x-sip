@@ -16,7 +16,6 @@
 #include "RequestLine.h"
 
 struct TransactionManager {
-    void (*die)(struct Transaction *t);
     t_list *transactions;
 };
 
@@ -116,13 +115,13 @@ BOOL TmHandleReponseMessage(struct Message *message)
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
         if (statusCode == 200) {
-            RunFsm(t, TRANSACTION_EVENT_200OK_RECEIVED);
+            RunFsm(t, TRANSACTION_EVENT_200OK);
         }
         else if (statusCode == 100) {
-            RunFsm(t, TRANSACTION_EVENT_100TRYING_RECEIVED);
+            RunFsm(t, TRANSACTION_EVENT_100TRYING);
         }
         else if (statusCode == 180) {
-            RunFsm(t, TRANSACTION_EVENT_180RINGING_RECEIVED);
+            RunFsm(t, TRANSACTION_EVENT_180RINGING);
         }
         return TRUE;
     }
@@ -137,7 +136,7 @@ BOOL TmHandleRequestMessage(struct Message *message)
     if ( (t = MatchTransaction(message)) == NULL) {
         AddServerInviteTransaction(message, NULL);
     } else {
-        RunFsm(t, TRANSACTION_EVENT_INVITE_RECEIVED);
+        RunFsm(t, TRANSACTION_EVENT_INVITE);
         DestroyMessage(&message);
     }
 
@@ -185,9 +184,7 @@ void ClearTransactionManager()
     DestroyTransactions(&TransactionManager);
 }
 
-struct TransactionManager TransactionManager = {
-    RemoveTransaction,
-};
+struct TransactionManager TransactionManager;
 
 void AddTransaction2Manager(struct Transaction *t)
 {

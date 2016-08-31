@@ -169,9 +169,9 @@ void HandleClientInviteEvent(struct Transaction *t)
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     enum TransactionEvent event = TransactionGetCurrentEvent(t);
     
-    if (event == TRANSACTION_EVENT_200OK_RECEIVED) {
+    if (event == TRANSACTION_EVENT_200OK) {
         ClientInviteOkReceived(dialog, message);
-    } else if (event == TRANSACTION_EVENT_180RINGING_RECEIVED) {
+    } else if (event == TRANSACTION_EVENT_180RINGING) {
         ClientInviteRingingReceived(dialog, message);
     }
 }
@@ -182,7 +182,7 @@ void HandleRegisterEvent (struct Transaction *t)
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
 
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK_RECEIVED) {    
+    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {    
         if (MessageGetExpires(message) != 0) {
             UserAgentSetBinded(ua);
         } else {

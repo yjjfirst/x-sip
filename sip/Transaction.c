@@ -270,7 +270,7 @@ void ResponseWith301(struct Transaction *t)
         return;
     }
 
-    RunFsm(t, TRANSACTION_EVENT_301MOVED_SENT);
+    RunFsm(t, TRANSACTION_SEND_301MOVED);
 }
 
 void ResponseWith200OK(struct Transaction *t)
@@ -279,7 +279,7 @@ void ResponseWith200OK(struct Transaction *t)
     TransactionAddResponse(t, ok);
     TransactionSendMessage(ok);
 
-    RunFsm(t, TRANSACTION_EVENT_200OK_SENT);
+    RunFsm(t, TRANSACTION_SEND_200OK);
 }
 
 void ResponseWith180Ringing(struct Transaction *t)
@@ -293,7 +293,7 @@ void ResponseWith180Ringing(struct Transaction *t)
     }
 
     if (TransactionGetType(t) == TRANSACTION_TYPE_SERVER_NON_INVITE)
-        RunFsm(t, TRANSACTION_EVENT_1XX_SENT);
+        RunFsm(t, TRANSACTION_SEND_1XX);
 }
 
 int SendAckRequest(struct Transaction *t)
@@ -310,7 +310,7 @@ int SendAckRequest(struct Transaction *t)
 
 void ReceiveAckRequest(struct Transaction *t)
 {
-    RunFsm(t, TRANSACTION_EVENT_ACK_RECEIVED);
+    RunFsm(t, TRANSACTION_EVENT_ACK);
 }
 
 void Receive3xxResponse(struct Transaction *t)
@@ -416,8 +416,8 @@ void DestroyTransaction(struct Transaction **t)
 struct FsmState ClientNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
-        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
@@ -431,9 +431,9 @@ struct FsmState ClientNonInviteTryingState = {
 struct FsmState ClientNonInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING},
-        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -464,9 +464,9 @@ struct Fsm ClientNonInviteTransactionFsm = {
 struct FsmState ClientInviteCallingState = {
     TRANSACTION_STATE_CALLING,
     {
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED,{NotifyUser,}},
-        {TRANSACTION_EVENT_100TRYING_RECEIVED,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
-        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED,{NotifyUser,}},
+        {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -482,9 +482,9 @@ struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
         {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_200OK_RECEIVED, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_100TRYING_RECEIVED, TRANSACTION_STATE_PROCEEDING},
-        {TRANSACTION_EVENT_180RINGING_RECEIVED, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
+        {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_100TRYING, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
         {TRANSACTION_EVENT_MAX},
     }
 };
@@ -511,10 +511,10 @@ struct Fsm ClientInviteTransactionFsm = {
 struct FsmState ServerInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
+        {TRANSACTION_EVENT_INVITE, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_301MOVED_SENT, TRANSACTION_STATE_COMPLETED, {ClientNonInviteAddRetransmitTimer, AddTimeoutTimer}},        
+        {TRANSACTION_SEND_200OK, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_SEND_301MOVED, TRANSACTION_STATE_COMPLETED, {ClientNonInviteAddRetransmitTimer, AddTimeoutTimer}},        
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -522,11 +522,11 @@ struct FsmState ServerInviteProceedingState = {
 struct FsmState ServerInviteCompletedState = {
     TRANSACTION_STATE_COMPLETED,
     {
-        {TRANSACTION_EVENT_INVITE_RECEIVED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
+        {TRANSACTION_EVENT_INVITE, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED, TRANSACTION_STATE_COMPLETED, {ResendLatestResponse}},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_ACK_RECEIVED, TRANSACTION_STATE_CONFIRMED, {AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_ACK, TRANSACTION_STATE_CONFIRMED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -550,8 +550,8 @@ struct Fsm ServerInviteTransactionFsm = {
 struct FsmState ServerNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
-        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED, {
+        {TRANSACTION_SEND_1XX, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_SEND_200OK, TRANSACTION_STATE_COMPLETED, {
                 AddServerNonInviteWaitRequestRetransmitTimer}},
         {TRANSACTION_EVENT_MAX}
     }
@@ -560,9 +560,9 @@ struct FsmState ServerNonInviteTryingState = {
 struct FsmState ServerNonInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_1XX_SENT, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_SEND_1XX, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_200OK_SENT, TRANSACTION_STATE_COMPLETED, {
+        {TRANSACTION_SEND_200OK, TRANSACTION_STATE_COMPLETED, {
                 AddServerNonInviteWaitRequestRetransmitTimer }},
         {TRANSACTION_EVENT_MAX}
     }
