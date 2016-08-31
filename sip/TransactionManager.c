@@ -103,6 +103,27 @@ struct Transaction *MatchTransaction(struct Message *message)
     return GetTransaction(branch, method);
 }
 
+struct StatusCodeEventMap {
+    int statusCode;
+    enum TransactionEvent event;
+} StatusCodeEventMap[] = {
+    {200, TRANSACTION_EVENT_200OK},
+    {100, TRANSACTION_EVENT_100TRYING},
+    {180, TRANSACTION_EVENT_180RINGING},
+    {0, 0},
+};
+
+enum TransactionEvent MapStatusCodeToEvent(int statusCode)
+{
+    for (int i = 0; StatusCodeEventMap[i].statusCode != 0; i++) {
+        if (StatusCodeEventMap[i].statusCode == statusCode) {
+            return StatusCodeEventMap[i].event;
+        }
+    }
+
+    return -1;
+}
+
 BOOL TmHandleReponseMessage(struct Message *message)
 {
     struct StatusLine *status = NULL;
@@ -114,15 +135,7 @@ BOOL TmHandleReponseMessage(struct Message *message)
     
     if ( (t = MatchTransaction(message)) != NULL) {
         TransactionAddResponse(t, message);
-        if (statusCode == 200) {
-            RunFsm(t, TRANSACTION_EVENT_200OK);
-        }
-        else if (statusCode == 100) {
-            RunFsm(t, TRANSACTION_EVENT_100TRYING);
-        }
-        else if (statusCode == 180) {
-            RunFsm(t, TRANSACTION_EVENT_180RINGING);
-        }
+        RunFsm(t, MapStatusCodeToEvent(statusCode));
         return TRUE;
     }
 
