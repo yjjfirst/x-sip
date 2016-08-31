@@ -31,6 +31,19 @@ Expires: 0\r\n\
 Contact: <sip:88001@192.168.10.1;line=f2fd53ebfa7728f>;expires=3600\r\n\
 Content-Length: 0\r\n"
 
+#define UNAUTHORIZED_MESSAGE  (char *)"\
+SIP/2.0 401 Unauthorized\r\n                                            \
+Via: SIP/2.0/UDP 192.168.10.1:5064;branch=z9hG4bK1491280923\r\n         \
+From: <sip:88001@192.168.10.62>;tag=959424103\r\n                       \
+To: <sip:88001@192.168.10.62>;tag=as7a073fad\r\n                        \
+Call-ID: 1966073125\r\n                                                 \
+CSeq: 1 REGISTER\r\n                                                    \
+Server: Asterisk PBX 1.8.12.2\r\n                                       \
+Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, SUBSCRIBE, NOTIFY, INFO, PUBLISH\r\n \
+Supported: replaces, timer\r\n                                          \
+WWW-Authenticate: Digest algorithm=MD5, realm=\"asterisk\", nonce=\"1cd2586e\"\r\n \
+Content-Length: 0\r\n\r\n"
+
 #define INVITE_200OK_MESSAGE (char *)"\
 SIP/2.0 200 OK\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\

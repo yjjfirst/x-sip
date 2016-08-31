@@ -38,7 +38,7 @@ struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
     return NULL;
 }
 
-TEST_GROUP(ClientNotInviteTransactionTestGroup)
+TEST_GROUP(ClientNonInviteTransactionTestGroup)
 {
     struct Message *m;
     struct Transaction *t;
@@ -104,20 +104,20 @@ TEST_GROUP(ClientNotInviteTransactionTestGroup)
 };
 
 //Trying state tests
-TEST(ClientNotInviteTransactionTestGroup, TryingStateInitTest)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateInitTest)
 {
     PrepareTryingState(0);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive1xxTest)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive1xxTest)
 {
     PrepareTryingState(0);
     PrepareProceedingState(); 
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive2xxTest)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive2xxTest)
 {
     PrepareTryingState(0);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
@@ -127,7 +127,18 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateReceive2xxTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateTimeETest)
+TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)
+{
+    PrepareTryingState(0);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(UNAUTHORIZED_MESSAGE);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
+
+    ReceiveInMessage();
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+
+}
+
+TEST(ClientNonInviteTransactionTestGroup, TryingStateTimeETest)
 {
     int i = 0;
     
@@ -146,20 +157,20 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateTimeETest)
     }
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateTimerFTest)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateTimerFTest)
 {
     PrepareTryingState(0);
     TimerFCallbackFunc(t);
     CheckNoTransaction();
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateEnterSendOutMessageError)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateEnterSendOutMessageError)
 {
     PrepareTryingState(-1);
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
 }
 
-TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
+TEST(ClientNonInviteTransactionTestGroup, TryingStateResendErrorTest)
 {
     PrepareTryingState(0);
 
@@ -173,7 +184,7 @@ TEST(ClientNotInviteTransactionTestGroup, TryingStateResendErrorTest)
 }
 
 //Proceeding State tests.
-TEST(ClientNotInviteTransactionTestGroup, ProceedingStateReceiveMulti1xxTest)
+TEST(ClientNonInviteTransactionTestGroup, ProceedingStateReceiveMulti1xxTest)
 {
     int i = 0;
 
@@ -187,7 +198,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateReceiveMulti1xxTest)
     } 
 }
 
-TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeETest)
+TEST(ClientNonInviteTransactionTestGroup, ProceedingStateTimeETest)
 {
     int i = 0;
 
@@ -204,7 +215,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeETest)
     }
 }
 
-TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeFTest) 
+TEST(ClientNonInviteTransactionTestGroup, ProceedingStateTimeFTest) 
 {
     PrepareTryingState(0);
     PrepareProceedingState();
@@ -212,7 +223,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateTimeFTest)
     CheckNoTransaction();
 }
 
-TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
+TEST(ClientNonInviteTransactionTestGroup, ProceedingStateResendErrorTest)
 {
     PrepareTryingState(0);
     PrepareProceedingState();
@@ -227,7 +238,7 @@ TEST(ClientNotInviteTransactionTestGroup, ProceedingStateResendErrorTest)
 }
 
 //Completed state
-TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
+TEST(ClientNonInviteTransactionTestGroup, CompletedStateTimerKTest)
 {
     PrepareTryingState(0);
     PrepareProceedingState();
@@ -243,7 +254,7 @@ TEST(ClientNotInviteTransactionTestGroup, CompletedStateTimerKTest)
 }
 
 //Other tests.
-TEST(ClientNotInviteTransactionTestGroup, GetLatestResponse)
+TEST(ClientNonInviteTransactionTestGroup, GetLatestResponse)
 {
     PrepareTryingState(0);
 

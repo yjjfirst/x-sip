@@ -315,7 +315,7 @@ void ReceiveAckRequest(struct Transaction *t)
 
 void Receive3xxResponse(struct Transaction *t)
 {
-    RunFsm(t, TRANSACTION_EVENT_3XX_RECEIVED);
+    RunFsm(t, TRANSACTION_EVENT_3XX);
 }
 
 void ReceiveDupRequest(struct Transaction *t, struct Message *message)
@@ -418,6 +418,7 @@ struct FsmState ClientNonInviteTryingState = {
     {
         {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
         {TRANSACTION_EVENT_100TRYING,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_401UNAUTHORIZED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
@@ -473,7 +474,7 @@ struct FsmState ClientInviteCallingState = {
                 ClientInviteAddRetransmitTimer}},
         {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -481,7 +482,7 @@ struct FsmState ClientInviteCallingState = {
 struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_200OK, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_100TRYING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_180RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
@@ -492,7 +493,7 @@ struct FsmState ClientInviteProceedingState = {
 struct FsmState ClientInviteCompletedState = {
     TRANSACTION_STATE_COMPLETED,
     {
-        {TRANSACTION_EVENT_3XX_RECEIVED, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
+        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX},
@@ -658,5 +659,6 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
-    assert ("FSM event handle error" == 0);
+    printf("Transaction event %d error.\n", event);
+    assert (0);
 }
