@@ -6,7 +6,7 @@ extern "C" {
 #include "WWW_AuthenticationHeader.h"
 }
 
-char AuthString[] =  "WWW-Authenticate:Digest algorithm=MD5,realm=\"asterisk\",nonce=\"0d70776f\"";
+char WWW_AuthenticateString[] =  "WWW-Authenticate:Digest algorithm=MD5,realm=\"asterisk\",nonce=\"0d70776f\"";
 
 TEST_GROUP(WWW_AuthenticationTestGroup)
 {
@@ -24,7 +24,7 @@ TEST(WWW_AuthenticationTestGroup, CreateAuthHeaderTest)
 
 TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderHeaderNameTest)
 {
-    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(AuthString);
+    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(WWW_AuthenticateString);
 
     STRCMP_EQUAL("WWW-Authenticate", HeaderGetName((struct Header *)authHeader));
 
@@ -33,7 +33,7 @@ TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderHeaderNameTest)
 
 TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderMechanismTest)
 {
-    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(AuthString);
+    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(WWW_AuthenticateString);
     enum AuthMechanism authMechanism = AuthHeaderGetMechanism(authHeader);
 
     CHECK_EQUAL(DIGEST, authMechanism);
@@ -43,7 +43,7 @@ TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderMechanismTest)
 
 TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderParametersTest)
 {
-    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(AuthString);
+    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(WWW_AuthenticateString);
     struct Parameters *ps  = AuthHeaderGetParameters(authHeader);
 
     STRCMP_EQUAL("MD5", GetParameter(ps, (char *)"algorithm"));
@@ -55,11 +55,11 @@ TEST(WWW_AuthenticationTestGroup, ParseAuthHeaderParametersTest)
 
 TEST(WWW_AuthenticationTestGroup, AuthHeader2StringTest)
 {
-    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(AuthString);
+    struct AuthHeader *authHeader = (struct AuthHeader *)ParseAuthHeader(WWW_AuthenticateString);
     char result[128] = {0};
     
     AuthHeader2String(result, (struct Header *)authHeader);
 
-    STRCMP_EQUAL(AuthString, result);
+    STRCMP_EQUAL(WWW_AuthenticateString, result);
     DestroyAuthHeader((struct Header *)authHeader);
 }

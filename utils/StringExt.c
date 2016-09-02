@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 int StrcmpExt(const char *s1, const char *s2)
 {

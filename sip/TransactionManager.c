@@ -84,6 +84,7 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
 {
     int i = 0;
     int length = CountTransaction();
+
     assert(branch != NULL && seqMethod != NULL);
     
     for (; i < length; i ++) {

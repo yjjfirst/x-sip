@@ -58,7 +58,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
             .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
             .andReturnValue(sendExpected);
     
-        t = AddClientNonInviteTransaction(m, NULL);
+        t = AddClientNonInviteTransaction(m, (struct TransactionUser *)dialog);
         if ( t != NULL)
             CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
 

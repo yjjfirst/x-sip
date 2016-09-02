@@ -181,13 +181,16 @@ void HandleRegisterEvent (struct Transaction *t)
     struct Message *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-
-    if (TransactionGetCurrentEvent(t) == TRANSACTION_EVENT_200OK) {    
+    enum TransactionEvent event = TransactionGetCurrentEvent(t);
+    
+    if (event == TRANSACTION_EVENT_200OK) {    
         if (MessageGetExpires(message) != 0) {
             UserAgentSetBinded(ua);
         } else {
             UserAgentSetUnbinded(ua);
         }
+    } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
+
     }
 }
 

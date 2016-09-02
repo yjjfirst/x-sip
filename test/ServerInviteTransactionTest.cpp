@@ -372,6 +372,5 @@ TEST(ServerInviteTransactionTestGroup, ConfirmedStateWaitForAckTimerTest)
 {
     struct Transaction *t = PrepareConfirmedState();
     WaitAckTimerAction(t);
-
     CheckNoTransaction();
 }
