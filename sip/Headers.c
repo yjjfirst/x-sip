@@ -42,6 +42,7 @@ struct HeaderOp HeaderOps[] = {
     {HEADER_NAME_CONTENT_LENGTH, ParseContentLengthHeader, DestroyContentLengthHeader, ContentLengthHeader2String},
     {HEADER_NAME_EXPIRES, ParseExpiresHeader, DestroyExpiresHeader, ExpiresHeader2String},
     {HEADER_NAME_WWW_AUTHENTICATE, ParseAuthHeader, DestroyAuthHeader, AuthHeader2String},
+    {HEADER_NAME_AUTHORIZATION, ParseAuthHeader, DestroyAuthHeader,AuthHeader2String},
 };
 
 struct Headers *CreateHeaders()

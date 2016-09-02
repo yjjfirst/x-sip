@@ -1,3 +1,16 @@
+#define  BINDING_MESSAGE_WITH_AUTHORIZATION (char *)"\
+REGISTER sip:192.168.10.62 SIP/2.0\r\n\
+Via:SIP/2.0/UDP 192.168.10.1:5064;rport;branch=z9hG4bK654649461\r\n\
+From:<sip:88004@192.168.10.62>;tag=930859246\r\n\
+To:<sip:88004@192.168.10.62>\r\n\
+Call-ID:385886699\r\n\
+CSeq:22 REGISTER\r\n\
+Contact:<sip:88004@192.168.10.1:5064;line=72cc7a7ac1d6a80>\r\n\
+Authorization:Digest username=\"88004\",realm=\"asterisk\",nonce=\"40062bed\",uri=\"sip:192.168.10.62\",response=\"ff880a705d5848ea0b81bdfbce0ea782\",algorithm=MD5\r\n\
+Max-Forwards:70\r\n\
+Expires:3600\r\n\
+Content-Length:0\r\n\r\n"
+
 #define  BINDING_TRYING_MESSAGE (char *)"\
 SIP/2.0 100 Trying\r\n\
 Via: SIP/2.0/UDP 192.168.10.1:5060;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5060\r\n\

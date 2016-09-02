@@ -502,3 +502,16 @@ TEST(MessageTestGroup, AuthHeaderParseTest)
     
     DestroyMessage(&message);
 }
+
+TEST(MessageTestGroup, AuthorizationHeader2StringTest)
+{
+    struct Message *message = CreateMessage();
+    char result[MAX_MESSAGE_LENGTH] = {0};
+
+    ParseMessage(BINDING_MESSAGE_WITH_AUTHORIZATION, message);
+
+    Message2String(result, message);
+    STRCMP_EQUAL(BINDING_MESSAGE_WITH_AUTHORIZATION, result);
+    
+    DestroyMessage(&message);    
+}
