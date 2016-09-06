@@ -190,7 +190,6 @@ void HandleRegisterEvent (struct Transaction *t)
             UserAgentSetUnbinded(ua);
         }
     } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
-
     }
 }
 

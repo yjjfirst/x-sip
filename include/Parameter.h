@@ -1,5 +1,8 @@
 #include "Bool.h"
 
+#define PARAMETER_NAME_MAX_LENGTH 32
+#define PARAMETER_VALUE_MAX_LENGTH 128
+
 struct Parameter;
 struct Parameters;
 /*

@@ -207,6 +207,32 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     mock().clear();
 }
 
+
+IGNORE_TEST(AccountManagerTestGroup, AuthoriaztionTest)
+{
+    struct Account *account = GetAccount(0);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(UNAUTHORIZED_MESSAGE);
+
+    AccountAddBinding(0);    
+    ReceiveInMessage();
+    CHECK_EQUAL(FALSE, AccountBinded(account));
+
+    UT_PTR_SET(GenerateBranch, GenerateBranchMockForAuthorization);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE_FOR_AUTHORIZATION);
+    ReceiveInMessage();
+    CHECK_EQUAL(TRUE, AccountBinded(account));
+    
+    ClearUserAgentManager();
+    ClearTransactionManager();
+
+    mock().checkExpectations();
+    mock().clear();
+
+}
+
 TEST(AccountManagerTestGroup, BindAllAccountsTest)
 {
     ClearAccountManager();

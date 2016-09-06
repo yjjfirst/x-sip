@@ -25,6 +25,7 @@ extern "C" {
 #include "TestingMessages.h"
 #include "UserAgentManager.h"
 #include "AccountManager.h"
+#include "WWW_AuthenticationHeader.h"
 }
 
 TEST_GROUP(MessageBuilderTestGroup)
@@ -79,7 +80,7 @@ TEST(MessageBuilderTestGroup, RequestLineTest)
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
     STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
-    STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
+    STRCMP_EQUAL("", UriGetUser(uri));
 }
 
 TEST(MessageBuilderTestGroup, FromHeaderTest)
@@ -586,4 +587,25 @@ TEST(MessageBuilderTestGroup, UnbindingMessage)
     
     CHECK_EQUAL(0, ExpiresHeaderGetExpires(e));
     DestroyMessage(&remove);
+}
+
+TEST(MessageBuilderTestGroup, AuthorizationMessage)
+{
+    struct Message *challenge = CreateMessage();
+    ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
+
+    struct Message *authMessage = BuildAuthorizationMessage(dialog,challenge);
+    struct AuthHeader *authHeader = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_AUTHORIZATION, authMessage);
+    
+    CHECK_FALSE(authHeader == NULL);
+    CHECK_EQUAL(DIGEST, AuthHeaderGetScheme(authHeader));
+    STRCMP_EQUAL(ALGORITHM_MD5, AuthHeaderGetParameter(authHeader, AUTH_HEADER_ALGORITHM));
+    STRCMP_EQUAL("\"88001\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_USER_NAME));
+    STRCMP_EQUAL("\"sip:192.168.10.62\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_URI));
+    STRCMP_EQUAL("\"asterisk\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_REALM));
+    STRCMP_EQUAL("\"1cd2586e\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_NONCE));
+
+    MessageDump(authMessage);
+    DestroyMessage(&authMessage);
+    DestroyMessage(&challenge);
 }

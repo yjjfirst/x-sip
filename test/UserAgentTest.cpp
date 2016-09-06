@@ -28,20 +28,6 @@ TEST_GROUP(UserAgentTestGroup)
     struct Dialog *dialog;
     struct Message *message;
 
-    void BuildTestingMessage()
-    {
-        ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
-        DialogSetToUser(dialog, GetUserName(0));
-        message = BuildAddBindingMessage(dialog);
-    }
-
-    void DestroyTestingMessage()
-    {
-        DestroyMessage(&message);
-        DestroyUserAgent(&ua);
-    }
-
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);

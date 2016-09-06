@@ -8,16 +8,13 @@
 #include "utils/list/include/list.h"
 #include "StringExt.h"
 
-#define PARAMETER_MAX_NAME_LENGTH 32
-#define PARAMETER_MAX_VALUE_LENGTH 128
-
 struct Parameters {
     t_list *parameters;
 };
 
 struct Parameter {
-    char name[PARAMETER_MAX_NAME_LENGTH];
-    char value[PARAMETER_MAX_VALUE_LENGTH];
+    char name[PARAMETER_NAME_MAX_LENGTH];
+    char value[PARAMETER_VALUE_MAX_LENGTH];
 };
 
 static struct HeaderPattern ParameterPattern[] = {

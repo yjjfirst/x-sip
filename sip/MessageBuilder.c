@@ -20,6 +20,8 @@
 #include "DialogId.h"
 #include "Provision.h"
 #include "Transaction.h"
+#include "WWW_AuthenticationHeader.h"
+#include "Accounts.h"
 
 struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 {
@@ -27,11 +29,15 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
     struct URI *uri ;
     struct URI *remoteTarget = UriDup(DialogGetRemoteTarget(dialog));
 
-    if (remoteTarget == NULL)
-        uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
-    else
+    if (remoteTarget == NULL) {
+        if (DialogGetRequestMethod(dialog) == SIP_METHOD_REGISTER)
+            uri = CreateUri(URI_SCHEME_SIP, NULL, UserAgentGetProxy(ua), 0);
+        else 
+            uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+    } else {
         uri = remoteTarget;
-
+    }
+    
     return  CreateRequestLine(DialogGetRequestMethod(dialog), uri);
 }
 
@@ -194,6 +200,49 @@ struct Message *BuildByeMessage(struct Dialog *dialog)
     return bye;
 }
 
+void AddAuthHeaderUri(struct Message *authMessage,struct AuthHeader *authHeader)
+{
+    struct RequestLine *rl = MessageGetRequestLine(authMessage);
+    struct URI *uri = RequestLineGetUri(rl);
+    char uriString[256] = {0};
+    
+    Uri2StringExt(uriString, uri);
+    AuthHeaderSetParameter(authHeader, AUTH_HEADER_URI,uriString); 
+}
+
+struct AuthHeader * BuildAuthHeader(struct Message *authMessage, struct Dialog *dialog, struct Message *challenge)
+{
+    struct AuthHeader *authHeader = CreateAuthorizationHeader(dialog);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UserAgentGetAccount(ua);
+
+    AuthHeaderSetScheme(authHeader, DIGEST);
+    AuthHeaderSetParameter(authHeader, AUTH_HEADER_USER_NAME, AccountGetUserName(account));
+    AuthHeaderSetParameter(authHeader, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
+    AddAuthHeaderUri(authMessage, authHeader);
+
+    struct AuthHeader
+        *challengeAuthHeader = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_WWW_AUTHENTICATE, challenge);
+
+    AuthHeaderSetParameter(authHeader,
+                           AUTH_HEADER_REALM,
+                           AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM));
+
+    AuthHeaderSetParameter(authHeader,
+                           AUTH_HEADER_NONCE,
+                           AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE));
+    
+    return authHeader;
+}
+
+struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge)
+{
+    struct Message *message = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
+   
+    MessageAddHeader(message, (struct Header *)BuildAuthHeader(message,dialog, challenge));
+    return message;
+}
+
 void AddResponseViaHeader(struct Message *response, struct Message *invite)
 {
     struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
@@ -332,11 +381,8 @@ struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
     struct RequestLine *rl = RequestLineDup(MessageGetRequestLine(invite));
     
     MessageSetType(ack, MESSAGE_TYPE_REQUEST);
-
     RequestLineSetMethod(rl, SIP_METHOD_NAME_ACK);
-
     MessageSetRequestLine(ack, rl);
-
     AddResponseHeaders(ack, invite);
     
     struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);

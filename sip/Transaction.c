@@ -596,7 +596,7 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
     }
 }
 
-void TransactionTerminate(struct Transaction *t)
+void RemoveTerminatedTransaction(struct Transaction *t)
 {
     if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
         if (t != NULL && t->manager != NULL) {
@@ -655,10 +655,10 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     
     if ((entry = LocateEventEntry(t, event)) != NULL) {
         TransactionHandleEvent(t, event, entry);            
-        TransactionTerminate(t);
+        RemoveTerminatedTransaction(t);
         return;
     } 
 
-    printf("Transaction event %d error.\n", event);
+    printf("Transaction Event Handle Error: %d, %d\n", TransactionGetState(t), event);
     assert (0);
 }

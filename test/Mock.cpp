@@ -65,3 +65,8 @@ void GenerateBranchMock(char *branch)
 {
     strcpy(branch, "z9hG4bK1491280923");
 }
+
+void GenerateBranchMockForAuthorization(char *branch)
+{
+    strcpy(branch, "z9hG4bK1491280927");
+}
