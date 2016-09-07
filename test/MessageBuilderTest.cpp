@@ -604,6 +604,7 @@ TEST(MessageBuilderTestGroup, AuthorizationMessage)
     STRCMP_EQUAL("\"sip:192.168.10.62\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_URI));
     STRCMP_EQUAL("\"asterisk\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_REALM));
     STRCMP_EQUAL("\"1cd2586e\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_NONCE));
+    STRCMP_EQUAL("\"074e8468c256759646b5a1d6897450e2\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_RESPONSE));
 
     DestroyMessage(&authMessage);
     DestroyMessage(&challenge);

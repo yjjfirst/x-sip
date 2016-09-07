@@ -219,7 +219,6 @@ struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *d
 
     AuthHeaderSetScheme(authHeader, DIGEST);
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_USER_NAME, AccountGetUserName(account));
-    AuthHeaderSetParameter(authHeader, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
     AddAuthHeaderUri(authMessage, authHeader);
 
     struct AuthHeader
@@ -239,7 +238,10 @@ struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *d
                       AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM),
                       AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE),
                       response);
-                       
+
+    AuthHeaderSetParameter(authHeader, AUTH_HEADER_RESPONSE, response);
+    AuthHeaderSetParameter(authHeader, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
+
     return authHeader;
 }
 
