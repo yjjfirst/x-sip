@@ -140,3 +140,8 @@ void DestroyUserAgent(struct UserAgent **ua)
         *ua = NULL;
     }
 }
+
+void UserAgentDump(struct UserAgent *ua)
+{
+    printf("%s:%d\n", AccountGetUserName(ua->account), CountDialogs(ua->dialogs));
+}

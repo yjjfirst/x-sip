@@ -78,3 +78,5 @@ enum TransactionType TransactionGetType(struct Transaction *t);
 
 BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);
 BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
+
+void TransactionDump(struct Transaction *t);

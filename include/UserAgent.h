@@ -32,3 +32,5 @@ void UserAgentEndCall(struct UserAgent *ua);
 
 struct UserAgent *CreateUserAgent(int account);
 void DestroyUserAgent(struct UserAgent **ua);
+
+void UserAgentDump(struct UserAgent *ua);

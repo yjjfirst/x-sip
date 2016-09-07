@@ -47,3 +47,16 @@ void ClearUserAgentManager()
     destroy_list(&uam->userAgents, NULL);
     uam->userAgents = NULL;
 }
+
+void UserAgentManagerDump()
+{
+    int i = 0;
+    struct UserAgentManager *uam = &UserAgentManager;   
+    int len = CountUserAgent(uam);
+
+    printf("\n");
+    for (; i < len; i ++) {
+        struct UserAgent *ua = get_data_at(uam->userAgents, i);
+        UserAgentDump(ua);
+    }
+}

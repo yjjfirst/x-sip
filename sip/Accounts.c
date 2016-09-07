@@ -50,6 +50,16 @@ void AccountSetUnbinded(struct Account *account)
     account->binded = FALSE;
 }
 
+void AccountDump(struct Account *account)
+{
+    printf("%s:%s:%s:%s:%s\n",
+           AccountGetUserName(account),
+           AccountGetAuthName(account),
+           AccountGetPasswd(account),
+           AccountGetProxy(account),
+           AccountGetRegistrar(account));
+}
+
 struct Account *CreateAccount(char *username, char *authname, char *passwd, char *proxy, char *registrar)
 {
     struct Account *account = calloc(1, sizeof(struct Account));

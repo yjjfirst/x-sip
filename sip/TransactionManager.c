@@ -255,3 +255,15 @@ struct Transaction *AddServerNonInviteTransaction(struct Message *message, struc
 
     return t;
 }
+
+void TransactionManagerDump()
+{
+    int i = 0;
+    int length = CountTransaction();
+
+    printf("\n");
+    for ( ; i < length; i++) {
+        struct Transaction *t = GetTransactionByPosition(i);
+        TransactionDump(t);
+    }
+}

@@ -11,7 +11,7 @@ extern "C" {
 #include "Transporter.h"
 #include "UserAgentManager.h"
 #include "ViaHeader.h"
-extern void ClearTransactionManager();
+#include "TransactionManager.h"
 }
 
 TEST_GROUP(AccountManagerTestGroup)
@@ -21,6 +21,7 @@ TEST_GROUP(AccountManagerTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
+        ClearTransactionManager();
         ClearAccountManager();
         ::AddFirstAccount();
     }
@@ -160,7 +161,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
-
+    
     AccountRemoveBinding(0);    
     ReceiveInMessage();
 
@@ -174,7 +175,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 }
 
 
-IGNORE_TEST(AccountManagerTestGroup, AuthoriaztionTest)
+TEST(AccountManagerTestGroup, AuthoriaztionTest)
 {
     struct Account *account = GetAccount(0);
     

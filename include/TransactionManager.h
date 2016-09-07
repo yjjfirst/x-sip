@@ -17,3 +17,5 @@ struct Transaction *AddServerNonInviteTransaction(struct Message *message, struc
 
 void RemoveTransaction(struct Transaction *t);
 void RemoveTransactionById(struct TransactionId *id);
+
+void TransactionManagerDump();

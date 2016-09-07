@@ -47,7 +47,6 @@ void ClearAccountManager()
     struct AccountManager *am = &AccountManager;
     int len = get_list_len(am->accounts);
 
-    assert(am != NULL);
     for (; i < len; i++) {
         struct Account *a = (struct Account *)get_data_at(am->accounts, i);
         DestroyAccount(&a);
@@ -135,3 +134,17 @@ void AccountInitImpl()
 }
 
 void (*AccountInit)() = AccountInitImpl;
+
+void AccountManagerDump()
+{
+    int i = 0;
+    struct AccountManager *am = &AccountManager;
+    int len = get_list_len(am->accounts);
+
+    printf("\n");
+    for (; i < len; i++) {
+        struct Account *a = (struct Account *)get_data_at(am->accounts, i);
+        AccountDump(a);
+    }
+
+}

@@ -14,3 +14,4 @@ int AddSecondAccount();
 int AddThirdAccount();
 
 extern void (*AccountInit)();
+void AccountManagerDump();

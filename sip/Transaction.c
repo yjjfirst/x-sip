@@ -662,3 +662,8 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     printf("Transaction Event Handle Error: %d, %d\n", TransactionGetState(t), event);
     assert (0);
 }
+
+void TransactionDump(struct Transaction *t)
+{
+    printf("%s:%s:%d\n", TransactionIdGetBranch(t->id), TransactionIdGetMethod(t->id), t->state);
+}
