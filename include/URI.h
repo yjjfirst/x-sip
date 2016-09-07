@@ -3,6 +3,12 @@
 #define URI_SCHEME_SIP "sip"
 #define URI_SCHEME_SIPS "sips"
 
+#define URI_MAX_ELEMENT 6
+#define URI_SCHEME_MAX_LENGTH 8
+#define URI_USER_MAX_LENGTH 32
+#define URI_HOST_MAX_LENGTH 128
+#define URI_STRING_MAX_LENGTH 256 
+
 struct URI;
 struct HeaderPattern;
 struct Parameters;

@@ -191,3 +191,15 @@ TEST(WWW_AuthenticationTestGroup, AllParametersTest)
     DestroyAuthHeader((struct Header *) h);
 }
 
+TEST(WWW_AuthenticationTestGroup, CalculateResponaseTest)
+{
+    char username[] = "88004";
+    char passwd[] = "88004";
+    char uri[] = "sip:192.168.10.62";
+    char realm[] = "asterisk";
+    char nonce[] = "40062bed";
+    char response[64] = {0};
+    
+    CalculateResponse(username, passwd, uri, realm, nonce, response);
+    STRCMP_EQUAL("ff880a705d5848ea0b81bdfbce0ea782", response);
+}

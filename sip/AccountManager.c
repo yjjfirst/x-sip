@@ -89,16 +89,17 @@ void BindAllAccounts()
     }
 }
 
-void AddFirstAccount()
+int AddFirstAccount()
 {
     struct Account *first;
     first = CreateAccount(
                           (char *)"88001", 
                           (char *)"88001", 
+                          (char *)"88001", 
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
 
-    AddAccount(first);
+    return AddAccount(first);
 }
 
 int AddSecondAccount()
@@ -107,6 +108,7 @@ int AddSecondAccount()
     second = CreateAccount(
                            (char *)"88002", 
                            (char *)"88002", 
+                           (char *)"88001", 
                            (char *)"192.168.10.62", 
                            (char *)"192.168.10.72");
     return AddAccount(second);
@@ -118,6 +120,7 @@ int AddThirdAccount()
     third = CreateAccount(
                           (char *)"88003", 
                           (char *)"88003", 
+                          (char *)"88001", 
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
 

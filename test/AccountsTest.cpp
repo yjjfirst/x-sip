@@ -30,11 +30,13 @@ TEST(AccountsTestGroup, AccountCreateTest)
     struct Account *acc = CreateAccount(
                                         (char *)"88001", 
                                         (char *)"88001", 
+                                        (char *)"88001", 
                                         (char *)"192.168.10.62", 
                                         (char *)"192.168.10.72");
 
     STRCMP_EQUAL("88001", AccountGetUserName(acc));
     STRCMP_EQUAL("88001", AccountGetAuthName(acc));
+    STRCMP_EQUAL("88001", AccountGetPasswd(acc));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxy(acc));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(acc));
 
@@ -131,5 +133,15 @@ TEST(AccountsTestGroup, SetVeryLongRegistrarTest)
     STRCMP_CONTAINS(AccountGetRegistrar(account), registrar);
     CHECK_EQUAL(REGISTRAR_MAX_LENGTH -1 , strlen(AccountGetRegistrar(account)));
 
+    DestroyAccount(&account);
+}
+
+TEST(AccountsTestGroup, SetPasswordTest)
+{
+    char passwd[] = "asdf";
+
+    AccountSetPasswd(account, passwd);
+    STRCMP_EQUAL(passwd, AccountGetPasswd(account));
+    
     DestroyAccount(&account);
 }

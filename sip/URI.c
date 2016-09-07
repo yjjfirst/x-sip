@@ -9,12 +9,6 @@
 #include "Parameter.h"
 #include "StringExt.h"
 
-#define URI_MAX_ELEMENT 6
-#define URI_SCHEME_MAX_LENGTH 8
-#define URI_USER_MAX_LENGTH 32
-#define URI_HOST_MAX_LENGTH 32
-
-
 struct URI {
     char scheme[URI_SCHEME_MAX_LENGTH];
     char user[URI_USER_MAX_LENGTH];

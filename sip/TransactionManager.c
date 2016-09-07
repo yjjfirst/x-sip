@@ -39,7 +39,7 @@ void RemoveTransactionByPosition(int position)
 BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
 {
     struct Message *request = TransactionGetRequest(t);
-    
+
     return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
@@ -87,6 +87,8 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
 
     assert(branch != NULL && seqMethod != NULL);
     
+//    printf("branch = %s, method = %s\n", branch, seqMethod);
+//    printf("%d\n", length);
     for (; i < length; i ++) {
         struct Transaction *t = GetTransactionByPosition(i);
         if (TransactionMatched(t, branch, seqMethod))

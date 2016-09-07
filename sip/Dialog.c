@@ -190,6 +190,8 @@ void HandleRegisterEvent (struct Transaction *t)
             UserAgentSetUnbinded(ua);
         }
     } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
+        struct Message *authMessage = BuildAuthorizationMessage(dialog, message);
+        DialogAddClientNonInviteTransaction(dialog, authMessage);
     }
 }
 

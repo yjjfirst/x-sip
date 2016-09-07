@@ -12,6 +12,8 @@ struct Header;
 struct URI;
 struct Parameters;
 
+typedef struct ViaHeader VIA_HEADER;
+
 struct HeaderPattern *GetViaPattern();
 struct ViaHeader *CreateEmptyViaHeader();
 struct ViaHeader *CreateViaHeader(struct URI *uri);

@@ -7,6 +7,8 @@
 #define AUTH_HEADER_RESPONSE "response"
 #define AUTH_HEADER_NONCE "nonce"
 
+#define MD5_HASH_LENGTH 32
+
 struct Header;
 struct AuthHeader;
 
@@ -20,6 +22,8 @@ void AuthHeaderSetParameter(struct AuthHeader *authHeader, const char *name, con
 enum AuthScheme AuthHeaderGetScheme(struct AuthHeader *authHeader);
 struct Parameters *AuthHeaderGetParameters(struct AuthHeader *authHeader);
 char *AuthHeaderGetParameter(struct AuthHeader *authHeader, const char *name);
+void CalculateResponse(char *username, char *passwd, char *uri, char *realm, char *nonce, char *response);
+
 
 struct Header *ParseAuthHeader(char *string);
 char *AuthHeader2String(char *result, struct Header *auth);

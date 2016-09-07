@@ -204,17 +204,18 @@ void AddAuthHeaderUri(struct Message *authMessage,struct AuthHeader *authHeader)
 {
     struct RequestLine *rl = MessageGetRequestLine(authMessage);
     struct URI *uri = RequestLineGetUri(rl);
-    char uriString[256] = {0};
+    char uriString[URI_STRING_MAX_LENGTH + 1] = {0};
     
     Uri2StringExt(uriString, uri);
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_URI,uriString); 
 }
 
-struct AuthHeader * BuildAuthHeader(struct Message *authMessage, struct Dialog *dialog, struct Message *challenge)
+struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *dialog, struct Message *challenge)
 {
     struct AuthHeader *authHeader = CreateAuthorizationHeader(dialog);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct Account *account = UserAgentGetAccount(ua);
+    char response[MD5_HASH_LENGTH + 1] = {0};
 
     AuthHeaderSetScheme(authHeader, DIGEST);
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_USER_NAME, AccountGetUserName(account));
@@ -231,7 +232,14 @@ struct AuthHeader * BuildAuthHeader(struct Message *authMessage, struct Dialog *
     AuthHeaderSetParameter(authHeader,
                            AUTH_HEADER_NONCE,
                            AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE));
-    
+
+    CalculateResponse(AccountGetAuthName(account),
+                      AccountGetPasswd(account),
+                      AuthHeaderGetParameter(authHeader,AUTH_HEADER_URI),
+                      AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM),
+                      AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE),
+                      response);
+                       
     return authHeader;
 }
 
@@ -245,8 +253,8 @@ struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message 
 
 void AddResponseViaHeader(struct Message *response, struct Message *invite)
 {
-    struct ViaHeader *via = ViaHeaderDup((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite));
-    MessageAddHeader(response, (struct Header *)via);
+    VIA_HEADER *via = ViaHeaderDup((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite));
+    MessageAddHeader(response, (HEADER *)via);
 }
 
 void AddResponseFromHeader(struct Message *response, struct Message *invite)

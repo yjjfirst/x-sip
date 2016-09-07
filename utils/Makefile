@@ -4,7 +4,7 @@ SRCS = $(wildcard ./*.c)
 OBJS = $(SRCS:.c=.o)
 
 %.o:%.c
-	$(CC) -MMD -c -o $@ $< $(CPPFLAGS)
+	$(CC) -MMD -c -o $@ $< $(CPPFLAGS) -I../include/utils/
 
 all: $(OBJS)
 	make -C list all

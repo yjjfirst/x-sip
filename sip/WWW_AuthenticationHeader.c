@@ -6,6 +6,7 @@
 #include "Header.h"
 #include "Parameter.h"
 #include "StringExt.h"
+#include "utils/md5.h"
 
 #define AUTHENTICATION_SCHEME_DIGEST "Digest"
 #define AUTHENTICATION_SCHEME_BASIC "Basic"
@@ -77,6 +78,67 @@ struct Parameters *AuthHeaderGetParameters(struct AuthHeader *authHeader)
 {
     assert(authHeader != NULL);
     return authHeader->parameters;
+}
+
+#define HASHLEN 16
+#define HASHHEXLEN 32
+typedef unsigned char HASH[HASHLEN];
+typedef char HASHHEX[HASHHEXLEN+1];
+
+void convert_to_hex(HASH Bin, HASHHEX Hex )
+{
+    unsigned short i;
+    unsigned char j;
+
+    for (i = 0; i < HASHLEN; i++) {
+        j = (Bin[i] >> 4) & 0xf;
+        if (j <= 9)
+            Hex[i*2] = (j + '0');
+        else
+            Hex[i*2] = (j + 'a' - 10);
+        j = Bin[i] & 0xf;
+        if (j <= 9)
+            Hex[i*2+1] = (j + '0');
+        else
+            Hex[i*2+1] = (j + 'a' - 10);
+    };
+    Hex[HASHHEXLEN] = '\0';
+};
+
+void CalculateResponse(char *username, char *passwd, char *uri, char *realm, char *nonce, char *response)
+{
+    char a1[128] = {0};
+    char a2[128] = {0};
+    char final[128] = {0};
+    
+    MD5_CTX Md5Ctx;
+    HASH HA1;
+    HASHHEX HA1Hex;
+    HASH HA2;
+    HASHHEX HA2Hex;
+    HASH HFinal;
+    HASHHEX HFinalHex;
+
+    snprintf(a1, sizeof(a1) - 1, "%s:%s:%s", username, realm, passwd);
+    snprintf(a2, sizeof(a2) - 1, "%s:%s", "REGISTER", uri);    
+    
+    MD5_Init(&Md5Ctx);
+    MD5_Update(&Md5Ctx, a1, strlen(a1));
+    MD5_Final(HA1, &Md5Ctx);
+    convert_to_hex(HA1, HA1Hex);
+
+    MD5_Init(&Md5Ctx);
+    MD5_Update(&Md5Ctx, a2, strlen(a2));
+    MD5_Final(HA2, &Md5Ctx);
+    convert_to_hex(HA2, HA2Hex);
+
+    snprintf(final, sizeof(final) -1, "%s:%s:%s", HA1Hex, nonce, HA2Hex);
+    MD5_Init(&Md5Ctx);
+    MD5_Update(&Md5Ctx, final , strlen(final));
+    MD5_Final(HFinal, &Md5Ctx);
+    convert_to_hex(HFinal, HFinalHex);
+
+    strcpy(response, HFinalHex);
 }
 
 char *AuthHeader2String(char *result, struct Header *auth)

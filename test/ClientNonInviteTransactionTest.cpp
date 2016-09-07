@@ -132,10 +132,14 @@ TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)
     PrepareTryingState(0);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(UNAUTHORIZED_MESSAGE);
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
-
+    
+    mock().expectOneCall("AddTimer").withIntParameter("ms", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
+    mock().expectOneCall("AddTimer").withIntParameter("ms", TRANSACTION_TIMEOUT_INTERVAL);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+ 
+    
     ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
-
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryingStateTimeETest)

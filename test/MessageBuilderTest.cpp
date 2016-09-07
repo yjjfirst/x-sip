@@ -605,7 +605,6 @@ TEST(MessageBuilderTestGroup, AuthorizationMessage)
     STRCMP_EQUAL("\"asterisk\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_REALM));
     STRCMP_EQUAL("\"1cd2586e\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_NONCE));
 
-    MessageDump(authMessage);
     DestroyMessage(&authMessage);
     DestroyMessage(&challenge);
 }

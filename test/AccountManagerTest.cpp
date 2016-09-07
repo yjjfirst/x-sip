@@ -14,40 +14,6 @@ extern "C" {
 extern void ClearTransactionManager();
 }
 
-void AddFirstAccount()
-{
-    struct Account *first;
-    first = CreateAccount(
-                          (char *)"88001", 
-                          (char *)"88001", 
-                          (char *)"192.168.10.62", 
-                          (char *)"192.168.10.72");
-    AddAccount(first);
-}
-
-int AddSecondAccount()
-{
-    struct Account *second;
-    second = CreateAccount(
-                           (char *)"88002", 
-                           (char *)"88002", 
-                           (char *)"192.168.10.62", 
-                           (char *)"192.168.10.72");
-    return AddAccount(second);
-}
-
-int AddThirdAccount()
-{
-    struct Account *third;
-    third = CreateAccount(
-                          (char *)"88003", 
-                          (char *)"88003", 
-                          (char *)"192.168.10.62", 
-                          (char *)"192.168.10.72");
-
-    return AddAccount(third);
-}
-
 TEST_GROUP(AccountManagerTestGroup)
 {
     void setup()
@@ -211,17 +177,18 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 IGNORE_TEST(AccountManagerTestGroup, AuthoriaztionTest)
 {
     struct Account *account = GetAccount(0);
-
+    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(UNAUTHORIZED_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE_FOR_AUTHORIZATION);
 
     AccountAddBinding(0);    
+
+    UT_PTR_SET(GenerateBranch, GenerateBranchMockForAuthorization);
     ReceiveInMessage();
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
-    UT_PTR_SET(GenerateBranch, GenerateBranchMockForAuthorization);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE_FOR_AUTHORIZATION);
     ReceiveInMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
     

@@ -19,6 +19,8 @@ struct Header {
     char name[HEADER_NAME_MAX_LENGTH];
 };
 
+typedef struct Header HEADER;
+
 static inline char *HeaderGetName(struct Header *header)
 {
     assert(header != NULL);
