@@ -230,34 +230,6 @@ char *DialogGetRemoteTagMock(struct Dialog *dialog)
     return (char *)"123456abcde";
 }
 
-struct URI *dialog_remote_target;
-struct URI *DialogGetRemoteTargetMock(struct Dialog *dialog)
-{
-    if (dialog_remote_target == NULL) {
-        dialog_remote_target = CreateEmptyUri();
-        ParseUri((char *)"sip:8800222@192.168.10.62", &dialog_remote_target);
-    }
-    return dialog_remote_target;
-}
-
-TEST(BindingMessageBuildTestGroup, ByeMessageRequestLineTest)
-{
-    UT_PTR_SET(DialogGetRemoteTarget, DialogGetRemoteTargetMock);
-
-    struct Message *bye = BuildByeMessage(dialog);
-    struct RequestLine *rl = MessageGetRequestLine(bye);
-    struct URI *uri = RequestLineGetUri(rl);
-    struct URI *remoteTarget = DialogGetRemoteTarget(dialog);
-    
-    STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
-    STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));
-    CHECK_TRUE(UriMatched(remoteTarget, uri));
-
-    DestroyUri(&remoteTarget);
-    DestroyMessage(&bye);
-
-}
-
 TEST(BindingMessageBuildTestGroup, BindingsRequestLineTest)
 {
     struct RequestLine *rl = MessageGetRequestLine(m);

@@ -217,32 +217,19 @@ TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
     DestroyMessage(&bye);
 }
 
-static struct URI *dialog_remote_target;
-static struct URI *DialogGetRemoteTargetMock(struct Dialog *dialog)
-{
-    if (dialog_remote_target == NULL) {
-        dialog_remote_target = CreateEmptyUri();
-        ParseUri((char *)"sip:8800222@192.168.10.62", &dialog_remote_target);
-    }
-    return dialog_remote_target;
-}
 
 TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 {
-    UT_PTR_SET(DialogGetRemoteTarget, DialogGetRemoteTargetMock);
-
     struct Message *bye = BuildByeMessage(dialog);
     struct RequestLine *rl = MessageGetRequestLine(bye);
     struct URI *uri = RequestLineGetUri(rl);
-    struct URI *remoteTarget = DialogGetRemoteTarget(dialog);
+    struct URI *remoteUri = DialogGetRemoteUri(dialog);
     
     STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));
-    CHECK_TRUE(UriMatched(remoteTarget, uri));
+    CHECK_TRUE(UriMatched(remoteUri, uri));
 
-    DestroyUri(&remoteTarget);
     DestroyMessage(&bye);
-
 }
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
