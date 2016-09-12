@@ -30,7 +30,7 @@ TEST_GROUP(TransactionTestGroup)
         
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
-        invite = BuildInviteMessage(dialog); 
+        invite = BuildInviteMessage(dialog, (char *)"88002"); 
         transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
 
         strcpy(branch, MessageGetViaBranch(invite));

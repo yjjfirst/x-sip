@@ -30,10 +30,7 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
     struct URI *remoteTarget = UriDup(DialogGetRemoteTarget(dialog));
 
     if (remoteTarget == NULL) {
-        if (DialogGetRequestMethod(dialog) == SIP_METHOD_REGISTER)
-            uri = CreateUri(URI_SCHEME_SIP, NULL, UserAgentGetProxy(ua), 0);
-        else 
-            uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+        uri = CreateUri(URI_SCHEME_SIP, NULL, UserAgentGetProxy(ua), 0);
     } else {
         uri = remoteTarget;
     }
@@ -48,6 +45,7 @@ struct Header *BuildRequestViaHeader(struct Dialog *dialog)
     struct Parameters *ps = ViaHeaderGetParameters(via);
     char branch[32];
 
+    AddParameter(ps, "rport", "");
     GenerateBranch(branch);
     AddParameter(ps, VIA_BRANCH_PARAMETER_NAME, branch); 
 
@@ -81,10 +79,11 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
     struct URI *uri;
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
 
+    //DialogSetToUser(dialog, "88002");
     if (remoteUri != NULL)
         uri = remoteUri;
     else
-        uri = CreateUri(URI_SCHEME_SIP, DialogGetToUser(dialog), UserAgentGetProxy(ua), 0);
+        uri = CreateUri(URI_SCHEME_SIP, "", UserAgentGetProxy(ua), 0);
 
     struct ContactHeader *to = CreateToHeader();
     ContactHeaderSetUri(to, uri);
@@ -126,7 +125,7 @@ struct Header *BuildRequestCSeqHeader(struct Dialog *dialog)
 
 struct Header *BuildRequestExpiresHeader(struct Dialog *dialog)
 {
-    struct ExpiresHeader *e = CreateExpiresHeader(7200);
+    struct ExpiresHeader *e = CreateExpiresHeader(3600);
     
     return (struct Header *)e;
 }
@@ -159,9 +158,14 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 
 struct Message *BuildAddBindingMessage(struct Dialog *dialog)
 {
-    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
-    MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
+    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);    
+    struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, binding);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UserAgentGetAccount(ua);
 
+    UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));
+    MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
+    
     return binding;
 }
 
@@ -175,17 +179,42 @@ struct Message *BuildRemoveBindingMessage(struct Dialog *dialog)
     return remove;
 }
 
-struct Message *BuildInviteMessage(struct Dialog *dialog)
+struct URI *BuildRemoteUri(struct Dialog *dialog, char *to)
+{
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UserAgentGetAccount(ua);    
+    struct URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxy(account), 0);
+
+    return uri;
+}
+
+struct Message *BuildInviteMessage(struct Dialog *dialog, char *to)
 {
     struct Message *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
+    struct ContactHeader  *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+    struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
+    //struct URI *uri = BuildRemoteUri(dialog, to);
 
+    //char string[256];
+
+    //Uri2StringExt(string, uri);
+
+    //DialogSetRemoteUri(dialog, uri);
+    UriSetUser(RequestLineGetUri(rl), to);
+    UriSetUser(ContactHeaderGetUri(toHeader), to);
+    
     return invite;
 }
 
 struct Message *BuildAckMessage(struct Dialog *dialog)
 {
     struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
+//    struct RequestLine *rl = MessageGetRequestLine(ack);
+//    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    
+//    UriSetUser(RequestLineGetUri(rl),UriGetUser(remoteUri));
     MessageSetRemoteTag(ack, DialogGetRemoteTag(dialog));
+    
     return ack;
 }
 
@@ -248,7 +277,13 @@ struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *d
 struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge)
 {
     struct Message *message = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
-   
+    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
+
+    CSeqHeaderSetSeq(cseq, 2);
+    char *callid = MessageGetCallId(challenge);
+    struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);
+    CallIdHeaderSetID(callidHeader, callid);
+    
     MessageAddHeader(message, (struct Header *)BuildAuthHeader(message,dialog, challenge));
     return message;
 }

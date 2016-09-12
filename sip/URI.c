@@ -161,6 +161,7 @@ char *UriGetScheme(struct URI *uri)
 
 char *UriGetUser(struct URI *uri)
 {
+    assert(uri != NULL);
     return uri->user;
 }
 
@@ -192,6 +193,9 @@ void UriSetScheme(struct URI *uri, char *scheme)
 
 void UriSetUser(struct URI *uri, char *user)
 {
+    assert(uri != NULL);
+    assert(user != NULL);
+
     struct HeaderPattern *p = UserPattern;
     Copy2Target(uri, user, p);
 
@@ -298,9 +302,15 @@ struct URI *UriDup(struct URI *src)
 void DestroyUri(struct URI **uri)
 {
     if (*uri != NULL) {
-        DestroyParameters((*uri)->parameters);
-        DestroyParameters((*uri)->headers);
-        free (*uri);
+        if ((*uri)->parameters != NULL) {        
+            DestroyParameters((*uri)->parameters);
+            (*uri)->parameters = NULL;
+        }
+        if ((*uri)->headers != NULL) {
+            DestroyParameters((*uri)->headers);
+            (*uri)->headers = NULL;
+        }
+        free (*uri);        
         *uri = NULL;
     }
 }

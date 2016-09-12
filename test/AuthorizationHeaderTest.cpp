@@ -48,3 +48,127 @@ TEST(AuthorizationTestGroup, AuthorizationHeader2StringTest)
     STRCMP_EQUAL(AuthorizationString, result);
     DestroyAuthHeader((struct Header *)authHeader);
 }
+
+TEST(AuthorizationTestGroup, SetSchemeTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetScheme(h, DIGEST);
+    CHECK_EQUAL(DIGEST, AuthHeaderGetScheme(h));
+
+    AuthHeaderSetScheme(h, BASIC);
+    CHECK_EQUAL(BASIC, AuthHeaderGetScheme(h));
+    
+
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersAlgorithmTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
+    STRCMP_EQUAL(ALGORITHM_MD5, AuthHeaderGetParameter(h, AUTH_HEADER_ALGORITHM));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersUriTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_URI, "sip://192.168.10.62");
+    STRCMP_EQUAL("\"sip://192.168.10.62\"", AuthHeaderGetParameter(h, AUTH_HEADER_URI));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersUserNameTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_USER_NAME, "88004");
+    STRCMP_EQUAL("\"88004\"", AuthHeaderGetParameter(h, AUTH_HEADER_USER_NAME));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersRealmTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_REALM, "asterisk");
+    STRCMP_EQUAL("\"asterisk\"", AuthHeaderGetParameter(h, AUTH_HEADER_REALM));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersResponseTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_RESPONSE, "ff880a705d5848ea0b81bdfbce0ea782");
+    STRCMP_EQUAL("\"ff880a705d5848ea0b81bdfbce0ea782\"", AuthHeaderGetParameter(h, AUTH_HEADER_RESPONSE));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, ParametersNonceTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_NONCE, "ff880a705");
+    STRCMP_EQUAL("\"ff880a705\"", AuthHeaderGetParameter(h, AUTH_HEADER_NONCE));
+    
+    DestroyAuthHeader((struct Header *) h);
+}
+
+
+TEST(AuthorizationTestGroup, SetParameterQuotedTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_NONCE, "\"ff880a705\"");
+    STRCMP_EQUAL("\"ff880a705\"", AuthHeaderGetParameter(h, AUTH_HEADER_NONCE));
+    
+    DestroyAuthHeader((struct Header *) h);
+
+}
+
+TEST(AuthorizationTestGroup, AllParametersTest)
+{
+    struct AuthHeader *h  = CreateAuthorizationHeader();
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
+    STRCMP_EQUAL(ALGORITHM_MD5, AuthHeaderGetParameter(h, AUTH_HEADER_ALGORITHM));
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_URI, "sip://192.168.10.62");
+    STRCMP_EQUAL("\"sip://192.168.10.62\"", AuthHeaderGetParameter(h, AUTH_HEADER_URI));
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_USER_NAME, "88004");
+    STRCMP_EQUAL("\"88004\"", AuthHeaderGetParameter(h, AUTH_HEADER_USER_NAME));
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_REALM, "asterisk");
+    STRCMP_EQUAL("\"asterisk\"", AuthHeaderGetParameter(h, AUTH_HEADER_REALM));
+
+    AuthHeaderSetParameter(h, AUTH_HEADER_RESPONSE, "ff880a705d5848ea0b81bdfbce0ea782");
+    STRCMP_EQUAL("\"ff880a705d5848ea0b81bdfbce0ea782\"", AuthHeaderGetParameter(h, AUTH_HEADER_RESPONSE));
+    
+    AuthHeaderSetParameter(h, AUTH_HEADER_NONCE, "ff880a705");
+    STRCMP_EQUAL("\"ff880a705\"", AuthHeaderGetParameter(h, AUTH_HEADER_NONCE));
+
+    DestroyAuthHeader((struct Header *) h);
+}
+
+TEST(AuthorizationTestGroup, CalculateResponaseTest)
+{
+    char username[] = "88004";
+    char passwd[] = "88004";
+    char uri[] = "\"sip:192.168.10.62\"";
+    char realm[] = "\"asterisk\"";
+    char nonce[] = "\"40062bed\"";
+    char response[64] = {0};
+    
+    CalculateResponse(username, passwd, uri, realm, nonce, response);
+    STRCMP_EQUAL("ff880a705d5848ea0b81bdfbce0ea782", response);
+}

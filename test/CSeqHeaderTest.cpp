@@ -114,3 +114,13 @@ TEST(CSeqTestGroup, CSeqHeaderDupTest)
     DestroyCSeqHeader((struct Header *)src);
     DestroyCSeqHeader((struct Header *)dest);
 }
+
+TEST(CSeqTestGroup, CSeqHeaderSetSeqTest)
+{
+    struct CSeqHeader *c1 = CreateCSeqHeader(101, (char *)SIP_METHOD_NAME_REGISTER);
+
+    CSeqHeaderSetSeq(c1, 1000);
+    CHECK_EQUAL(1000, CSeqHeaderGetSeq(c1));
+    
+    DestroyCSeqHeader((struct Header *) c1);
+}

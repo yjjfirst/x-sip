@@ -6,7 +6,7 @@
 #include "Transporter.h"
 #include "TransactionManager.h"
 #include "Messages.h"
-#include "TransporterUdp.h"
+#include "Udp.h"
 
 int SendOutMessage(char *message)
 {
@@ -18,11 +18,15 @@ int SendOutMessage(char *message)
 BOOL ReceiveInMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
-
     if (Transporter->receive == NULL) return FALSE;
-    
+
     Transporter->receive(received);
     return ReceiveMessageCallback(received);
+}
+
+void TransporterInit()
+{
+    Transporter->init();
 }
 
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t)

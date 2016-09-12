@@ -69,3 +69,8 @@ TEST(MessageTransportTestGroup, NullSendTest)
 
     mock().checkExpectations();
 }
+
+TEST(MessageTransportTestGroup, InitTest)
+{
+    TransporterInit();
+}

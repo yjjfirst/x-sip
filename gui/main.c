@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-#include "AccountManager.h"
+#include "Init.h"
 
 static void print_hello (GtkWidget *widget, gpointer   data)
 {
@@ -83,9 +83,7 @@ int main (int argc, char **argv)
     GtkApplication *app;
     int status;
 
-    AccountInit();
-    BindAllAccounts();
-    
+    InitStack();
     app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
     g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
     status = g_application_run (G_APPLICATION (app), argc, argv);

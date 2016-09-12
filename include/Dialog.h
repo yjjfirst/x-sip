@@ -5,6 +5,7 @@
 
 struct DialogId;
 struct Dialog;
+struct URI;
 
 enum DIALOG_STATE {
     DIALOG_STATE_NON_EXIST,
@@ -12,6 +13,9 @@ enum DIALOG_STATE {
     DIALOG_STATE_CONFIRMED,
     DIALOG_STATE_TERMINATED,
 };
+
+
+void  DialogSetRemoteUri(struct Dialog *dialog, struct URI *uri);
 
 extern struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog);
 extern struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog);

@@ -107,7 +107,7 @@ int AddSecondAccount()
     second = CreateAccount(
                            (char *)"88002", 
                            (char *)"88002", 
-                           (char *)"88001", 
+                           (char *)"88002", 
                            (char *)"192.168.10.62", 
                            (char *)"192.168.10.72");
     return AddAccount(second);
@@ -119,7 +119,7 @@ int AddThirdAccount()
     third = CreateAccount(
                           (char *)"88003", 
                           (char *)"88003", 
-                          (char *)"88001", 
+                          (char *)"88003", 
                           (char *)"192.168.10.62", 
                           (char *)"192.168.10.72");
 

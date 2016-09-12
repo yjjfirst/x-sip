@@ -46,7 +46,7 @@ enum AuthScheme AuthHeaderGetScheme(struct AuthHeader *authHeader)
     }
 }
 
-BOOL QuotedValue(const char *value)
+BOOL UnquotedValue(const char *value)
 {
     return value[0] != '\"' && value[strlen(value) -1] != '\"';
 }
@@ -56,7 +56,7 @@ void AuthHeaderSetParameter(struct AuthHeader *authHeader, const char *name, con
     struct Parameters *ps = AuthHeaderGetParameters(authHeader);
     char quotedValue[PARAMETER_VALUE_MAX_LENGTH] = {0};
 
-    if (strcmp(name, AUTH_HEADER_ALGORITHM) != 0 && QuotedValue(value)) {
+    if (strcmp(name, AUTH_HEADER_ALGORITHM) != 0 && UnquotedValue(value)) {
         quotedValue[0] = '\"';
         strcpy(quotedValue + 1, value);
         quotedValue[strlen(quotedValue)] = '\"';
@@ -105,6 +105,12 @@ void convert_to_hex(HASH Bin, HASHHEX Hex )
     Hex[HASHHEXLEN] = '\0';
 };
 
+void UnquoteString(char *dest, char *src)
+{
+    strcpy(dest, src + 1);
+    dest[strlen(dest) -1] = 0;
+}
+
 void CalculateResponse(char *username, char *passwd, char *uri, char *realm, char *nonce, char *response)
 {
     char a1[128] = {0};
@@ -119,25 +125,36 @@ void CalculateResponse(char *username, char *passwd, char *uri, char *realm, cha
     HASH HFinal;
     HASHHEX HFinalHex;
 
-    snprintf(a1, sizeof(a1) - 1, "%s:%s:%s", username, realm, passwd);
-    snprintf(a2, sizeof(a2) - 1, "%s:%s", "REGISTER", uri);    
+    char unquotedRealm[PARAMETER_VALUE_MAX_LENGTH];
+    char unquotedNonce[PARAMETER_VALUE_MAX_LENGTH];
+    char unquotedUri[PARAMETER_VALUE_MAX_LENGTH];
+    
+    UnquoteString(unquotedRealm, realm);
+    UnquoteString(unquotedUri, uri);
+    UnquoteString(unquotedNonce, nonce);
+
+    snprintf(a1, sizeof(a1) - 1, "%s:%s:%s", username, unquotedRealm, passwd);    
+    snprintf(a2, sizeof(a2) - 1, "%s:%s", "REGISTER", unquotedUri);    
     
     MD5_Init(&Md5Ctx);
     MD5_Update(&Md5Ctx, a1, strlen(a1));
     MD5_Final(HA1, &Md5Ctx);
     convert_to_hex(HA1, HA1Hex);
-
+    //printf("%s->%s\n",a1, HA1Hex);
+    
     MD5_Init(&Md5Ctx);
     MD5_Update(&Md5Ctx, a2, strlen(a2));
     MD5_Final(HA2, &Md5Ctx);
     convert_to_hex(HA2, HA2Hex);
-
-    snprintf(final, sizeof(final) -1, "%s:%s:%s", HA1Hex, nonce, HA2Hex);
+    //printf("%s->%s\n",a2, HA2Hex);
+ 
+    
+    snprintf(final, sizeof(final) -1, "%s:%s:%s", HA1Hex, unquotedNonce, HA2Hex);
     MD5_Init(&Md5Ctx);
     MD5_Update(&Md5Ctx, final , strlen(final));
     MD5_Final(HFinal, &Md5Ctx);
     convert_to_hex(HFinal, HFinalHex);
-
+    //printf("%s->%s\n", final, HFinalHex);
     strcpy(response, HFinalHex);
 }
 

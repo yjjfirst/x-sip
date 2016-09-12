@@ -13,6 +13,7 @@ struct HeaderPattern *GetCallIdPattern();
 struct Header *ParseCallIdHeader(char *string);
 
 char *CallIdHeaderGetId(struct CallIdHeader *id);
+void CallIdHeaderSetID(struct CallIdHeader *id, char *idString);
 char *CallIdHeaderGetName(struct CallIdHeader *id);
 
 BOOL CallIdHeaderMatched(struct CallIdHeader *id1, struct CallIdHeader *id2);

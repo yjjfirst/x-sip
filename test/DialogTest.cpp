@@ -43,8 +43,7 @@ TEST_GROUP(DialogTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
-        invite = BuildInviteMessage(dialog);
-        
+        invite = BuildInviteMessage(dialog, (char *)"88002");
     }
 
     void teardown()
@@ -107,7 +106,7 @@ TEST(DialogTestGroup, AddTransactionTest)
 TEST(DialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *originInvite = BuildInviteMessage(dialog);
+    struct Message *originInvite = BuildInviteMessage(dialog, (char *)"88002");
     struct Message *localOk = Build200OkMessage(originInvite);
     
     Message2String(okString, localOk);
@@ -130,7 +129,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
 TEST(DialogTestGroup, UACDialogIdDelegateTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *originInvite = BuildInviteMessage(dialog);
+    struct Message *originInvite = BuildInviteMessage(dialog, (char *)"88002");
     struct Message *localOk = Build200OkMessage(originInvite);
     Message2String(okString, localOk);
     
@@ -185,6 +184,15 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 
     CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));
     DestroyMessage(&ok);
+}
+
+IGNORE_TEST(DialogTestGroup, UACDialogRemoteUriTest)
+{
+    char string[256] = {0};
+    
+    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    Uri2StringExt(string, remoteUri);
+    printf("%s\n", string);
 }
 
 TEST(DialogTestGroup, UACDialogConfirmedTest)
@@ -278,7 +286,6 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
     DialogSend200OKResponse(dialog);
 
     CHECK_TRUE(UriMatched(uri, DialogGetRemoteTarget(dialog)));
-
     DestroyUri(&uri);
 }
 

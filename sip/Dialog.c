@@ -22,7 +22,8 @@ struct Dialog {
     struct UserAgent *ua;
     struct Session *session;
     struct URI *remoteTarget;
-
+    struct URI *remoteUri;
+    
     SIP_METHOD requestMethod;
     unsigned int localSeqNumber;
     unsigned int remoteSeqNumber;
@@ -32,7 +33,9 @@ struct Dialog {
 
 struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
 {
-    return NULL;
+    assert(dialog != 0);
+    
+    return dialog->remoteUri;
 }
 
 char *DialogGetCallIdImpl(struct Dialog *dialog)
@@ -121,6 +124,14 @@ void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
 {
     assert(dialog != NULL);
     dialog->state = state;
+}
+
+void DialogSetRemoteUri(struct Dialog *dialog, struct URI *uri)
+{
+    assert(uri != NULL);
+    assert(dialog != NULL);
+    
+    dialog->remoteUri = uri;
 }
 
 void ExtractDialogIdFromMessage(struct Dialog *dialog, struct Message *message)
@@ -308,7 +319,7 @@ void DialogTerminate(struct Dialog *dialog)
 
 void DialogInvite(struct Dialog *dialog)
 {
-    struct Message *invite = BuildInviteMessage(dialog);
+    struct Message *invite = BuildInviteMessage(dialog, (char *)"88002");
     AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
 }
 
@@ -349,6 +360,10 @@ void DestroyDialog(struct Dialog **dialog)
     if (d != NULL) {
         DestroyDialogId(&d->id);
         DestroyUri(&d->remoteTarget);
+        if (d->remoteUri != NULL) {
+            DestroyUri(&(d->remoteUri));
+            d->remoteUri = NULL;
+        }
         DestroySession(&d->session);
         free(d);
         d = NULL;

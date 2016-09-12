@@ -3,6 +3,8 @@
 #include "Mock.h"
 
 extern "C" {
+#include <stdio.h>
+    
 #include "Session.h"
 #include "Dialog.h"
 #include "Messages.h"
@@ -28,7 +30,7 @@ TEST_GROUP(SessionTestGroup)
         ua = CreateUserAgent(0);    
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
         DialogSetToUser(dialog, (char *)"88002");
-        invite = BuildInviteMessage(dialog);
+        invite = BuildInviteMessage(dialog, (char *)"88002");
     }
 
     void teardown()
@@ -110,14 +112,12 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     UT_PTR_SET(DestroySession,DestroySessionMock);
 
     DialogAddClientInviteTransaction(dialog, invite);
-
+    
     mock().expectOneCall("CreateSession");
     ClientInviteOkReceived(dialog, ok);
-
     mock().expectOneCall("DestroySession");
     struct Message *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
-
     DestroyMessage(&ok);
     ClearTransactionManager();
 }
