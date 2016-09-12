@@ -17,7 +17,7 @@ BOOL ParameterMatched(struct Parameter *p1, struct Parameter *p2);
  */
 struct Parameters *CreateParameters();
 struct Parameters *ParametersDup(struct Parameters *src);
-void DestroyParameters(struct Parameters *ps);
+void DestroyParameters(struct Parameters **ps);
 int ParseParameters(char *string, void *target);
 int ParseParametersExt(char *string, void *target);
 char *GetParameter(struct Parameters *p, char *name);

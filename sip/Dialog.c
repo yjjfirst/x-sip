@@ -357,15 +357,13 @@ struct Dialog *AddNewDialog(struct DialogId *dialogid, struct UserAgent *ua)
 void DestroyDialog(struct Dialog **dialog)
 {
     struct Dialog *d = *dialog;
+
     if (d != NULL) {
         DestroyDialogId(&d->id);
         DestroyUri(&d->remoteTarget);
-        if (d->remoteUri != NULL) {
-            DestroyUri(&(d->remoteUri));
-            d->remoteUri = NULL;
-        }
+        DestroyUri(&(d->remoteUri));
         DestroySession(&d->session);
         free(d);
-        d = NULL;
+        *dialog = NULL;
     }
 }

@@ -1,6 +1,8 @@
 #include "CppUTest/TestHarness.h"
 
 extern "C" {
+#include <stdio.h>
+#include <assert.h>
 #include "Parameter.h"
 }
 
@@ -12,7 +14,7 @@ TEST_GROUP(ParameterTestGroup)
     }
 
     void teardown() {
-        DestroyParameters(params);
+        DestroyParameters(&params);
     }
 };
 
@@ -124,7 +126,7 @@ TEST(ParameterTestGroup, ParametersMatchedTest)
 
     CHECK_TRUE(ParametersMatched(params, ps));
 
-    DestroyParameters(ps);
+    DestroyParameters(&ps);
 }
 
 TEST(ParameterTestGroup, ParametersUnmatchedTest)
@@ -141,7 +143,7 @@ TEST(ParameterTestGroup, ParametersUnmatchedTest)
 
     CHECK_FALSE(ParametersMatched(params, ps));
 
-    DestroyParameters(ps);
+    DestroyParameters(&ps);
 }
 
 TEST(ParameterTestGroup, ParametersLengthUnmatchedTest)
@@ -157,7 +159,7 @@ TEST(ParameterTestGroup, ParametersLengthUnmatchedTest)
 
     CHECK_FALSE(ParametersMatched(params, ps));
 
-    DestroyParameters(ps);
+    DestroyParameters(&ps);
 }
 
 TEST(ParameterTestGroup, NullElementParametersDupTest)
@@ -166,8 +168,8 @@ TEST(ParameterTestGroup, NullElementParametersDupTest)
     struct Parameters *dest = ParametersDup(ps);
     CHECK_TRUE(ParametersMatched(ps, dest));
 
-    DestroyParameters(dest);
-    DestroyParameters(ps);
+    DestroyParameters(&dest);
+    DestroyParameters(&ps);
 
 }
 
@@ -180,8 +182,8 @@ TEST(ParameterTestGroup, OneElementParametersDupTest)
     struct Parameters *dest = ParametersDup(ps);
     CHECK_TRUE(ParametersMatched(ps, dest));
 
-    DestroyParameters(dest);
-    DestroyParameters(ps);
+    DestroyParameters(&dest);
+    DestroyParameters(&ps);
 
 
 }
@@ -197,8 +199,8 @@ TEST(ParameterTestGroup, ThreeElementParametersDupTest)
     struct Parameters *dest = ParametersDup(ps);
     CHECK_TRUE(ParametersMatched(ps, dest));
 
-    DestroyParameters(dest);
-    DestroyParameters(ps);
+    DestroyParameters(&dest);
+    DestroyParameters(&ps);
 
 
 }
@@ -221,8 +223,8 @@ TEST(ParameterTestGroup, TenElementParametersDupTest)
     struct Parameters *dest = ParametersDup(ps);
     CHECK_TRUE(ParametersMatched(ps, dest));
 
-    DestroyParameters(dest);
-    DestroyParameters(ps);
+    DestroyParameters(&dest);
+    DestroyParameters(&ps);
 }
 
 TEST(ParameterTestGroup, ClearParametersTest)
@@ -243,5 +245,23 @@ TEST(ParameterTestGroup, ClearParametersTest)
     ClearParameters(ps);
     CHECK_EQUAL(0, ParametersLength(ps));
     
-    DestroyParameters(ps);
+    DestroyParameters(&ps);
+}
+
+TEST(ParameterTestGroup, DestroyParametersTest)
+{
+    struct Parameters *ps = CreateParameters();
+    
+    AddParameter(ps, (char *)"test1", (char *)"value1");
+    AddParameter(ps, (char *)"test2", (char *)"value2");
+    AddParameter(ps, (char *)"test3", (char *)"value3");
+
+    struct Parameters *dest = ParametersDup(ps);
+    CHECK_TRUE(ParametersMatched(ps, dest));
+
+    DestroyParameters(&dest);
+    DestroyParameters(&ps);
+
+    POINTERS_EQUAL(NULL, dest);
+    POINTERS_EQUAL(NULL, ps);
 }

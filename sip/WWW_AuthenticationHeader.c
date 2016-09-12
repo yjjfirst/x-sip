@@ -220,6 +220,6 @@ void DestroyAuthHeader(struct Header *header)
 
     if (authHeader == NULL) return;
 
-    DestroyParameters(authHeader->parameters);
+    DestroyParameters(&authHeader->parameters);
     free(authHeader);
 }

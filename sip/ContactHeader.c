@@ -178,7 +178,7 @@ void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *v
 void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters *parameters)
 {
     if (header->parameters != NULL)
-        DestroyParameters(header->parameters);
+        DestroyParameters(&header->parameters);
     header->parameters = parameters;
 }
 
@@ -217,7 +217,7 @@ struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
     struct ContactHeader *dest = CreateContactHeader();
 
     DestroyUri(&dest->uri);
-    DestroyParameters(dest->parameters);
+    DestroyParameters(&dest->parameters);
     memcpy(dest, src, sizeof(struct ContactHeader));
     
     dest->uri = UriDup(src->uri);
@@ -269,7 +269,7 @@ void DestroyContactHeader(struct Header *h)
 
     struct ContactHeader *header = (struct ContactHeader *)h;
     if (header != NULL) {
-        DestroyParameters(header->parameters);
+        DestroyParameters(&header->parameters);
         DestroyUri(&header->uri);
         free(header);
     }

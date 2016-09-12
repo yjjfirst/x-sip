@@ -197,13 +197,6 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 
 }
 
-static struct URI *DialogGetRemoteUriMock(struct Dialog *dialog)
-{
-    struct URI *uri = CreateEmptyUri();
-    ParseUri((char *)"sip:abcd@192.168.10.123:tag=1234", &uri);
-    return uri;
-}
-
 static char *DialogGetRemoteTagMock(struct Dialog *dialog)
 {
     return (char *)"123456abcde";
@@ -211,18 +204,16 @@ static char *DialogGetRemoteTagMock(struct Dialog *dialog)
 
 TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
-    UT_PTR_SET(DialogGetRemoteUri, DialogGetRemoteUriMock);
     UT_PTR_SET(DialogGetRemoteTag, DialogGetRemoteTagMock);
 
     struct Message *bye = BuildByeMessage(dialog);
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct URI *uri = ContactHeaderGetUri(to);
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
-    
+
     CHECK_TRUE(UriMatched(uri, remoteUri));
     STRCMP_EQUAL(DialogGetRemoteTag(dialog), ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG));
-
-    DestroyUri(&remoteUri);
+    
     DestroyMessage(&bye);
 }
 

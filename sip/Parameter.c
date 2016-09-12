@@ -237,17 +237,21 @@ struct Parameters *ParametersDup(struct Parameters *src)
     return dest;
 }
 
-void DestroyParameters(struct Parameters *ps)
+void DestroyParameters(struct Parameters **ps)
 {
-    if (ps == NULL) return;
+    struct Parameters *pp = *ps;
 
-    int length = ParametersLength(ps);
+    assert(pp != NULL);
+    
+    int length = ParametersLength(pp);
     int i = 0;
     for ( ; i < length; i ++) {
-        struct Parameter *p = get_data_at(ps->parameters, i);
+        struct Parameter *p = get_data_at(pp->parameters, i);
         free(p);
     }
 
-    destroy_list(&ps->parameters, NULL);
-    free(ps);
+    destroy_list(&pp->parameters, NULL);
+    free(pp);
+
+    *ps = NULL;
 }

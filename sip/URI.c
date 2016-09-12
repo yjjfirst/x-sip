@@ -217,7 +217,7 @@ void UriSetPort(struct URI *uri, int port)
 void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 {
     if (uri->parameters != NULL)
-        DestroyParameters(uri->parameters);
+        DestroyParameters(&uri->parameters);
 
     uri->parameters = paramaters;
 
@@ -250,7 +250,7 @@ void UriAddParameter(struct URI *uri, char *name, char *value)
 void UriSetHeaders(struct URI *uri, struct Parameters *headers)
 {
     if (uri->headers != NULL)
-        DestroyParameters(uri->headers);
+        DestroyParameters(&uri->headers);
 
     uri->headers = headers;
 }
@@ -285,8 +285,8 @@ struct URI *UriDup(struct URI *src)
 
     struct URI *dest = CreateEmptyUri();
     
-    DestroyParameters(dest->parameters);
-    DestroyParameters(dest->headers);
+    DestroyParameters(&dest->parameters);
+    DestroyParameters(&dest->headers);
     memcpy(dest, src, sizeof(struct URI));
 
     //Prevent release src parameters and headers.
@@ -301,16 +301,11 @@ struct URI *UriDup(struct URI *src)
 
 void DestroyUri(struct URI **uri)
 {
-    if (*uri != NULL) {
-        if ((*uri)->parameters != NULL) {        
-            DestroyParameters((*uri)->parameters);
-            (*uri)->parameters = NULL;
-        }
-        if ((*uri)->headers != NULL) {
-            DestroyParameters((*uri)->headers);
-            (*uri)->headers = NULL;
-        }
-        free (*uri);        
+    struct URI *u = *uri;
+    if (u != NULL) {
+        DestroyParameters(&u->parameters);
+        DestroyParameters(&u->headers);
+        free (u);        
         *uri = NULL;
     }
 }

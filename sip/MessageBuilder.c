@@ -81,7 +81,7 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
 
     //DialogSetToUser(dialog, "88002");
     if (remoteUri != NULL)
-        uri = remoteUri;
+        uri = UriDup(remoteUri);
     else
         uri = CreateUri(URI_SCHEME_SIP, "", UserAgentGetProxy(ua), 0);
 
@@ -193,13 +193,13 @@ struct Message *BuildInviteMessage(struct Dialog *dialog, char *to)
     struct Message *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
     struct ContactHeader  *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
-    //struct URI *uri = BuildRemoteUri(dialog, to);
+    struct URI *uri = NULL;
 
-    //char string[256];
+    if (DialogGetRemoteUri(dialog) == NULL) {
+        uri = BuildRemoteUri(dialog, to);        
+        DialogSetRemoteUri(dialog, uri);
+    }
 
-    //Uri2StringExt(string, uri);
-
-    //DialogSetRemoteUri(dialog, uri);
     UriSetUser(RequestLineGetUri(rl), to);
     UriSetUser(ContactHeaderGetUri(toHeader), to);
     
