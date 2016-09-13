@@ -22,11 +22,17 @@ extern "C" {
 #include "Session.h"
 #include "AccountManager.h"
 #include "ViaHeader.h"
+#include "CSeqHeader.h"
 }
 
 static struct Session *CreateSessionMock()
 {
     return NULL;
+}
+
+unsigned int CSeqGenerateSeqMock()
+{
+    return 100;
 }
 
 TEST_GROUP(DialogTestGroup)
@@ -39,6 +45,7 @@ TEST_GROUP(DialogTestGroup)
         UT_PTR_SET(Transporter, &MockTransporter);
         UT_PTR_SET(CreateSession, CreateSessionMock);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
+        UT_PTR_SET(CSeqGenerateSeq, CSeqGenerateSeqMock);
 
         AccountInit();
         ua = CreateUserAgent(0);
@@ -273,7 +280,7 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     DialogAddServerInviteTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 
-    CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetLocalSeqNumber(dialog));
+    CHECK_EQUAL(CSeqGenerateSeq(), DialogGetLocalSeqNumber(dialog));
 }
 
 TEST(DialogTestGroup, UASDialogRemoteTargetTest)

@@ -30,6 +30,7 @@ struct DialogId *DialogGetId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
 unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog);
+void DialogSetLocalSeqNumber(struct Dialog *dialog, int seq);
 unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog);
 enum DIALOG_STATE DialogGetState(struct Dialog *dialog);
 

@@ -8,6 +8,7 @@
 #include "CSeqHeader.h"
 #include "SipMethod.h"
 #include "StringExt.h"
+#include "System.h"
 
 struct CSeqHeader 
 {
@@ -70,7 +71,8 @@ char *CSeq2String(char *result, struct Header *c)
 
 static unsigned int CSeqGenerateSeqImpl()
 {
-    return 102;
+    srand(GetSeed());
+    return 3023 + rand() % 10000;
 }
 
 unsigned int (*CSeqGenerateSeq)() = CSeqGenerateSeqImpl;

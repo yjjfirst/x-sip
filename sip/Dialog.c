@@ -98,6 +98,12 @@ unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog)
     return dialog->localSeqNumber;
 }
 
+void DialogSetLocalSeqNumber(struct Dialog *dialog, int seq)
+{
+    assert(dialog != NULL);
+    dialog->localSeqNumber = seq;
+}
+
 void DialogSetLocalTag(struct Dialog *dialog, const char *localTag)
 {
     struct DialogId *id = DialogGetId(dialog);

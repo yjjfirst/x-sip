@@ -52,12 +52,13 @@ void AccountSetUnbinded(struct Account *account)
 
 void AccountDump(struct Account *account)
 {
-    printf("%s:%s:%s:%s:%s\n",
+    printf("%s:%s:%s:%s:%s:%d\n",
            AccountGetUserName(account),
            AccountGetAuthName(account),
            AccountGetPasswd(account),
            AccountGetProxy(account),
-           AccountGetRegistrar(account));
+           AccountGetRegistrar(account),
+           AccountBinded(account));
 }
 
 struct Account *CreateAccount(char *username, char *authname, char *passwd, char *proxy, char *registrar)

@@ -117,7 +117,19 @@ struct Header *BuildRequestCallIdHeader(struct Dialog *dialog)
 struct Header *BuildRequestCSeqHeader(struct Dialog *dialog)
 {
     SIP_METHOD method = DialogGetRequestMethod(dialog);
-    struct CSeqHeader *cseq = CreateCSeqHeader(1, MethodMap2String(method));
+    int cseqNumber;
+    
+    if (DialogGetLocalSeqNumber(dialog) == EMPTY_DIALOG_SEQNUMBER) {
+        cseqNumber = CSeqGenerateSeq();
+    } else {
+        if (DialogGetRequestMethod(dialog) != SIP_METHOD_ACK)
+            cseqNumber = DialogGetLocalSeqNumber(dialog) + 1;
+        else
+            cseqNumber = DialogGetLocalSeqNumber(dialog);
+    }
+        
+    DialogSetLocalSeqNumber(dialog, cseqNumber);
+    struct CSeqHeader *cseq = CreateCSeqHeader(cseqNumber, MethodMap2String(method));
 
     return (struct Header *)cseq;
 }
@@ -220,7 +232,7 @@ MESSAGE *BuildAckMessage(struct Dialog *dialog)
     
 //    UriSetUser(RequestLineGetUri(rl),UriGetUser(remoteUri));
     MessageSetRemoteTag(ack, DialogGetRemoteTag(dialog));
-    
+   
     return ack;
 }
 
@@ -283,9 +295,7 @@ struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, struct Dialog *dialog, 
 MESSAGE *BuildAuthorizationMessage(struct Dialog *dialog, MESSAGE *challenge)
 {
     MESSAGE *message = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
-    struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
 
-    CSeqHeaderSetSeq(cseq, 2);
     char *callid = MessageGetCallId(challenge);
     struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);
     CallIdHeaderSetID(callidHeader, callid);
