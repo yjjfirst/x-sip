@@ -49,7 +49,7 @@ void OnEventMock(struct Transaction *t)
 TEST_GROUP(ClientInviteTransactionTestGroup)
 {
     struct UserAgent *ua;
-    struct Message *message;
+    MESSAGE *message;
     struct Transaction *t;
     struct Dialog *dialog;
 

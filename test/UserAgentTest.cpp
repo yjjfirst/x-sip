@@ -26,7 +26,7 @@ TEST_GROUP(UserAgentTestGroup)
 {    
     struct UserAgent *ua;
     struct Dialog *dialog;
-    struct Message *message;
+    MESSAGE *message;
 
     void setup()
     {

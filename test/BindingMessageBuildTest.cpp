@@ -31,7 +31,7 @@ extern "C" {
 TEST_GROUP(BindingMessageBuildTestGroup)
 {
     struct UserAgent *ua;
-    struct Message *m;
+    MESSAGE *m;
     struct Dialog *dialog;
     void setup()
     {
@@ -55,7 +55,7 @@ TEST(BindingMessageBuildTestGroup, MessageTypeTest)
 {
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(m));
 
-    struct Message *tmpMessage = CreateMessage();
+    MESSAGE *tmpMessage = CreateMessage();
     CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 
@@ -156,9 +156,9 @@ TEST(BindingMessageBuildTestGroup, ContentLengthTest)
 
 TEST(BindingMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ringing = BuildRingingMessage(invite);
+    MESSAGE *ringing = BuildRingingMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -171,9 +171,9 @@ TEST(BindingMessageBuildTestGroup, RingingMessageStatusLineTest)
 
 TEST(BindingMessageBuildTestGroup, OKMessageStatusLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
@@ -186,9 +186,9 @@ TEST(BindingMessageBuildTestGroup, OKMessageStatusLineTest)
 
 TEST(BindingMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     struct URI *uri = ContactHeaderGetUri(c);
     
@@ -203,9 +203,9 @@ TEST(BindingMessageBuildTestGroup,OKMessageContactHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, 301MessageStatueLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *moved = Build301Message(invite);
+    MESSAGE *moved = Build301Message(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
@@ -254,7 +254,7 @@ TEST(BindingMessageBuildTestGroup, BindingsContactHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, UnbindingMessage)
 {
-    struct Message *remove = BuildRemoveBindingMessage(dialog);
+    MESSAGE *remove = BuildRemoveBindingMessage(dialog);
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
     
     CHECK_EQUAL(0, ExpiresHeaderGetExpires(e));
@@ -263,10 +263,10 @@ TEST(BindingMessageBuildTestGroup, UnbindingMessage)
 
 TEST(BindingMessageBuildTestGroup, MessageAuthorizationHeaderTest)
 {
-    struct Message *challenge = CreateMessage();
+    MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    struct Message *authMessage = BuildAuthorizationMessage(dialog,challenge);
+    MESSAGE *authMessage = BuildAuthorizationMessage(dialog,challenge);
     struct AuthHeader *authHeader = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_AUTHORIZATION, authMessage);
     
     CHECK_FALSE(authHeader == NULL);
@@ -284,10 +284,10 @@ TEST(BindingMessageBuildTestGroup, MessageAuthorizationHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, AuthorizationMessageToHeaderTest)
 {
-    struct Message *challenge = CreateMessage();
+    MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    struct Message *authMessage = BuildAuthorizationMessage(dialog, challenge);
+    MESSAGE *authMessage = BuildAuthorizationMessage(dialog, challenge);
     struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, authMessage);
     struct URI *uri = ContactHeaderGetUri(toHeader);
     STRCMP_EQUAL("88001", UriGetUser(uri));

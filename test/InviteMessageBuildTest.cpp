@@ -32,7 +32,7 @@ TEST_GROUP(InviteMessageBuildTestGroup)
 {
     struct UserAgent *ua;
     struct Dialog *dialog;
-    struct Message *inviteMessage;
+    MESSAGE *inviteMessage;
     void setup()
     {
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
@@ -85,7 +85,7 @@ TEST(InviteMessageBuildTestGroup, InviteContentLengthTest)
 
 TEST(InviteMessageBuildTestGroup, AckMessageRequestLineTest)
 {
-    struct Message *ackMessage = BuildAckMessage(dialog);
+    MESSAGE *ackMessage = BuildAckMessage(dialog);
     struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
     struct URI *uri = RequestLineGetUri(requestLine);
     struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
@@ -99,7 +99,7 @@ TEST(InviteMessageBuildTestGroup, AckMessageRequestLineTest)
 
 TEST(InviteMessageBuildTestGroup, AckMessageCallIdTest)
 {
-    struct Message *ackMessage = BuildAckMessage(dialog);
+    MESSAGE *ackMessage = BuildAckMessage(dialog);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ackMessage));
     DestroyMessage(&ackMessage);
@@ -107,7 +107,7 @@ TEST(InviteMessageBuildTestGroup, AckMessageCallIdTest)
 
 TEST(InviteMessageBuildTestGroup, AckMessageFromTest)
 {
-    struct Message *ackMessage = BuildAckMessage(dialog);
+    MESSAGE *ackMessage = BuildAckMessage(dialog);
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
 
@@ -118,7 +118,7 @@ TEST(InviteMessageBuildTestGroup, AckMessageFromTest)
 
 TEST(InviteMessageBuildTestGroup, AckMessageCSeqTest)
 {
-    struct Message *ackMessage = BuildAckMessage(dialog);
+    MESSAGE *ackMessage = BuildAckMessage(dialog);
 
     CHECK_EQUAL(MessageGetCSeqNumber(ackMessage),MessageGetCSeqNumber(inviteMessage));
 
@@ -127,7 +127,7 @@ TEST(InviteMessageBuildTestGroup, AckMessageCSeqTest)
 
 TEST(InviteMessageBuildTestGroup, AckMessageViaTest)
 {
-    struct Message *ackMessage = BuildAckMessage(dialog);
+    MESSAGE *ackMessage = BuildAckMessage(dialog);
     struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage);
     struct ViaHeader *ackVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
 
@@ -137,9 +137,9 @@ TEST(InviteMessageBuildTestGroup, AckMessageViaTest)
 
 TEST(InviteMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ringing = BuildRingingMessage(invite);
+    MESSAGE *ringing = BuildRingingMessage(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -152,9 +152,9 @@ TEST(InviteMessageBuildTestGroup, RingingMessageStatusLineTest)
 
 TEST(InviteMessageBuildTestGroup, OKMessageStatusLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OkMessage(invite);    
+    MESSAGE *ok = Build200OkMessage(invite);    
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
@@ -166,9 +166,9 @@ TEST(InviteMessageBuildTestGroup, OKMessageStatusLineTest)
 
 TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     struct URI *uri = ContactHeaderGetUri(c);
     
@@ -183,9 +183,9 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
 
 TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *moved = Build301Message(invite);
+    MESSAGE *moved = Build301Message(invite);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
@@ -199,7 +199,7 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 
 TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct URI *uri = ContactHeaderGetUri(to);
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
@@ -213,7 +213,7 @@ TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 
 TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 {
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     struct RequestLine *rl = MessageGetRequestLine(bye);
     struct URI *uri = RequestLineGetUri(rl);
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
@@ -227,7 +227,7 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ack));    
 
@@ -236,7 +236,7 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionCallIdTe
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionRequestUriTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
     struct RequestLine *rl = MessageGetRequestLine(ack);
 
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
@@ -247,7 +247,7 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionRequestU
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
     CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
                                     (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,ack)));
@@ -257,7 +257,7 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHead
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
     struct ContactHeader *toHeaderOfAck = 
         ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, ack));
 
@@ -271,7 +271,7 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionToHeaderTe
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
     CHECK_TRUE(ViaHeaderMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
                                 (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ack)));
@@ -281,7 +281,7 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionViaHeaderT
 
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest)
 {
-    struct Message *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
     struct CSeqHeader *seq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
     STRCMP_EQUAL(SIP_METHOD_NAME_ACK, CSeqHeaderGetMethod(seq));

@@ -19,7 +19,7 @@ int ReceiveInMessageMock(char *message)
 
 int SendOutMessageMock(char *message)
 {
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
     SIP_METHOD method;
     int statusCode;

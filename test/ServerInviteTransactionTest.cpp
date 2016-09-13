@@ -20,7 +20,7 @@ TimerCallback WaitAckTimerAction;
 
 int SendOut100TryingMock(char *message)
 {
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
     
@@ -39,7 +39,7 @@ struct MessageTransporter MockTransporterFor100Trying = {
 int SendOut180RingingMock(char *message)
 {
 
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
@@ -58,7 +58,7 @@ struct MessageTransporter MockTransporterFor180Ringing = {
 int SendOut301Mock(char *message)
 {
 
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
@@ -77,7 +77,7 @@ struct MessageTransporter MockTransporterFor301 = {
 int SendOut200OKMock(char *message)
 {
 
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
@@ -137,7 +137,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
     struct Transaction *PrepareProceedingState()
     {
         struct TransactionUser *user = NULL;
-        struct Message *request = CreateMessage();
+        MESSAGE *request = CreateMessage();
 
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
         ParseMessage(INCOMMING_INVITE_MESSAGE, request);
@@ -189,7 +189,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
 {
     struct TransactionUser *user = NULL;
-    struct Message *request = CreateMessage();
+    MESSAGE *request = CreateMessage();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
         .withIntParameter("StatusCode", 100)

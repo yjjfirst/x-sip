@@ -26,7 +26,7 @@ static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action
 
 TEST_GROUP(ServerNonInviteTransactionTestGroup)
 {
-    struct Message *request;
+    MESSAGE *request;
     struct Transaction *transaction;
     void setup() 
     {
@@ -45,7 +45,7 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
 {
-    struct Message *newRequest = CreateMessage();
+    MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
 
     CHECK_TRUE(IfRequestMatchTransaction(transaction, newRequest));
@@ -56,7 +56,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchTest)
 {
     char branch[] = "1234567890";
-    struct Message *newRequest = CreateMessage();
+    MESSAGE *newRequest = CreateMessage();
 
     ParseMessage(BYE_MESSAGE, newRequest);
     MessageSetViaBranch(newRequest, branch); 
@@ -68,7 +68,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchT
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatchTest)
 {
-    struct Message *newRequest = CreateMessage();
+    MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
     MessageAddViaParameter(newRequest, VIA_SENDBY_PARAMETER_NAME, (char *)"192.168.10.111:777");
 
@@ -78,7 +78,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatch
 
 TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatchedTest)
 {
-    struct Message *newRequest = CreateMessage();
+    MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
     struct RequestLine *rl = MessageGetRequestLine(newRequest);
     
@@ -92,11 +92,11 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 {
     ClearTransactionManager();
 
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     transaction = AddServerInviteTransaction(invite, NULL);
     
-    struct Message *ack = BuildAckMessageWithinClientTransaction(invite);
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(invite);
 
     CHECK_TRUE(IfRequestMatchTransaction(transaction, ack));
 
@@ -106,7 +106,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 //Match request to transaction test
 TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithInviteTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     transaction = AddServerNonInviteTransaction(invite, NULL);
     
@@ -117,7 +117,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithIn
 
 TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAckTest)
 {
-    struct Message *ack = CreateMessage();
+    MESSAGE *ack = CreateMessage();
     ParseMessage(ACK_MESSAGE, ack);
     transaction = AddServerNonInviteTransaction(ack, NULL);
     
@@ -148,7 +148,7 @@ TEST(ServerNonInviteTransactionTestGroup, TryingStateSendNonprovisionalTest)
 //Proceeding state test
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
 {
-    struct Message *trying = BuildTryingMessage(request);
+    MESSAGE *trying = BuildTryingMessage(request);
     ResponseWith180Ringing(transaction);
 
     for (int i = 0; i < 20; i++) {
@@ -160,7 +160,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
 
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
 {
-    struct Message *dupRequest = CreateMessage();
+    MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
     ResponseWith180Ringing(transaction);
 
@@ -209,7 +209,7 @@ void PrepareCompletedState(struct Transaction *transaction)
 //Completed state test
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
 {
-    struct Message *dupRequest = CreateMessage();
+    MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
     PrepareCompletedState(transaction);
 
@@ -226,7 +226,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateDupRequestTest)
 {
     PrepareCompletedState(transaction);
 
-    struct Message *dupRequest = CreateMessage();
+    MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
 
     UT_PTR_SET(Transporter, &MockTransporter);
@@ -245,7 +245,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateSendErrorTest)
 {
     PrepareCompletedState(transaction);
 
-    struct Message *dupRequest = CreateMessage();
+    MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
 
     UT_PTR_SET(Transporter, &MockTransporter);

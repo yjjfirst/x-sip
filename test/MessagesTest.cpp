@@ -53,7 +53,7 @@ Content-Length:0\r\n\r\n");
 TEST(MessageTestGroup, RegisterRequestLineParseTest)
 {
     
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
     
     struct RequestLine *request = MessageGetRequestLine(message);
@@ -70,7 +70,7 @@ TEST(MessageTestGroup, RegisterRequestLineParseTest)
 
 TEST(MessageTestGroup, ViaHeaderParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct Header *header =  MessageGetHeader("Via", message);
@@ -86,7 +86,7 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
 
 TEST(MessageTestGroup, MaxForwardsParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct MaxForwardsHeader *m = (struct MaxForwardsHeader *)MessageGetHeader("Max-Forwards", message);
@@ -100,7 +100,7 @@ TEST(MessageTestGroup, MaxForwardsParseTest)
 
 TEST(MessageTestGroup, ToParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
@@ -113,7 +113,7 @@ TEST(MessageTestGroup, ToParseTest)
 
 TEST(MessageTestGroup, FromParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", message);
@@ -128,7 +128,7 @@ TEST(MessageTestGroup, FromParseTest)
 
 TEST(MessageTestGroup, ContactParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
@@ -144,7 +144,7 @@ TEST(MessageTestGroup, ContactParseTest)
 
 TEST(MessageTestGroup, CallIdParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader("Call-ID", message);
@@ -155,7 +155,7 @@ TEST(MessageTestGroup, CallIdParseTest)
 
 TEST(MessageTestGroup, CSeqParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader("CSeq", message);
@@ -168,7 +168,7 @@ TEST(MessageTestGroup, CSeqParseTest)
 
 TEST(MessageTestGroup, ContentLengthParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     struct ContentLengthHeader *c = (struct ContentLengthHeader *) MessageGetHeader("Content-Length", message);
@@ -180,14 +180,14 @@ TEST(MessageTestGroup, ContentLengthParseTest)
 
 TEST(MessageTestGroup, CreateMessageTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
 
     DestroyMessage(&message);
 }
 
 TEST(MessageTestGroup, Message2StringTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char result[1024] = {0};
 
     ParseMessage(messageString, message);
@@ -199,7 +199,7 @@ TEST(MessageTestGroup, Message2StringTest)
 
 TEST(MessageTestGroup, Message2StringEndWithCRLFCRLF)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char result[1024] = {0};
     int last;
 
@@ -227,7 +227,7 @@ TEST(MessageTestGroup, ExtractHeaderNameTest)
 
 TEST(MessageTestGroup, ResponseMessageParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char string[] = "\
 SIP/2.0 180 Ringing\r\n\
 Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
@@ -250,7 +250,7 @@ Content-Length:0\r\n";
 
 TEST(MessageTestGroup, ByeMessageParseRequestLineMethodTest)
 {
-    struct Message *bye = CreateMessage();
+    MESSAGE *bye = CreateMessage();
     ParseMessage(BYE_MESSAGE, bye);
 
     struct RequestLine *rl = MessageGetRequestLine(bye);
@@ -261,7 +261,7 @@ TEST(MessageTestGroup, ByeMessageParseRequestLineMethodTest)
 
 TEST(MessageTestGroup, ResponseMessage2StringTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char string[] = "\
 SIP/2.0 180 Ringing\r\n\
 Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
@@ -282,7 +282,7 @@ Content-Length:0\r\n\r\n";
 
 TEST(MessageTestGroup, EmptyMessageParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char string[] = "";
     
     CHECK_EQUAL(-1,ParseMessage(string, message));
@@ -292,7 +292,7 @@ TEST(MessageTestGroup, EmptyMessageParseTest)
 
 TEST(MessageTestGroup, GetContentLengthTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char string[] = "\
 SIP/2.0 180 Ringing\r\n\
 Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
@@ -311,7 +311,7 @@ Content-Length:100\r\n";
 
 TEST(MessageTestGroup, GetContentLengthMessageWithNoContentLengthHeader)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char string[] = "\
 SIP/2.0 180 Ringing\r\n\
 Via:SIP/2.0/UDP server10.biloxi.com;branch=z9hG4bK4b43c2ff8.1\r\n\
@@ -330,7 +330,7 @@ CSeq:314159 INVITE\r\n";
 
 TEST(MessageTestGroup, SetContentLengthTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     MessageSetContentLength(message, 1024);
@@ -342,7 +342,7 @@ TEST(MessageTestGroup, SetContentLengthTest)
 
 TEST(MessageTestGroup, GetCallIdTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("23@200.201.202.203", MessageGetCallId(message));
@@ -351,7 +351,7 @@ TEST(MessageTestGroup, GetCallIdTest)
 
 TEST(MessageTestGroup, GetLocalTageTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("3431", MessageGetFromTag(message));
@@ -360,7 +360,7 @@ TEST(MessageTestGroup, GetLocalTageTest)
 
 TEST(MessageTestGroup, GetRemoteTageTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
     STRCMP_EQUAL("4321", MessageGetToTag(message));
@@ -369,7 +369,7 @@ TEST(MessageTestGroup, GetRemoteTageTest)
 
 TEST(MessageTestGroup, GetExpiresTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     ParseMessage(ADD_BINDING_OK_MESSAGE, message);
 
     CHECK_EQUAL(3600, MessageGetExpires(message));
@@ -378,7 +378,7 @@ TEST(MessageTestGroup, GetExpiresTest)
 
 TEST(MessageTestGroup, GetBranchTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
 
     STRCMP_EQUAL("z9hG4bK27dc30b4",MessageGetViaBranch(localMessage));
@@ -389,7 +389,7 @@ TEST(MessageTestGroup, GetBranchTest)
 TEST(MessageTestGroup, SetBranchTest)
 {
     char newBranch[] = "0123456789";
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
     MessageSetViaBranch(localMessage, newBranch);
 
@@ -401,7 +401,7 @@ TEST(MessageTestGroup, SetBranchTest)
 
 TEST(MessageTestGroup, GetCSeqMethodTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
 
     STRCMP_EQUAL("INVITE",MessageGetCSeqMethod(localMessage));
@@ -411,7 +411,7 @@ TEST(MessageTestGroup, GetCSeqMethodTest)
 
 TEST(MessageTestGroup, ParseMessageWithWrongHeaderTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(MESSAGE_WITH_WRONG_HEADER, localMessage);
 
     DestroyMessage(&localMessage);
@@ -419,7 +419,7 @@ TEST(MessageTestGroup, ParseMessageWithWrongHeaderTest)
 
 TEST(MessageTestGroup, ParseMessageWithLongHeaderNameTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(MESSAGE_WITH_LONG_HEADER_NAME, localMessage);
 
     DestroyMessage(&localMessage);
@@ -440,7 +440,7 @@ int ParseSdpMock(char *content, unsigned int length)
 
 TEST(MessageTestGroup, ParseMessageWithContentTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
 
     UT_PTR_SET(ParseSdp, ParseSdpMock);
     mock().expectOneCall("ParseSdp").withParameter("length", 435);
@@ -454,7 +454,7 @@ TEST(MessageTestGroup, ParseMessageWithContentTest)
 
 TEST(MessageTestGroup, GetInviteRequestMethodTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
 
     CHECK_EQUAL(SIP_METHOD_INVITE, MessageGetMethod(localMessage));
@@ -463,7 +463,7 @@ TEST(MessageTestGroup, GetInviteRequestMethodTest)
 
 TEST(MessageTestGroup, GetRegisterRequestMethodTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(messageString, localMessage);
 
     CHECK_EQUAL(SIP_METHOD_REGISTER, MessageGetMethod(localMessage));
@@ -481,7 +481,7 @@ Call-ID:a84b4c76e66710\r\n\
 Contact:<sip:bob@192.0.2.4>\r\n\
 CSeq:314159 INVITE\r\n\
 Content-Length:0\r\n";
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     ParseMessage(string, localMessage);
 
     CHECK_EQUAL(SIP_METHOD_NONE, MessageGetMethod(localMessage));
@@ -490,7 +490,7 @@ Content-Length:0\r\n";
 
 TEST(MessageTestGroup, AuthHeaderParseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
 
     ParseMessage(UNAUTHORIZED_MESSAGE, message);
     struct AuthHeader *auth = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_WWW_AUTHENTICATE, message);
@@ -505,7 +505,7 @@ TEST(MessageTestGroup, AuthHeaderParseTest)
 
 TEST(MessageTestGroup, AuthorizationHeader2StringTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     char result[MAX_MESSAGE_LENGTH] = {0};
 
     ParseMessage(BINDING_MESSAGE_WITH_AUTHORIZATION, message);

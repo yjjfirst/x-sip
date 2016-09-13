@@ -38,7 +38,7 @@ void RemoveTransactionByPosition(int position)
 
 BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
 {
-    struct Message *request = TransactionGetRequest(t);
+    MESSAGE *request = TransactionGetRequest(t);
 
     return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
@@ -98,7 +98,7 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
     return NULL;
 }
 
-struct Transaction *MatchTransaction(struct Message *message)
+struct Transaction *MatchTransaction(MESSAGE *message)
 {
     char *branch = MessageGetViaBranch(message);
     char *method = MessageGetCSeqMethod(message);
@@ -128,7 +128,7 @@ enum TransactionEvent MapStatusCodeToEvent(int statusCode)
     return -1;
 }
 
-BOOL TmHandleReponseMessage(struct Message *message)
+BOOL TmHandleReponseMessage(MESSAGE *message)
 {
     struct StatusLine *status = NULL;
     int statusCode = 0;
@@ -146,7 +146,7 @@ BOOL TmHandleReponseMessage(struct Message *message)
     return FALSE;
 }
 
-BOOL TmHandleRequestMessage(struct Message *message)
+BOOL TmHandleRequestMessage(MESSAGE *message)
 {
     struct Transaction *t = NULL;
 
@@ -162,7 +162,7 @@ BOOL TmHandleRequestMessage(struct Message *message)
 
 BOOL MessageReceived(char *string)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     BOOL garbage;
 
     if (ParseMessage(string, message) < 0) {
@@ -211,14 +211,14 @@ void AddTransaction2Manager(struct Transaction *t)
     }
 }
 
-BOOL ValidatedNonInviteMethod(struct Message *message)
+BOOL ValidatedNonInviteMethod(MESSAGE *message)
 {
     struct RequestLine *rl = MessageGetRequestLine(message);
     return  RequestLineGetMethod(rl) != SIP_METHOD_INVITE 
         &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
 }
 
-struct Transaction *AddClientNonInviteTransaction(struct Message *message, struct TransactionUser *user)
+struct Transaction *AddClientNonInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
 
@@ -226,7 +226,7 @@ struct Transaction *AddClientNonInviteTransaction(struct Message *message, struc
     return t;
 }
 
-struct Transaction *AddClientInviteTransaction(struct Message *message, struct TransactionUser *user)
+struct Transaction *AddClientInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateClientInviteTransaction(message, user);
 
@@ -235,7 +235,7 @@ struct Transaction *AddClientInviteTransaction(struct Message *message, struct T
 }
 
 
-struct Transaction *AddServerInviteTransaction(struct Message *message, struct TransactionUser *user)
+struct Transaction *AddServerInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
     struct Transaction *t = CreateServerInviteTransaction(message, user);
 
@@ -243,7 +243,7 @@ struct Transaction *AddServerInviteTransaction(struct Message *message, struct T
     return t;
 }
 
-struct Transaction *AddServerNonInviteTransaction(struct Message *message, struct TransactionUser *user)
+struct Transaction *AddServerNonInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
     struct Transaction *t = NULL;
 

@@ -40,7 +40,7 @@ struct Timer *AddTimerMock(void *p, int ms, TimerCallback onTime)
 
 TEST_GROUP(ClientNonInviteTransactionTestGroup)
 {
-    struct Message *m;
+    MESSAGE *m;
     struct Transaction *t;
     enum TransactionState s;
     struct UserAgent *ua;
@@ -272,7 +272,7 @@ TEST(ClientNonInviteTransactionTestGroup, GetLatestResponse)
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
     ReceiveInMessage();
 
-    struct Message *latestResponse = TransactionGetLatestResponse(t);
+    MESSAGE *latestResponse = TransactionGetLatestResponse(t);
     struct StatusLine *sl = MessageGetStatusLine(latestResponse);
     CHECK_EQUAL(200,StatusLineGetStatusCode(sl));
 }

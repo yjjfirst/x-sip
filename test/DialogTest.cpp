@@ -33,7 +33,7 @@ TEST_GROUP(DialogTestGroup)
 {
     struct UserAgent *ua;
     struct Dialog *dialog;
-    struct Message *invite;
+    MESSAGE *invite;
     void setup()
     {
         UT_PTR_SET(Transporter, &MockTransporter);
@@ -59,7 +59,7 @@ TEST_GROUP(DialogTestGroup)
 
 int SendOutAckMessageMock(char *message)
 {
-    struct Message *m = CreateMessage();
+    MESSAGE *m = CreateMessage();
     char *remoteTag = NULL;
 
     ParseMessage(message, m);
@@ -106,8 +106,8 @@ TEST(DialogTestGroup, AddTransactionTest)
 TEST(DialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    struct Message *localOk = Build200OkMessage(originInvite);
+    MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
+    MESSAGE *localOk = Build200OkMessage(originInvite);
     
     Message2String(okString, localOk);
     
@@ -129,8 +129,8 @@ TEST(DialogTestGroup, UACDialogIdTest)
 TEST(DialogTestGroup, UACDialogIdDelegateTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
-    struct Message *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    struct Message *localOk = Build200OkMessage(originInvite);
+    MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
+    MESSAGE *localOk = Build200OkMessage(originInvite);
     Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
@@ -170,7 +170,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 
 TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 {
-    struct Message *ok = CreateMessage();
+    MESSAGE *ok = CreateMessage();
   
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
@@ -230,7 +230,7 @@ TEST(DialogTestGroup, UASDialogIdTest)
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     DialogAddServerInviteTransaction(dialog, invite);
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
     DialogSend200OKResponse(dialog);
     
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
@@ -299,7 +299,7 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     DialogAddServerInviteTransaction(dialog, invite); 
     DialogSend200OKResponse(dialog);
 
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 }

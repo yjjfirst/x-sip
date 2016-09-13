@@ -130,13 +130,13 @@ void DialogSetRemoteUri(struct Dialog *dialog, struct URI *uri)
     dialog->remoteUri = uri;
 }
 
-void ExtractDialogIdFromMessage(struct Dialog *dialog, struct Message *message)
+void ExtractDialogIdFromMessage(struct Dialog *dialog, MESSAGE *message)
 {
     struct DialogId *dialogid = DialogGetId(dialog);
     DialogIdExtractFromMessage(dialogid, message);                    
 }
 
-void ExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message *message)
+void ExtractRemoteTargetFromMessage(struct Dialog *dialog, MESSAGE *message)
 {
     struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message);
     struct URI *uri = ContactHeaderGetUri(c);
@@ -145,12 +145,12 @@ void ExtractRemoteTargetFromMessage(struct Dialog *dialog, struct Message *messa
 
 void DialogAck(struct Dialog *dialog)
 {
-    struct Message *ack = BuildAckMessage(dialog);
+    MESSAGE *ack = BuildAckMessage(dialog);
     TransactionSendMessage(ack);
     DestroyMessage(&ack);
 }
 
-void ClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
+void ClientInviteOkReceived(struct Dialog *dialog, MESSAGE *message)
 {
     ExtractDialogIdFromMessage(dialog, message);
     ExtractRemoteTargetFromMessage(dialog, message);
@@ -164,7 +164,7 @@ void ClientInviteOkReceived(struct Dialog *dialog, struct Message *message)
     dialog->session = CreateSession();
 }
 
-void ClientInviteRingingReceived(struct Dialog *dialog, struct Message *message)
+void ClientInviteRingingReceived(struct Dialog *dialog, MESSAGE *message)
 {
     if (NotifyClient != NULL)
         NotifyClient(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
@@ -172,7 +172,7 @@ void ClientInviteRingingReceived(struct Dialog *dialog, struct Message *message)
 
 void HandleClientInviteEvent(struct Transaction *t)
 {
-    struct Message *message = TransactionGetLatestResponse(t);
+    MESSAGE *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     enum TransactionEvent event = TransactionGetCurrentEvent(t);
     
@@ -185,7 +185,7 @@ void HandleClientInviteEvent(struct Transaction *t)
 
 void HandleRegisterEvent (struct Transaction *t)
 {
-    struct Message *message = TransactionGetLatestResponse(t);
+    MESSAGE *message = TransactionGetLatestResponse(t);
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     enum TransactionEvent event = TransactionGetCurrentEvent(t);
@@ -197,7 +197,7 @@ void HandleRegisterEvent (struct Transaction *t)
             UserAgentSetUnbinded(ua);
         }
     } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
-        struct Message *authMessage = BuildAuthorizationMessage(dialog, message);
+        MESSAGE *authMessage = BuildAuthorizationMessage(dialog, message);
         DialogAddClientNonInviteTransaction(dialog, authMessage);
     }
 }
@@ -234,7 +234,7 @@ void OnTransactionEventImpl(struct Transaction *t)
 
 void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;
 
-struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, MESSAGE *message)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Transaction *t = NULL;
@@ -249,12 +249,12 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, stru
     return t;
 }
 
-struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
 {
     return AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
 }
 
-struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
 {
     struct Transaction *t;
 
@@ -264,7 +264,7 @@ struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, s
     return t;
 }
 
-struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, struct Message *message)
+struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, MESSAGE *message)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Transaction *t = NULL;
@@ -282,7 +282,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, stru
 void DialogSend200OKResponse(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
-    struct Message *message = Build200OkMessage(TransactionGetRequest(dialog->transaction));
+    MESSAGE *message = Build200OkMessage(TransactionGetRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));     
     ResponseWith200OK(dialog->transaction);
@@ -300,7 +300,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
     DestroyMessage(&message);
 }
 
-void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
+void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 {
     DialogAddServerNonInviteTransaction(dialog, bye);
     DialogSend200OKResponse(dialog);
@@ -308,20 +308,20 @@ void DialogReceiveBye(struct Dialog *dialog, struct Message *bye)
 
 void DialogTerminate(struct Dialog *dialog)
 {
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     DialogAddClientNonInviteTransaction(dialog, bye);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
 
 void DialogInvite(struct Dialog *dialog)
 {
-    struct Message *invite = BuildInviteMessage(dialog, (char *)"88002");
+    MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
     AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
 }
 
 void DialogBye(struct Dialog *dialog)
 {
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     AddClientNonInviteTransaction(bye, (struct TransactionUser *)dialog);
 }
 

@@ -28,13 +28,13 @@ struct Message {
     struct Headers *headers;
 };
 
-void MessageSetType(struct Message *message, enum MESSAGE_TYPE type)
+void MessageSetType(MESSAGE *message, enum MESSAGE_TYPE type)
 {
     assert (message != NULL);
     message->type = type;
 }
 
-enum MESSAGE_TYPE MessageGetType(struct Message *message)
+enum MESSAGE_TYPE MessageGetType(MESSAGE *message)
 {
     assert(message != NULL);
     return message->type;
@@ -49,13 +49,13 @@ enum MESSAGE_TYPE ParseMessageType(char *line)
     }
 }
 
-SIP_METHOD MessageGetMethod(struct Message *message)
+SIP_METHOD MessageGetMethod(MESSAGE *message)
 {
     struct RequestLine *rl = MessageGetRequestLine(message);
     return RequestLineGetMethod(rl);
 }
 
-void MessageParseRequestLine(char *string, struct Message *message)
+void MessageParseRequestLine(char *string, MESSAGE *message)
 {
     struct RequestLine *requestLine = CreateEmptyRequestLine();
 
@@ -63,7 +63,7 @@ void MessageParseRequestLine(char *string, struct Message *message)
     message->rr.request = requestLine;
 }
 
-void MessageParseStatusLine(char *string, struct Message *message)
+void MessageParseStatusLine(char *string, MESSAGE *message)
 {
     struct StatusLine *statusLine = CreateStatusLine(0, "");
 
@@ -72,12 +72,12 @@ void MessageParseStatusLine(char *string, struct Message *message)
 
 }
 
-void MessageAddHeader(struct Message *message, struct Header *header)
+void MessageAddHeader(MESSAGE *message, struct Header *header)
 {
     RawHeadersAddHeader(message->headers, header);
 }
 
-struct Header *MessageGetHeader(const char *name, struct Message *message)
+struct Header *MessageGetHeader(const char *name, MESSAGE *message)
 {
     assert (name != NULL);
     assert (message != NULL);
@@ -85,12 +85,12 @@ struct Header *MessageGetHeader(const char *name, struct Message *message)
     return RawHeadersGetHeader(name, message->headers);
 }
 
-void ParseHeader(char *headerString, struct Message *message)
+void ParseHeader(char *headerString, MESSAGE *message)
 {
     RawParseHeader(headerString, message->headers);
 }
 
-int ParseHeaders(char *localString, struct Message *message)
+int ParseHeaders(char *localString, MESSAGE *message)
 {
     char *save_ptr = NULL;
     char *line = NULL;
@@ -124,7 +124,7 @@ int ParseContent(char *content, unsigned int length)
     return 0;
 }
 
-int ParseMessage(const char *string, struct Message *message)
+int ParseMessage(const char *string, MESSAGE *message)
 {    
     int error = 0;
     char *content;
@@ -149,24 +149,24 @@ int ParseMessage(const char *string, struct Message *message)
     return 0;
 }
 
-struct RequestLine *MessageGetRequestLine(struct Message *message)
+struct RequestLine *MessageGetRequestLine(MESSAGE *message)
 {
     assert(message != NULL);
     return message->rr.request;
 }
 
-void MessageSetRequestLine(struct Message *message, struct RequestLine *rl)
+void MessageSetRequestLine(MESSAGE *message, struct RequestLine *rl)
 {
     message->rr.request = rl;
 }
 
-struct StatusLine *MessageGetStatusLine(struct Message *message)
+struct StatusLine *MessageGetStatusLine(MESSAGE *message)
 {
     assert(message != NULL);
     return message->rr.status;
 }
 
-void MessageSetStatusLine(struct Message *message, struct StatusLine *status)
+void MessageSetStatusLine(MESSAGE *message, struct StatusLine *status)
 {
     assert (message != NULL);
     assert (status != NULL);
@@ -174,37 +174,37 @@ void MessageSetStatusLine(struct Message *message, struct StatusLine *status)
     message->rr.status = status;
 }
 
-char *MessageGetCallId(struct Message *message)
+char *MessageGetCallId(MESSAGE *message)
 {
     struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader(HEADER_NAME_CALLID, message);
     return CallIdHeaderGetId(id);
 }
 
-char *MessageGetFromTag(struct Message *message)
+char *MessageGetFromTag(MESSAGE *message)
 {
     struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message);
     return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
 }
 
-char *MessageGetToTag(struct Message *message)
+char *MessageGetToTag(MESSAGE *message)
 {
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
 }
 
-void MessageSetRemoteTag(struct Message *message, char *tag)
+void MessageSetRemoteTag(MESSAGE *message, char *tag)
 {
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
 }
 
-int MessageGetExpires(struct Message *message)
+int MessageGetExpires(MESSAGE *message)
 {
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, message); 
     return ExpiresHeaderGetExpires(e);
 }
 
-unsigned int MessageGetCSeqNumber(struct Message *message)
+unsigned int MessageGetCSeqNumber(MESSAGE *message)
 {
     assert (message != NULL);
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
@@ -212,14 +212,14 @@ unsigned int MessageGetCSeqNumber(struct Message *message)
     return CSeqHeaderGetSeq(c);
 }
 
-char *MessageGetViaBranch(struct Message *message)
+char *MessageGetViaBranch(MESSAGE *message)
 {
     assert (message != NULL);
     return ViaHeaderGetParameter((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, message), 
                                  VIA_BRANCH_PARAMETER_NAME);
 }
 
-void MessageSetViaBranch(struct Message *message, char *branch)
+void MessageSetViaBranch(MESSAGE *message, char *branch)
 {
     assert (message != NULL);
     assert (branch != NULL);
@@ -229,13 +229,13 @@ void MessageSetViaBranch(struct Message *message, char *branch)
                           branch);
 }
 
-char *MessageGetCSeqMethod(struct Message *message)
+char *MessageGetCSeqMethod(MESSAGE *message)
 {
     assert (message != NULL);
     return CSeqHeaderGetMethod((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message));
 }
 
-void MessageAddViaParameter(struct Message *message, char *name, char *value)
+void MessageAddViaParameter(MESSAGE *message, char *name, char *value)
 {
     struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
     struct Parameters *p = ViaHeaderGetParameters(via);
@@ -243,14 +243,14 @@ void MessageAddViaParameter(struct Message *message, char *name, char *value)
     AddParameter(p, name, value);
 }
 
-void MessageSetCSeqMethod (struct Message *message, char *method)
+void MessageSetCSeqMethod (MESSAGE *message, char *method)
 {
     struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
 
     CSeqHeaderSetMethod(c, method);
 }
 
-void MessageSetContentLength(struct Message *message, int length)
+void MessageSetContentLength(MESSAGE *message, int length)
 {
     struct ContentLengthHeader *c = 
         (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
@@ -258,7 +258,7 @@ void MessageSetContentLength(struct Message *message, int length)
     ContentLengthHeaderSetLength(c, length);
 }
 
-unsigned int MessageGetContentLength(struct Message *message)
+unsigned int MessageGetContentLength(MESSAGE *message)
 {    
     struct ContentLengthHeader *c = 
         (struct ContentLengthHeader *)MessageGetHeader(HEADER_NAME_CONTENT_LENGTH, message);
@@ -269,37 +269,37 @@ unsigned int MessageGetContentLength(struct Message *message)
         return ContentLengthHeaderGetLength(c);
 }
 
-BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm)
+BOOL MessageViaHeaderBranchMatched(MESSAGE *m, MESSAGE *mm)
 {
     return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
     
 }
 
-BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm)
+BOOL MessageCSeqHeaderMethodMatched(MESSAGE *m, MESSAGE *mm)
 {
     return  CSeqHeaderMethodMatched((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, m),
                                     (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, mm));    
 
 }
 
-BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm)
+BOOL MessageViaHeaderSendbyMatched(MESSAGE *m, MESSAGE *mm)
 {
     return ViaHeaderSendbyMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
                                   (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
 }
 
-struct Transaction *MessageBelongTo(struct Message *message)
+struct Transaction *MessageBelongTo(MESSAGE *message)
 {
     return message->transaction;
 }
 
-void MessageSetOwner(struct Message *message, struct Transaction *t)
+void MessageSetOwner(MESSAGE *message, struct Transaction *t)
 {
     message->transaction = t;
 }
 
-void Message2String(char *result, struct Message *message)
+void Message2String(char *result, MESSAGE *message)
 {
     char *p = result;
 
@@ -324,7 +324,7 @@ void Message2String(char *result, struct Message *message)
 }
 
 //Only for debug, no unit test for this funciton.
-void MessageDump(struct Message *message)
+void MessageDump(MESSAGE *message)
 {
     char messageString[MAX_MESSAGE_LENGTH] = {0};
 
@@ -333,15 +333,15 @@ void MessageDump(struct Message *message)
     printf("%s\n",messageString);
 }
 
-struct Message *CreateMessage () 
+MESSAGE *CreateMessage () 
 { 
-    struct Message *message = calloc(1,sizeof (struct Message));
+    MESSAGE *message = calloc(1,sizeof (struct Message));
     message->type = MESSAGE_TYPE_NONE;
     message->headers = CreateHeaders();
     return message;
 }
 
-void DestroyMessage (struct Message **message) 
+void DestroyMessage (MESSAGE **message) 
 {  
     assert(message != NULL);
 

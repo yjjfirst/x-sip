@@ -49,7 +49,7 @@ struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteT
     return dialogid;
 }
 
-void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *message)
+void DialogIdExtractFromMessage(struct DialogId *dialogid, MESSAGE *message)
 {
     DialogIdSetCallId(dialogid, MessageGetCallId(message));
     if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
@@ -60,7 +60,7 @@ void DialogIdExtractFromMessage(struct DialogId *dialogid, struct Message *messa
     }
 }
 
-struct DialogId *CreateDialogIdFromMessage(struct Message *message)
+struct DialogId *CreateDialogIdFromMessage(MESSAGE *message)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
     DialogIdExtractFromMessage(dialogid, message);

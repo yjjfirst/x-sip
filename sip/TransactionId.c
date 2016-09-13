@@ -35,7 +35,7 @@ void TransactionIdSetMethod(struct TransactionId *transactionId, char *method)
     transactionId->method = method;
 }
 
-void TransactionIdExtract(struct TransactionId *tid, struct Message *message)
+void TransactionIdExtract(struct TransactionId *tid, MESSAGE *message)
 {
     tid->branch = MessageGetViaBranch(message);
     tid->method = MessageGetCSeqMethod(message);

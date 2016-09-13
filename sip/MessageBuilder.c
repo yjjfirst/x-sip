@@ -136,9 +136,9 @@ struct Header *BuildRequestContentLengthHeader(struct Dialog *dialog)
     return (struct Header *)c;
 }
 
-struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
+MESSAGE *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
  
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
@@ -156,7 +156,7 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 }
 
 
-void SetToHeaderUserName(struct Message *message, struct Dialog *dialog)
+void SetToHeaderUserName(MESSAGE *message, struct Dialog *dialog)
 {
     struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
@@ -165,9 +165,9 @@ void SetToHeaderUserName(struct Message *message, struct Dialog *dialog)
     UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));    
 }
 
-struct Message *BuildAddBindingMessage(struct Dialog *dialog)
+MESSAGE *BuildAddBindingMessage(struct Dialog *dialog)
 {
-    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);    
+    MESSAGE *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);    
 
     SetToHeaderUserName(binding, dialog);
     MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
@@ -175,9 +175,9 @@ struct Message *BuildAddBindingMessage(struct Dialog *dialog)
     return binding;
 }
 
-struct Message *BuildRemoveBindingMessage(struct Dialog *dialog)
+MESSAGE *BuildRemoveBindingMessage(struct Dialog *dialog)
 {
-    struct Message *remove = BuildAddBindingMessage(dialog);
+    MESSAGE *remove = BuildAddBindingMessage(dialog);
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
     
     ExpiresHeaderSetExpires(e, 0);
@@ -194,9 +194,9 @@ struct URI *BuildRemoteUri(struct Dialog *dialog, char *to)
     return uri;
 }
 
-struct Message *BuildInviteMessage(struct Dialog *dialog, char *to)
+MESSAGE *BuildInviteMessage(struct Dialog *dialog, char *to)
 {
-    struct Message *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
+    MESSAGE *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
     struct ContactHeader  *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
     struct URI *uri = NULL;
@@ -212,9 +212,9 @@ struct Message *BuildInviteMessage(struct Dialog *dialog, char *to)
     return invite;
 }
 
-struct Message *BuildAckMessage(struct Dialog *dialog)
+MESSAGE *BuildAckMessage(struct Dialog *dialog)
 {
-    struct Message *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
+    MESSAGE *ack = BuildRequestMessage(dialog, SIP_METHOD_ACK);
 //    struct RequestLine *rl = MessageGetRequestLine(ack);
 //    struct URI *remoteUri = DialogGetRemoteUri(dialog);
     
@@ -224,9 +224,9 @@ struct Message *BuildAckMessage(struct Dialog *dialog)
     return ack;
 }
 
-struct Message *BuildByeMessage(struct Dialog *dialog)
+MESSAGE *BuildByeMessage(struct Dialog *dialog)
 {
-    struct Message *bye = BuildRequestMessage(dialog, SIP_METHOD_BYE);
+    MESSAGE *bye = BuildRequestMessage(dialog, SIP_METHOD_BYE);
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct Parameters *ps = ContactHeaderGetParameters(to);
 
@@ -235,7 +235,7 @@ struct Message *BuildByeMessage(struct Dialog *dialog)
     return bye;
 }
 
-void AddAuthHeaderUri(struct Message *authMessage,struct AuthHeader *authHeader)
+void AddAuthHeaderUri(MESSAGE *authMessage,struct AuthHeader *authHeader)
 {
     struct RequestLine *rl = MessageGetRequestLine(authMessage);
     struct URI *uri = RequestLineGetUri(rl);
@@ -245,7 +245,7 @@ void AddAuthHeaderUri(struct Message *authMessage,struct AuthHeader *authHeader)
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_URI,uriString); 
 }
 
-struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *dialog, struct Message *challenge)
+struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, struct Dialog *dialog, MESSAGE *challenge)
 {
     struct AuthHeader *authHeader = CreateAuthorizationHeader(dialog);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
@@ -280,9 +280,9 @@ struct AuthHeader *BuildAuthHeader(struct Message *authMessage, struct Dialog *d
     return authHeader;
 }
 
-struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge)
+MESSAGE *BuildAuthorizationMessage(struct Dialog *dialog, MESSAGE *challenge)
 {
-    struct Message *message = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
+    MESSAGE *message = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);
     struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
 
     CSeqHeaderSetSeq(cseq, 2);
@@ -295,20 +295,20 @@ struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message 
     return message;
 }
 
-void AddResponseViaHeader(struct Message *response, struct Message *invite)
+void AddResponseViaHeader(MESSAGE *response, MESSAGE *invite)
 {
     VIA_HEADER *via = ViaHeaderDup((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite));
     MessageAddHeader(response, (HEADER *)via);
 }
 
-void AddResponseFromHeader(struct Message *response, struct Message *invite)
+void AddResponseFromHeader(MESSAGE *response, MESSAGE *invite)
 {
     struct ContactHeader *from = 
         ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
     MessageAddHeader(response, (struct Header *)from);
 }
 
-void BuildResponseToTag(char *tag, struct Message *invite)
+void BuildResponseToTag(char *tag, MESSAGE *invite)
 {
     struct Dialog *dialog = NULL;    
     struct Transaction *t = MessageBelongTo(invite);
@@ -332,7 +332,7 @@ void BuildResponseToTag(char *tag, struct Message *invite)
     }
 }
 
-void AddResponseToHeader(struct Message *response, struct Message *invite)
+void AddResponseToHeader(MESSAGE *response, MESSAGE *invite)
 {
     char tag[MAX_TAG_LENGTH] = {0};
     struct ContactHeader *to =
@@ -347,14 +347,14 @@ void AddResponseToHeader(struct Message *response, struct Message *invite)
     MessageAddHeader(response, (struct Header *)to);
 }
 
-void AddResponseCallIdHeader(struct Message *response, struct Message *invite)
+void AddResponseCallIdHeader(MESSAGE *response, MESSAGE *invite)
 {
     struct CallIdHeader *callId = 
         CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
     MessageAddHeader(response, (struct Header *)callId);
 }
 
-void AddResponseCSeqHeader(struct Message *response, struct Message *invite)
+void AddResponseCSeqHeader(MESSAGE *response, MESSAGE *invite)
 {
     struct CSeqHeader *cseqId =              
         CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
@@ -362,7 +362,7 @@ void AddResponseCSeqHeader(struct Message *response, struct Message *invite)
 
 }
 
-void AddResponseContactHeader(struct Message *response, struct Message *invite)
+void AddResponseContactHeader(MESSAGE *response, MESSAGE *invite)
 {
     struct ContactHeader *c = CreateContactHeader();
     struct URI *uri = CreateUri(URI_SCHEME_SIP, "88001", GetLocalIpAddr(), LOCAL_PORT);
@@ -372,7 +372,7 @@ void AddResponseContactHeader(struct Message *response, struct Message *invite)
     
 }
 
-void AddResponseHeaders(struct Message *response, struct Message *request)
+void AddResponseHeaders(MESSAGE *response, MESSAGE *request)
 {
     AddResponseViaHeader(response, request);
     AddResponseFromHeader(response, request);
@@ -382,18 +382,18 @@ void AddResponseHeaders(struct Message *response, struct Message *request)
     AddResponseContactHeader(response, request);
 }
 
-struct Message *BuildResponseMessage(struct Message *request, struct StatusLine *status)
+MESSAGE *BuildResponseMessage(MESSAGE *request, struct StatusLine *status)
 {
     assert(request != NULL);
     
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     MessageSetStatusLine(message, status);
     AddResponseHeaders(message, request);
 
     return message;  
 }
 
-struct Message *BuildTryingMessage(struct Message *invite)
+MESSAGE *BuildTryingMessage(MESSAGE *invite)
 {
     assert(invite != NULL);
 
@@ -401,7 +401,7 @@ struct Message *BuildTryingMessage(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *BuildRingingMessage(struct Message *invite)
+MESSAGE *BuildRingingMessage(MESSAGE *invite)
 {
     assert(invite != NULL);
 
@@ -409,7 +409,7 @@ struct Message *BuildRingingMessage(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *Build200OkMessage(struct Message *request)
+MESSAGE *Build200OkMessage(MESSAGE *request)
 {
     assert(request != NULL);
 
@@ -417,7 +417,7 @@ struct Message *Build200OkMessage(struct Message *request)
     return BuildResponseMessage(request, status);
 }
 
-struct Message *Build301Message(struct Message *invite)
+MESSAGE *Build301Message(MESSAGE *invite)
 {
     assert(invite != NULL);
 
@@ -425,11 +425,11 @@ struct Message *Build301Message(struct Message *invite)
     return BuildResponseMessage(invite, status);
 }
 
-struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite)
+MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite)
 {
     assert(invite != NULL);
 
-    struct Message *ack = CreateMessage();
+    MESSAGE *ack = CreateMessage();
     struct RequestLine *rl = RequestLineDup(MessageGetRequestLine(invite));
     
     MessageSetType(ack, MESSAGE_TYPE_REQUEST);

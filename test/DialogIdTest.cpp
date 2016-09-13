@@ -71,7 +71,7 @@ TEST(DialogIdTestGroup, DialogIdUnequalTest2)
 
 TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     struct DialogId *dialogid;
 
     ParseMessage(INVITE_200OK_MESSAGE, message);
@@ -86,7 +86,7 @@ TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
 
 TEST(DialogIdTestGroup, BuildDialogIdFromRequestTest)
 {
-    struct Message *message = CreateMessage();
+    MESSAGE *message = CreateMessage();
     struct DialogId *dialogid;
 
     ParseMessage(INCOMMING_INVITE_MESSAGE, message);

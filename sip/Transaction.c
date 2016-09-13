@@ -26,7 +26,7 @@ struct Transaction {
 
     enum TransactionState state;
     struct Fsm *fsm;
-    struct Message *request;
+    MESSAGE *request;
     t_list *responses;
     int retransmits;
     int curEvent;
@@ -53,7 +53,7 @@ struct Fsm ClientInviteTransactionFsm;
 struct Fsm ServerInviteTransactionFsm;
 struct Fsm ServerNonInviteTransactionFsm;
 
-void TransactionAddResponse(struct Transaction *t, struct Message *message)
+void TransactionAddResponse(struct Transaction *t, MESSAGE *message)
 {
     put_in_list(&t->responses, message);
 }
@@ -75,7 +75,7 @@ struct TransactionId *TransactionGetId(struct Transaction *t)
     return t->id;
 }
 
-struct Message *TransactionGetLatestResponse(struct Transaction *t)
+MESSAGE *TransactionGetLatestResponse(struct Transaction *t)
 {
     int length = get_list_len(t->responses);
     return get_data_at(t->responses, length - 1);
@@ -167,7 +167,7 @@ int NotifyUser(struct Transaction *t)
     return 0;
 }
 
-int TransactionSendMessage(struct Message *message)
+int TransactionSendMessage(MESSAGE *message)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, message);
@@ -197,17 +197,17 @@ int ResendLatestResponse(struct Transaction *t)
     return 0;
 }
 
-BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response)
+BOOL IfResponseMatchedTransaction(struct Transaction *t, MESSAGE *response)
 {
     assert (t != NULL);
     assert (response != NULL);
 
-    struct Message *request = TransactionGetRequest(t);
+    MESSAGE *request = TransactionGetRequest(t);
     return MessageViaHeaderBranchMatched(request, response) 
         && MessageCSeqHeaderMethodMatched(request, response);
 }
 
-BOOL RequestMethodMatched(struct Transaction *t, struct Message *request)
+BOOL RequestMethodMatched(struct Transaction *t, MESSAGE *request)
 {
     struct RequestLine *origin = MessageGetRequestLine(t->request);
     struct RequestLine *new = MessageGetRequestLine(request);
@@ -215,18 +215,18 @@ BOOL RequestMethodMatched(struct Transaction *t, struct Message *request)
     return RequestLineMethodMatched(origin, new);
 }
 
-BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *request)
+BOOL IfRequestMatchTransaction(struct Transaction *t, MESSAGE *request)
 {
     assert(t != NULL);
     assert(request != NULL);
 
-    struct Message *origin = TransactionGetRequest(t);
+    MESSAGE *origin = TransactionGetRequest(t);
     return MessageViaHeaderBranchMatched(origin, request)
         && MessageViaHeaderSendbyMatched(origin, request)
         && RequestMethodMatched(t, request);
 }
 
-struct Message *TransactionGetRequest(struct Transaction *t)
+MESSAGE *TransactionGetRequest(struct Transaction *t)
 {
     assert (t != NULL);
     return t->request;
@@ -247,7 +247,7 @@ struct TransactionUser *TransactionGetUser(struct Transaction *t)
     return t->user;
 }
 
-struct Transaction *CallocTransaction(struct Message *request, struct TransactionUser *user)
+struct Transaction *CallocTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = calloc(1, sizeof (struct Transaction));
 
@@ -262,7 +262,7 @@ struct Transaction *CallocTransaction(struct Message *request, struct Transactio
 
 void ResponseWith301(struct Transaction *t)
 {
-    struct Message *moved = Build301Message(t->request);
+    MESSAGE *moved = Build301Message(t->request);
 
     TransactionAddResponse(t, moved);
     if (TransactionSendMessage(moved) < 0) {
@@ -275,7 +275,7 @@ void ResponseWith301(struct Transaction *t)
 
 void ResponseWith200OK(struct Transaction *t)
 {
-    struct Message *ok = Build200OkMessage(t->request);
+    MESSAGE *ok = Build200OkMessage(t->request);
     TransactionAddResponse(t, ok);
     TransactionSendMessage(ok);
 
@@ -284,7 +284,7 @@ void ResponseWith200OK(struct Transaction *t)
 
 void ResponseWith180Ringing(struct Transaction *t)
 {
-    struct Message *ringing = BuildRingingMessage(t->request);
+    MESSAGE *ringing = BuildRingingMessage(t->request);
 
     TransactionAddResponse(t, ringing);
     if (TransactionSendMessage(ringing) < 0) {
@@ -298,7 +298,7 @@ void ResponseWith180Ringing(struct Transaction *t)
 
 int SendAckRequest(struct Transaction *t)
 {
-    struct Message *ack=BuildAckMessageWithinClientTransaction(t->request);
+    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
 
     TransactionAddResponse(t, ack);
     if (TransactionSendMessage(ack) < 0) {
@@ -318,12 +318,12 @@ void Receive3xxResponse(struct Transaction *t)
     RunFsm(t, TRANSACTION_EVENT_3XX);
 }
 
-void ReceiveDupRequest(struct Transaction *t, struct Message *message)
+void ReceiveDupRequest(struct Transaction *t, MESSAGE *message)
 {
     ResendLatestResponse(t);
 }
 
-struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUser *user)
+struct Transaction *CreateClientInviteTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     
@@ -342,7 +342,7 @@ struct Transaction *CreateClientInviteTransaction(struct Message *request, struc
     return t;
 }
 
-struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUser *user)
+struct Transaction *CreateClientNonInviteTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
 
@@ -361,10 +361,10 @@ struct Transaction *CreateClientNonInviteTransaction(struct Message *request, st
     return t;
 }
 
-struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUser *user)
+struct Transaction *CreateServerInviteTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
-    struct Message *trying = BuildTryingMessage(t->request);
+    MESSAGE *trying = BuildTryingMessage(t->request);
 
     t->state = TRANSACTION_STATE_PROCEEDING;
     t->fsm = &ServerInviteTransactionFsm;
@@ -380,7 +380,7 @@ struct Transaction *CreateServerInviteTransaction(struct Message *request, struc
     return t;
 }
 
-struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUser *user)
+struct Transaction *CreateServerNonInviteTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
     t->type = TRANSACTION_TYPE_SERVER_NON_INVITE;
@@ -395,7 +395,7 @@ void DestroyResponseMessage(struct Transaction *t)
     int i = 0;
 
     for (; i < length; i ++) {
-        struct Message *message = get_data_at(t->responses, i);
+        MESSAGE *message = get_data_at(t->responses, i);
         DestroyMessage(&message);
     }
 

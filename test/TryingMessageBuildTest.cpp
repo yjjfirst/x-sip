@@ -34,10 +34,10 @@ TEST_GROUP(TryingMessageBuildTestGroup)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageStatusLineTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
@@ -51,10 +51,10 @@ TEST(TryingMessageBuildTestGroup, TryingMessageStatusLineTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
     struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
     struct ContactHeader *tryingFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, trying);
 
@@ -66,10 +66,10 @@ TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
     
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
 
     struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -82,10 +82,10 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
 
     struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -102,9 +102,9 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageCallIdTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
 
     struct CallIdHeader *inviteCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite);
     struct CallIdHeader *tryingCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, trying);
@@ -117,9 +117,9 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCallIdTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageCSeqTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
     
     struct CSeqHeader *inviteCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite);
     struct CSeqHeader *tryingCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, trying);
@@ -132,9 +132,9 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCSeqTest)
 
 TEST(TryingMessageBuildTestGroup, TryingMessageViaTest)
 {
-    struct Message *invite = CreateMessage();
+    MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    struct Message *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(invite);
 
     struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite);
     struct ViaHeader *tryingVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, trying);

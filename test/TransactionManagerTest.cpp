@@ -23,7 +23,7 @@ TEST_GROUP(TransactionManager)
 {
     struct UserAgent *ua;
     struct Dialog *dialog;
-    struct Message *message;
+    MESSAGE *message;
     
     void setup() {
         UT_PTR_SET(Transporter, &MockTransporter);
@@ -103,7 +103,7 @@ TEST(TransactionManager, GetTransactionByIdTest)
 
 TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
 {
-    struct Message *localMessage = CreateMessage();
+    MESSAGE *localMessage = CreateMessage();
     struct TransactionId *tid = CreateTransactionId(); 
     ParseMessage(INCOMMING_INVITE_MESSAGE, localMessage);
     TransactionIdExtract(tid, localMessage);

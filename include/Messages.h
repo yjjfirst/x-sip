@@ -3,6 +3,7 @@
 
 #define MAX_MESSAGE_LENGTH 2048
 
+typedef struct Message MESSAGE;
 enum MESSAGE_TYPE {
     MESSAGE_TYPE_REQUEST,
     MESSAGE_TYPE_RESPONSE,

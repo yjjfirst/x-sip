@@ -19,7 +19,7 @@ extern "C" {
 TEST_GROUP(SessionTestGroup)
 {
     struct Dialog *dialog;
-    struct Message *invite;
+    MESSAGE *invite;
     struct UserAgent *ua;
 
     void setup() 
@@ -66,7 +66,7 @@ TEST(SessionTestGroup, CreateSessionStructTest)
 
 TEST(SessionTestGroup, UACCreateSessionTest)
 {
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
@@ -105,7 +105,7 @@ TEST(SessionTestGroup, UACDestroySessionTest)
 
 TEST(SessionTestGroup, UASDestroySessionTest)
 {
-    struct Message *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(invite);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
     UT_PTR_SET(DestroySession,DestroySessionMock);
@@ -115,7 +115,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     mock().expectOneCall("CreateSession");
     ClientInviteOkReceived(dialog, ok);
     mock().expectOneCall("DestroySession");
-    struct Message *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
     DestroyMessage(&ok);
     ClearTransactionManager();

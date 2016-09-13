@@ -18,7 +18,7 @@ extern "C" {
 TEST_GROUP(TransactionTestGroup)
 {
     struct UserAgent *ua;
-    struct Message *invite;
+    MESSAGE *invite;
     struct Transaction *transaction;
     struct Dialog *dialog;
     char branch[32];
