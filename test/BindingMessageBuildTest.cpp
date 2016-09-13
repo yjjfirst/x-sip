@@ -40,7 +40,6 @@ TEST_GROUP(BindingMessageBuildTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
-
         m = BuildAddBindingMessage(dialog);
     }
 
@@ -218,18 +217,6 @@ TEST(BindingMessageBuildTestGroup, 301MessageStatueLineTest)
 
 }
 
-struct URI *DialogGetRemoteUriMock(struct Dialog *dialog)
-{
-    struct URI *uri = CreateEmptyUri();
-    ParseUri((char *)"sip:abcd@192.168.10.123:tag=1234", &uri);
-    return uri;
-}
-
-char *DialogGetRemoteTagMock(struct Dialog *dialog)
-{
-    return (char *)"123456abcde";
-}
-
 TEST(BindingMessageBuildTestGroup, BindingsRequestLineTest)
 {
     struct RequestLine *rl = MessageGetRequestLine(m);
@@ -274,7 +261,7 @@ TEST(BindingMessageBuildTestGroup, UnbindingMessage)
     DestroyMessage(&remove);
 }
 
-TEST(BindingMessageBuildTestGroup, AuthorizationMessage)
+TEST(BindingMessageBuildTestGroup, MessageAuthorizationHeaderTest)
 {
     struct Message *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
@@ -291,6 +278,20 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessage)
     STRCMP_EQUAL("\"1cd2586e\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_NONCE));
     STRCMP_EQUAL("\"722b5f3120526c9bce5ee1e95a085c1c\"", AuthHeaderGetParameter(authHeader, AUTH_HEADER_RESPONSE));
 
+    DestroyMessage(&authMessage);
+    DestroyMessage(&challenge);
+}
+
+TEST(BindingMessageBuildTestGroup, AuthorizationMessageToHeaderTest)
+{
+    struct Message *challenge = CreateMessage();
+    ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
+
+    struct Message *authMessage = BuildAuthorizationMessage(dialog, challenge);
+    struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, authMessage);
+    struct URI *uri = ContactHeaderGetUri(toHeader);
+    STRCMP_EQUAL("88001", UriGetUser(uri));
+    
     DestroyMessage(&authMessage);
     DestroyMessage(&challenge);
 }

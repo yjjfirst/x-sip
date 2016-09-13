@@ -29,7 +29,6 @@ TEST_GROUP(SessionTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);    
         dialog = AddNewDialog(NULL_DIALOG_ID, ua);
-        DialogSetToUser(dialog, (char *)"88002");
         invite = BuildInviteMessage(dialog, (char *)"88002");
     }
 

@@ -28,7 +28,6 @@ struct Dialog {
     unsigned int localSeqNumber;
     unsigned int remoteSeqNumber;
     enum DIALOG_STATE state;
-    char to[USER_NAME_MAX_LENGTH];
 };
 
 struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
@@ -79,9 +78,6 @@ struct UserAgent *DialogGetUserAgent(struct Dialog *dialog)
     assert(dialog != NULL);
     return dialog->ua;
 }
-
-DEFINE_STRING_MEMBER_WRITER(struct Dialog, DialogSetToUser, to, USER_NAME_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct Dialog, DialogGetToUser, to);
 
 void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
 {

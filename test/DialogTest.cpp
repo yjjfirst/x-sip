@@ -186,13 +186,14 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     DestroyMessage(&ok);
 }
 
-IGNORE_TEST(DialogTestGroup, UACDialogRemoteUriTest)
+TEST(DialogTestGroup, UACDialogRemoteUriTest)
 {
-    char string[256] = {0};
     
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
-    Uri2StringExt(string, remoteUri);
-    printf("%s\n", string);
+    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+
+    UriMatched(remoteUri, ContactHeaderGetUri(to));
+    DestroyMessage(&invite);
 }
 
 TEST(DialogTestGroup, UACDialogConfirmedTest)

@@ -14,6 +14,8 @@ struct CallIdHeader {
     char id[CALLID_MAX_LENGTH];
 };
 
+typedef struct CallIdHeader CALLID_HEADER;
+
 struct HeaderPattern CallIdHeaderPattern[] = {
     {"*", EMPTY, COLON, 0, OFFSETOF(struct CallIdHeader, headerBase), ParseString, NULL, String2String},
     {"*", COLON, EMPTY, 0, OFFSETOF(struct CallIdHeader, id), ParseString, NULL, String2String},

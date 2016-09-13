@@ -79,7 +79,6 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
     struct URI *uri;
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
 
-    //DialogSetToUser(dialog, "88002");
     if (remoteUri != NULL)
         uri = UriDup(remoteUri);
     else
@@ -156,14 +155,21 @@ struct Message *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
     return message;
 }
 
-struct Message *BuildAddBindingMessage(struct Dialog *dialog)
+
+void SetToHeaderUserName(struct Message *message, struct Dialog *dialog)
 {
-    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);    
-    struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, binding);
+    struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct Account *account = UserAgentGetAccount(ua);
 
-    UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));
+    UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));    
+}
+
+struct Message *BuildAddBindingMessage(struct Dialog *dialog)
+{
+    struct Message *binding = BuildRequestMessage(dialog, SIP_METHOD_REGISTER);    
+
+    SetToHeaderUserName(binding, dialog);
     MessageAddHeader(binding, BuildRequestExpiresHeader(dialog));
     
     return binding;
@@ -283,7 +289,8 @@ struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message 
     char *callid = MessageGetCallId(challenge);
     struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);
     CallIdHeaderSetID(callidHeader, callid);
-    
+
+    SetToHeaderUserName(message, dialog);
     MessageAddHeader(message, (struct Header *)BuildAuthHeader(message,dialog, challenge));
     return message;
 }

@@ -197,15 +197,8 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 
 }
 
-static char *DialogGetRemoteTagMock(struct Dialog *dialog)
-{
-    return (char *)"123456abcde";
-}
-
 TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
-    UT_PTR_SET(DialogGetRemoteTag, DialogGetRemoteTagMock);
-
     struct Message *bye = BuildByeMessage(dialog);
     struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct URI *uri = ContactHeaderGetUri(to);
