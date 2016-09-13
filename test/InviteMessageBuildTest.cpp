@@ -61,7 +61,7 @@ TEST(InviteMessageBuildTestGroup, InviteMessageRequestLineTest)
 
 TEST(InviteMessageBuildTestGroup, InviteMessageToHeaderTest)
 {
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, inviteMessage);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, inviteMessage);
     struct URI *uri = ContactHeaderGetUri(to);
 
     STRCMP_EQUAL("88002", UriGetUser(uri));
@@ -108,8 +108,8 @@ TEST(InviteMessageBuildTestGroup, AckMessageCallIdTest)
 TEST(InviteMessageBuildTestGroup, AckMessageFromTest)
 {
     MESSAGE *ackMessage = BuildAckMessage(dialog);
-    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
-    struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
+    CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
+    CONTACT_HEADER *inviteFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
 
     CHECK_TRUE(ContactHeaderMatched(from, inviteFrom));
     
@@ -128,8 +128,8 @@ TEST(InviteMessageBuildTestGroup, AckMessageCSeqTest)
 TEST(InviteMessageBuildTestGroup, AckMessageViaTest)
 {
     MESSAGE *ackMessage = BuildAckMessage(dialog);
-    struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage);
-    struct ViaHeader *ackVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
+    VIA_HEADER *inviteVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage);
+    VIA_HEADER *ackVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
 
     CHECK_TRUE(ViaHeaderMatched(ackVia, inviteVia));
     DestroyMessage(&ackMessage);
@@ -169,7 +169,7 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     MESSAGE *ok = Build200OkMessage(invite);
-    struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
+    CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     struct URI *uri = ContactHeaderGetUri(c);
     
     CHECK_TRUE(c != NULL);
@@ -200,7 +200,7 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct URI *uri = ContactHeaderGetUri(to);
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
 
@@ -249,8 +249,8 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHead
 {
     MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
-    CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
-                                    (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM,ack)));
+    CHECK_TRUE(ContactHeaderMatched((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
+                                    (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM,ack)));
 
     DestroyMessage(&ack);
 }
@@ -258,11 +258,11 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHead
 TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
 {
     MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
-    struct ContactHeader *toHeaderOfAck = 
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, ack));
+    CONTACT_HEADER *toHeaderOfAck = 
+        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, ack));
 
     ContactHeaderRemoveParameters(toHeaderOfAck);
-    CHECK_TRUE(ContactHeaderMatched((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO,inviteMessage), 
+    CHECK_TRUE(ContactHeaderMatched((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO,inviteMessage), 
                                     toHeaderOfAck));
 
     DestroyMessage(&ack);
@@ -273,8 +273,8 @@ TEST(InviteMessageBuildTestGroup, BuildAckRequestWithClientTransactionViaHeaderT
 {
     MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage);    
 
-    CHECK_TRUE(ViaHeaderMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
-                                (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, ack)));
+    CHECK_TRUE(ViaHeaderMatched((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
+                                (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, ack)));
 
     DestroyMessage(&ack);
 }

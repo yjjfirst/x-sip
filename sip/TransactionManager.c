@@ -40,7 +40,7 @@ BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
 {
     MESSAGE *request = TransactionGetRequest(t);
 
-    return ViaHeaderBranchMatchedByString((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
+    return ViaHeaderBranchMatchedByString((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
 }
 

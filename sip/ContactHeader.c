@@ -115,48 +115,48 @@ struct HeaderPattern *GetContactHeaderPattern(char *header)
 
 struct Header *ParseContactHeader(char *string)
 {
-    struct ContactHeader *header = CreateContactHeader();
+    CONTACT_HEADER *header = CreateContactHeader();
     Parse(string, header, GetContactHeaderPattern(string));
     
     return (struct Header *)header;
 }
 
-void ContactHeaderSetName(struct ContactHeader *header, char *name)
+void ContactHeaderSetName(CONTACT_HEADER *header, char *name)
 {
     struct HeaderPattern *p = ContactNamePattern;
     Copy2Target(header, name, p);
 }
 
-char *ContactHeaderGetName(struct ContactHeader *toHeader)
+char *ContactHeaderGetName(CONTACT_HEADER *toHeader)
 {
     return toHeader->headerBase.name;
 }
 
-char *ContactHeaderGetDisplayName(struct ContactHeader *toHeader)
+char *ContactHeaderGetDisplayName(CONTACT_HEADER *toHeader)
 {
     return toHeader->displayName;
 }
 
-void ContactHeaderSetDisplayName(struct ContactHeader *header, char *name)
+void ContactHeaderSetDisplayName(CONTACT_HEADER *header, char *name)
 {
     struct HeaderPattern *p = DisplayNamePattern;
     Copy2Target(header, name, p);
 }
 
-struct URI *ContactHeaderGetUri(struct ContactHeader *header)
+struct URI *ContactHeaderGetUri(CONTACT_HEADER *header)
 {
     assert(header != NULL);
     return header->uri;
 }
 
-void ContactHeaderSetUri(struct ContactHeader *header, struct URI *uri)
+void ContactHeaderSetUri(CONTACT_HEADER *header, struct URI *uri)
 {
     if (header->uri != NULL)
         DestroyUri(&header->uri);
     header->uri = uri;
 }
 
-char *ContactHeaderGetParameter(struct ContactHeader *toHeader, char *name)
+char *ContactHeaderGetParameter(CONTACT_HEADER *toHeader, char *name)
 {
     assert(toHeader != NULL);
     assert(name != NULL);
@@ -164,30 +164,30 @@ char *ContactHeaderGetParameter(struct ContactHeader *toHeader, char *name)
     return GetParameter(toHeader->parameters, name);
 }
 
-struct Parameters *ContactHeaderGetParameters(struct ContactHeader *header)
+struct Parameters *ContactHeaderGetParameters(CONTACT_HEADER *header)
 {
     assert(header != NULL);
     return header->parameters;
 }
 
-void ContactHeaderSetParameter(struct ContactHeader *header, char *name, char *value)
+void ContactHeaderSetParameter(CONTACT_HEADER *header, char *name, char *value)
 {
     AddParameter(header->parameters, name, value);
 }
 
-void ContactHeaderSetParameters(struct ContactHeader *header, struct Parameters *parameters)
+void ContactHeaderSetParameters(CONTACT_HEADER *header, struct Parameters *parameters)
 {
     if (header->parameters != NULL)
         DestroyParameters(&header->parameters);
     header->parameters = parameters;
 }
 
-void ContactHeaderRemoveParameters(struct ContactHeader *header)
+void ContactHeaderRemoveParameters(CONTACT_HEADER *header)
 {
     ClearParameters(header->parameters);
 }
 
-BOOL ContactHeaderMatched(struct ContactHeader *header1, struct ContactHeader *header2)
+BOOL ContactHeaderMatched(CONTACT_HEADER *header1, CONTACT_HEADER *header2)
 {
     assert(header1 != NULL);
     assert(header2 != NULL);
@@ -212,9 +212,9 @@ void GenerateTagImpl(char *tag)
 
 void (*GenerateTag)(char *tag) = GenerateTagImpl;
 
-struct ContactHeader *ContactHeaderDup(struct ContactHeader *src)
+CONTACT_HEADER *ContactHeaderDup(CONTACT_HEADER *src)
 {
-    struct ContactHeader *dest = CreateContactHeader();
+    CONTACT_HEADER *dest = CreateContactHeader();
 
     DestroyUri(&dest->uri);
     DestroyParameters(&dest->parameters);
@@ -230,9 +230,9 @@ char *ContactHeader2String(char *result, struct Header *contact)
     return ToString(result, contact, BuildQuotedDisplayNamePattern());
 }
 
-struct ContactHeader *CreateEmptyContactHeader()
+CONTACT_HEADER *CreateEmptyContactHeader()
 {
-    struct ContactHeader *header = (struct ContactHeader *)calloc(1, sizeof(struct ContactHeader));
+    CONTACT_HEADER *header = (CONTACT_HEADER *)calloc(1, sizeof(struct ContactHeader));
     
     header->uri = CreateEmptyUri();
     header->parameters = CreateParameters();
@@ -240,25 +240,25 @@ struct ContactHeader *CreateEmptyContactHeader()
     return header;
 }
 
-struct ContactHeader *CreateContactHeader()
+CONTACT_HEADER *CreateContactHeader()
 {
-    struct ContactHeader *c = CreateEmptyContactHeader();
+    CONTACT_HEADER *c = CreateEmptyContactHeader();
     ContactHeaderSetName(c, HEADER_NAME_CONTACT);
 
     return c;
 }
 
-struct ContactHeader *CreateToHeader()
+CONTACT_HEADER *CreateToHeader()
 {
-    struct ContactHeader *to = CreateEmptyContactHeader();
+    CONTACT_HEADER *to = CreateEmptyContactHeader();
     ContactHeaderSetName(to, HEADER_NAME_TO);
 
     return to;
 }
 
-struct ContactHeader *CreateFromHeader()
+CONTACT_HEADER *CreateFromHeader()
 {
-    struct ContactHeader *from = CreateEmptyContactHeader();
+    CONTACT_HEADER *from = CreateEmptyContactHeader();
     ContactHeaderSetName(from, HEADER_NAME_FROM);
 
     return from;
@@ -267,7 +267,7 @@ struct ContactHeader *CreateFromHeader()
 void DestroyContactHeader(struct Header *h)
 {
 
-    struct ContactHeader *header = (struct ContactHeader *)h;
+    CONTACT_HEADER *header = (CONTACT_HEADER *)h;
     if (header != NULL) {
         DestroyParameters(&header->parameters);
         DestroyUri(&header->uri);

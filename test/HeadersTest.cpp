@@ -26,7 +26,7 @@ TEST(HeadersTestGroup, CreateHeadersTest)
 
 TEST(HeadersTestGroup, AddOneHeaderTest)
 {
-    struct ContactHeader *to = CreateToHeader();
+    CONTACT_HEADER *to = CreateToHeader();
     HeadersAddHeader(headers, (struct Header *)to);
 
     CHECK_EQUAL(1, HeadersLength(headers));
@@ -35,10 +35,10 @@ TEST(HeadersTestGroup, AddOneHeaderTest)
 
 TEST(HeadersTestGroup, AddTwoHeadersTest)
 {
-    struct ContactHeader *to = CreateToHeader();
+    CONTACT_HEADER *to = CreateToHeader();
     HeadersAddHeader(headers, (struct Header *)to);
 
-    struct ContactHeader *from = CreateFromHeader();
+    CONTACT_HEADER *from = CreateFromHeader();
     HeadersAddHeader(headers, (struct Header *)from);
 
     CHECK_EQUAL(2, HeadersLength(headers));
@@ -46,13 +46,13 @@ TEST(HeadersTestGroup, AddTwoHeadersTest)
 
 TEST(HeadersTestGroup, AddThreeHeadersTest)
 {
-    struct ContactHeader *to = CreateToHeader();
+    CONTACT_HEADER *to = CreateToHeader();
     HeadersAddHeader(headers, (struct Header *)to);
 
-    struct ContactHeader *from = CreateFromHeader();
+    CONTACT_HEADER *from = CreateFromHeader();
     HeadersAddHeader(headers, (struct Header *)from);
 
-    struct ContactHeader *contact = CreateContactHeader();
+    CONTACT_HEADER *contact = CreateContactHeader();
     HeadersAddHeader(headers, (struct Header *)contact);
 
     CHECK_EQUAL(3, HeadersLength(headers));

@@ -2,7 +2,7 @@
 
 #define MAX_TAG_LENGTH 10
 
-struct ContactHeader;
+typedef struct ContactHeader CONTACT_HEADER;
 struct Parameters;
 
 struct HeaderPattern *GetContactHeaderPattern(char *header);

@@ -138,7 +138,7 @@ void ExtractDialogIdFromMessage(struct Dialog *dialog, MESSAGE *message)
 
 void ExtractRemoteTargetFromMessage(struct Dialog *dialog, MESSAGE *message)
 {
-    struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, message);
+    CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, message);
     struct URI *uri = ContactHeaderGetUri(c);
     dialog->remoteTarget = UriDup(uri);
 }

@@ -55,8 +55,8 @@ TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     MESSAGE *trying = BuildTryingMessage(invite);
-    struct ContactHeader *inviteFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
-    struct ContactHeader *tryingFrom = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, trying);
+    CONTACT_HEADER *inviteFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite);
+    CONTACT_HEADER *tryingFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, trying);
 
     CHECK_TRUE(ContactHeaderMatched(inviteFrom, tryingFrom));
 
@@ -71,8 +71,8 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
     
     MESSAGE *trying = BuildTryingMessage(invite);
 
-    struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
-    struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
+    CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
+    CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
 
     CHECK_TRUE(ContactHeaderMatched(inviteTo, tryingTo));
 
@@ -87,8 +87,8 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
     
     MESSAGE *trying = BuildTryingMessage(invite);
 
-    struct ContactHeader *inviteTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
-    struct ContactHeader *tryingTo = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, trying);
+    CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
+    CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
 
     struct URI *inviteToUri = ContactHeaderGetUri(inviteTo);
     struct URI *tryingToUri = ContactHeaderGetUri(tryingTo);
@@ -136,8 +136,8 @@ TEST(TryingMessageBuildTestGroup, TryingMessageViaTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     MESSAGE *trying = BuildTryingMessage(invite);
 
-    struct ViaHeader *inviteVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, invite);
-    struct ViaHeader *tryingVia = (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, trying);
+    VIA_HEADER *inviteVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite);
+    VIA_HEADER *tryingVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, trying);
     
     CHECK_TRUE(ViaHeaderMatched(inviteVia, tryingVia));
 

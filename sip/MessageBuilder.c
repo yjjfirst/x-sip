@@ -41,7 +41,7 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
 struct Header *BuildRequestViaHeader(struct Dialog *dialog)
 {
     struct URI *uri = CreateUri("", "", GetLocalIpAddr(), LOCAL_PORT);
-    struct ViaHeader *via = CreateViaHeader(uri);    
+    VIA_HEADER *via = CreateViaHeader(uri);    
     struct Parameters *ps = ViaHeaderGetParameters(via);
     char branch[32];
 
@@ -56,7 +56,7 @@ struct Header *BuildRequestFromHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), UserAgentGetProxy(ua), 0);
-    struct ContactHeader *from = CreateFromHeader();
+    CONTACT_HEADER *from = CreateFromHeader();
     struct Parameters *ps = ContactHeaderGetParameters(from);
     char tag[MAX_TAG_LENGTH +1] = {0};
 
@@ -84,7 +84,7 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
     else
         uri = CreateUri(URI_SCHEME_SIP, "", UserAgentGetProxy(ua), 0);
 
-    struct ContactHeader *to = CreateToHeader();
+    CONTACT_HEADER *to = CreateToHeader();
     ContactHeaderSetUri(to, uri);
 
     return (struct Header *)to;
@@ -95,7 +95,7 @@ struct Header *BuildRequestContactHeader(struct Dialog *dialog)
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), GetLocalIpAddr(), 0);
     UriAddParameter(uri, "line", "6c451db26592505");
-    struct ContactHeader *contact = CreateContactHeader();
+    CONTACT_HEADER *contact = CreateContactHeader();
 
     ContactHeaderSetUri(contact, uri);
     return  (struct Header *)contact;
@@ -158,7 +158,7 @@ MESSAGE *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 
 void SetToHeaderUserName(MESSAGE *message, struct Dialog *dialog)
 {
-    struct ContactHeader *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    CONTACT_HEADER *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct Account *account = UserAgentGetAccount(ua);
 
@@ -197,7 +197,7 @@ struct URI *BuildRemoteUri(struct Dialog *dialog, char *to)
 MESSAGE *BuildInviteMessage(struct Dialog *dialog, char *to)
 {
     MESSAGE *invite = BuildRequestMessage(dialog, SIP_METHOD_INVITE);
-    struct ContactHeader  *toHeader = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+    struct ContactHeader *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
     struct URI *uri = NULL;
 
@@ -227,7 +227,7 @@ MESSAGE *BuildAckMessage(struct Dialog *dialog)
 MESSAGE *BuildByeMessage(struct Dialog *dialog)
 {
     MESSAGE *bye = BuildRequestMessage(dialog, SIP_METHOD_BYE);
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, bye);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, bye);
     struct Parameters *ps = ContactHeaderGetParameters(to);
 
     AddParameter(ps, HEADER_PARAMETER_NAME_TAG, DialogGetRemoteTag(dialog));
@@ -303,8 +303,8 @@ void AddResponseViaHeader(MESSAGE *response, MESSAGE *invite)
 
 void AddResponseFromHeader(MESSAGE *response, MESSAGE *invite)
 {
-    struct ContactHeader *from = 
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
+    CONTACT_HEADER *from = 
+        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite));
     MessageAddHeader(response, (struct Header *)from);
 }
 
@@ -335,8 +335,8 @@ void BuildResponseToTag(char *tag, MESSAGE *invite)
 void AddResponseToHeader(MESSAGE *response, MESSAGE *invite)
 {
     char tag[MAX_TAG_LENGTH] = {0};
-    struct ContactHeader *to =
-        ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite));
+    CONTACT_HEADER *to =
+        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite));
 
     BuildResponseToTag(tag, invite);
     
@@ -364,7 +364,7 @@ void AddResponseCSeqHeader(MESSAGE *response, MESSAGE *invite)
 
 void AddResponseContactHeader(MESSAGE *response, MESSAGE *invite)
 {
-    struct ContactHeader *c = CreateContactHeader();
+    CONTACT_HEADER *c = CreateContactHeader();
     struct URI *uri = CreateUri(URI_SCHEME_SIP, "88001", GetLocalIpAddr(), LOCAL_PORT);
 
     ContactHeaderSetUri(c, uri);

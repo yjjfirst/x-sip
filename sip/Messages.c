@@ -182,19 +182,19 @@ char *MessageGetCallId(MESSAGE *message)
 
 char *MessageGetFromTag(MESSAGE *message)
 {
-    struct ContactHeader *from = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, message);
+    CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, message);
     return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
 }
 
 char *MessageGetToTag(MESSAGE *message)
 {
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
 }
 
 void MessageSetRemoteTag(MESSAGE *message, char *tag)
 {
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, message);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
 }
 
@@ -215,7 +215,7 @@ unsigned int MessageGetCSeqNumber(MESSAGE *message)
 char *MessageGetViaBranch(MESSAGE *message)
 {
     assert (message != NULL);
-    return ViaHeaderGetParameter((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, message), 
+    return ViaHeaderGetParameter((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, message), 
                                  VIA_BRANCH_PARAMETER_NAME);
 }
 
@@ -224,7 +224,7 @@ void MessageSetViaBranch(MESSAGE *message, char *branch)
     assert (message != NULL);
     assert (branch != NULL);
     
-    ViaHeaderSetParameter((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, message),
+    ViaHeaderSetParameter((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, message),
                           VIA_BRANCH_PARAMETER_NAME,
                           branch);
 }
@@ -237,7 +237,7 @@ char *MessageGetCSeqMethod(MESSAGE *message)
 
 void MessageAddViaParameter(MESSAGE *message, char *name, char *value)
 {
-    struct ViaHeader *via = (struct ViaHeader *) MessageGetHeader(HEADER_NAME_VIA, message);
+    VIA_HEADER *via = (VIA_HEADER *) MessageGetHeader(HEADER_NAME_VIA, message);
     struct Parameters *p = ViaHeaderGetParameters(via);
 
     AddParameter(p, name, value);
@@ -271,8 +271,8 @@ unsigned int MessageGetContentLength(MESSAGE *message)
 
 BOOL MessageViaHeaderBranchMatched(MESSAGE *m, MESSAGE *mm)
 {
-    return ViaHeaderBranchMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
-                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+    return ViaHeaderBranchMatched((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                  (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, mm));
     
 }
 
@@ -285,8 +285,8 @@ BOOL MessageCSeqHeaderMethodMatched(MESSAGE *m, MESSAGE *mm)
 
 BOOL MessageViaHeaderSendbyMatched(MESSAGE *m, MESSAGE *mm)
 {
-    return ViaHeaderSendbyMatched((struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, m),
-                                  (struct ViaHeader *)MessageGetHeader(HEADER_NAME_VIA, mm));
+    return ViaHeaderSendbyMatched((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, m),
+                                  (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, mm));
 }
 
 struct Transaction *MessageBelongTo(MESSAGE *message)

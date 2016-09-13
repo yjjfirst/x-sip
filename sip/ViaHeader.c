@@ -34,7 +34,7 @@ struct HeaderPattern *GetViaPattern()
     return ViaHeaderPattern;
 }
 
-BOOL ViaHeaderBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+BOOL ViaHeaderBranchMatched(VIA_HEADER *via1, VIA_HEADER *via2)
 {
     assert(via1 != NULL && via2 != NULL);
 
@@ -42,13 +42,13 @@ BOOL ViaHeaderBranchMatched(struct ViaHeader *via1, struct ViaHeader *via2)
                       ViaHeaderGetParameter(via2, VIA_BRANCH_PARAMETER_NAME));
 }
 
-BOOL ViaHeaderBranchMatchedByString(struct ViaHeader *via, char *string)
+BOOL ViaHeaderBranchMatchedByString(VIA_HEADER *via, char *string)
 {
     assert(via != NULL && string != NULL);
     return !StrcmpExt(ViaHeaderGetParameter(via, VIA_BRANCH_PARAMETER_NAME), string);
 }
 
-BOOL ViaHeaderSendbyMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+BOOL ViaHeaderSendbyMatched(VIA_HEADER *via1, VIA_HEADER *via2)
 {
     assert (via1 != NULL && via2 != NULL);
 
@@ -58,7 +58,7 @@ BOOL ViaHeaderSendbyMatched(struct ViaHeader *via1, struct ViaHeader *via2)
     return !StrcmpExt(sendBy1, sendBy2);
 }
 
-BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2)
+BOOL ViaHeaderMatched(VIA_HEADER *via1, VIA_HEADER *via2)
 {
     assert(via1 != NULL);
     assert(via2 != NULL);
@@ -78,56 +78,56 @@ BOOL ViaHeaderMatched(struct ViaHeader *via1, struct ViaHeader *via2)
     return TRUE;
 }
 
-char *ViaHeaderGetName(struct ViaHeader *via)
+char *ViaHeaderGetName(VIA_HEADER *via)
 {
     return via->headerBase.name;
 }
 
-void ViaHeaderSetName(struct ViaHeader *via, char *name)
+void ViaHeaderSetName(VIA_HEADER *via, char *name)
 {
     struct HeaderPattern *p = &ViaHeaderPattern[0];
     Copy2Target(via, name, p);
 }
 
-char *ViaHeaderGetTransport(struct ViaHeader *via)
+char *ViaHeaderGetTransport(VIA_HEADER *via)
 {
     return via->transport;
 }
 
-void ViaHeaderSetTransport(struct ViaHeader *via, char *t)
+void ViaHeaderSetTransport(VIA_HEADER *via, char *t)
 {
     struct HeaderPattern *p = &ViaHeaderPattern[1];
     Copy2Target(via, t, p);
 }
 
-struct URI *ViaHeaderGetUri(struct ViaHeader *via)
+struct URI *ViaHeaderGetUri(VIA_HEADER *via)
 {
     return via->uri;
 }
 
-void ViaHeaderSetUri(struct ViaHeader *via, struct URI *uri)
+void ViaHeaderSetUri(VIA_HEADER *via, struct URI *uri)
 {
     if (via->uri != NULL)
         DestroyUri(&via->uri);
     via->uri = uri;
 }
 
-char *ViaHeaderGetParameter(struct ViaHeader *via, char *name)
+char *ViaHeaderGetParameter(VIA_HEADER *via, char *name)
 {
     return GetParameter(via->parameters, name);
 }
 
-struct Parameters *ViaHeaderGetParameters(struct ViaHeader *via)
+struct Parameters *ViaHeaderGetParameters(VIA_HEADER *via)
 {
     return via->parameters;
 }
 
-void ViaHeaderSetParameter(struct ViaHeader *via, char *name, char *value)
+void ViaHeaderSetParameter(VIA_HEADER *via, char *name, char *value)
 {
     AddParameter(via->parameters, name, value); 
 }
 
-void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters)
+void ViaHeaderSetParameters(VIA_HEADER *via, struct Parameters *parameters)
 {
     if (via->parameters != NULL)
         DestroyParameters(&via->parameters);
@@ -136,7 +136,7 @@ void ViaHeaderSetParameters(struct ViaHeader *via, struct Parameters *parameters
 
 struct Header *ParseViaHeader(char *string) 
 {
-    struct ViaHeader *via =  CreateEmptyViaHeader();
+    VIA_HEADER *via =  CreateEmptyViaHeader();
     struct HeaderPattern *viaPattern = GetViaPattern();
     Parse(string, via, viaPattern);
     
@@ -165,9 +165,9 @@ void GenerateBranchImpl(char *branch)
 
 void (*GenerateBranch)(char *branch) = GenerateBranchImpl;
 
-struct ViaHeader *CreateEmptyViaHeader()
+VIA_HEADER *CreateEmptyViaHeader()
 {
-    struct ViaHeader *via = (struct ViaHeader *)calloc(1, sizeof(struct ViaHeader));
+    VIA_HEADER *via = (VIA_HEADER *)calloc(1, sizeof(struct ViaHeader));
 
     ViaHeaderSetName(via, "Via");
     via->uri = CreateEmptyUri();
@@ -175,9 +175,9 @@ struct ViaHeader *CreateEmptyViaHeader()
     return via;
 }
 
-struct ViaHeader *CreateViaHeader(struct URI *uri)
+VIA_HEADER *CreateViaHeader(struct URI *uri)
 {
-    struct ViaHeader *via = CreateEmptyViaHeader();
+    VIA_HEADER *via = CreateEmptyViaHeader();
     
     ViaHeaderSetTransport(via, "SIP/2.0/UDP");
     ViaHeaderSetUri(via, uri);
@@ -185,9 +185,9 @@ struct ViaHeader *CreateViaHeader(struct URI *uri)
     return via;
 }
 
-struct ViaHeader *ViaHeaderDup(struct ViaHeader *src)
+VIA_HEADER *ViaHeaderDup(VIA_HEADER *src)
 {
-    struct ViaHeader *dest = CreateEmptyViaHeader();
+    VIA_HEADER *dest = CreateEmptyViaHeader();
     
     DestroyUri(&dest->uri);
     DestroyParameters(&dest->parameters);
@@ -201,7 +201,7 @@ struct ViaHeader *ViaHeaderDup(struct ViaHeader *src)
 
 void DestroyViaHeader(struct Header *via)
 {
-    struct ViaHeader *v = (struct ViaHeader *)via;
+    VIA_HEADER *v = (VIA_HEADER *)via;
     if (v != NULL) {
         DestroyUri(&v->uri);
         DestroyParameters(&v->parameters);

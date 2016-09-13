@@ -41,7 +41,7 @@ Contact:<sip:werner.heisenberg@200.201.202.203>\r\n\
 Content-Length:0\r\n\r\n");
     }
     
-    void UriCheck(struct ContactHeader *header)
+    void UriCheck(CONTACT_HEADER *header)
     {
         struct URI *uri = ContactHeaderGetUri(header);
         STRCMP_EQUAL("sip", UriGetScheme(uri));
@@ -74,7 +74,7 @@ TEST(MessageTestGroup, ViaHeaderParseTest)
     ParseMessage(messageString, message);
 
     struct Header *header =  MessageGetHeader("Via", message);
-    struct ViaHeader *via = (struct ViaHeader*)header;
+    VIA_HEADER *via = (struct ViaHeader*)header;
 
     STRCMP_EQUAL("Via", ViaHeaderGetName(via));
     STRCMP_EQUAL("SIP/2.0/UDP", ViaHeaderGetTransport(via));
@@ -103,7 +103,7 @@ TEST(MessageTestGroup, ToParseTest)
     MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    struct ContactHeader *to = (struct ContactHeader *) MessageGetHeader("To", message);
+    CONTACT_HEADER *to = (CONTACT_HEADER *) MessageGetHeader("To", message);
     STRCMP_EQUAL("To", ContactHeaderGetName(to));
     STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(to));
     UriCheck(to);
@@ -116,7 +116,7 @@ TEST(MessageTestGroup, FromParseTest)
     MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    struct ContactHeader *from = (struct ContactHeader *) MessageGetHeader("From", message);
+    CONTACT_HEADER *from = (CONTACT_HEADER *) MessageGetHeader("From", message);
     STRCMP_EQUAL("From", ContactHeaderGetName(from));
     STRCMP_EQUAL("Werner Heisenberg", ContactHeaderGetDisplayName(from));
     UriCheck(from);
@@ -131,7 +131,7 @@ TEST(MessageTestGroup, ContactParseTest)
     MESSAGE *message = CreateMessage();
     ParseMessage(messageString, message);
 
-    struct ContactHeader *contact = (struct ContactHeader *) MessageGetHeader("Contact", message);
+    CONTACT_HEADER *contact = (CONTACT_HEADER *) MessageGetHeader("Contact", message);
     STRCMP_EQUAL("Contact", ContactHeaderGetName(contact));
 
     struct URI *uri = ContactHeaderGetUri(contact);

@@ -13,7 +13,7 @@ extern "C" {
 
 TEST_GROUP(ContactHeaderTestGroup)
 {
-    void UriCheck(struct ContactHeader *header)
+    void UriCheck(CONTACT_HEADER *header)
     {
         struct URI *uri = ContactHeaderGetUri(header);
         STRCMP_EQUAL("sip", UriGetScheme(uri));
@@ -24,7 +24,7 @@ TEST_GROUP(ContactHeaderTestGroup)
 
 TEST(ContactHeaderTestGroup, ContactHeaderParseTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
 
     char toString[]= "To:Martin Yang<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
 
@@ -41,7 +41,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderParseTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderWithSpaceParseTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
     char toString[]= "To:  Martin Yang  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetContactHeaderPattern(toString));    
@@ -57,7 +57,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderWithSpaceParseTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
     char toString[]= "To:  \"Martin Yang\"  <sip:Martin.Yang@cs.columbia.edu>  ;  tag=287447";
 
     Parse((char *)toString, toHeader, GetContactHeaderPattern(toString));    
@@ -73,7 +73,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderQuotedDisplayNameParseTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderNoDisplayNameParseTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
     char toString[]= "To:sip:Martin.Yang@cs.columbia.edu;tag=287447";
 
     Parse((char *)toString, toHeader, GetContactHeaderPattern(toString));    
@@ -90,7 +90,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderNoDisplayNameParseTest)
 
 TEST(ContactHeaderTestGroup, ContactParseTest)
 {
-    struct ContactHeader *contact = CreateContactHeader();
+    CONTACT_HEADER *contact = CreateContactHeader();
     char contactString[] = "Contact:<sip:Martin.Yang@cs.columbia.edu>";
    
     Parse((char*) contactString, contact, GetContactHeaderPattern(contactString));
@@ -102,7 +102,7 @@ TEST(ContactHeaderTestGroup, ContactParseTest)
 
 TEST(ContactHeaderTestGroup, Contact2StringTest)
 {
-    struct ContactHeader *contact = CreateContactHeader();
+    CONTACT_HEADER *contact = CreateContactHeader();
     char contactString[] = "Contact:<sip:alice@pc33.atlanta.com>";
     char result[128] = {0};
 
@@ -115,7 +115,7 @@ TEST(ContactHeaderTestGroup, Contact2StringTest)
 
 TEST(ContactHeaderTestGroup, ContactWithQuotedDisplayName2StringTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
     char toString[]= "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     char result[128] = {0};
 
@@ -128,7 +128,7 @@ TEST(ContactHeaderTestGroup, ContactWithQuotedDisplayName2StringTest)
 
 TEST(ContactHeaderTestGroup, ContactStartWithSpaceParseTest)
 {
-    struct ContactHeader *toHeader = CreateContactHeader();
+    CONTACT_HEADER *toHeader = CreateContactHeader();
     char contactString[] = "Contact: <sip:bob@192.0.2.4>";
 
     Parse((char *)contactString, toHeader, GetContactHeaderPattern(contactString));
@@ -137,7 +137,7 @@ TEST(ContactHeaderTestGroup, ContactStartWithSpaceParseTest)
 
 TEST(ContactHeaderTestGroup, CreateToHeaderTest)
 {
-    struct ContactHeader *toHeader = CreateToHeader();
+    CONTACT_HEADER *toHeader = CreateToHeader();
 
     STRCMP_EQUAL("To", ContactHeaderGetName(toHeader));
 
@@ -146,7 +146,7 @@ TEST(ContactHeaderTestGroup, CreateToHeaderTest)
 
 TEST(ContactHeaderTestGroup, CreateFromHeaderTest)
 {
-    struct ContactHeader *from = CreateFromHeader();
+    CONTACT_HEADER *from = CreateFromHeader();
 
     STRCMP_EQUAL("From", ContactHeaderGetName(from));
 
@@ -156,7 +156,7 @@ TEST(ContactHeaderTestGroup, CreateFromHeaderTest)
 
 TEST(ContactHeaderTestGroup, CreateContactHeaderTest)
 {
-    struct ContactHeader *c = CreateContactHeader();
+    CONTACT_HEADER *c = CreateContactHeader();
 
     STRCMP_EQUAL("Contact", ContactHeaderGetName(c));
 
@@ -165,8 +165,8 @@ TEST(ContactHeaderTestGroup, CreateContactHeaderTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderMatchedTest)
 {
-    struct ContactHeader *header1 = CreateContactHeader();
-    struct ContactHeader *header2 = CreateContactHeader();
+    CONTACT_HEADER *header1 = CreateContactHeader();
+    CONTACT_HEADER *header2 = CreateContactHeader();
     char toString[]= "To:sip:Martin.Yang@cs.columbia.edu;tag=287447";
 
     Parse((char *)toString, header1, GetContactHeaderPattern(toString));    
@@ -179,8 +179,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderMatchedTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderDisplayNameUnmatchedTest)
 {
-    struct ContactHeader *header1 = CreateContactHeader();
-    struct ContactHeader *header2 = CreateContactHeader();
+    CONTACT_HEADER *header1 = CreateContactHeader();
+    CONTACT_HEADER *header2 = CreateContactHeader();
     char toString1[]= "To:\"Peter Zhang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     char toString2[]= "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
 
@@ -194,8 +194,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderDisplayNameUnmatchedTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderUriUnmatchedTest)
 {
-    struct ContactHeader *header1 = CreateContactHeader();
-    struct ContactHeader *header2 = CreateContactHeader();
+    CONTACT_HEADER *header1 = CreateContactHeader();
+    CONTACT_HEADER *header2 = CreateContactHeader();
     char toString1[]= "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     char toString2[]= "To:\"Martin Yang\"<sips:Martin.Yang@cs.columbia.edu>;tag=287447";
 
@@ -209,8 +209,8 @@ TEST(ContactHeaderTestGroup, ContactHeaderUriUnmatchedTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderParametersUnmatchedTest)
 {
-    struct ContactHeader *header1 = CreateContactHeader();
-    struct ContactHeader *header2 = CreateContactHeader();
+    CONTACT_HEADER *header1 = CreateContactHeader();
+    CONTACT_HEADER *header2 = CreateContactHeader();
     char toString1[]= "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     char toString2[]= "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287448";
 
@@ -224,11 +224,11 @@ TEST(ContactHeaderTestGroup, ContactHeaderParametersUnmatchedTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
 {
-    struct ContactHeader *header = CreateContactHeader();
+    CONTACT_HEADER *header = CreateContactHeader();
     char toString[] = "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     Parse(toString, header, GetContactHeaderPattern(toString));
     
-    struct ContactHeader *headerDup = ContactHeaderDup(header);
+    CONTACT_HEADER *headerDup = ContactHeaderDup(header);
     CHECK_TRUE(ContactHeaderMatched(header, headerDup));
 
     DestroyContactHeader((struct Header *)headerDup);
@@ -237,7 +237,7 @@ TEST(ContactHeaderTestGroup, ContactHeaderDupTest)
 
 TEST(ContactHeaderTestGroup, ContactHeaderRemoveParametersTest)
 {
-    struct ContactHeader *header = CreateContactHeader();
+    CONTACT_HEADER *header = CreateContactHeader();
     char toString[] = "To:\"Martin Yang\"<sip:Martin.Yang@cs.columbia.edu>;tag=287447";
     Parse(toString, header, GetContactHeaderPattern(toString));
 

@@ -180,7 +180,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     ReceiveInMessage();
 
     ParseMessage(INVITE_200OK_MESSAGE, ok);
-    struct ContactHeader *ch = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
+    CONTACT_HEADER *ch = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
 
     CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));
     DestroyMessage(&ok);
@@ -190,7 +190,7 @@ TEST(DialogTestGroup, UACDialogRemoteUriTest)
 {
     
     struct URI *remoteUri = DialogGetRemoteUri(dialog);
-    struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
 
     UriMatched(remoteUri, ContactHeaderGetUri(to));
     DestroyMessage(&invite);
@@ -226,7 +226,7 @@ TEST(DialogTestGroup, UASDialogIdTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
-    struct ContactHeader *from = ContactHeaderDup((struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite));
+    CONTACT_HEADER *from = ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite));
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     DialogAddServerInviteTransaction(dialog, invite);
@@ -281,7 +281,7 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    struct ContactHeader *c = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
+    CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
     struct URI *uri = UriDup(ContactHeaderGetUri(c));
     DialogAddServerInviteTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
