@@ -17,7 +17,7 @@
 struct ViaHeader {
     struct Header headerBase;
     char transport[TRANSPORT_PROTOCOL_NAME_MAX_LENGTH];
-    struct URI *uri;
+    URI *uri;
     struct Parameters *parameters;
 };
 
@@ -100,12 +100,12 @@ void ViaHeaderSetTransport(VIA_HEADER *via, char *t)
     Copy2Target(via, t, p);
 }
 
-struct URI *ViaHeaderGetUri(VIA_HEADER *via)
+URI *ViaHeaderGetUri(VIA_HEADER *via)
 {
     return via->uri;
 }
 
-void ViaHeaderSetUri(VIA_HEADER *via, struct URI *uri)
+void ViaHeaderSetUri(VIA_HEADER *via, URI *uri)
 {
     if (via->uri != NULL)
         DestroyUri(&via->uri);
@@ -175,7 +175,7 @@ VIA_HEADER *CreateEmptyViaHeader()
     return via;
 }
 
-VIA_HEADER *CreateViaHeader(struct URI *uri)
+VIA_HEADER *CreateViaHeader(URI *uri)
 {
     VIA_HEADER *via = CreateEmptyViaHeader();
     

@@ -62,7 +62,7 @@ TEST(InviteMessageBuildTestGroup, InviteMessageRequestLineTest)
 TEST(InviteMessageBuildTestGroup, InviteMessageToHeaderTest)
 {
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, inviteMessage);
-    struct URI *uri = ContactHeaderGetUri(to);
+    URI *uri = ContactHeaderGetUri(to);
 
     STRCMP_EQUAL("88002", UriGetUser(uri));
 }
@@ -87,8 +87,8 @@ TEST(InviteMessageBuildTestGroup, AckMessageRequestLineTest)
 {
     MESSAGE *ackMessage = BuildAckMessage(dialog);
     struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
-    struct URI *uri = RequestLineGetUri(requestLine);
-    struct URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
+    URI *uri = RequestLineGetUri(requestLine);
+    URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
 
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(requestLine));
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(requestLine));
@@ -170,7 +170,7 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     MESSAGE *ok = Build200OkMessage(invite);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
-    struct URI *uri = ContactHeaderGetUri(c);
+    URI *uri = ContactHeaderGetUri(c);
     
     CHECK_TRUE(c != NULL);
     STRCMP_EQUAL(UriGetScheme(uri), URI_SCHEME_SIP);
@@ -201,8 +201,8 @@ TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, bye);
-    struct URI *uri = ContactHeaderGetUri(to);
-    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    URI *uri = ContactHeaderGetUri(to);
+    URI *remoteUri = DialogGetRemoteUri(dialog);
 
     CHECK_TRUE(UriMatched(uri, remoteUri));
     STRCMP_EQUAL(DialogGetRemoteTag(dialog), ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG));
@@ -215,8 +215,8 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
     struct RequestLine *rl = MessageGetRequestLine(bye);
-    struct URI *uri = RequestLineGetUri(rl);
-    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    URI *uri = RequestLineGetUri(rl);
+    URI *remoteUri = DialogGetRemoteUri(dialog);
     
     STRCMP_EQUAL(SIP_METHOD_NAME_BYE, RequestLineGetMethodName(rl));
     STRCMP_EQUAL(SIP_VERSION, RequestLineGetSipVersion(rl));

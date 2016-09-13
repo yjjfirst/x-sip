@@ -15,7 +15,7 @@ TEST_GROUP(ContactHeaderTestGroup)
 {
     void UriCheck(CONTACT_HEADER *header)
     {
-        struct URI *uri = ContactHeaderGetUri(header);
+        URI *uri = ContactHeaderGetUri(header);
         STRCMP_EQUAL("sip", UriGetScheme(uri));
         STRCMP_EQUAL("Martin.Yang", UriGetUser(uri));
         STRCMP_EQUAL("cs.columbia.edu",UriGetHost(uri));

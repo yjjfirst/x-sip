@@ -52,7 +52,7 @@ TEST(RequestLineTestGroup, RegisterSIP_VersionTest)
 
 TEST(RequestLineTestGroup, RegisterURIParseTest)
 {
-    struct URI *uri = RequestLineGetUri(RegisterRequestLine);
+    URI *uri = RequestLineGetUri(RegisterRequestLine);
 
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("192.168.2.89", UriGetHost(uri));
@@ -101,7 +101,7 @@ TEST(RequestLineTestGroup, RequestLineSetSipVersionTest)
 TEST(RequestLineTestGroup, RequestLineSetUriTest)
 {
     struct RequestLine *r = CreateEmptyRequestLine();
-    struct URI *u = CreateEmptyUri();
+    URI *u = CreateEmptyUri();
     char URIString[] = "sips:peter@192.168.10.62:5060";
     
     ParseUri((char *)URIString, &u);
@@ -118,7 +118,7 @@ TEST(RequestLineTestGroup, RequestLineSetUriTest)
 TEST(RequestLineTestGroup, RequestLine2StringTest)
 {
     struct RequestLine *r = CreateEmptyRequestLine();
-    struct URI *u = CreateEmptyUri();
+    URI *u = CreateEmptyUri();
     char string[256] = {0};
     
     RequestLineSetMethod(r, (char *)"INVITE");
@@ -141,7 +141,7 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
 {
     SIP_METHOD m = SIP_METHOD_REGISTER;
     char URIString[] = "sip:registrar.biloxi.com";
-    struct URI *u = CreateEmptyUri();
+    URI *u = CreateEmptyUri();
     struct RequestLine *r = NULL;
 
     ParseUri((char *)URIString, &u);
@@ -159,7 +159,7 @@ TEST(RequestLineTestGroup, CreateNonEmptyRequestLineTest)
 
 TEST(RequestLineTestGroup, SetMethodTest)
 {
-    struct URI *u = CreateUri((char *)URI_SCHEME_SIP, (char *)"", (char *)"192.168.10.62", 0);
+    URI *u = CreateUri((char *)URI_SCHEME_SIP, (char *)"", (char *)"192.168.10.62", 0);
     struct RequestLine *rl = CreateRequestLine(SIP_METHOD_INVITE, u);
 
     STRCMP_EQUAL(SIP_METHOD_NAME_INVITE, RequestLineGetMethodName(rl));

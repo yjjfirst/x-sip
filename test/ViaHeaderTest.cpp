@@ -23,7 +23,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderParseTest)
     STRCMP_EQUAL ("Via", ViaHeaderGetName(via));
     STRCMP_EQUAL ("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 
-    struct URI *u = ViaHeaderGetUri(via);
+    URI *u = ViaHeaderGetUri(via);
     STRCMP_EQUAL("erlang.bell-telephone.com", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
 
@@ -40,7 +40,7 @@ TEST(ViaHeaderTestGroup, ViaHeaderWithNoParametersParseTest)
     STRCMP_EQUAL ("Via", ViaHeaderGetName(via));
     STRCMP_EQUAL ("SIP/2.0/UDP", ViaHeaderGetTransport(via));
 
-    struct URI *u = ViaHeaderGetUri(via);
+    URI *u = ViaHeaderGetUri(via);
     STRCMP_EQUAL("erlang.bell-telephone.com", UriGetHost(u));
     CHECK_EQUAL(5060, UriGetPort(u));
 
@@ -51,7 +51,7 @@ TEST(ViaHeaderTestGroup, ViaHeader2StringTest)
 {
     VIA_HEADER *via = CreateEmptyViaHeader();
     char header[] = "Via   :  SIP/2.0/UDP erlang.bell-telephone.com:5060";
-    struct URI *uri;
+    URI *uri;
     char result[128] = {0};
 
     Parse(header, via, GetViaPattern());

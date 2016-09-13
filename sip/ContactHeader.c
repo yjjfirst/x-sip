@@ -13,7 +13,7 @@
 struct ContactHeader {
     struct Header headerBase;
     char displayName[32];
-    struct URI *uri;
+    URI *uri;
     struct Parameters *parameters;
 };
 
@@ -143,13 +143,13 @@ void ContactHeaderSetDisplayName(CONTACT_HEADER *header, char *name)
     Copy2Target(header, name, p);
 }
 
-struct URI *ContactHeaderGetUri(CONTACT_HEADER *header)
+URI *ContactHeaderGetUri(CONTACT_HEADER *header)
 {
     assert(header != NULL);
     return header->uri;
 }
 
-void ContactHeaderSetUri(CONTACT_HEADER *header, struct URI *uri)
+void ContactHeaderSetUri(CONTACT_HEADER *header, URI *uri)
 {
     if (header->uri != NULL)
         DestroyUri(&header->uri);

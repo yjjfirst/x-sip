@@ -196,7 +196,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
 TEST(DialogTestGroup, UACDialogRemoteUriTest)
 {
     
-    struct URI *remoteUri = DialogGetRemoteUri(dialog);
+    URI *remoteUri = DialogGetRemoteUri(dialog);
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
 
     UriMatched(remoteUri, ContactHeaderGetUri(to));
@@ -289,7 +289,7 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
-    struct URI *uri = UriDup(ContactHeaderGetUri(c));
+    URI *uri = UriDup(ContactHeaderGetUri(c));
     DialogAddServerInviteTransaction(dialog, invite);
     DialogSend200OKResponse(dialog);
 

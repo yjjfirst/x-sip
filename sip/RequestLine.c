@@ -13,7 +13,7 @@
 
 struct RequestLine {
     char method[METHOD_MAX_LENGTH + 1];
-    struct URI *requestUri;
+    URI *requestUri;
     char sipVersion[SIP_VERSION_LENGTH];
 };
 
@@ -71,7 +71,7 @@ int RequestLineSetSipVersion(struct RequestLine *r, char *version)
     return 0;
 }
 
-int RequestLineSetUri(struct RequestLine *r, struct URI *u)
+int RequestLineSetUri(struct RequestLine *r, URI *u)
 {
     assert(r != NULL);
     assert(u != NULL);
@@ -83,7 +83,7 @@ int RequestLineSetUri(struct RequestLine *r, struct URI *u)
     return 0;
 }
 
-struct URI *RequestLineGetUri(struct RequestLine *r)
+URI *RequestLineGetUri(struct RequestLine *r)
 {
     assert (r != NULL);
     return r->requestUri;
@@ -132,7 +132,7 @@ char *RequestLine2String(char *string, struct RequestLine *r)
     return ToString(string, r, GetRequestLinePattern());
 }
 
-struct RequestLine *CreateRequestLine(SIP_METHOD m, struct URI *u)
+struct RequestLine *CreateRequestLine(SIP_METHOD m, URI *u)
 {
     assert (u != NULL);
 

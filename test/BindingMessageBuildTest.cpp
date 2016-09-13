@@ -68,7 +68,7 @@ TEST(BindingMessageBuildTestGroup, RequestLineTest)
 {
 
     struct RequestLine *rl = MessageGetRequestLine(m);
-    struct URI *uri = RequestLineGetUri(rl);
+    URI *uri = RequestLineGetUri(rl);
     
     STRCMP_EQUAL(URI_SCHEME_SIP, UriGetScheme(uri));
     STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
@@ -80,7 +80,7 @@ TEST(BindingMessageBuildTestGroup, FromHeaderTest)
     CONTACT_HEADER *from = (CONTACT_HEADER *) MessageGetHeader(HEADER_NAME_FROM, m);
     STRCMP_EQUAL(HEADER_NAME_FROM, ContactHeaderGetName(from));
 
-    struct URI *uri = ContactHeaderGetUri(from);
+    URI *uri = ContactHeaderGetUri(from);
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
     STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 }
@@ -90,7 +90,7 @@ TEST(BindingMessageBuildTestGroup, ToHeaderTest)
     CONTACT_HEADER *to = (CONTACT_HEADER *) MessageGetHeader(HEADER_NAME_TO, m);
     STRCMP_EQUAL(HEADER_NAME_TO, ContactHeaderGetName(to));
 
-    struct URI *uri = ContactHeaderGetUri(to);
+    URI *uri = ContactHeaderGetUri(to);
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
     STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 }
@@ -190,7 +190,7 @@ TEST(BindingMessageBuildTestGroup,OKMessageContactHeaderTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     MESSAGE *ok = Build200OkMessage(invite);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
-    struct URI *uri = ContactHeaderGetUri(c);
+    URI *uri = ContactHeaderGetUri(c);
     
     CHECK_TRUE(c != NULL);
     STRCMP_EQUAL(UriGetScheme(uri), URI_SCHEME_SIP);
@@ -223,7 +223,7 @@ TEST(BindingMessageBuildTestGroup, BindingsRequestLineTest)
     STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(rl));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(rl));
 
-    struct URI *uri = RequestLineGetUri(rl);
+    URI *uri = RequestLineGetUri(rl);
     STRCMP_EQUAL(URI_SCHEME_SIP,  UriGetScheme(uri));
     STRCMP_EQUAL(GetProxy(0), UriGetHost(uri));
 }
@@ -231,7 +231,7 @@ TEST(BindingMessageBuildTestGroup, BindingsRequestLineTest)
 TEST(BindingMessageBuildTestGroup, BindingsToHeaderTest)
 {
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, m); 
-    struct URI *uri = ContactHeaderGetUri(to);
+    URI *uri = ContactHeaderGetUri(to);
 
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 }
@@ -239,7 +239,7 @@ TEST(BindingMessageBuildTestGroup, BindingsToHeaderTest)
 TEST(BindingMessageBuildTestGroup, BindingsFromHeaderTest)
 {
     CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, m); 
-    struct URI *uri = ContactHeaderGetUri(from);
+    URI *uri = ContactHeaderGetUri(from);
 
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 }
@@ -247,7 +247,7 @@ TEST(BindingMessageBuildTestGroup, BindingsFromHeaderTest)
 TEST(BindingMessageBuildTestGroup, BindingsContactHeaderTest)
 {
     CONTACT_HEADER *contact = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, m); 
-    struct URI *uri = ContactHeaderGetUri(contact);
+    URI *uri = ContactHeaderGetUri(contact);
 
     STRCMP_EQUAL(GetUserName(0), UriGetUser(uri));
 }
@@ -289,7 +289,7 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageToHeaderTest)
 
     MESSAGE *authMessage = BuildAuthorizationMessage(dialog, challenge);
     CONTACT_HEADER *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, authMessage);
-    struct URI *uri = ContactHeaderGetUri(toHeader);
+    URI *uri = ContactHeaderGetUri(toHeader);
     STRCMP_EQUAL("88001", UriGetUser(uri));
     
     DestroyMessage(&authMessage);

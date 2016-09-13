@@ -21,8 +21,8 @@ struct Dialog {
     struct DialogId *id;
     struct UserAgent *ua;
     struct Session *session;
-    struct URI *remoteTarget;
-    struct URI *remoteUri;
+    URI *remoteTarget;
+    URI *remoteUri;
     
     SIP_METHOD requestMethod;
     unsigned int localSeqNumber;
@@ -30,7 +30,7 @@ struct Dialog {
     enum DIALOG_STATE state;
 };
 
-struct URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
+URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
 {
     assert(dialog != 0);
     
@@ -54,7 +54,7 @@ char *DialogGetLocalTagImpl(struct Dialog *dialog)
     return DialogIdGetLocalTag(dialog->id);
 }
 
-struct URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
+URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->remoteTarget;
@@ -63,8 +63,8 @@ struct URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
 char *(*DialogGetCallId)(struct Dialog *dialog) = DialogGetCallIdImpl;
 char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
 char *(*DialogGetLocalTag)(struct Dialog *dialog) = DialogGetLocalTagImpl;
-struct URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
-struct URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
+URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
+URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
 
 
 struct DialogId *DialogGetId(struct Dialog *dialog)
@@ -128,7 +128,7 @@ void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
     dialog->state = state;
 }
 
-void DialogSetRemoteUri(struct Dialog *dialog, struct URI *uri)
+void DialogSetRemoteUri(struct Dialog *dialog, URI *uri)
 {
     assert(uri != NULL);
     assert(dialog != NULL);
@@ -145,7 +145,7 @@ void ExtractDialogIdFromMessage(struct Dialog *dialog, MESSAGE *message)
 void ExtractRemoteTargetFromMessage(struct Dialog *dialog, MESSAGE *message)
 {
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, message);
-    struct URI *uri = ContactHeaderGetUri(c);
+    URI *uri = ContactHeaderGetUri(c);
     dialog->remoteTarget = UriDup(uri);
 }
 

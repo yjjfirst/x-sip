@@ -90,8 +90,8 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
     CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
 
-    struct URI *inviteToUri = ContactHeaderGetUri(inviteTo);
-    struct URI *tryingToUri = ContactHeaderGetUri(tryingTo);
+    URI *inviteToUri = ContactHeaderGetUri(inviteTo);
+    URI *tryingToUri = ContactHeaderGetUri(tryingTo);
 
     CHECK_FALSE(ContactHeaderMatched(inviteTo, tryingTo));
     CHECK_TRUE(UriMatched(inviteToUri, tryingToUri));

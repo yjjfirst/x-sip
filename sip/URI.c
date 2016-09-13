@@ -51,7 +51,7 @@ BOOL HasScheme4Parse(void *s)
 
 BOOL HasScheme42String(void *u)
 {
-    struct URI **uri = (struct URI **)(u);
+    URI **uri = (URI **)(u);
 
     if (strlen(UriGetScheme(*uri)) != 0)
         return TRUE;
@@ -71,7 +71,7 @@ BOOL HasUser4Parse(void *h)
 
 BOOL HasUser42String(void *u)
 {
-    struct URI **uri = (struct URI **)(u);
+    URI **uri = (URI **)(u);
 
     if (StrcmpExt("", UriGetUser(*uri)) == 0 )
         return FALSE;
@@ -139,7 +139,7 @@ struct HeaderPattern *GetURIPattern4Parse(char *string)
     return GetURIPattern((void *)string, HasUser4Parse, HasScheme4Parse);
 }
 
-struct HeaderPattern *GetURIPattern42String(struct URI **uri)
+struct HeaderPattern *GetURIPattern42String(URI **uri)
 {
     return GetURIPattern((void *)uri, HasUser42String, HasScheme42String);
 }
@@ -147,51 +147,51 @@ struct HeaderPattern *GetURIPattern42String(struct URI **uri)
 int ParseUri(char *string, void *target)
 {
     struct HeaderPattern *pattern = GetURIPattern4Parse(string);
-    struct URI **uri = target;
+    URI **uri = target;
 
     Parse(string, *uri, pattern);
     
     return 0;
 }
 
-char *UriGetScheme(struct URI *uri)
+char *UriGetScheme(URI *uri)
 {
     return uri->scheme;
 }
 
-char *UriGetUser(struct URI *uri)
+char *UriGetUser(URI *uri)
 {
     assert(uri != NULL);
     return uri->user;
 }
 
-char *UriGetHost(struct URI *uri)
+char *UriGetHost(URI *uri)
 {
     return uri->host;
 }
 
-int UriGetPort(struct URI *uri)
+int UriGetPort(URI *uri)
 {
     return uri->port;
 }
 
-char *UriGetParameter(struct URI *uri, char *name)
+char *UriGetParameter(URI *uri, char *name)
 {
     return GetParameter(uri->parameters, name);
 }
 
-char  *UriGetHeader(struct URI *uri, char *name)
+char  *UriGetHeader(URI *uri, char *name)
 {
     return GetParameter(uri->headers, name);
 }
 
-void UriSetScheme(struct URI *uri, char *scheme)
+void UriSetScheme(URI *uri, char *scheme)
 {
     struct HeaderPattern *p = &URISchemePattern[0];
     Copy2Target(uri, scheme, p);
 }
 
-void UriSetUser(struct URI *uri, char *user)
+void UriSetUser(URI *uri, char *user)
 {
     assert(uri != NULL);
     assert(user != NULL);
@@ -201,20 +201,20 @@ void UriSetUser(struct URI *uri, char *user)
 
 }
 
-void UriSetHost(struct URI *uri, char *host)
+void UriSetHost(URI *uri, char *host)
 {
     struct HeaderPattern *p = HostPattern;
     Copy2Target(uri, host, p);
 }
 
-void UriSetPort(struct URI *uri, int port)
+void UriSetPort(URI *uri, int port)
 {
     struct HeaderPattern *p = &URIRemainPattern[0];
 
     SetIntegerField(uri, port, p);
 }
 
-void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
+void UriSetParameters(URI *uri,struct Parameters  *paramaters)
 {
     if (uri->parameters != NULL)
         DestroyParameters(&uri->parameters);
@@ -223,7 +223,7 @@ void UriSetParameters(struct URI *uri,struct Parameters  *paramaters)
 
 }
 
-BOOL UriMatched(struct URI *uri, struct URI *uri2)
+BOOL UriMatched(URI *uri, URI *uri2)
 {
     assert (uri != NULL);
     assert (uri2 != NULL);
@@ -242,12 +242,12 @@ BOOL UriMatched(struct URI *uri, struct URI *uri2)
              || StrcmpExt(uri->scheme, uri2->scheme) != 0);
 }
 
-void UriAddParameter(struct URI *uri, char *name, char *value)
+void UriAddParameter(URI *uri, char *name, char *value)
 {
     AddParameter(uri->parameters, name, value);
 }
 
-void UriSetHeaders(struct URI *uri, struct Parameters *headers)
+void UriSetHeaders(URI *uri, struct Parameters *headers)
 {
     if (uri->headers != NULL)
         DestroyParameters(&uri->headers);
@@ -255,9 +255,9 @@ void UriSetHeaders(struct URI *uri, struct Parameters *headers)
     uri->headers = headers;
 }
 
-struct URI *CreateEmptyUri()
+URI *CreateEmptyUri()
 {
-    struct URI *uri = calloc(1, sizeof (struct URI));
+    URI *uri = calloc(1, sizeof (struct URI));
     struct Parameters *ps = CreateParameters();
     struct Parameters *hs = CreateParameters();
     uri->parameters = ps;
@@ -266,9 +266,9 @@ struct URI *CreateEmptyUri()
     return uri;
 }
 
-struct URI *CreateUri(char *scheme, char *user, char *host, int port)
+URI *CreateUri(char *scheme, char *user, char *host, int port)
 {
-    struct URI *uri = CreateEmptyUri();
+    URI *uri = CreateEmptyUri();
     UriSetScheme(uri, scheme);
     if (user != NULL) {
         UriSetUser(uri, user);
@@ -279,11 +279,11 @@ struct URI *CreateUri(char *scheme, char *user, char *host, int port)
     return uri;
 }
 
-struct URI *UriDup(struct URI *src)
+URI *UriDup(URI *src)
 {
     if (src == NULL) return NULL;
 
-    struct URI *dest = CreateEmptyUri();
+    URI *dest = CreateEmptyUri();
     
     DestroyParameters(&dest->parameters);
     DestroyParameters(&dest->headers);
@@ -299,9 +299,9 @@ struct URI *UriDup(struct URI *src)
     return dest;
 }
 
-void DestroyUri(struct URI **uri)
+void DestroyUri(URI **uri)
 {
-    struct URI *u = *uri;
+    URI *u = *uri;
     if (u != NULL) {
         DestroyParameters(&u->parameters);
         DestroyParameters(&u->headers);
@@ -313,7 +313,7 @@ void DestroyUri(struct URI **uri)
 char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 {
     struct HeaderPattern *pattern = GetURIPattern42String(uri);
-    struct URI **u = uri;
+    URI **u = uri;
     
     if (p->startSeparator != EMPTY) {
         *string = p->startSeparator;
@@ -325,6 +325,6 @@ char *Uri2String(char *string, void *uri, struct HeaderPattern *p)
 
 char *Uri2StringExt(char *string, void *uri)
 {
-    struct HeaderPattern *pattern = GetURIPattern42String((struct URI **)&uri);
+    struct HeaderPattern *pattern = GetURIPattern42String((URI **)&uri);
     return ToString(string, uri, pattern);
 }

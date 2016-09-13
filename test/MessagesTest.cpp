@@ -43,7 +43,7 @@ Content-Length:0\r\n\r\n");
     
     void UriCheck(CONTACT_HEADER *header)
     {
-        struct URI *uri = ContactHeaderGetUri(header);
+        URI *uri = ContactHeaderGetUri(header);
         STRCMP_EQUAL("sip", UriGetScheme(uri));
         STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
         STRCMP_EQUAL("munich.de", UriGetHost(uri));
@@ -60,7 +60,7 @@ TEST(MessageTestGroup, RegisterRequestLineParseTest)
     STRCMP_EQUAL("REGISTER", RequestLineGetMethodName(request));
     STRCMP_EQUAL("SIP/2.0", RequestLineGetSipVersion(request));
     
-    struct URI *uri = RequestLineGetUri(request);
+    URI *uri = RequestLineGetUri(request);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("registrar.munich.de", UriGetHost(uri));
     STRCMP_EQUAL("", UriGetUser(uri));
@@ -134,7 +134,7 @@ TEST(MessageTestGroup, ContactParseTest)
     CONTACT_HEADER *contact = (CONTACT_HEADER *) MessageGetHeader("Contact", message);
     STRCMP_EQUAL("Contact", ContactHeaderGetName(contact));
 
-    struct URI *uri = ContactHeaderGetUri(contact);
+    URI *uri = ContactHeaderGetUri(contact);
     STRCMP_EQUAL("sip", UriGetScheme(uri));
     STRCMP_EQUAL("werner.heisenberg", UriGetUser(uri));
     STRCMP_EQUAL("200.201.202.203", UriGetHost(uri));

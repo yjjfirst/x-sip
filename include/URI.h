@@ -13,6 +13,8 @@ struct URI;
 struct HeaderPattern;
 struct Parameters;
 
+typedef struct URI URI;
+
 void DestroyUri(struct URI **uri);
 struct URI *CreateEmptyUri();
 struct URI *CreateUri(char *scheme, char *user, char *host, int port);
