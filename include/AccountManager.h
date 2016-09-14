@@ -1,4 +1,5 @@
 struct Account;
+struct Message;
 
 int AddAccount(struct Account *account);
 void RemoveAccount(int pos);
@@ -9,9 +10,7 @@ void AccountAddBinding(int account);
 void AccountRemoveBinding(int account);
 void BindAllAccounts();
 
-int AddFirstAccount();
-int AddSecondAccount();
-int AddThirdAccount();
+struct Account *FindMessageDestAccount(struct Message *invite);
 
-extern void (*AccountInit)();
+extern int (*AccountInit)();
 void AccountManagerDump();

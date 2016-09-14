@@ -23,12 +23,20 @@ TEST_GROUP(AccountManagerTestGroup)
 
         ClearTransactionManager();
         ClearAccountManager();
-        ::AddFirstAccount();
+        AddAccount(CreateAccount(
+                   (char *)"88001", 
+                   (char *)"88001", 
+                   (char *)"88001", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
     }
 
     void teardown()
     {
         ClearAccountManager();
+
+        mock().checkExpectations();
+        mock().clear();
     }
 };
 
@@ -46,14 +54,31 @@ TEST(AccountManagerTestGroup, AddOneAccountTest)
 
 TEST(AccountManagerTestGroup, AddTwoAccountsTest)
 {
-    AddSecondAccount();
+    AddAccount(CreateAccount(
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+
     CHECK_EQUAL(2, TotalAccount());
 }
 
 TEST(AccountManagerTestGroup, AddThreeAccountsTest)
 {
-    AddSecondAccount();
-    AddThirdAccount();
+    AddAccount(CreateAccount(
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    AddAccount(CreateAccount(
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+
     CHECK_EQUAL(3, TotalAccount());
 }
 
@@ -65,8 +90,18 @@ TEST(AccountManagerTestGroup, ClearAccountTest)
 
 TEST(AccountManagerTestGroup, ClearMulitAccountTest)
 {
-    AddSecondAccount();
-    AddThirdAccount();
+    AddAccount(CreateAccount(
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    AddAccount(CreateAccount(
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
     ClearAccountManager();
     CHECK_EQUAL(0, TotalAccount());
 }
@@ -79,8 +114,18 @@ TEST(AccountManagerTestGroup, RemoveAccountTest)
 
 TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
 {
-    AddSecondAccount();
-    AddThirdAccount();
+    AddAccount(CreateAccount(
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    AddAccount(CreateAccount(
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
 
     RemoveAccount(0);
     CHECK_EQUAL(2, TotalAccount());
@@ -118,8 +163,8 @@ TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 {
     ClearAccountManager();
 
-    AccountInit();
-    CHECK_EQUAL(3, TotalAccount());
+    int total = AccountInit();
+    CHECK_EQUAL(total, TotalAccount());
 
     struct Account *a = GetAccount( -100);
     POINTERS_EQUAL(NULL, a);
@@ -131,8 +176,19 @@ TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
 
 TEST(AccountManagerTestGroup, AddAccountReturnTest)
 {
-    CHECK_EQUAL(1,AddSecondAccount());
-    CHECK_EQUAL(2,AddThirdAccount());
+    CHECK_EQUAL(1, AddAccount(CreateAccount(
+                                  (char *)"88002", 
+                                  (char *)"88002", 
+                                  (char *)"88002", 
+                                  (char *)"192.168.10.62", 
+                                  (char *)"192.168.10.72")));
+    
+    CHECK_EQUAL(2, AddAccount(CreateAccount(
+                                  (char *)"88002", 
+                                  (char *)"88002", 
+                                  (char *)"88002", 
+                                  (char *)"192.168.10.62", 
+                                  (char *)"192.168.10.72")));
 }
 
 TEST(AccountManagerTestGroup, AccountAddBindingTest)
@@ -148,9 +204,6 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
 
     ClearUserAgentManager();
     ClearTransactionManager();
-
-    mock().checkExpectations();
-    mock().clear();
 }
 
 TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
@@ -170,12 +223,10 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     ClearUserAgentManager();
     ClearTransactionManager();
 
-    mock().checkExpectations();
-    mock().clear();
 }
 
 
-TEST(AccountManagerTestGroup, AuthoriaztionTest)
+TEST(AccountManagerTestGroup, AuthoriaztionNeedTest)
 {
     struct Account *account = GetAccount(0);
     
@@ -195,15 +246,10 @@ TEST(AccountManagerTestGroup, AuthoriaztionTest)
     
     ClearUserAgentManager();
     ClearTransactionManager();
-
-    mock().checkExpectations();
-    mock().clear();
-
 }
 
 TEST(AccountManagerTestGroup, BindAllAccountsTest)
 {
-    ClearAccountManager();
     AccountInit();
 
     mock().expectNCalls(TotalAccount(), SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
@@ -211,7 +257,17 @@ TEST(AccountManagerTestGroup, BindAllAccountsTest)
 
     ClearUserAgentManager();
     ClearTransactionManager();
+}
 
-    mock().checkExpectations();
-    mock().clear();
+TEST(AccountManagerTestGroup,  FindDestAccountTest)
+{
+    AccountInit();
+
+    MESSAGE *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
+    struct Account *account = FindMessageDestAccount(invite);
+    POINTERS_EQUAL(GetAccount(0), account);
+
+    DestroyMessage(&invite);
 }

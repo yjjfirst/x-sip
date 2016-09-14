@@ -51,12 +51,17 @@ BOOL UnquotedValue(const char *value)
     return value[0] != '\"' && value[strlen(value) -1] != '\"';
 }
 
+BOOL IsAlgorithmParameter(const char *name)
+{
+    return !strcmp(name, AUTH_HEADER_ALGORITHM);
+}
+
 void AuthHeaderSetParameter(struct AuthHeader *authHeader, const char *name, const char *value)
 {
     struct Parameters *ps = AuthHeaderGetParameters(authHeader);
     char quotedValue[PARAMETER_VALUE_MAX_LENGTH] = {0};
 
-    if (strcmp(name, AUTH_HEADER_ALGORITHM) != 0 && UnquotedValue(value)) {
+    if ( !IsAlgorithmParameter(name)  && UnquotedValue(value)) {
         quotedValue[0] = '\"';
         strcpy(quotedValue + 1, value);
         quotedValue[strlen(quotedValue)] = '\"';

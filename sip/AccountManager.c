@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "AccountManager.h"
 #include "Accounts.h"
 #include "UserAgentManager.h"
@@ -8,6 +10,9 @@
 #include "Messages.h"
 #include "UserAgent.h"
 #include "TransactionManager.h"
+#include "URI.h"
+#include "ContactHeader.h"
+#include "Header.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -41,11 +46,17 @@ void RemoveAccount(int pos)
     del_node_at(&am->accounts, pos);
 }
 
+int TotalAccount()
+{
+    struct AccountManager *am = &AccountManager;
+    return get_list_len(am->accounts);
+}
+
 void ClearAccountManager()
 {
     int i = 0;
     struct AccountManager *am = &AccountManager;
-    int len = get_list_len(am->accounts);
+    int len = TotalAccount();
 
     for (; i < len; i++) {
         struct Account *a = (struct Account *)get_data_at(am->accounts, i);
@@ -55,10 +66,15 @@ void ClearAccountManager()
     destroy_list(&am->accounts, NULL);
 }
 
-int TotalAccount()
+struct Account *FindAccountByUserName(char *user)
 {
-    struct AccountManager *am = &AccountManager;
-    return get_list_len(am->accounts);
+    for (int i =0; i < TotalAccount(); i++) {
+        struct Account *account = GetAccount(i);
+        if (strcmp(user, AccountGetUserName(account)) == 0)
+            return account;
+    }
+
+    return NULL;
 }
 
 void AccountAddBinding(int account)
@@ -88,52 +104,45 @@ void BindAllAccounts()
     }
 }
 
-int AddFirstAccount()
+struct Account *FindMessageDestAccount(struct Message *invite)
 {
-    struct Account *first;
-    first = CreateAccount(
-                          (char *)"88001", 
-                          (char *)"88001", 
-                          (char *)"88001", 
-                          (char *)"192.168.10.62", 
-                          (char *)"192.168.10.72");
+    CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
+    URI *uri = ContactHeaderGetUri(to);
+    char *user = UriGetUser(uri);
 
-    return AddAccount(first);
+    return FindAccountByUserName(user);
 }
 
-int AddSecondAccount()
+
+int AccountInitImpl()
 {
-    struct Account *second;
-    second = CreateAccount(
-                           (char *)"88002", 
-                           (char *)"88002", 
-                           (char *)"88002", 
-                           (char *)"192.168.10.62", 
-                           (char *)"192.168.10.72");
-    return AddAccount(second);
+    ClearAccountManager();
+
+    AddAccount(CreateAccount(
+                   (char *)"88001", 
+                   (char *)"88001", 
+                   (char *)"88001", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    
+    AddAccount(CreateAccount(
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"88002", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    
+    AddAccount(CreateAccount(
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"88003", 
+                   (char *)"192.168.10.62", 
+                   (char *)"192.168.10.72"));
+    
+    return TotalAccount();
 }
 
-int AddThirdAccount()
-{
-    struct Account *third;
-    third = CreateAccount(
-                          (char *)"88003", 
-                          (char *)"88003", 
-                          (char *)"88003", 
-                          (char *)"192.168.10.62", 
-                          (char *)"192.168.10.72");
-
-    return AddAccount(third);
-}
-
-void AccountInitImpl()
-{
-    AddFirstAccount();
-    AddSecondAccount();
-    AddThirdAccount();
-}
-
-void (*AccountInit)() = AccountInitImpl;
+int (*AccountInit)() = AccountInitImpl;
 
 void AccountManagerDump()
 {

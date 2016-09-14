@@ -27,7 +27,6 @@ BOOL AccountBinded(struct Account *account);
 void AccountSetBinded(struct Account *account);
 void AccountSetUnbinded(struct Account *account);
 
-
 struct Account *CreateEmptyAccount();
 struct Account *CreateAccount(char *username, char *authname, char *passwd, char *proxy, char *registrar);
 void DestroyAccount(struct Account **account);

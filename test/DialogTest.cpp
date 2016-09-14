@@ -90,6 +90,14 @@ TEST(DialogTestGroup, DialogCreateTest)
     DestroyMessage(&invite);
 }
 
+TEST(DialogTestGroup, SetLocalTagTest)
+{
+    DialogSetLocalTag(dialog, "testtag123456");
+
+    STRCMP_EQUAL(DialogGetLocalTag(dialog), "testtag123456");
+    DestroyMessage(&invite);
+}
+
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
@@ -311,10 +319,13 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 }
 
-TEST(DialogTestGroup, SetLocalTagTest)
+IGNORE_TEST(DialogTestGroup, ReceiveInviteTest)
 {
-    DialogSetLocalTag(dialog, "testtag123456");
+    MESSAGE *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    STRCMP_EQUAL(DialogGetLocalTag(dialog), "testtag123456");
-    DestroyMessage(&invite);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
+    ReceiveInMessage();
+
 }
