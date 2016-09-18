@@ -23,6 +23,7 @@ extern "C" {
 #include "AccountManager.h"
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
+#include "DialogManager.h"
 }
 
 static struct Session *CreateSessionMock()
@@ -49,7 +50,7 @@ TEST_GROUP(DialogTestGroup)
 
         AccountInit();
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog, (char *)"88002");
     }
 

@@ -21,6 +21,7 @@ extern "C" {
 #include "Session.h"
 #include "AccountManager.h"
 #include "ViaHeader.h"
+#include "DialogManager.h"
 }
 
 TimerCallback TimerACallbackFunc;
@@ -62,7 +63,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);
         AccountInit();
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog, (char *)"88002"); 
         t = AddClientInviteTransaction(message,(struct TransactionUser *) dialog);
 

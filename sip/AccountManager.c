@@ -13,6 +13,7 @@
 #include "URI.h"
 #include "ContactHeader.h"
 #include "Header.h"
+#include "DialogManager.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -80,7 +81,7 @@ struct Account *FindAccountByUserName(char *user)
 void AccountAddBinding(int account)
 {
     struct UserAgent *ua = AddUserAgent(account);
-    struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildAddBindingMessage(dialog);
 
     AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
@@ -89,7 +90,7 @@ void AccountAddBinding(int account)
 void AccountRemoveBinding(int account)
 {
     struct UserAgent *ua = AddUserAgent(account);
-    struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildRemoveBindingMessage(dialog);
 
     AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);

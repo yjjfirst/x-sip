@@ -26,6 +26,7 @@ extern "C" {
 #include "UserAgentManager.h"
 #include "AccountManager.h"
 #include "WWW_AuthenticationHeader.h"
+#include "DialogManager.h"
 }
 
 TEST_GROUP(BindingMessageBuildTestGroup)
@@ -39,7 +40,7 @@ TEST_GROUP(BindingMessageBuildTestGroup)
         
         AccountInit();
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         m = BuildAddBindingMessage(dialog);
     }
 

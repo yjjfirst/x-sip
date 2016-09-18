@@ -20,6 +20,7 @@ extern "C" {
 #include "Dialog.h"
 #include "Provision.h"
 #include "ViaHeader.h"
+#include "DialogManager.h"
 }
 
 TEST_GROUP(UserAgentTestGroup)
@@ -56,10 +57,10 @@ TEST(UserAgentTestGroup, AddDialogTest)
 {
     ua = CreateUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = AddNewDialog(dialogid, ua);
+    dialog = AddDialog(dialogid, ua);
 
-    CHECK_TRUE(UserAgentGetDialogById(ua, dialogid) != NULL);
-    POINTERS_EQUAL(dialog, UserAgentGetDialogById(ua, dialogid));
+    CHECK_TRUE(GetDialogById(dialogid) != NULL);
+    POINTERS_EQUAL(dialog, GetDialogById(dialogid));
 
     DestroyUserAgent(&ua);
 }
@@ -68,9 +69,9 @@ TEST(UserAgentTestGroup, CountDialogTest)
 {
     ua = AddUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = AddNewDialog(dialogid, ua);
+    dialog = AddDialog(dialogid, ua);
 
-    CHECK_EQUAL(1, UserAgentCountDialogs(ua));
+    CHECK_EQUAL(1, CountDialogs());
 
     ClearUserAgentManager();
     
@@ -79,8 +80,8 @@ TEST(UserAgentTestGroup, CountDialogTest)
 TEST(UserAgentTestGroup, GetDialogTest)
 {
     ua = AddUserAgent(0);
-    dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    dialog = AddDialog(NULL_DIALOG_ID, ua);
     
-    POINTERS_EQUAL(dialog, UserAgentGetDialog(ua, 0));
+    POINTERS_EQUAL(dialog, GetDialog(0));
     ClearUserAgentManager();
 }

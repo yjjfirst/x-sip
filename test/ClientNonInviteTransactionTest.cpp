@@ -20,6 +20,7 @@ extern "C" {
 #include "Dialog.h"
 #include "AccountManager.h"
 #include "ViaHeader.h"
+#include "DialogManager.h"
 }
 
 static TimerCallback TimerECallbackFunc;
@@ -87,7 +88,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
 
         AccountInit();
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         m = BuildAddBindingMessage(dialog);
 
         strcpy(branch, MessageGetViaBranch(m));

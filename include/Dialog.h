@@ -37,7 +37,7 @@ enum DIALOG_STATE DialogGetState(struct Dialog *dialog);
 void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method);
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog);
 
-struct Dialog *AddNewDialog(struct DialogId *dialogid, struct UserAgent *ua);
+struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestroyDialog(struct Dialog **dialog);
 void DialogTerminate(struct Dialog *dialog);
 void DialogInvite(struct Dialog *dialog);

@@ -25,6 +25,7 @@ extern "C" {
 #include "TestingMessages.h"
 #include "UserAgentManager.h"
 #include "AccountManager.h"
+#include "DialogManager.h"
 #include "WWW_AuthenticationHeader.h"
 }
 
@@ -39,7 +40,7 @@ TEST_GROUP(InviteMessageBuildTestGroup)
         
         AccountInit();
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         inviteMessage = BuildInviteMessage(dialog , (char *)"88002");
     }
 

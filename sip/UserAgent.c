@@ -64,53 +64,15 @@ void UserAgentSetUnbinded(struct UserAgent *ua)
     AccountSetUnbinded(account);
 }
 
-void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
-{
-    assert(ua != NULL);
-    assert(dialog != NULL);
-
-    AddDialog(dialog);
-}
-
-void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id)
-{
-    assert(ua != NULL);
-    assert(id != NULL);
-
-    RemoveDialog(id);
-}
-
-struct Dialog *UserAgentGetDialogById(struct UserAgent *ua, struct DialogId *callid)
-{
-    assert(ua != NULL);
-    assert(callid != NULL);
-
-    return GetDialogById(callid);
-}
-
-struct Dialog *UserAgentGetDialog(struct UserAgent *ua, int pos)
-{
-    assert(ua != NULL);
-
-    return GetDialog(pos);
-}
-
-int UserAgentCountDialogs(struct UserAgent *ua)
-{
-    assert (ua != NULL);
-
-    return CountDialogs();
-}
-
 void UserAgentMakeCall(struct UserAgent *ua)
 {
-    struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     DialogInvite(dialog);
 }
 
 void UserAgentEndCall(struct UserAgent *ua)
 {
-    struct Dialog *dialog = UserAgentGetDialog(ua, 0);
+    struct Dialog *dialog = GetDialog(0);
     DialogBye(dialog);
 }
 

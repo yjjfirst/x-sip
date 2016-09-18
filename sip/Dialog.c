@@ -15,6 +15,7 @@
 #include "ContactHeader.h"
 #include "Session.h"
 #include "CallEvents.h"
+#include "DialogManager.h"
 
 struct Dialog {
     struct Transaction *transaction;
@@ -211,9 +212,7 @@ void HandleRegisterEvent (struct Transaction *t)
 void HandleByeEvent(struct Transaction *t)
 {
     struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-
-    UserAgentRemoveDialog(ua, DialogGetId(dialog));
+    RemoveDialog(DialogGetId(dialog));
 }
 
 void HandleClientNonInviteEvent(struct Transaction *t)
@@ -342,16 +341,6 @@ struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)
     }
 
     dialog->ua = ua;
-
-    return dialog;
-}
-
-struct Dialog *AddNewDialog(struct DialogId *dialogid, struct UserAgent *ua)
-{
-    struct Dialog *dialog = CreateDialog(dialogid, ua);
-
-    if (ua != NULL)
-        UserAgentAddDialog(ua, dialog);
 
     return dialog;
 }

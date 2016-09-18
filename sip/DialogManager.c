@@ -36,9 +36,12 @@ struct Dialog *GetDialog(int pos)
     return get_data_at(DialogManager.dialogList, pos);
 }
 
-void AddDialog(struct Dialog *dialog)
+struct Dialog *AddDialog(struct DialogId *dialogid, struct UserAgent *ua)
 {
+    struct Dialog *dialog = CreateDialog(dialogid, ua);
     put_in_list(&DialogManager.dialogList, dialog);
+    
+    return dialog;
 }
 
 int CountDialogs()

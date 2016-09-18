@@ -16,6 +16,7 @@ extern "C" {
 #include "TransactionManager.h"
 #include "Messages.h"
 #include "ViaHeader.h"
+#include "DialogManager.h"
 }
 
 TEST_GROUP(CallManagerTestGroup)
@@ -64,11 +65,11 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
-    struct UserAgent *ua = CallOut(account, dest);
+    CallOut(account, dest);
     ReceiveInMessage();
 
     CHECK_EQUAL(1, CountUserAgent());
-    CHECK_EQUAL(1, UserAgentCountDialogs(ua));
+    CHECK_EQUAL(1, CountDialogs());
 }
 
 TEST(CallManagerTestGroup, ActiveHangupTest)
@@ -89,7 +90,7 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
 
     ReceiveInMessage();
     
-    CHECK_EQUAL(0, UserAgentCountDialogs(ua));
+    CHECK_EQUAL(0, CountDialogs());
 }
 
 TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)

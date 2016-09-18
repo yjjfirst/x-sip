@@ -18,13 +18,9 @@ char *UserAgentGetAuthName(struct UserAgent *ua);
 void UserAgentSetBinded(struct UserAgent *ua);
 void UserAgentSetUnbinded(struct UserAgent *ua);
 struct Account *UserAgentGetAccount(struct UserAgent *ua);
-int UserAgentCountDialogs(struct UserAgent *ua);
 
 BOOL UserAgentBinded(struct UserAgent *ua);
-struct Dialog *UserAgentGetDialogById(struct UserAgent *ua, struct DialogId *callid);
-struct Dialog *UserAgentGetDialog(struct UserAgent *ua, int pos);
-void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog);
-void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id);
+
 
 void UserAgentMakeCall(struct UserAgent *ua);
 void UserAgentEndCall(struct UserAgent *ua);

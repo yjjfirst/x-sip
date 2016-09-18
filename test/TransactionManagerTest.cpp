@@ -17,6 +17,7 @@ extern "C" {
 #include "Dialog.h"
 #include "AccountManager.h"
 #include "ViaHeader.h"
+#include "DialogManager.h"
 }
 
 TEST_GROUP(TransactionManager)
@@ -33,7 +34,7 @@ TEST_GROUP(TransactionManager)
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         message = BuildAddBindingMessage(dialog);
     }
 

@@ -13,6 +13,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "TransactionManager.h"
 #include "AccountManager.h"
+#include "DialogManager.h"
 #include "Transporter.h"
 }
 
@@ -28,7 +29,7 @@ TEST_GROUP(SessionTestGroup)
 
         AccountInit();
         ua = CreateUserAgent(0);    
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog, (char *)"88002");
     }
 

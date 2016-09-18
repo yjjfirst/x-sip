@@ -12,7 +12,8 @@ extern "C" {
 #include "MessageBuilder.h"
 #include "TransactionManager.h"
 #include "Transaction.h"
-#include "Messages.h"    
+#include "Messages.h"
+#include "DialogManager.h"
 }
 
 TEST_GROUP(TransactionTestGroup)
@@ -29,7 +30,7 @@ TEST_GROUP(TransactionTestGroup)
         AccountInit();
         
         ua = CreateUserAgent(0);
-        dialog = AddNewDialog(NULL_DIALOG_ID, ua);
+        dialog = AddDialog(NULL_DIALOG_ID, ua);
         invite = BuildInviteMessage(dialog, (char *)"88002"); 
         transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
 
