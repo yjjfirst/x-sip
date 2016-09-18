@@ -16,7 +16,6 @@
 
 struct UserAgent {
     struct Account *account;
-    struct DialogManager *dialogs;
 };
 
 char *UserAgentGetUserName(struct UserAgent *ua)
@@ -70,7 +69,7 @@ void UserAgentAddDialog(struct UserAgent *ua, struct Dialog *dialog)
     assert(ua != NULL);
     assert(dialog != NULL);
 
-    AddDialog(ua->dialogs, dialog);
+    AddDialog(dialog);
 }
 
 void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id)
@@ -78,14 +77,7 @@ void UserAgentRemoveDialog(struct UserAgent *ua, struct DialogId *id)
     assert(ua != NULL);
     assert(id != NULL);
 
-    RemoveDialog(ua->dialogs, id);
-}
-
-struct DialogManager *UserAgentGetDialogManager(struct UserAgent *ua)
-{
-    assert(ua != NULL);
-
-    return ua->dialogs;
+    RemoveDialog(id);
 }
 
 struct Dialog *UserAgentGetDialogById(struct UserAgent *ua, struct DialogId *callid)
@@ -93,21 +85,21 @@ struct Dialog *UserAgentGetDialogById(struct UserAgent *ua, struct DialogId *cal
     assert(ua != NULL);
     assert(callid != NULL);
 
-    return GetDialogById(ua->dialogs, callid);
+    return GetDialogById(callid);
 }
 
 struct Dialog *UserAgentGetDialog(struct UserAgent *ua, int pos)
 {
     assert(ua != NULL);
 
-    return GetDialog(ua->dialogs, pos);
+    return GetDialog(pos);
 }
 
 int UserAgentCountDialogs(struct UserAgent *ua)
 {
     assert (ua != NULL);
 
-    return CountDialogs(ua->dialogs);
+    return CountDialogs();
 }
 
 void UserAgentMakeCall(struct UserAgent *ua)
@@ -126,7 +118,6 @@ struct UserAgent *CreateUserAgent(int account)
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));
     struct Account *acc = GetAccount(account);
-    ua->dialogs = CreateDialogs();
     ua->account = acc;
 
     return ua;
@@ -135,7 +126,7 @@ struct UserAgent *CreateUserAgent(int account)
 void DestroyUserAgent(struct UserAgent **ua)
 {
     if (*ua != NULL) {
-        DestroyDialogs(&(*ua)->dialogs);
+        DestroyDialogList();
         free(*ua);
         *ua = NULL;
     }
@@ -143,5 +134,5 @@ void DestroyUserAgent(struct UserAgent **ua)
 
 void UserAgentDump(struct UserAgent *ua)
 {
-    printf("%s:%d\n", AccountGetUserName(ua->account), CountDialogs(ua->dialogs));
+    printf("%s:%d\n", AccountGetUserName(ua->account), CountDialogs());
 }

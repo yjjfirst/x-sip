@@ -2,10 +2,12 @@ struct DialogManager;
 struct DialogId;
 struct CallIdHeader;
 
-struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dialogid);
+void DestroyDialogList();
 struct DialogManager *CreateDialogs();
 void DestroyDialogs(struct DialogManager **dialogs);
-void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog);
-void RemoveDialog(struct DialogManager *dialogs, struct DialogId *dialogId);
-struct Dialog *GetDialog(struct DialogManager *dm, int pos);
-int CountDialogs(struct DialogManager *dialogs);
+
+struct Dialog *GetDialogById(struct DialogId *dialogid);
+void AddDialog(struct Dialog *dialog);
+void RemoveDialog(struct DialogId *dialogId);
+struct Dialog *GetDialog(int pos);
+int CountDialogs();

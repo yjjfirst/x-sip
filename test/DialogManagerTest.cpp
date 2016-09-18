@@ -63,10 +63,10 @@ TEST(DialogsTestGroup, CountDialogsTest)
     struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
 
     AddNewDialog(dialogid, ua);
-    CHECK_EQUAL(1, CountDialogs(UserAgentGetDialogManager(ua)));
+    CHECK_EQUAL(1, CountDialogs());
 
     AddNewDialog(dialogid2, ua);
-    CHECK_EQUAL(2, CountDialogs(UserAgentGetDialogManager(ua)));
+    CHECK_EQUAL(2, CountDialogs());
     
     DestroyUserAgent(&ua);
 }
@@ -77,10 +77,9 @@ TEST(DialogsTestGroup, GetDialogTest)
 
     struct Dialog *dialog = AddNewDialog(NULL_DIALOG_ID, ua);    
     struct Dialog *dialog1 = AddNewDialog(NULL_DIALOG_ID, ua);
-    struct DialogManager *dm = UserAgentGetDialogManager(ua);
 
-    POINTERS_EQUAL(dialog, GetDialog(dm, 0));
-    POINTERS_EQUAL(dialog1, GetDialog(dm, 1));
+    POINTERS_EQUAL(dialog, GetDialog(0));
+    POINTERS_EQUAL(dialog1, GetDialog(1));
 
     DestroyUserAgent(&ua);
 }

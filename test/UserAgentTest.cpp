@@ -76,14 +76,6 @@ TEST(UserAgentTestGroup, CountDialogTest)
     
 }
 
-TEST(UserAgentTestGroup, GetDialogManagerTest)
-{
-    ua = AddUserAgent(0);
-    CHECK_FALSE(UserAgentGetDialogManager(ua) == NULL);
-
-    ClearUserAgentManager();
-}
-
 TEST(UserAgentTestGroup, GetDialogTest)
 {
     ua = AddUserAgent(0);

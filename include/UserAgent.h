@@ -18,7 +18,6 @@ char *UserAgentGetAuthName(struct UserAgent *ua);
 void UserAgentSetBinded(struct UserAgent *ua);
 void UserAgentSetUnbinded(struct UserAgent *ua);
 struct Account *UserAgentGetAccount(struct UserAgent *ua);
-struct DialogManager *UserAgentGetDialogManager(struct UserAgent *ua);
 int UserAgentCountDialogs(struct UserAgent *ua);
 
 BOOL UserAgentBinded(struct UserAgent *ua);

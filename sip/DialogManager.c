@@ -13,16 +13,17 @@ struct DialogManager {
     t_list *dialogList;
 };
 
-struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dialogid)
+struct DialogManager DialogManager;
+
+struct Dialog *GetDialogById(struct DialogId *dialogid)
 {
-    int length = get_list_len(dialogs->dialogList);
+    int length = get_list_len(DialogManager.dialogList);
     int i = 0;
     
-    assert(dialogs != NULL);
     assert(dialogid != NULL);
 
     for (; i < length ; i ++) {
-        struct Dialog *dialog = get_data_at(dialogs->dialogList, i);
+        struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
         if (DialogGetId(dialog) != NULL && DialogIdMatched(DialogGetId(dialog), dialogid))
            return dialog;
     }
@@ -30,21 +31,19 @@ struct Dialog *GetDialogById(struct DialogManager *dialogs, struct DialogId *dia
     return NULL;
 }
 
-struct Dialog *GetDialog(struct DialogManager *dm, int pos)
+struct Dialog *GetDialog(int pos)
 {
-    return get_data_at(dm->dialogList, pos);
+    return get_data_at(DialogManager.dialogList, pos);
 }
 
-void AddDialog(struct DialogManager *dialogs, struct Dialog *dialog)
+void AddDialog(struct Dialog *dialog)
 {
-    put_in_list(&dialogs->dialogList, dialog);
+    put_in_list(&DialogManager.dialogList, dialog);
 }
 
-int CountDialogs(struct DialogManager *dialogs)
+int CountDialogs()
 {
-    assert(dialogs != NULL);
- 
-    return get_list_len(dialogs->dialogList);
+    return get_list_len(DialogManager.dialogList);
 }
 
 bool MatchedDialogId (void *dialog, void *id)
@@ -52,9 +51,9 @@ bool MatchedDialogId (void *dialog, void *id)
     return DialogIdMatched(DialogGetId(dialog), id);
 }
 
-void RemoveDialog(struct DialogManager *dialogs, struct DialogId *dialogId)
+void RemoveDialog(struct DialogId *dialogId)
 {
-    struct Dialog *dialog = del_node_as_arg(&dialogs->dialogList, MatchedDialogId, dialogId);
+    struct Dialog *dialog = del_node_as_arg(&DialogManager.dialogList, MatchedDialogId, dialogId);
     DestroyDialog(&dialog);
 }
 
@@ -66,18 +65,18 @@ struct DialogManager *CreateDialogs()
     return dialogs;
 }
 
-void DestroyDialogList(struct DialogManager *dialogs)
+void DestroyDialogList()
 {
-    int length = get_list_len(dialogs->dialogList);
+    int length = get_list_len(DialogManager.dialogList);
     int i = 0;
     
     for (; i < length; i++) {
-        struct Dialog *dialog = get_data_at(dialogs->dialogList, i);
+        struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
         DestroyDialog(&dialog);
     }
 
-    destroy_list(&dialogs->dialogList, NULL);
-    dialogs->dialogList = NULL;
+    destroy_list(&DialogManager.dialogList, NULL);
+    DialogManager.dialogList = NULL;
 }
 
 void DestroyDialogs(struct DialogManager **dialogs)
@@ -86,6 +85,6 @@ void DestroyDialogs(struct DialogManager **dialogs)
     if (dm != NULL) {
         DestroyDialogList(dm);
         free(dm);
-        dm = NULL;
+        *dialogs = NULL;
     }
 }
