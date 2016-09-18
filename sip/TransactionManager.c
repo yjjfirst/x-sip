@@ -14,6 +14,9 @@
 #include "DialogId.h"
 #include "Dialog.h"
 #include "RequestLine.h"
+#include "AccountManager.h"
+#include "UserAgentManager.h"
+#include "DialogManager.h"
 
 struct TransactionManager {
     t_list *transactions;
@@ -146,7 +149,11 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 
 void HandleInviteRequest (MESSAGE *invite)
 {
-    AddServerInviteTransaction(invite, NULL);
+    int account = FindMessageDestAccount(invite);
+    struct UserAgent *ua = AddUserAgent(account);
+    struct Dialog *dialog = AddDialog(NULL, ua);
+
+    AddServerInviteTransaction(invite,(struct TransactionUser *)dialog);
 }
 
 BOOL TmHandleRequestMessage(MESSAGE *message)

@@ -335,5 +335,6 @@ TEST(DialogTestGroup, ReceiveInviteTest)
 
     DestroyMessage(&expected);
     DestroyMessage(&invite);
+    ClearUserAgentManager();
 }
 

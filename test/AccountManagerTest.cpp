@@ -266,8 +266,7 @@ TEST(AccountManagerTestGroup,  FindDestAccountTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    struct Account *account = FindMessageDestAccount(invite);
-    POINTERS_EQUAL(GetAccount(0), account);
+    CHECK_EQUAL(0, FindMessageDestAccount(invite));
 
     DestroyMessage(&invite);
 }

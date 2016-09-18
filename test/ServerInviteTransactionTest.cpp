@@ -12,6 +12,7 @@ extern "C" {
 #include "Transaction.h"
 #include "UserAgent.h"
 #include "StatusLine.h"
+#include "UserAgentManager.h"
 }
 
 TimerCallback RetransmitTimerAction;
@@ -184,6 +185,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage(); 
     CheckOnlyOneTransactionMatched();
+    ClearUserAgentManager();
 }
 
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
@@ -379,4 +381,5 @@ TEST(ServerInviteTransactionTestGroup, ReceiveInviteTest)
     ReceiveInMessage();
 
     CheckOnlyOneTransactionMatched();
+    ClearUserAgentManager();    
 }

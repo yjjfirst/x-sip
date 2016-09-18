@@ -67,15 +67,15 @@ void ClearAccountManager()
     destroy_list(&am->accounts, NULL);
 }
 
-struct Account *FindAccountByUserName(char *user)
+int FindAccountByUserName(char *user)
 {
     for (int i =0; i < TotalAccount(); i++) {
         struct Account *account = GetAccount(i);
         if (strcmp(user, AccountGetUserName(account)) == 0)
-            return account;
+            return i;
     }
 
-    return NULL;
+    return -1;
 }
 
 void AccountAddBinding(int account)
@@ -105,7 +105,7 @@ void BindAllAccounts()
     }
 }
 
-struct Account *FindMessageDestAccount(struct Message *invite)
+int FindMessageDestAccount(struct Message *invite)
 {
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     URI *uri = ContactHeaderGetUri(to);

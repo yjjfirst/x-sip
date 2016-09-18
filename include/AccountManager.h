@@ -10,7 +10,7 @@ void AccountAddBinding(int account);
 void AccountRemoveBinding(int account);
 void BindAllAccounts();
 
-struct Account *FindMessageDestAccount(struct Message *invite);
+int FindMessageDestAccount(struct Message *invite);
 
 extern int (*AccountInit)();
 void AccountManagerDump();
