@@ -1,15 +1,21 @@
 #include "CppUTest/TestHarness.h"
+#include "CppUTestExt/MockSupport.h"
+#include "Mock.h"
+#include "TestingMessages.h"
 
 extern "C" {
 #include "UserAgent.h"
 #include "UserAgentManager.h"
 #include "AccountManager.h"
+#include "Transporter.h"
+#include "TransactionManager.h"
 }
 
 TEST_GROUP(UserAgentManagerTestGroup)
 {
     void setup() 
     {
+        UT_PTR_SET(Transporter, &MockTransporter);
         AccountInit();
     }
     
@@ -17,6 +23,9 @@ TEST_GROUP(UserAgentManagerTestGroup)
     {
         ClearUserAgentManager();
         ClearAccountManager();
+
+        mock().checkExpectations();
+        mock().clear();        
     }
 };
 
@@ -57,4 +66,14 @@ TEST(UserAgentManagerTestGroup, GetUserAgentOutOfRangeTest)
     POINTERS_EQUAL(NULL, GetUserAgent(-100));
     POINTERS_EQUAL(NULL, GetUserAgent(3));
     POINTERS_EQUAL(NULL, GetUserAgent(100));
+}
+
+TEST(UserAgentManagerTestGroup, CreateUserAgentAfterReceiveInviteTest)
+{
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
+    ReceiveInMessage();
+
+    CHECK_EQUAL(1, CountUserAgent());
+    ClearTransactionManager();
 }

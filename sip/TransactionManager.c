@@ -87,8 +87,6 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
 
     assert(branch != NULL && seqMethod != NULL);
     
-//    printf("branch = %s, method = %s\n", branch, seqMethod);
-//    printf("%d\n", length);
     for (; i < length; i ++) {
         struct Transaction *t = GetTransactionByPosition(i);
         if (TransactionMatched(t, branch, seqMethod))
@@ -146,12 +144,17 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     return FALSE;
 }
 
+void HandleInviteRequest (MESSAGE *invite)
+{
+    AddServerInviteTransaction(invite, NULL);
+}
+
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
     struct Transaction *t = NULL;
 
     if ( (t = MatchTransaction(message)) == NULL) {
-        AddServerInviteTransaction(message, NULL);
+        HandleInviteRequest(message);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE);
         DestroyMessage(&message);
@@ -197,13 +200,13 @@ void DestroyTransactions(struct TransactionManager *manager)
 }
 
 void ClearTransactionManager()
-{
+{    
     DestroyTransactions(&TransactionManager);
 }
 
 struct TransactionManager TransactionManager;
 
-void AddTransaction2Manager(struct Transaction *t)
+void AddTransaction(struct Transaction *t)
 {
     if (t != NULL) {
         TransactionSetObserver(t, &TransactionManager);
@@ -222,7 +225,7 @@ struct Transaction *AddClientNonInviteTransaction(MESSAGE *message, struct Trans
 {
     struct Transaction *t = CreateClientNonInviteTransaction(message, user);
 
-    AddTransaction2Manager(t);
+    AddTransaction(t);
     return t;
 }
 
@@ -230,7 +233,7 @@ struct Transaction *AddClientInviteTransaction(MESSAGE *message, struct Transact
 {
     struct Transaction *t = CreateClientInviteTransaction(message, user);
 
-    AddTransaction2Manager(t);
+    AddTransaction(t);
     return t;
 }
 
@@ -239,7 +242,7 @@ struct Transaction *AddServerInviteTransaction(MESSAGE *message, struct Transact
 {
     struct Transaction *t = CreateServerInviteTransaction(message, user);
 
-    AddTransaction2Manager(t);
+    AddTransaction(t);
     return t;
 }
 
@@ -251,7 +254,7 @@ struct Transaction *AddServerNonInviteTransaction(MESSAGE *message, struct Trans
     if (!ValidatedNonInviteMethod(message)) return NULL;
 
     t = CreateServerNonInviteTransaction(message, user);
-    AddTransaction2Manager(t);
+    AddTransaction(t);
 
     return t;
 }
