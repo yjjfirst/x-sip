@@ -320,13 +320,20 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
 }
 
-IGNORE_TEST(DialogTestGroup, ReceiveInviteTest)
+TEST(DialogTestGroup, ReceiveInviteTest)
 {
-    MESSAGE *invite = CreateMessage();
-    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+    ClearDialogManager();
+    
+    MESSAGE *expected = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, expected);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
     ReceiveInMessage();
 
+    CHECK_EQUAL(1, CountDialogs());
+
+    DestroyMessage(&expected);
+    DestroyMessage(&invite);
 }
+

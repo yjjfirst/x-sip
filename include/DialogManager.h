@@ -3,6 +3,7 @@ struct DialogId;
 struct CallIdHeader;
 struct UserAgent;
 
+void ClearDialogManager();
 void DestroyDialogList();
 struct DialogManager *CreateDialogs();
 void DestroyDialogs(struct DialogManager **dialogs);

@@ -82,6 +82,11 @@ void DestroyDialogList()
     DialogManager.dialogList = NULL;
 }
 
+void ClearDialogManager()
+{
+    DestroyDialogList();
+}
+
 void DestroyDialogs(struct DialogManager **dialogs)
 {
     struct DialogManager *dm = *dialogs;
