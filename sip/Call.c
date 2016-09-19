@@ -15,3 +15,7 @@ void EndCall(struct UserAgent *ua)
     UserAgentEndCall(ua);
 }
 
+void AcceptCall(struct UserAgent *ua)
+{
+    UserAgentAcceptCall(ua);
+}

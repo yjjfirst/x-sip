@@ -18,7 +18,7 @@ static void add_all_widget(GtkWidget *window)
 
     
     make_call_button = gtk_button_new_with_label ("Make Call");
-    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (gtk_widget_destroy), window);
+    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (print_hello), window);
     
     number = gtk_entry_new();
     vbox =  gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);

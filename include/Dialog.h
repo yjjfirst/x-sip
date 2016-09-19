@@ -39,17 +39,18 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog);
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestroyDialog(struct Dialog **dialog);
-void DialogTerminate(struct Dialog *dialog);
-void DialogInvite(struct Dialog *dialog);
-void DialogBye(struct Dialog *dialog);
 
 struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, struct Message *message);
 struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, struct Message *message);
 
-void DialogSend200OKResponse(struct Dialog *dialog);
+void DialogTerminate(struct Dialog *dialog);
+void DialogInvite(struct Dialog *dialog);
+void DialogBye(struct Dialog *dialog);
+void DialogOk(struct Dialog *dialog);
+
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
-void ClientInviteOkReceived(struct Dialog *dialog, struct Message *message);
+void ClientReceiveOk(struct Dialog *dialog, struct Message *message);
 
 extern void (*OnTransactionEvent)(struct Transaction *t);

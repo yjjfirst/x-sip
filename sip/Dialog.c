@@ -157,7 +157,7 @@ void DialogAck(struct Dialog *dialog)
     DestroyMessage(&ack);
 }
 
-void ClientInviteOkReceived(struct Dialog *dialog, MESSAGE *message)
+void ClientReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
     ExtractDialogIdFromMessage(dialog, message);
     ExtractRemoteTargetFromMessage(dialog, message);
@@ -184,7 +184,7 @@ void HandleClientInviteEvent(struct Transaction *t)
     enum TransactionEvent event = TransactionGetCurrentEvent(t);
     
     if (event == TRANSACTION_EVENT_200OK) {
-        ClientInviteOkReceived(dialog, message);
+        ClientReceiveOk(dialog, message);
     } else if (event == TRANSACTION_EVENT_180RINGING) {
         ClientInviteRingingReceived(dialog, message);
     }
@@ -278,13 +278,18 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, MESS
     DialogIdSetCallId(id, MessageGetCallId(message));
     ExtractRemoteTargetFromMessage(dialog, message);
 
-    t = AddServerInviteTransaction(message, (struct TransactionUser *)dialog);;
+    if (NotifyClient != NULL) {
+        NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
+    }
+
+    t = AddServerInviteTransaction(message, (struct TransactionUser *)dialog);
     dialog->transaction = t;
+    
     
     return t;
 }
 
-void DialogSend200OKResponse(struct Dialog *dialog)
+void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
     MESSAGE *message = Build200OkMessage(TransactionGetRequest(dialog->transaction));
@@ -308,7 +313,7 @@ void DialogSend200OKResponse(struct Dialog *dialog)
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 {
     DialogAddServerNonInviteTransaction(dialog, bye);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 }
 
 void DialogTerminate(struct Dialog *dialog)

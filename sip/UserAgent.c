@@ -76,6 +76,12 @@ void UserAgentEndCall(struct UserAgent *ua)
     DialogBye(dialog);
 }
 
+void UserAgentAcceptCall(struct UserAgent *ua)
+{
+    struct Dialog *dialog = GetDialog(0);
+    DialogOk(dialog);
+}
+
 struct UserAgent *CreateUserAgent(int account)
 {
     struct UserAgent *ua = calloc(1, sizeof(struct UserAgent));

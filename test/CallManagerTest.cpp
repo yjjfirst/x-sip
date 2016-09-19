@@ -42,8 +42,7 @@ TEST_GROUP(CallManagerTestGroup)
 
 void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
 {
-    mock().actualCall("NotifyClient").withParameter("event", event)
-        .withParameter("UserAgent", ua);
+    mock().actualCall("NotifyClient").withParameter("event", event);
 }
 
 TEST(CallManagerTestGroup, CallOutSendInviteTest)
@@ -104,10 +103,9 @@ TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
     
-    struct UserAgent *ua = CallOut(account, dest);
+    CallOut(account, dest);
 
-    mock().expectOneCall("NotifyClient").withParameter("event", CALL_ESTABLISHED)
-        .withParameter("UserAgent", ua);
+    mock().expectOneCall("NotifyClient").withParameter("event", CALL_ESTABLISHED);
 
     ReceiveInMessage();
 }
@@ -123,10 +121,28 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
     
-    struct UserAgent *ua = CallOut(account, dest);
+    CallOut(account, dest);
 
-    mock().expectOneCall("NotifyClient").withParameter("event", CALL_REMOTE_RINGING)
-        .withParameter("UserAgent", ua);
-
+    mock().expectOneCall("NotifyClient").withParameter("event", CALL_REMOTE_RINGING);
+    
     ReceiveInMessage();
+}
+
+TEST(CallManagerTestGroup, IncomingCallTest)
+{
+    UT_PTR_SET(NotifyClient, NotifyClientMock);
+    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall("NotifyClient").
+        withParameter("event", CALL_INCOMING);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
+
+    
+    ReceiveInMessage();
+    struct UserAgent *ua = GetUserAgent(0);
+    AcceptCall(ua);
+    
+    ClearUserAgentManager();    
 }

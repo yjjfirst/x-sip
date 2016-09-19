@@ -232,7 +232,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerInviteTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
     DialogTerminate(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
@@ -247,7 +247,7 @@ TEST(DialogTestGroup, UASDialogIdTest)
 
     DialogAddServerInviteTransaction(dialog, invite);
     MESSAGE *ok = Build200OkMessage(invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
     
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
     STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), DialogIdGetRemoteTag(DialogGetId(dialog)));
@@ -264,7 +264,7 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerInviteTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
 }
@@ -276,7 +276,7 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
 
     unsigned int seq = MessageGetCSeqNumber(invite);
     DialogAddServerInviteTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 
     CHECK_EQUAL(seq, DialogGetRemoteSeqNumber(dialog));
 }
@@ -287,7 +287,7 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerInviteTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 
     CHECK_EQUAL(CSeqGenerateSeq(), DialogGetLocalSeqNumber(dialog));
 }
@@ -300,7 +300,7 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
     URI *uri = UriDup(ContactHeaderGetUri(c));
     DialogAddServerInviteTransaction(dialog, invite);
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 
     CHECK_TRUE(UriMatched(uri, DialogGetRemoteTarget(dialog)));
     DestroyUri(&uri);
@@ -313,7 +313,7 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     DialogAddServerInviteTransaction(dialog, invite); 
-    DialogSend200OKResponse(dialog);
+    DialogOk(dialog);
 
     MESSAGE *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);
