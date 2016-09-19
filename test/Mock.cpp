@@ -41,9 +41,15 @@ int SendOutMessageMock(char *message)
     }
 }
 
+int InitMock()
+{
+    return mock().actualCall("InitMock").returnIntValue();
+}
+
 struct MessageTransporter MockTransporter = {
     SendOutMessageMock,
     ReceiveInMessageMock,
+    InitMock,
 };
 
 int DummySend(char *message)

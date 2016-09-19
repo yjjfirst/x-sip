@@ -3,7 +3,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-int UdpInit();
+int UdpTransporterInit();
+int UdpReceiveMessage(char *message);
+int UdpSendMessage(char *message);
 
 extern struct MessageTransporter UdpTransporter;
 

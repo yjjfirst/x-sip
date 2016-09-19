@@ -72,5 +72,13 @@ TEST(MessageTransportTestGroup, NullSendTest)
 
 TEST(MessageTransportTestGroup, InitTest)
 {
-    TransporterInit();
+    int result = 102;
+    UT_PTR_SET(Transporter, &MockTransporter);
+
+    mock().expectOneCall("InitMock").andReturnValue(result);
+    
+    CHECK_EQUAL(result, TransporterInit());
+    CHECK_EQUAL(result, Transporter->fd);
+    
+    mock().checkExpectations();
 }

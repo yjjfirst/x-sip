@@ -24,9 +24,10 @@ BOOL ReceiveInMessage()
     return ReceiveMessageCallback(received);
 }
 
-void TransporterInit()
+int TransporterInit()
 {
-    Transporter->init();
+    Transporter->fd = Transporter->init();
+    return Transporter->fd;
 }
 
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t)
