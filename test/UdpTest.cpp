@@ -37,7 +37,6 @@ TEST_GROUP(TransporterUdpTestGroup)
         UT_PTR_SET(xbind, bind_mock);
         UT_PTR_SET(xsendto, sendto_mock);
         UT_PTR_SET(xrecvfrom, recvfrom_mock);
-        UT_PTR_SET(CreateRecvTask, CreateRecvTaskMock);
     }
     void teardown()
     {

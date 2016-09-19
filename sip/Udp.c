@@ -77,17 +77,3 @@ struct MessageTransporter UdpTransporter = {
     .receive = UdpReceiveMessage,
     .init = UdpInit,
 };
-
-void CreateRecvTaskImpl()
-{
-    if (fork() == 0) {
-        while(1) {
-            sleep(1);            
-            UdpReceiveMessage(NULL);
-        }
-    }
-}
-
-void (*CreateRecvTask)() = CreateRecvTaskImpl;
-
-
