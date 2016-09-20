@@ -57,7 +57,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     char branch[64];
     void setup(){
         UT_PTR_SET(AddTimer, AddTimerMock);
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
         
         ExpectedNewClientTransaction(SIP_METHOD_INVITE);

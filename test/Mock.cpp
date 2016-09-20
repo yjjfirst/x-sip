@@ -5,6 +5,7 @@
 extern "C" {
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 #include "Transporter.h"
 #include "Messages.h"
 #include "RequestLine.h"
@@ -49,8 +50,7 @@ int InitMock()
 
 int MessageHandleMock(char *message)
 {
-    mock().actualCall("MessageHandleMock");
-    return 0;
+    return mock().actualCall("MessageHandleMock").returnIntValue();
 }
 
 

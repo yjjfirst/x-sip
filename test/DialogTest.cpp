@@ -43,7 +43,7 @@ TEST_GROUP(DialogTestGroup)
     MESSAGE *invite;
     void setup()
     {
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
         UT_PTR_SET(CreateSession, CreateSessionMock);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
         UT_PTR_SET(CSeqGenerateSeq, CSeqGenerateSeqMock);
@@ -109,7 +109,7 @@ TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
    
     AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
-    UT_PTR_SET(Transporter, &MockTransporterForAck);
+    UT_PTR_SET(SipTransporter, &MockTransporterForAck);
 
     ReceiveInMessage();
 }

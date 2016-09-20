@@ -19,4 +19,4 @@ int TransporterInit();
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
 struct MessageTransporter *GetTransporter();
 
-extern struct MessageTransporter *Transporter;
+extern struct MessageTransporter *SipTransporter;

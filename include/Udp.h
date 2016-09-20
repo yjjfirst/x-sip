@@ -3,11 +3,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-int UdpTransporterInit();
-int UdpReceiveMessage(char *message);
-int UdpSendMessage(char *message);
+int SipUdpInit();
+int SipUdpReceiveMessage(char *message);
+int SipUdpSendMessage(char *message);
 
-extern struct MessageTransporter UdpTransporter;
+extern struct MessageTransporter SipUdpTransporter;
 
 extern int (*xbind)(int sockfd, const struct sockaddr *addr,
          socklen_t addrlen);

@@ -15,7 +15,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
 {
     void setup() 
     {
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
         AccountInit();
     }
     

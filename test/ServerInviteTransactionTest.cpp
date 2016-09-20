@@ -117,7 +117,7 @@ static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action
 TEST_GROUP(ServerInviteTransactionTestGroup)
 {
     void setup(){
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
     }
 
     void teardown() {
@@ -164,7 +164,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", INITIAL_REQUEST_RETRANSMIT_INTERVAL);
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", WAIT_TIME_FOR_ACK_RECEIPT);
 
-        UT_PTR_SET(Transporter, &MockTransporterFor301);    
+        UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
         ResponseWith301(t);
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
 
@@ -187,7 +187,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 {
 
-    UT_PTR_SET(Transporter, &MockTransporterFor100Trying);
+    UT_PTR_SET(SipTransporter, &MockTransporterFor100Trying);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
@@ -235,7 +235,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180FromTuTest)
     struct Transaction *t = PrepareProceedingState();
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    UT_PTR_SET(Transporter, &MockTransporterFor180Ringing);
+    UT_PTR_SET(SipTransporter, &MockTransporterFor180Ringing);
     ResponseWith180Ringing(t);
 
     CHECK_EQUAL(1, CountTransaction());
@@ -248,7 +248,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180ErrorTest)
     struct Transaction *t = PrepareProceedingState();
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    UT_PTR_SET(Transporter, &MockTransporterFor180Ringing);
+    UT_PTR_SET(SipTransporter, &MockTransporterFor180Ringing);
     ResponseWith180Ringing(t);
 
     CheckNoTransaction();
@@ -259,7 +259,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKFromTuTest)
     struct Transaction *t = PrepareProceedingState();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    UT_PTR_SET(Transporter, &MockTransporterFor200OK);    
+    UT_PTR_SET(SipTransporter, &MockTransporterFor200OK);    
     ResponseWith200OK(t);
     
     CheckNoTransaction();
@@ -270,7 +270,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKSendErrorTest)
     struct Transaction *t = PrepareProceedingState();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    UT_PTR_SET(Transporter, &MockTransporterFor200OK);    
+    UT_PTR_SET(SipTransporter, &MockTransporterFor200OK);    
     ResponseWith200OK(t);
     
     CheckNoTransaction();
@@ -281,7 +281,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuTest)
     struct Transaction *t = PrepareProceedingState();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    UT_PTR_SET(Transporter, &MockTransporterFor301);    
+    UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
     ResponseWith301(t);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
@@ -306,7 +306,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
 {
     struct Transaction *t = PrepareProceedingState();
 
-    UT_PTR_SET(Transporter, &MockTransporterFor301);
+    UT_PTR_SET(SipTransporter, &MockTransporterFor301);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);    
     ResponseWith301(t);
  

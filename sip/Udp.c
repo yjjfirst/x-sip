@@ -73,24 +73,24 @@ int UdpInit(int port)
     return sockfd;
 }
 
-int UdpReceiveMessage(char *message)
+int SipUdpReceiveMessage(char *message)
 {
     return UdpReceive(message, sockfd);
 }
 
-int UdpSendMessage(char *message)
+int SipUdpSendMessage(char *message)
 {
     return UdpSend(message, sockfd);
 }
 
-int UdpTransporterInit()
+int SipUdpInit()
 {
     return UdpInit(SERV_PORT);
 }
 
-struct MessageTransporter UdpTransporter = {
-    .send = UdpSendMessage,
-    .receive = UdpReceiveMessage,
-    .init = UdpTransporterInit,
+struct MessageTransporter SipUdpTransporter = {
+    .send = SipUdpSendMessage,
+    .receive = SipUdpReceiveMessage,
+    .init = SipUdpInit,
     .callback = SipMessageHandle
 };

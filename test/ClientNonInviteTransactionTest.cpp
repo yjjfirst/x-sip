@@ -82,7 +82,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
 
     void setup()
     {
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
         UT_PTR_SET(AddTimer, AddTimerMock);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 

@@ -30,7 +30,7 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     struct Transaction *transaction;
     void setup() 
     {
-        UT_PTR_SET(Transporter, &DummyTransporter);
+        UT_PTR_SET(SipTransporter, &DummyTransporter);
 
         request = CreateMessage();
         ParseMessage(BYE_MESSAGE, request);
@@ -184,7 +184,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendErrorTest)
     ResponseWith180Ringing(transaction);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 180).andReturnValue(-1);
-    UT_PTR_SET(Transporter, &MockTransporter);
+    UT_PTR_SET(SipTransporter, &MockTransporter);
     ResponseWith180Ringing(transaction);
 
     CheckNoTransaction();
@@ -229,7 +229,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateDupRequestTest)
     MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
 
-    UT_PTR_SET(Transporter, &MockTransporter);
+    UT_PTR_SET(SipTransporter, &MockTransporter);
 
     for (int i = 0; i < 20; i ++) {
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
@@ -248,7 +248,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateSendErrorTest)
     MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
 
-    UT_PTR_SET(Transporter, &MockTransporter);
+    UT_PTR_SET(SipTransporter, &MockTransporter);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200).andReturnValue(-1);
     ReceiveDupRequest(transaction, dupRequest);
 

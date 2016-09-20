@@ -50,14 +50,14 @@ TEST(TransporterUdpTestGroup, BindFailedTest)
     mock().expectOneCall("socket").andReturnValue(0);
     mock().expectOneCall("bind").andReturnValue(-1);
 
-    CHECK_EQUAL(-1, UdpTransporterInit());
+    CHECK_EQUAL(-1, SipUdpInit());
 }
 
 
 TEST(TransporterUdpTestGroup, CreateSocketFailedTest)
 {
     mock().expectOneCall("socket").andReturnValue(-1);
-    CHECK_EQUAL(-1, UdpTransporterInit());
+    CHECK_EQUAL(-1, SipUdpInit());
 }
 
 TEST(TransporterUdpTestGroup, InitSuccessedTest)
@@ -65,7 +65,7 @@ TEST(TransporterUdpTestGroup, InitSuccessedTest)
     mock().expectOneCall("socket").andReturnValue(0);
     mock().expectOneCall("bind").andReturnValue(0);
 
-    CHECK_EQUAL(0, UdpTransporterInit());
+    CHECK_EQUAL(0, SipUdpInit());
 }
 
 TEST(TransporterUdpTestGroup, SendMessageTest)
@@ -73,7 +73,7 @@ TEST(TransporterUdpTestGroup, SendMessageTest)
     char message[] = "Testing message";
     
     mock().expectOneCall("sendto");
-    UdpSendMessage(message);
+    SipUdpSendMessage(message);
 }
 
 TEST(TransporterUdpTestGroup, ReceiveMessageTest)
@@ -81,5 +81,5 @@ TEST(TransporterUdpTestGroup, ReceiveMessageTest)
     char message[64] ={0};
     
     mock().expectOneCall("recvfrom");
-    UdpReceiveMessage(message);
+    SipUdpReceiveMessage(message);
 }

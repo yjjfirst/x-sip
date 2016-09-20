@@ -10,38 +10,38 @@
 
 int SendOutMessage(char *message)
 {
-    if (Transporter->send == NULL) return -1;
+    if (SipTransporter->send == NULL) return -1;
     
-    return Transporter->send(message);
+    return SipTransporter->send(message);
 }
 
 int ReceiveInMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
 
-    if (Transporter->receive == NULL) return -1;
-    Transporter->receive(received);
+    if (SipTransporter->receive == NULL) return -1;
+    SipTransporter->receive(received);
     
-    return Transporter->callback(received);
+    return SipTransporter->callback(received);
 }
 
 int TransporterInit()
 {
-    Transporter->fd = Transporter->init();
-    return Transporter->fd;
+    SipTransporter->fd = SipTransporter->init();
+    return SipTransporter->fd;
 }
 
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t)
 {
-    struct MessageTransporter *pre = Transporter;
+    struct MessageTransporter *pre = SipTransporter;
 
-    Transporter = t;
+    SipTransporter = t;
     return pre;
 }
 
 struct MessageTransporter *GetTransporter()
 {
-    return Transporter;
+    return SipTransporter;
 }
 
-struct MessageTransporter *Transporter = &UdpTransporter;
+struct MessageTransporter *SipTransporter = &SipUdpTransporter;

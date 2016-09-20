@@ -25,7 +25,7 @@ TEST_GROUP(SessionTestGroup)
 
     void setup() 
     {
-        UT_PTR_SET(Transporter, &DummyTransporter);
+        UT_PTR_SET(SipTransporter, &DummyTransporter);
 
         AccountInit();
         ua = CreateUserAgent(0);    

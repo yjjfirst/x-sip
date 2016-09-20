@@ -27,7 +27,7 @@ TEST_GROUP(TransactionManager)
     MESSAGE *message;
     
     void setup() {
-        UT_PTR_SET(Transporter, &MockTransporter);
+        UT_PTR_SET(SipTransporter, &MockTransporter);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
         AccountInit();
