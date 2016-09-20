@@ -9,6 +9,7 @@ extern "C" {
 #include "Messages.h"
 #include "RequestLine.h"
 #include "StatusLine.h"
+#include "TransactionManager.h"
 }
 
 int ReceiveInMessageMock(char *message)
@@ -46,10 +47,25 @@ int InitMock()
     return mock().actualCall("InitMock").returnIntValue();
 }
 
+int MessageHandleMock(char *message)
+{
+    mock().actualCall("MessageHandleMock");
+    return 0;
+}
+
+
 struct MessageTransporter MockTransporter = {
-    SendOutMessageMock,
-    ReceiveInMessageMock,
-    InitMock,
+    .send = SendOutMessageMock,
+    .receive = ReceiveInMessageMock,
+    .init = InitMock,
+    .callback = SipMessageHandle
+};
+
+struct MessageTransporter MockTransporterAndHandle = {
+    .send = SendOutMessageMock,
+    .receive = ReceiveInMessageMock,
+    .init = InitMock,
+    .callback = MessageHandleMock,
 };
 
 int DummySend(char *message)
@@ -65,6 +81,8 @@ int DummyReceive(char *message)
 struct MessageTransporter DummyTransporter = {
     .send = DummySend,
     .receive = DummyReceive,
+    .init = NULL,
+    .callback = SipMessageHandle
 };
 
 void GenerateBranchMock(char *branch)

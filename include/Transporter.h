@@ -9,14 +9,14 @@ struct MessageTransporter {
     MessageSend send;
     MessageReceive receive;
     Init init;
+    MessageHandle callback;
     int fd;
 };
 
-BOOL ReceiveInMessage();
+int ReceiveInMessage();
 int SendOutMessage(char *message);
 int TransporterInit();
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
 struct MessageTransporter *GetTransporter();
 
-extern MessageHandle ReceiveMessageCallback;
 extern struct MessageTransporter *Transporter;

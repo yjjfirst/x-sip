@@ -83,6 +83,9 @@ int SendOutAckMessageMock(char *message)
 static struct MessageTransporter MockTransporterForAck = {
     SendOutAckMessageMock,
     ReceiveInMessageMock,
+    NULL,
+    SipMessageHandle
+
 };
 
 TEST(DialogTestGroup, DialogCreateTest)

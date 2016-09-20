@@ -15,13 +15,14 @@ int SendOutMessage(char *message)
     return Transporter->send(message);
 }
 
-BOOL ReceiveInMessage()
+int ReceiveInMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
-    if (Transporter->receive == NULL) return FALSE;
 
+    if (Transporter->receive == NULL) return -1;
     Transporter->receive(received);
-    return ReceiveMessageCallback(received);
+    
+    return Transporter->callback(received);
 }
 
 int TransporterInit()
@@ -44,4 +45,3 @@ struct MessageTransporter *GetTransporter()
 }
 
 struct MessageTransporter *Transporter = &UdpTransporter;
-MessageHandle ReceiveMessageCallback =  MessageReceived;

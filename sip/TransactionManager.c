@@ -170,7 +170,7 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
     return TRUE;
 }
 
-BOOL MessageReceived(char *string)
+BOOL SipMessageHandle(char *string)
 {
     MESSAGE *message = CreateMessage();
     BOOL garbage;

@@ -6,6 +6,7 @@
 
 #include "Transporter.h"
 #include "Udp.h"
+#include "TransactionManager.h"
 
 #define MAXLINE 80
 #define SERV_PORT 5060
@@ -91,4 +92,5 @@ struct MessageTransporter UdpTransporter = {
     .send = UdpSendMessage,
     .receive = UdpReceiveMessage,
     .init = UdpTransporterInit,
+    .callback = SipMessageHandle
 };

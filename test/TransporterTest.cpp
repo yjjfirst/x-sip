@@ -5,12 +5,7 @@
 extern "C" {
 #include <string.h>
 #include "Transporter.h"
-}
-
-int MessageHandleMock(char *message)
-{
-    mock().actualCall("MessageHandleMock");
-    return 0;
+#include "TransactionManager.h"
 }
 
 TEST_GROUP(MessageTransportTestGroup)
@@ -22,8 +17,7 @@ TEST_GROUP(MessageTransportTestGroup)
 
 TEST(MessageTransportTestGroup, ReceiveMessageTest)
 {
-    UT_PTR_SET(Transporter, &MockTransporter);
-    UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
+    UT_PTR_SET(Transporter, &MockTransporterAndHandle);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
@@ -37,8 +31,7 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 {
     char message[32] = "Sending test string";
 
-    UT_PTR_SET(Transporter, &MockTransporter);
-    UT_PTR_SET(ReceiveMessageCallback, MessageHandleMock);
+    UT_PTR_SET(Transporter, &MockTransporterAndHandle);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "");
     SendOutMessage(message);
@@ -56,17 +49,23 @@ TEST(MessageTransportTestGroup, SetTransporterTest)
 struct MessageTransporter NullTransporter = {
     NULL,
     NULL,
+    NULL,
+    SipMessageHandle
 };
+
+TEST(MessageTransportTestGroup, NullReceiveTest)
+{
+    UT_PTR_SET(Transporter, &NullTransporter);
+    CHECK_EQUAL(-1, ReceiveInMessage());
+    mock().checkExpectations();
+}
 
 TEST(MessageTransportTestGroup, NullSendTest)
 {
     char message[32] = "Sending test string";
 
     UT_PTR_SET(Transporter, &NullTransporter);
-    
     CHECK_EQUAL(-1, SendOutMessage(message));
-    CHECK_EQUAL(FALSE, ReceiveInMessage());
-
     mock().checkExpectations();
 }
 

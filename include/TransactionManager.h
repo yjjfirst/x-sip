@@ -5,7 +5,7 @@ struct UserAgent;
 struct TransactionUser;
 
 void ClearTransactionManager();
-int MessageReceived(char *string);
+int SipMessageHandle(char *string);
 struct TransactionId *TransactionIdExtract(struct TransactionId *tid, struct Message *message);
 
 struct Transaction *GetTransaction(char *branch, char *seqMethod);

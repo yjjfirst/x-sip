@@ -10,3 +10,4 @@ void GenerateBranchMockForAuthorization(char *branch);
     
 extern struct MessageTransporter MockTransporter;
 extern struct MessageTransporter DummyTransporter;
+extern struct MessageTransporter MockTransporterAndHandle;
