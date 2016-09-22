@@ -39,14 +39,6 @@ TEST(MessageTransportTestGroup, SendMessageTest)
     mock().checkExpectations();
 }
 
-TEST(MessageTransportTestGroup, SetTransporterTest)
-{
-    struct MessageTransporter *pre = SetTransporter(&MockTransporter);
-                   
-    POINTERS_EQUAL(&MockTransporter, GetTransporter());
-    POINTERS_EQUAL(&MockTransporter, SetTransporter(pre));   
-}
-
 struct MessageTransporter NullTransporter = {
     NULL,
     NULL,

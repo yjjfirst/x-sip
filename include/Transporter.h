@@ -17,6 +17,4 @@ int ReceiveInMessage();
 int SendOutMessage(char *message);
 int TransporterInit();
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
-struct MessageTransporter *GetTransporter();
-
 extern struct MessageTransporter *SipTransporter;

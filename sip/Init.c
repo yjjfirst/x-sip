@@ -3,19 +3,31 @@
 
 #include "AccountManager.h"
 #include "Transporter.h"
+#include "TransporterManager.h"
 
 void InitStack()
 {
+    fd_set fdsr;
+    struct timeval tv;
+    
     if (fork() != 0) {
         printf("main thread\n");
         return;
     }
 
     AccountInit();
-    TransporterInit();
+    TransporterManagerInit();
     BindAllAccounts();
+    
     while(1) {
-        ReceiveInMessage();
+        FillFdset(&fdsr);
+
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
+
+        printf("No message\n");
+        select(GetMaxFd() + 1, &fdsr, NULL, NULL, &tv);
+        ReceiveMessages(&fdsr);
     }
 }
 

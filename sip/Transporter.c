@@ -39,9 +39,4 @@ struct MessageTransporter *SetTransporter(struct MessageTransporter *t)
     return pre;
 }
 
-struct MessageTransporter *GetTransporter()
-{
-    return SipTransporter;
-}
-
 struct MessageTransporter *SipTransporter = &SipUdpTransporter;
