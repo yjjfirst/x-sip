@@ -6,7 +6,7 @@ extern "C" {
 #include <string.h>
 #include "Transporter.h"
 #include "TransactionManager.h"
-#include "Udp.h"
+#include "SipUdp.h"
 }
 
 TEST_GROUP(MessageTransportTestGroup)

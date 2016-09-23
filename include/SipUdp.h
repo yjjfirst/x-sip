@@ -7,6 +7,10 @@ int SipUdpInit();
 int SipUdpReceiveMessage(char *message, int fd);
 int SipUdpSendMessage(char *message, int fd);
 
+int UdpRreceive(char *message, int fd);
+int UdpSend(char *message, int ft);
+int UdpInit(int port);
+
 extern struct MessageTransporter SipUdpTransporter;
 extern struct MessageTransporter ClientTransporter;
 

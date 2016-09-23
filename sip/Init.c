@@ -25,7 +25,6 @@ void InitStack()
         tv.tv_sec = 1;
         tv.tv_usec = 0;
 
-        printf("No message\n");
         select(GetMaxFd() + 1, &fdsr, NULL, NULL, &tv);
         ReceiveMessages(&fdsr);
     }

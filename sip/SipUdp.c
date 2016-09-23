@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #include "Transporter.h"
-#include "Udp.h"
+#include "SipUdp.h"
 #include "TransactionManager.h"
 
 #define MAXLINE 80

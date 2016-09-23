@@ -5,7 +5,7 @@ extern "C" {
 #include <stdio.h>
 #include "TransporterManager.h"
 #include "Transporter.h"
-#include "Udp.h"
+#include "SipUdp.h"
 }
 
 TEST_GROUP(TransporterManagerTestGroup)
