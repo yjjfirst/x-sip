@@ -16,9 +16,9 @@ TEST_GROUP(TransporterManagerTestGroup)
     }
 };
 
-int ReceiveMessageMock(char *message)
+int ReceiveMessageMock(char *message, int fd)
 {
-    mock().actualCall("ReceiveMessage");
+    mock().actualCall("ReceiveMessage").withParameter("fd", fd);
     return 0;
 }
 
@@ -73,6 +73,7 @@ TEST(TransporterManagerTestGroup, InitTest)
     TransporterManagerInit();
 
     POINTERS_EQUAL(&SipUdpTransporter, GetTransporter(SipUdpTransporter.fd));
+    POINTERS_EQUAL(&ClientTransporter, GetTransporter(ClientTransporter.fd));
 }
 
 TEST(TransporterManagerTestGroup, MaxFdTest)
@@ -130,7 +131,12 @@ TEST(TransporterManagerTestGroup, ReceiveMessagesTest)
     AddTransporter(&t5);
     FillFdset(&fdsr);
 
-    mock().expectNCalls(6, "ReceiveMessage");
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 0);
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 101);
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 102);
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 103);
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 104);
+    mock().expectOneCall("ReceiveMessage").withParameter("fd", 1023);
    
     ReceiveMessages(&fdsr);
 

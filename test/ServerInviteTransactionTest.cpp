@@ -19,7 +19,7 @@ TimerCallback RetransmitTimerAction;
 TimerCallback TimeOutTimerAction; 
 TimerCallback WaitAckTimerAction;
 
-int SendOut100TryingMock(char *message)
+int SendOut100TryingMock(char *message, int fd)
 {
     MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
@@ -39,7 +39,7 @@ struct MessageTransporter MockTransporterFor100Trying = {
     SipMessageHandle
 };
 
-int SendOut180RingingMock(char *message)
+int SendOut180RingingMock(char *message, int fd)
 {
 
     MESSAGE *m = CreateMessage();
@@ -60,7 +60,7 @@ struct MessageTransporter MockTransporterFor180Ringing = {
     SipMessageHandle
 };
 
-int SendOut301Mock(char *message)
+int SendOut301Mock(char *message, int fd)
 {
 
     MESSAGE *m = CreateMessage();
@@ -81,7 +81,7 @@ struct MessageTransporter MockTransporterFor301 = {
     SipMessageHandle
 };
 
-int SendOut200OKMock(char *message)
+int SendOut200OKMock(char *message, int fd)
 {
 
     MESSAGE *m = CreateMessage();

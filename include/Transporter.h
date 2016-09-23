@@ -1,7 +1,7 @@
 #include "Bool.h"
 
-typedef int (*MessageSend) (char *message);
-typedef int (*MessageReceive) (char *message);
+typedef int (*MessageSend) (char *message, int fd);
+typedef int (*MessageReceive) (char *message, int fd);
 typedef int (*MessageHandle) (char *message);
 typedef int (*Init) ();
 

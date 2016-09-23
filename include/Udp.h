@@ -4,10 +4,11 @@
 #include <arpa/inet.h>
 
 int SipUdpInit();
-int SipUdpReceiveMessage(char *message);
-int SipUdpSendMessage(char *message);
+int SipUdpReceiveMessage(char *message, int fd);
+int SipUdpSendMessage(char *message, int fd);
 
 extern struct MessageTransporter SipUdpTransporter;
+extern struct MessageTransporter ClientTransporter;
 
 extern int (*xbind)(int sockfd, const struct sockaddr *addr,
          socklen_t addrlen);

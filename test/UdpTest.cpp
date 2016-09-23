@@ -73,7 +73,7 @@ TEST(TransporterUdpTestGroup, SendMessageTest)
     char message[] = "Testing message";
     
     mock().expectOneCall("sendto");
-    SipUdpSendMessage(message);
+    SipUdpSendMessage(message, 0);
 }
 
 TEST(TransporterUdpTestGroup, ReceiveMessageTest)
@@ -81,5 +81,5 @@ TEST(TransporterUdpTestGroup, ReceiveMessageTest)
     char message[64] ={0};
     
     mock().expectOneCall("recvfrom");
-    SipUdpReceiveMessage(message);
+    SipUdpReceiveMessage(message, 0);
 }

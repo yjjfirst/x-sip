@@ -12,7 +12,7 @@ int SendOutMessage(char *message)
 {
     if (SipTransporter->send == NULL) return -1;
     
-    return SipTransporter->send(message);
+    return SipTransporter->send(message, SipTransporter->fd);
 }
 
 int ReceiveInMessage()
@@ -20,7 +20,7 @@ int ReceiveInMessage()
     char received[MAX_MESSAGE_LENGTH] = {0};
 
     if (SipTransporter->receive == NULL) return -1;
-    SipTransporter->receive(received);
+    SipTransporter->receive(received, SipTransporter->fd);
     
     return SipTransporter->callback(received);
 }

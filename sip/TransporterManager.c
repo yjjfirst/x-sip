@@ -44,6 +44,7 @@ struct MessageTransporter *GetTransporter(int fd)
 void TransporterManagerInit()
 {
     AddTransporter(&SipUdpTransporter);
+    AddTransporter(&ClientTransporter);
 }
 
 void ClearTransporterManager()
@@ -89,8 +90,8 @@ void ReceiveMessages(fd_set *fdsr)
 
     for (; i < len; i++) {        
         t = (struct MessageTransporter *)get_data_at(TransporterManager.transporters, i);
-        if (FD_ISSET(t->fd, fdsr)) { 
-            if (t->receive != NULL) t->receive(message);
+        if (FD_ISSET(t->fd, fdsr)) {
+            if (t->receive != NULL) t->receive(message, t->fd);
             if (t->callback != NULL) t->callback(message);
         }
     }    

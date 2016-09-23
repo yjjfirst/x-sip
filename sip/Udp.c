@@ -10,8 +10,7 @@
 
 #define MAXLINE 80
 #define SERV_PORT 5060
-
-static int sockfd = -1;
+#define CLIENT_SERV_PORT 5555
 
 int (*xbind)(int sockfd, const struct sockaddr *addr,
          socklen_t addrlen) = bind;
@@ -55,7 +54,8 @@ int UdpSend(char *message, int fd)
 int UdpInit(int port)
 {
     struct sockaddr_in servaddr;
-
+    int sockfd = -1;
+    
     if ( (sockfd = xsocket(AF_INET, SOCK_DGRAM, 0)) == -1) {
         return -1;
     }
@@ -73,14 +73,14 @@ int UdpInit(int port)
     return sockfd;
 }
 
-int SipUdpReceiveMessage(char *message)
+int SipUdpReceiveMessage(char *message, int fd)
 {
-    return UdpReceive(message, sockfd);
+    return UdpReceive(message, fd);
 }
 
-int SipUdpSendMessage(char *message)
+int SipUdpSendMessage(char *message, int fd)
 {
-    return UdpSend(message, sockfd);
+    return UdpSend(message, fd);
 }
 
 int SipUdpInit()
@@ -88,9 +88,36 @@ int SipUdpInit()
     return UdpInit(SERV_PORT);
 }
 
+int ClientReceiveMessage(char *message, int fd)
+{
+    return UdpReceive(message, fd);
+}
+
+int ClientSendMessage(char *message, int fd)
+{
+    return UdpSend(message, fd);
+}
+
+int ClientInit()
+{
+    return UdpInit(CLIENT_SERV_PORT);
+}
+        
 struct MessageTransporter SipUdpTransporter = {
     .send = SipUdpSendMessage,
     .receive = SipUdpReceiveMessage,
     .init = SipUdpInit,
     .callback = SipMessageHandle
+};
+
+BOOL ClientMessageHandle(char *string)
+{
+    return 1;
+}
+
+struct MessageTransporter ClientTransporter = {
+    .send = ClientSendMessage,
+    .receive = ClientReceiveMessage,
+    .init = ClientInit,
+    .callback = ClientMessageHandle
 };

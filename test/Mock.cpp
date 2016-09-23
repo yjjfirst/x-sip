@@ -13,13 +13,13 @@ extern "C" {
 #include "TransactionManager.h"
 }
 
-int ReceiveInMessageMock(char *message)
+int ReceiveInMessageMock(char *message, int fd)
 {
     strcpy(message, mock().actualCall(RECEIVE_IN_MESSAGE_MOCK).returnStringValue());
     return 0;
 }
 
-int SendOutMessageMock(char *message)
+int SendOutMessageMock(char *message, int fd)
 {
     MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
@@ -68,12 +68,12 @@ struct MessageTransporter MockTransporterAndHandle = {
     .callback = MessageHandleMock,
 };
 
-int DummySend(char *message)
+int DummySend(char *message, int fd)
 {
     return 0;
 }
 
-int DummyReceive(char *message)
+int DummyReceive(char *message, int fd)
 {
     return 0;
 }
