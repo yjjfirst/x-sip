@@ -4,6 +4,7 @@
 extern "C" {
 #include "Transporter.h"
 #include "SipUdp.h"
+#include "Udp.h"
 }
 int bind_mock(int sockfd, const struct sockaddr *addr,
          socklen_t addrlen)

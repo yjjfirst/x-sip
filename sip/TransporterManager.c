@@ -2,6 +2,7 @@
 #include <assert.h>
 
 #include "SipUdp.h"
+#include "ClientUdp.h"
 #include "Transporter.h"
 #include "utils/list/include/list.h"
 #include "Messages.h"
