@@ -7,8 +7,6 @@ int UdpReceive(char *message, int fd);
 int UdpSend(char *message, int ft);
 int UdpInit(int port);
 
-extern struct MessageTransporter ClientTransporter;
-
 extern int (*xbind)(int sockfd, const struct sockaddr *addr,
          socklen_t addrlen);
 extern int (*xsocket)(int domain, int type, int protocol);

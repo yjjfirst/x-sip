@@ -12,7 +12,7 @@ int SendOutMessage(char *message)
 {
     if (SipTransporter->send == NULL) return -1;
     
-    return SipTransporter->send(message, SipTransporter->fd);
+    return SipTransporter->send(message, NULL, 0, SipTransporter->fd);
 }
 
 int ReceiveInMessage()
@@ -25,9 +25,9 @@ int ReceiveInMessage()
     return SipTransporter->callback(received);
 }
 
-int TransporterInit()
+int TransporterInit(int port)
 {
-    SipTransporter->fd = SipTransporter->init();
+    SipTransporter->fd = SipTransporter->init(port);
     return SipTransporter->fd;
 }
 

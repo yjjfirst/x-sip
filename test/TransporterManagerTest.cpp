@@ -1,11 +1,13 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "Mock.h"
 
 extern "C" {
 #include <stdio.h>
 #include "TransporterManager.h"
 #include "Transporter.h"
 #include "SipUdp.h"
+#include "Udp.h"
 #include "ClientUdp.h"
 }
 
@@ -71,10 +73,17 @@ TEST(TransporterManagerTestGroup, GetTransporterTest)
 
 TEST(TransporterManagerTestGroup, InitTest)
 {
-    TransporterManagerInit();
+    UT_PTR_SET(xbind, bind_mock);
 
+    mock().expectOneCall("bind").andReturnValue(100);
+    mock().expectOneCall("bind").andReturnValue(200);
+
+    TransporterManagerInit();    
+    
     POINTERS_EQUAL(&SipUdpTransporter, GetTransporter(SipUdpTransporter.fd));
     POINTERS_EQUAL(&ClientTransporter, GetTransporter(ClientTransporter.fd));
+
+    mock().clear();
 }
 
 TEST(TransporterManagerTestGroup, MaxFdTest)

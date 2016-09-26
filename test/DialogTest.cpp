@@ -65,7 +65,7 @@ TEST_GROUP(DialogTestGroup)
     }
 };
 
-int SendOutAckMessageMock(char *message, int fd)
+int SendOutAckMessageMock(char *message, char *destaddr, int destport, int fd)
 {
     MESSAGE *m = CreateMessage();
     char *remoteTag = NULL;

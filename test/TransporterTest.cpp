@@ -67,9 +67,9 @@ TEST(MessageTransportTestGroup, InitTest)
     int result = 102;
     UT_PTR_SET(SipTransporter, &MockTransporter);
 
-    mock().expectOneCall("InitMock").andReturnValue(result);
+    mock().expectOneCall("InitMock").withParameter("port", SipTransporter->port).andReturnValue(result);
     
-    CHECK_EQUAL(result, TransporterInit());
+    CHECK_EQUAL(result, TransporterInit(SipTransporter->port));
     CHECK_EQUAL(result, SipTransporter->fd);
     
     mock().checkExpectations();

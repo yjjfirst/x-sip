@@ -19,7 +19,7 @@ int ReceiveInMessageMock(char *message, int fd)
     return 0;
 }
 
-int SendOutMessageMock(char *message, int fd)
+int SendOutMessageMock(char *message, char *destaddr, int destport,  int fd)
 {
     MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
@@ -43,9 +43,9 @@ int SendOutMessageMock(char *message, int fd)
     }
 }
 
-int InitMock()
+int InitMock(int port)
 {
-    return mock().actualCall("InitMock").returnIntValue();
+    return mock().actualCall("InitMock").withIntParameter("port", port).returnIntValue();
 }
 
 int MessageHandleMock(char *message)
@@ -53,12 +53,11 @@ int MessageHandleMock(char *message)
     return mock().actualCall("MessageHandleMock").returnIntValue();
 }
 
-
 struct MessageTransporter MockTransporter = {
     .send = SendOutMessageMock,
     .receive = ReceiveInMessageMock,
     .init = InitMock,
-    .callback = SipMessageHandle
+    .callback = SipMessageHandle,
 };
 
 struct MessageTransporter MockTransporterAndHandle = {
@@ -68,7 +67,7 @@ struct MessageTransporter MockTransporterAndHandle = {
     .callback = MessageHandleMock,
 };
 
-int DummySend(char *message, int fd)
+int DummySend(char *message, char *destaddr, int destport, int fd)
 {
     return 0;
 }
@@ -93,4 +92,26 @@ void GenerateBranchMock(char *branch)
 void GenerateBranchMockForAuthorization(char *branch)
 {
     strcpy(branch, "z9hG4bK1491280927");
+}
+
+int bind_mock(int sockfd, const struct sockaddr *addr,
+         socklen_t addrlen)
+{
+    return mock().actualCall("bind").returnIntValue();
+}
+
+int socket_mock(int domain, int type, int protocol)
+{
+    return mock().actualCall("socket").returnIntValue();
+}
+
+ssize_t sendto_mock(int sockfd, const void *buf, size_t len, int flags,
+                    const struct sockaddr *dest_addr, socklen_t addrlen)
+{
+    return mock().actualCall("sendto").returnIntValue();
+}
+ssize_t recvfrom_mock(int sockfd, void *buf, size_t len, int flags,
+                     struct sockaddr *src_addr, socklen_t *addrlen)
+{
+    return mock().actualCall("recvfrom").returnIntValue();
 }

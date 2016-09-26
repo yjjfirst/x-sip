@@ -1,34 +1,12 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
+#include "Mock.h"
 
 extern "C" {
 #include "Transporter.h"
 #include "SipUdp.h"
 #include "Udp.h"
 }
-int bind_mock(int sockfd, const struct sockaddr *addr,
-         socklen_t addrlen)
-{
-    return mock().actualCall("bind").returnIntValue();
-}
-
-int socket_mock(int domain, int type, int protocol)
-{
-    return mock().actualCall("socket").returnIntValue();
-}
-
-ssize_t sendto_mock(int sockfd, const void *buf, size_t len, int flags,
-                    const struct sockaddr *dest_addr, socklen_t addrlen)
-{
-    return mock().actualCall("sendto").returnIntValue();
-}
-ssize_t recvfrom_mock(int sockfd, void *buf, size_t len, int flags,
-                     struct sockaddr *src_addr, socklen_t *addrlen)
-{
-    return mock().actualCall("recvfrom").returnIntValue();
-}
-
-void CreateRecvTaskMock(){}
 
 TEST_GROUP(TransporterUdpTestGroup)
 {
@@ -51,14 +29,14 @@ TEST(TransporterUdpTestGroup, BindFailedTest)
     mock().expectOneCall("socket").andReturnValue(0);
     mock().expectOneCall("bind").andReturnValue(-1);
 
-    CHECK_EQUAL(-1, SipUdpInit());
+    CHECK_EQUAL(-1, SipUdpInit(0));
 }
 
 
 TEST(TransporterUdpTestGroup, CreateSocketFailedTest)
 {
     mock().expectOneCall("socket").andReturnValue(-1);
-    CHECK_EQUAL(-1, SipUdpInit());
+    CHECK_EQUAL(-1, SipUdpInit(0));
 }
 
 TEST(TransporterUdpTestGroup, InitSuccessedTest)
@@ -66,7 +44,7 @@ TEST(TransporterUdpTestGroup, InitSuccessedTest)
     mock().expectOneCall("socket").andReturnValue(0);
     mock().expectOneCall("bind").andReturnValue(0);
 
-    CHECK_EQUAL(0, SipUdpInit());
+    CHECK_EQUAL(0, SipUdpInit(0));
 }
 
 TEST(TransporterUdpTestGroup, SendMessageTest)
@@ -74,7 +52,7 @@ TEST(TransporterUdpTestGroup, SendMessageTest)
     char message[] = "Testing message";
     
     mock().expectOneCall("sendto");
-    SipUdpSendMessage(message, 0);
+    SipUdpSendMessage(message, NULL, 0, 0);
 }
 
 TEST(TransporterUdpTestGroup, ReceiveMessageTest)

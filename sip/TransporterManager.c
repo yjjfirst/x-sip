@@ -17,9 +17,10 @@ void AddTransporter(struct MessageTransporter *t)
 {
     assert (t != NULL);
 
-    if (t->init != NULL)
-        t->fd = t->init();
     
+    if (t->init != NULL) {
+        t->fd = t->init(t->port);
+    }
     put_in_list(&TransporterManager.transporters, t);
 }
 
@@ -33,7 +34,7 @@ struct MessageTransporter *GetTransporter(int fd)
     int i = 0;
     int len = CountTransporter();
     struct MessageTransporter *t = NULL;
-        
+    
     for (; i < len; i++) {
         t = (struct MessageTransporter *)get_data_at(TransporterManager.transporters, i);
         if (fd == t->fd) return t;
