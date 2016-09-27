@@ -31,7 +31,7 @@ int UdpReceive(char *message, int fd)
     return 0;
 }
 
-int UdpSend(char *message, int fd)
+int UdpSendImpl(char *message, char *destaddr, int port, int fd)
 {
     struct sockaddr_in dest_addr;
     int slen = sizeof(dest_addr);
@@ -44,6 +44,8 @@ int UdpSend(char *message, int fd)
 
     return 0;
 }
+
+int (*UdpSend)(char *message, char *destaddr, int port,  int ft) = UdpSendImpl;
 
 int UdpInit(int port)
 {

@@ -14,6 +14,7 @@ extern "C" {
 #include "Transaction.h"
 #include "Messages.h"
 #include "DialogManager.h"
+#include "UserAgentManager.h"
 }
 
 TEST_GROUP(TransactionTestGroup)
@@ -22,34 +23,58 @@ TEST_GROUP(TransactionTestGroup)
     MESSAGE *invite;
     struct Transaction *transaction;
     struct Dialog *dialog;
-    char branch[32];
 
-    void setup()
-    {
-        UT_PTR_SET(SipTransporter, &DummyTransporter);        
-        AccountInit();
-        
-        ua = CreateUserAgent(0);
-        dialog = AddDialog(NULL_DIALOG_ID, ua);
-        invite = BuildInviteMessage(dialog, (char *)"88002"); 
-        transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
-
-        strcpy(branch, MessageGetViaBranch(invite));
-    }
     void teardown()
     {
-        DestroyUserAgent(&ua);
         ClearTransactionManager();
         ClearAccountManager();
+        ClearDialogManager();
+        ClearUserAgentManager();
+
+        mock().checkExpectations();
+        mock().clear();
     }
 };
 
 TEST(TransactionTestGroup, MessageOwnerTest)
 {
+    UT_PTR_SET(SipTransporter, &DummyTransporter);        
+    AccountInit();
+    
+    ua = CreateUserAgent(0);
+    dialog = AddDialog(NULL_DIALOG_ID, ua);
+    invite = BuildInviteMessage(dialog, (char *)"88002"); 
+    transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
+
     POINTERS_EQUAL(transaction, MessageBelongTo(invite));
+    
+    DestroyUserAgent(&ua);
 }
 
 TEST(TransactionTestGroup, TransactionOwnerTest)
 {
+    UT_PTR_SET(SipTransporter, &DummyTransporter);        
+    AccountInit();
+    
+    ua = CreateUserAgent(0);
+    dialog = AddDialog(NULL_DIALOG_ID, ua);
+    invite = BuildInviteMessage(dialog, (char *)"88002"); 
+    transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
+    
     POINTERS_EQUAL(dialog, TransactionGetUser(transaction));
+
+    DestroyUserAgent(&ua);
+
+}
+
+TEST(TransactionTestGroup, MessageDestTest)
+{
+    UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);    
+    mock().expectNCalls(3, SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
+        withStringParameter("destaddr", (char *)"192.168.10.62").
+        withIntParameter("port", 5060);
+
+    AccountInit();
+    
+    BindAllAccounts();
 }

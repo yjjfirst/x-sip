@@ -172,7 +172,7 @@ int TransactionSendMessage(MESSAGE *message)
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, message);
 
-    return SendOutMessage(s);
+    return SendOutMessage(s, "192.168.10.62", 5060 );
 }
 
 int SendRequestMessage(struct Transaction *t)

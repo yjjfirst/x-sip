@@ -4,7 +4,7 @@
 #include <arpa/inet.h>
 
 int UdpReceive(char *message, int fd);
-int UdpSend(char *message, int ft);
+extern int (*UdpSend)(char *message, char *destaddr, int port,  int ft);
 int UdpInit(int port);
 
 extern int (*xbind)(int sockfd, const struct sockaddr *addr,

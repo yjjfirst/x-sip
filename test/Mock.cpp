@@ -43,6 +43,34 @@ int SendOutMessageMock(char *message, char *destaddr, int destport,  int fd)
     }
 }
 
+int SendOutMessageMockForTransporterTest(char *message, char *destaddr, int destport,  int fd)
+{
+    MESSAGE *m = CreateMessage();
+    ParseMessage(message, m);
+    SIP_METHOD method;
+    int statusCode;
+    enum MESSAGE_TYPE type;
+
+    type = MessageGetType(m);
+    if (type == MESSAGE_TYPE_REQUEST) {
+        method = RequestLineGetMethod(MessageGetRequestLine(m));
+        DestroyMessage(&m);
+        return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
+            withStringParameter("Method", MethodMap2String(method)).
+            withStringParameter("destaddr", destaddr).
+            withIntParameter("port", destport).
+            returnIntValue();
+    } else { 
+        statusCode = StatusLineGetStatusCode(MessageGetStatusLine(m));
+        DestroyMessage(&m);
+        return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
+            withIntParameter("StatusCode", statusCode).
+            withStringParameter("destaddr", destaddr).
+            withIntParameter("port", destport).
+            returnIntValue();
+    }
+}
+
 int InitMock(int port)
 {
     return mock().actualCall("InitMock").withIntParameter("port", port).returnIntValue();
@@ -61,7 +89,7 @@ struct MessageTransporter MockTransporter = {
 };
 
 struct MessageTransporter MockTransporterAndHandle = {
-    .send = SendOutMessageMock,
+    .send = SendOutMessageMockForTransporterTest,
     .receive = ReceiveInMessageMock,
     .init = InitMock,
     .callback = MessageHandleMock,

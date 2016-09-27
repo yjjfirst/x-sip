@@ -19,7 +19,7 @@ int ClientReceiveMessage(char *message, int fd)
 
 int ClientSendMessage(char *message, char *destaddr, int destport, int fd)
 {
-    return UdpSend(message, fd);
+    return UdpSend(message, destaddr, destport, fd);
 }
 
 int ClientInit(int port)

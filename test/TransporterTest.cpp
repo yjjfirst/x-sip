@@ -34,8 +34,11 @@ TEST(MessageTransportTestGroup, SendMessageTest)
 
     UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "");
-    SendOutMessage(message);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "").
+        withStringParameter("destaddr", (char *)"192.168.10.63").
+        withIntParameter("port", 5060);
+
+    SendOutMessage(message, (char *)"192.168.10.63", 5060);
     mock().checkExpectations();
 }
 
@@ -58,7 +61,7 @@ TEST(MessageTransportTestGroup, NullSendTest)
     char message[32] = "Sending test string";
 
     UT_PTR_SET(SipTransporter, &NullTransporter);
-    CHECK_EQUAL(-1, SendOutMessage(message));
+    CHECK_EQUAL(-1, SendOutMessage(message, NULL, 0));
     mock().checkExpectations();
 }
 

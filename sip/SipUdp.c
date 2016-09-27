@@ -19,7 +19,7 @@ int SipUdpReceiveMessage(char *message, int fd)
 
 int SipUdpSendMessage(char *message, char *destaddr, int destport, int fd)
 {
-    return UdpSend(message, fd);
+    return UdpSend(message, destaddr, destport, fd);
 }
 
 int SipUdpInit(int port)

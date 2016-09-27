@@ -1,10 +1,12 @@
 #include <gtk/gtk.h>
 
 #include "Init.h"
+#include "Udp.h"
 
-static void print_hello (GtkWidget *widget, gpointer   data)
+static int sockfd;
+static void send_hello (GtkWidget *widget, gpointer   data)
 {
-  g_print ("Hello World\n");
+    UdpSend("Hello World\n","192.168.10.1", 5555,  sockfd);
 }
 
 static void add_all_widget(GtkWidget *window)
@@ -18,7 +20,7 @@ static void add_all_widget(GtkWidget *window)
 
     
     make_call_button = gtk_button_new_with_label ("Make Call");
-    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (print_hello), window);
+    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (send_hello), window);
     
     number = gtk_entry_new();
     vbox =  gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
@@ -82,8 +84,10 @@ int main (int argc, char **argv)
 {
     GtkApplication *app;
     int status;
-
+    
     InitStack();
+    sockfd = UdpInit(5556);
+    
     app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
     g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
     status = g_application_run (G_APPLICATION (app), argc, argv);

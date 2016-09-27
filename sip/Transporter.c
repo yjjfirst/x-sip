@@ -8,11 +8,11 @@
 #include "Messages.h"
 #include "SipUdp.h"
 
-int SendOutMessage(char *message)
+int SendOutMessage(char *message, char *destaddr, int port)
 {
     if (SipTransporter->send == NULL) return -1;
     
-    return SipTransporter->send(message, NULL, 0, SipTransporter->fd);
+    return SipTransporter->send(message, destaddr, port, SipTransporter->fd);
 }
 
 int ReceiveInMessage()
