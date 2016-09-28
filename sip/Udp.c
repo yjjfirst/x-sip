@@ -36,9 +36,11 @@ int UdpSendImpl(char *message, char *destaddr, int port, int fd)
     struct sockaddr_in dest_addr;
     int slen = sizeof(dest_addr);
 
+    assert(destaddr != NULL);
+    
     dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = htons(5060);
-    inet_aton("192.168.10.62", &dest_addr.sin_addr);
+    dest_addr.sin_port = htons(port);
+    inet_aton(destaddr, &dest_addr.sin_addr);
     
     xsendto(fd, message, strlen(message), 0, (void*)&dest_addr, slen);
 

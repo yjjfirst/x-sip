@@ -148,10 +148,21 @@ struct Header *BuildRequestContentLengthHeader(struct Dialog *dialog)
     return (struct Header *)c;
 }
 
+void BuildMessageDest(MESSAGE *m, struct Dialog *dialog, SIP_METHOD method)
+{
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UserAgentGetAccount(ua);
+
+    MessageSetDestAddr(m, AccountGetRegistrar(account));
+    MessageSetDestPort(m, AccountGetRegistrarPort(account));
+}
+
 MESSAGE *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 {
     MESSAGE *message = CreateMessage();
- 
+
+    BuildMessageDest(message, dialog, method);
+    
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
     MessageSetRequestLine(message, BuildRequestLine(dialog));
@@ -201,7 +212,7 @@ URI *BuildRemoteUri(struct Dialog *dialog, char *to)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     struct Account *account = UserAgentGetAccount(ua);    
-    URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxy(account), 0);
+    URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxyAddr(account), 0);
 
     return uri;
 }

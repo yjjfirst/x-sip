@@ -124,21 +124,21 @@ int AccountInitImpl()
                    (char *)"88001", 
                    (char *)"88001", 
                    (char *)"192.168.10.62", 
-                   (char *)"192.168.10.72"));
+                   (char *)"192.168.10.62"));
     
     AddAccount(CreateAccount(
                    (char *)"88002", 
                    (char *)"88002", 
                    (char *)"88002", 
                    (char *)"192.168.10.62", 
-                   (char *)"192.168.10.72"));
+                   (char *)"192.168.10.62"));
     
     AddAccount(CreateAccount(
                    (char *)"88003", 
                    (char *)"88003", 
                    (char *)"88003", 
                    (char *)"192.168.10.62", 
-                   (char *)"192.168.10.72"));
+                   (char *)"192.168.10.62"));
     
     return TotalAccount();
 }

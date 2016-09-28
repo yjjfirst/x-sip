@@ -11,7 +11,12 @@ TEST_GROUP(AccountsTestGroup)
     struct Account *account;
     void setup() 
     {
-        account = CreateEmptyAccount();
+        account = CreateAccount(
+            (char *)"88001", 
+            (char *)"88001", 
+            (char *)"88001", 
+            (char *)"192.168.10.62", 
+            (char *)"192.168.10.72");
     }
 
     void teardown()
@@ -37,7 +42,7 @@ TEST(AccountsTestGroup, AccountCreateTest)
     STRCMP_EQUAL("88001", AccountGetUserName(acc));
     STRCMP_EQUAL("88001", AccountGetAuthName(acc));
     STRCMP_EQUAL("88001", AccountGetPasswd(acc));
-    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(acc));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(acc));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(acc));
 
     DestroyAccount(&acc);
@@ -81,11 +86,11 @@ TEST(AccountsTestGroup, AccountSetProxyTest)
     char proxy[] = "Test.Proxy";
     char anotherProxy[] = "Another.Proxy";
 
-    AccountSetProxy(account, proxy);
-    STRCMP_EQUAL(proxy, AccountGetProxy(account));
+    AccountSetProxyAddr(account, proxy);
+    STRCMP_EQUAL(proxy, AccountGetProxyAddr(account));
 
-    AccountSetProxy(account, anotherProxy);
-    STRCMP_EQUAL(anotherProxy, AccountGetProxy(account));
+    AccountSetProxyAddr(account, anotherProxy);
+    STRCMP_EQUAL(anotherProxy, AccountGetProxyAddr(account));
     DestroyAccount(&account);
 }
 
@@ -118,10 +123,10 @@ TEST(AccountsTestGroup, SetVeryLongProxyTest)
 {
     char proxy[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
     
-    AccountSetProxy(account, (char *)proxy);
+    AccountSetProxyAddr(account, (char *)proxy);
 
-    STRCMP_CONTAINS(AccountGetProxy(account), proxy);
-    CHECK_EQUAL(PROXY_MAX_LENGTH - 1, strlen(AccountGetProxy(account)));
+    STRCMP_CONTAINS(AccountGetProxyAddr(account), proxy);
+    CHECK_EQUAL(PROXY_MAX_LENGTH - 1, strlen(AccountGetProxyAddr(account)));
     DestroyAccount(&account);
 }
 
@@ -143,5 +148,46 @@ TEST(AccountsTestGroup, SetPasswordTest)
     AccountSetPasswd(account, passwd);
     STRCMP_EQUAL(passwd, AccountGetPasswd(account));
     
+    DestroyAccount(&account);
+}
+
+TEST(AccountsTestGroup, SetRegistrarPortTest)
+{
+    int port = 1000;
+
+    AccountSetRegistrarPort(account, port);
+    CHECK_EQUAL(port, AccountGetRegistrarPort(account));
+
+    port = 1003;
+    AccountSetRegistrarPort(account, port);
+    CHECK_EQUAL(port, AccountGetRegistrarPort(account));
+
+    DestroyAccount(&account);
+}
+
+TEST(AccountsTestGroup, SetProxyPortTest)
+{
+    int port = 2000;
+    
+    AccountSetProxyPort(account, port);
+    CHECK_EQUAL(port, AccountGetProxyPort(account));
+
+    port = 3000;
+    AccountSetProxyPort(account, port);
+    CHECK_EQUAL(port, AccountGetProxyPort(account));
+
+    DestroyAccount(&account);
+
+}
+
+TEST(AccountsTestGroup, DefaultProxyPortTest)
+{
+    CHECK_EQUAL(5060, AccountGetProxyPort(account));
+    DestroyAccount(&account);
+}
+
+TEST(AccountsTestGroup, DefaultRegistrarPortTest)
+{
+    CHECK_EQUAL(5060, AccountGetRegistrarPort(account));
     DestroyAccount(&account);
 }

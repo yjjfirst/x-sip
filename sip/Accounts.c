@@ -7,7 +7,9 @@ struct Account {
     char authName[AUTH_NAME_MAX_LENGTH];
     char passwd[PASS_WORD_MAX_LENGTH];
     char proxy[PROXY_MAX_LENGTH];
+    int  proxyPort;
     char registrar[REGISTRAR_MAX_LENGTH];
+    int  registrarPort;
     BOOL binded;
 };
 
@@ -20,16 +22,30 @@ DEFINE_STRING_MEMBER_READER(struct Account, AccountGetPasswd, passwd);
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetAuthName, authName, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetAuthName, authName);
 
-DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetProxy, proxy, USER_NAME_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct Account, AccountGetProxy, proxy);
+DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetProxyAddr, proxy, USER_NAME_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct Account, AccountGetProxyAddr, proxy);
 
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetRegistrar, registrar, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetRegistrar, registrar);
 
-struct Account *CreateEmptyAccount()
+int AccountGetRegistrarPort(struct Account *account)
 {
-    struct Account *account = calloc(1, sizeof(struct Account));
-    return account;
+    return account->registrarPort;
+}
+
+void AccountSetRegistrarPort(struct Account *account, int port)
+{
+    account->registrarPort = port;
+}
+
+int AccountGetProxyPort(struct Account *account)
+{
+    return account->proxyPort;
+}
+
+void AccountSetProxyPort(struct Account *account, int port)
+{
+    account->proxyPort = port;
 }
 
 BOOL AccountBinded(struct Account *account)
@@ -56,7 +72,7 @@ void AccountDump(struct Account *account)
            AccountGetUserName(account),
            AccountGetAuthName(account),
            AccountGetPasswd(account),
-           AccountGetProxy(account),
+           AccountGetProxyAddr(account),
            AccountGetRegistrar(account),
            AccountBinded(account));
 }
@@ -68,8 +84,11 @@ struct Account *CreateAccount(char *username, char *authname, char *passwd, char
     AccountSetUserName(account, username);
     AccountSetAuthName(account, authname);
     AccountSetPasswd(account, passwd);
-    AccountSetProxy(account, proxy);
+    AccountSetProxyAddr(account, proxy);
     AccountSetRegistrar(account, registrar);
+
+    AccountSetProxyPort(account, 5060);
+    AccountSetRegistrarPort(account, 5060);
 
     return account;
 }

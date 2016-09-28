@@ -52,7 +52,7 @@ TEST(TransporterUdpTestGroup, SendMessageTest)
     char message[] = "Testing message";
     
     mock().expectOneCall("sendto");
-    SipUdpSendMessage(message, NULL, 0, 0);
+    SipUdpSendMessage(message, (char *)"192.168.10.62", 0, 0);
 }
 
 TEST(TransporterUdpTestGroup, ReceiveMessageTest)

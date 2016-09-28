@@ -46,7 +46,7 @@ TEST(AccountManagerTestGroup, AddOneAccountTest)
 
     STRCMP_EQUAL("88001", AccountGetUserName(retrived));
     STRCMP_EQUAL("88001", AccountGetAuthName(retrived));
-    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(retrived));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(retrived));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(retrived));
     CHECK_EQUAL(1, TotalAccount());
 
@@ -144,19 +144,19 @@ TEST(AccountManagerTestGroup, InitTest)
 
     struct Account *a = GetAccount( 0);
     STRCMP_EQUAL("88001", AccountGetUserName(a));
-    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
-    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetRegistrar(a));
 
 
     a = GetAccount(1);
     STRCMP_EQUAL("88002", AccountGetUserName(a));
-    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
-    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetRegistrar(a));
 
     a = GetAccount(2);
     STRCMP_EQUAL("88003", AccountGetUserName(a));
-    STRCMP_EQUAL("192.168.10.62", AccountGetProxy(a));
-    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(a));
+    STRCMP_EQUAL("192.168.10.62", AccountGetRegistrar(a));
 }
 
 TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)

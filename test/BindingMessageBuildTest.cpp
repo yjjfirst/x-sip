@@ -27,6 +27,7 @@ extern "C" {
 #include "AccountManager.h"
 #include "WWW_AuthenticationHeader.h"
 #include "DialogManager.h"
+#include "Accounts.h"
 }
 
 TEST_GROUP(BindingMessageBuildTestGroup)
@@ -39,6 +40,7 @@ TEST_GROUP(BindingMessageBuildTestGroup)
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
         
         AccountInit();
+        AccountSetRegistrarPort(GetAccount(0), 1000);
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
         m = BuildAddBindingMessage(dialog);
@@ -310,4 +312,16 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
     
     DestroyMessage(&authMessage);
     DestroyMessage(&challenge);
+}
+
+TEST(BindingMessageBuildTestGroup, MessageDestAddrTest)
+{
+    STRCMP_EQUAL(AccountGetRegistrar(GetAccount(0)),MessageGetDestAddr(m));
+}
+
+
+TEST(BindingMessageBuildTestGroup, MessageDestPortTest)
+{
+    struct Account *account = GetAccount(0);
+    CHECK_EQUAL(AccountGetRegistrarPort(account),MessageGetDestPort(m));
 }

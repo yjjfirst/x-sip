@@ -18,6 +18,10 @@
 #include "RequestLine.h"
 #include "Sdp.h"
 
+struct MessageDestation {
+    char addr[64];
+    int port;
+};
 struct Message {
     struct Transaction *transaction;
     union {
@@ -25,8 +29,10 @@ struct Message {
         struct StatusLine *status;
     } rr;
     enum MESSAGE_TYPE type;
+    struct MessageDestation dest;
     struct Headers *headers;
 };
+
 
 void MessageSetType(MESSAGE *message, enum MESSAGE_TYPE type)
 {
@@ -321,6 +327,26 @@ void Message2String(char *result, MESSAGE *message)
     *p++ = '\n';
 
     return ;
+}
+
+char *MessageGetDestAddr(MESSAGE *message)
+{
+    return message->dest.addr;
+}
+
+void MessageSetDestAddr(MESSAGE *m, char *addr)
+{
+    strcpy(m->dest.addr, addr);
+}
+
+int  MessageGetDestPort(MESSAGE *m)
+{
+    return m->dest.port;
+}
+
+void MessageSetDestPort(MESSAGE *m, int port)
+{
+    m->dest.port = port;
 }
 
 //Only for debug, no unit test for this funciton.

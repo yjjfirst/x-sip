@@ -15,6 +15,7 @@ extern "C" {
 #include "Messages.h"
 #include "DialogManager.h"
 #include "UserAgentManager.h"
+#include "Accounts.h"
 }
 
 TEST_GROUP(TransactionTestGroup)
@@ -69,12 +70,19 @@ TEST(TransactionTestGroup, TransactionOwnerTest)
 
 TEST(TransactionTestGroup, MessageDestTest)
 {
-    UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);    
-    mock().expectNCalls(3, SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
-        withStringParameter("destaddr", (char *)"192.168.10.62").
-        withIntParameter("port", 5060);
+    UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
 
-    AccountInit();
-    
+    AccountInit();    
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
+        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(0))).
+        withIntParameter("port", AccountGetRegistrarPort(GetAccount(0)));
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
+        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(1))).
+        withIntParameter("port", AccountGetRegistrarPort(GetAccount(1)));
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
+        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(2))).
+        withIntParameter("port", AccountGetRegistrarPort(GetAccount(2)));
+
     BindAllAccounts();
 }

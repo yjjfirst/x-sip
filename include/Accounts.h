@@ -17,17 +17,22 @@ char *AccountGetPasswd(struct Account *account);
 void AccountSetAuthName(struct Account *account, char *userName);
 char *AccountGetAuthName(struct Account *account);
 
-void AccountSetProxy(struct Account *account, char *proxy);
-char *AccountGetProxy(struct Account *account);
+void AccountSetProxyAddr(struct Account *account, char *proxy);
+char *AccountGetProxyAddr(struct Account *account);
 
 void AccountSetRegistrar(struct Account *account, char *registrar);
 char *AccountGetRegistrar(struct Account *account);
+
+int AccountGetRegistrarPort(struct Account *account);
+void AccountSetRegistrarPort(struct Account *account, int port);
+
+int AccountGetProxyPort(struct Account *account);
+void AccountSetProxyPort(struct Account *account, int port);
 
 BOOL AccountBinded(struct Account *account);
 void AccountSetBinded(struct Account *account);
 void AccountSetUnbinded(struct Account *account);
 
-struct Account *CreateEmptyAccount();
 struct Account *CreateAccount(char *username, char *authname, char *passwd, char *proxy, char *registrar);
 void DestroyAccount(struct Account **account);
 

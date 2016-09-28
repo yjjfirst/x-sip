@@ -86,7 +86,6 @@ void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
     dialog->requestMethod = method;
 }
 
-
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
 {
     assert(dialog != NULL);

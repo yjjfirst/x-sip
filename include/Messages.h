@@ -53,3 +53,8 @@ BOOL MessageViaHeaderBranchMatched(struct Message *m, struct Message *mm);
 BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm);
 BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm);
 
+
+char *MessageGetDestAddr(MESSAGE *message);
+void MessageSetDestAddr(MESSAGE *m, char *addr);
+int  MessageGetDestPort(MESSAGE *message);
+void MessageSetDestPort(MESSAGE *m, int port);

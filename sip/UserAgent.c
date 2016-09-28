@@ -30,7 +30,7 @@ char *UserAgentGetAuthName(struct UserAgent *ua)
 
 char *UserAgentGetProxy(struct UserAgent *ua)
 {
-    return AccountGetProxy(ua->account);
+    return AccountGetProxyAddr(ua->account);
 }
 
 char *UserAgentGetRegistrar(struct UserAgent *ua)
