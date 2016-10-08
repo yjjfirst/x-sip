@@ -22,7 +22,7 @@ void AcceptCall(struct UserAgent *ua)
 
 BOOL ClientMessageHandle(char *string)
 {
-    struct UserAgent *ua = GetUserAgent(0);
+    struct UserAgent *ua = GetUserAgent(3);
     AcceptCall(ua);
     
     return 1;

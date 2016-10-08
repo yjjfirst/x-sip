@@ -80,7 +80,7 @@ void UserAgentEndCall(struct UserAgent *ua)
 
 void UserAgentAcceptCall(struct UserAgent *ua)
 {
-    struct Dialog *dialog = GetDialog(0);
+    struct Dialog *dialog = GetDialogByUserAgent(ua);
 
     DialogOk(dialog);
 }

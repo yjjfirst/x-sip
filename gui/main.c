@@ -83,8 +83,10 @@ static void activate (GtkApplication* app, gpointer user_data)
 
 gboolean sock_callback(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-    char buf[64];
-    g_io_channel_read_chars(source, buf, 64, NULL, NULL);
+    char *buf;
+    gsize length;
+    
+    g_io_channel_read_line(source, &buf, &length, NULL, NULL);
     printf("%s\n", buf);
     return TRUE;
 }

@@ -291,7 +291,7 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, MESS
 void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
-    MESSAGE *message = Build200OkMessage(TransactionGetRequest(dialog->transaction));
+    MESSAGE *message = Build200OkMessage(NULL, TransactionGetRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));     
     ResponseWith200OK(dialog->transaction);

@@ -27,6 +27,7 @@ extern "C" {
 #include "AccountManager.h"
 #include "DialogManager.h"
 #include "WWW_AuthenticationHeader.h"
+#include "Accounts.h"
 }
 
 TEST_GROUP(InviteMessageBuildTestGroup)
@@ -103,7 +104,7 @@ TEST(InviteMessageBuildTestGroup, OKMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(invite);    
+    MESSAGE *ok = Build200OkMessage(NULL, invite);    
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
@@ -117,7 +118,7 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(NULL, invite);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     URI *uri = ContactHeaderGetUri(c);
     
@@ -172,4 +173,10 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
     CHECK_TRUE(UriMatched(remoteUri, uri));
 
     DestroyMessage(&bye);
+}
+
+TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
+{
+    MESSAGE *ok = Build200OkMessage(dialog, inviteMessage);
+    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(ok));    
 }

@@ -127,7 +127,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
     MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    MESSAGE *localOk = Build200OkMessage(originInvite);
+    MESSAGE *localOk = Build200OkMessage(NULL, originInvite);
     
     Message2String(okString, localOk);
     
@@ -150,7 +150,7 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
     MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    MESSAGE *localOk = Build200OkMessage(originInvite);
+    MESSAGE *localOk = Build200OkMessage(NULL, originInvite);
     Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
@@ -250,7 +250,7 @@ TEST(DialogTestGroup, UASDialogIdTest)
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     DialogAddServerInviteTransaction(dialog, invite);
-    MESSAGE *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(NULL, invite);
     DialogOk(dialog);
     
     STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));

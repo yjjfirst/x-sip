@@ -433,7 +433,7 @@ MESSAGE *BuildRingingMessage(MESSAGE *invite)
     return BuildResponseMessage(invite, status);
 }
 
-MESSAGE *Build200OkMessage(MESSAGE *request)
+MESSAGE *Build200OkMessage(struct Dialog *dialog, MESSAGE *request)
 {
     assert(request != NULL);
 

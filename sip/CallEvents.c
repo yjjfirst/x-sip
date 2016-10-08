@@ -10,7 +10,7 @@ void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event)
 {
     assert(msg != NULL);
     
-    sprintf(msg, "ua=%d:event=%s", ua, "call_incoming");
+    sprintf(msg, "ua=%d:event=%s\r\n", ua, "call_incoming");
 }
 
 void NotifyClientImpl(enum CALL_EVENT event, struct UserAgent *ua)

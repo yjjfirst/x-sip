@@ -176,7 +176,7 @@ TEST(BindingMessageBuildTestGroup, OKMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(NULL, invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
@@ -191,7 +191,7 @@ TEST(BindingMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(invite);
+    MESSAGE *ok = Build200OkMessage(NULL, invite);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     URI *uri = ContactHeaderGetUri(c);
     

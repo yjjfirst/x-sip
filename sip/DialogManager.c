@@ -15,6 +15,22 @@ struct DialogManager {
 
 struct DialogManager DialogManager;
 
+struct Dialog *GetDialogByUserAgent(struct UserAgent *ua)
+{
+    int length = get_list_len(DialogManager.dialogList);
+    int i = 0;
+    
+    for (; i < length ; i ++) {
+        struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
+        if (DialogGetUserAgent(dialog) == ua) {
+            return dialog;
+        }
+    }
+
+    return NULL;
+
+}
+
 struct Dialog *GetDialogById(struct DialogId *dialogid)
 {
     int length = get_list_len(DialogManager.dialogList);

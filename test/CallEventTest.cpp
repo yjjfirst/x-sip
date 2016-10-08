@@ -56,7 +56,7 @@ TEST(CallEventTestGroup, BuildClientMessageTest)
     
     BuildClientMessage(msg, ua, event);
 
-    STRCMP_EQUAL("ua=0:event=call_incoming", msg);
+    STRCMP_EQUAL("ua=0:event=call_incoming\r\n", msg);
 }
 
 TEST(CallEventTestGroup, ClientMessageSendTest)
@@ -64,7 +64,7 @@ TEST(CallEventTestGroup, ClientMessageSendTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=0:event=call_incoming").
+        withParameter("message","ua=0:event=call_incoming\r\n").
         withParameter("addr", "192.168.10.1").
         withParameter("port", 5556).
         withParameter("fd", ClientTransporter->fd);
@@ -81,7 +81,7 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=1:event=call_incoming").
+        withParameter("message","ua=1:event=call_incoming\r\n").
         withParameter("addr", "192.168.10.1").
         withParameter("port", 5556).
         withParameter("fd", ClientTransporter->fd);

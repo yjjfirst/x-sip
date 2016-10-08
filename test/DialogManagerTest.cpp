@@ -5,6 +5,7 @@ extern "C" {
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
+#include "UserAgentManager.h"    
 }
 
 TEST_GROUP(DialogsTestGroup)
@@ -73,6 +74,8 @@ TEST(DialogsTestGroup, CountDialogsTest)
 
 TEST(DialogsTestGroup, GetDialogTest)
 {
+    ClearDialogManager();
+
     struct UserAgent *ua =  CreateUserAgent(0);
 
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);    
@@ -82,6 +85,51 @@ TEST(DialogsTestGroup, GetDialogTest)
     POINTERS_EQUAL(dialog1, GetDialog(1));
 
     DestroyUserAgent(&ua);
+}
+
+TEST(DialogsTestGroup, GetDialogInFirstUserAgentTest)
+{
+    struct UserAgent *ua = AddUserAgent(0);
+    AddUserAgent(1);
+    AddUserAgent(0);
+    AddUserAgent(0);
+    AddUserAgent(0);
+
+    struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
+
+    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+
+    ClearUserAgentManager();
+}
+
+TEST(DialogsTestGroup, GetDialogInLastUserAgentTest)
+{
+    AddUserAgent(0);
+    AddUserAgent(1);
+    AddUserAgent(0);
+    AddUserAgent(0);
+    struct UserAgent *ua = AddUserAgent(0);
+
+    struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
+
+    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+
+    ClearUserAgentManager();
+}
+
+TEST(DialogsTestGroup, GetDialogInMiddleUserAgentTest)
+{
+    AddUserAgent(0);
+    AddUserAgent(1);
+    struct UserAgent *ua = AddUserAgent(0);
+    AddUserAgent(0);
+    AddUserAgent(0);
+
+    struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
+
+    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+
+    ClearUserAgentManager();
 }
 
 TEST(DialogsTestGroup, ClearDialogMangerTest)
