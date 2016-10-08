@@ -6,6 +6,7 @@
 extern "C" {
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 #include "Messages.h"
 #include "Transporter.h"
 #include "TransactionManager.h"
@@ -27,6 +28,7 @@ int SendOut100TryingMock(char *message, char *destaddr, int destport, int fd)
     
     CHECK_EQUAL(100, StatusLineGetStatusCode(sl));
     STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(sl));
+
     DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    

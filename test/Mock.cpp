@@ -112,6 +112,21 @@ struct MessageTransporter DummyTransporter = {
     .callback = SipMessageHandle
 };
 
+int ClientSendMock(char *message, char *destaddr, int destport, int fd)
+{
+    mock().actualCall("ClientUdpSend").withStringParameter("message", message).
+        withStringParameter("addr", destaddr).
+        withIntParameter("port", destport).
+        withIntParameter("fd", fd);
+    return 0;
+}
+
+struct MessageTransporter ClientTransporterMock = {
+    .send = ClientSendMock,
+    .receive = NULL,
+    .init = NULL,
+    .callback = NULL,
+};
 void GenerateBranchMock(char *branch)
 {
     strcpy(branch, "z9hG4bK1491280923");

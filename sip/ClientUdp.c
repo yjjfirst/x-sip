@@ -7,7 +7,7 @@
 #include "Transporter.h"
 #include "ClientUdp.h"
 #include "Udp.h"
-#include "TransactionManager.h"
+#include "Call.h"
 
 #define MAXLINE 80
 #define CLIENT_SERV_PORT 5555
@@ -27,12 +27,7 @@ int ClientInit(int port)
     return UdpInit(port);
 }
 
-BOOL ClientMessageHandle(char *string)
-{
-    return 1;
-}
-
-struct MessageTransporter ClientTransporter = {
+struct MessageTransporter ClientUdpTransporter = {
     .send = ClientSendMessage,
     .receive = ClientReceiveMessage,
     .init = ClientInit,

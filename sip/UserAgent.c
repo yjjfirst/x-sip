@@ -13,6 +13,8 @@
 #include "DialogId.h"
 #include "Dialog.h"
 #include "Accounts.h"
+#include "TransactionManager.h"
+#include "UserAgentManager.h"
 
 struct UserAgent {
     struct Account *account;
@@ -79,6 +81,7 @@ void UserAgentEndCall(struct UserAgent *ua)
 void UserAgentAcceptCall(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialog(0);
+
     DialogOk(dialog);
 }
 
@@ -102,5 +105,5 @@ void DestroyUserAgent(struct UserAgent **ua)
 
 void UserAgentDump(struct UserAgent *ua)
 {
-    printf("%s:%d\n", AccountGetUserName(ua->account), CountDialogs());
+    printf("%s\n", AccountGetUserName(ua->account));
 }

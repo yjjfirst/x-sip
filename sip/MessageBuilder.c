@@ -410,12 +410,19 @@ MESSAGE *BuildResponseMessage(MESSAGE *request, struct StatusLine *status)
     return message;  
 }
 
-MESSAGE *BuildTryingMessage(MESSAGE *invite)
+MESSAGE *BuildTryingMessage(struct Dialog *dialog, MESSAGE *invite)
 {
+    MESSAGE *trying = NULL;
     assert(invite != NULL);
 
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
-    return BuildResponseMessage(invite, status);
+    trying = BuildResponseMessage(invite, status);
+    if (dialog != NULL) {
+        struct UserAgent *ua = DialogGetUserAgent(dialog);
+        if (UserAgentGetAccount(ua) != NULL)
+            BuildMessageDest(trying, dialog, SIP_METHOD_NONE); 
+    }
+    return trying;
 }
 
 MESSAGE *BuildRingingMessage(MESSAGE *invite)

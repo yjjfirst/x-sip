@@ -7,4 +7,4 @@ int ClientInit(int port);
 int ClientReceiveMessage(char *message, int fd);
 int ClientSendMessage(char *message, char *destaddr, int destport, int fd);
 
-extern struct MessageTransporter ClientTransporter;
+extern struct MessageTransporter ClientUdpTransporter;

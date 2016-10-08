@@ -19,3 +19,12 @@ void AcceptCall(struct UserAgent *ua)
 {
     UserAgentAcceptCall(ua);
 }
+
+BOOL ClientMessageHandle(char *string)
+{
+    struct UserAgent *ua = GetUserAgent(0);
+    AcceptCall(ua);
+    
+    return 1;
+}
+

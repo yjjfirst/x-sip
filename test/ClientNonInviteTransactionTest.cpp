@@ -126,6 +126,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive2xxTest)
 
     ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    TransactionManagerDump();
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)

@@ -14,7 +14,7 @@
 
 int SipUdpReceiveMessage(char *message, int fd)
 {
-    return UdpReceive(message, fd);
+    return UdpReceive(message, fd);    
 }
 
 int SipUdpSendMessage(char *message, char *destaddr, int destport, int fd)

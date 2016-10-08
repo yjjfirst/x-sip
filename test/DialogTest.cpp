@@ -24,6 +24,7 @@ extern "C" {
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
 #include "DialogManager.h"
+#include "CallEvents.h"
 }
 
 static struct Session *CreateSessionMock()
@@ -340,4 +341,5 @@ TEST(DialogTestGroup, ReceiveInviteTest)
     DestroyMessage(&invite);
     ClearUserAgentManager();
 }
+
 

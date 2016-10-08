@@ -6,26 +6,21 @@ extern "C" {
 #include <string.h>
 
 #include "URI.h"
-#include "RequestLine.h"
 #include "StatusLine.h"
 #include "MessageBuilder.h"
 #include "Messages.h"
 #include "ContactHeader.h"
 #include "ViaHeader.h"
-#include "MaxForwardsHeader.h"
 #include "CallIdHeader.h"
 #include "CSeqHeader.h"
-#include "ExpiresHeader.h"
-#include "ContentLengthHeader.h"
 #include "Header.h"
-#include "Parameter.h"
 #include "UserAgent.h"
 #include "Dialog.h"
-#include "Provision.h"
 #include "TestingMessages.h"
 #include "UserAgentManager.h"
 #include "AccountManager.h"
-#include "WWW_AuthenticationHeader.h"
+#include "DialogManager.h"
+#include "Accounts.h"
 }
 
 TEST_GROUP(TryingMessageBuildTestGroup)
@@ -37,7 +32,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageStatusLineTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
@@ -54,7 +49,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
     CONTACT_HEADER *inviteFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite);
     CONTACT_HEADER *tryingFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, trying);
 
@@ -69,7 +64,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
     
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
 
     CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -85,7 +80,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
 
     CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -104,7 +99,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCallIdTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
 
     struct CallIdHeader *inviteCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite);
     struct CallIdHeader *tryingCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, trying);
@@ -119,7 +114,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCSeqTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
     
     struct CSeqHeader *inviteCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite);
     struct CSeqHeader *tryingCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, trying);
@@ -134,7 +129,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageViaTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(invite);
+    MESSAGE *trying = BuildTryingMessage(NULL, invite);
 
     VIA_HEADER *inviteVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite);
     VIA_HEADER *tryingVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, trying);
@@ -145,3 +140,44 @@ TEST(TryingMessageBuildTestGroup, TryingMessageViaTest)
     DestroyMessage(&invite);    
 }
 
+TEST(TryingMessageBuildTestGroup, TryingMessageDestPortTest)
+{
+    MESSAGE *trying = NULL;
+    
+    AccountInit();
+    struct UserAgent *ua = CreateUserAgent(0);
+    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
+    MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
+
+    trying = BuildTryingMessage(dialog, invite);
+
+    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(trying));
+
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);
+
+    ClearDialogManager();
+    ClearAccountManager();
+    DestroyUserAgent(&ua);
+}
+
+TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
+{
+    MESSAGE *trying = NULL;
+    
+    AccountInit();
+    struct UserAgent *ua = CreateUserAgent(0);
+    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
+    MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
+
+    trying = BuildTryingMessage(dialog, invite);
+
+    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(trying));
+
+    DestroyMessage(&trying);
+    DestroyMessage(&invite);
+
+    ClearDialogManager();
+    ClearAccountManager();
+    DestroyUserAgent(&ua);
+}

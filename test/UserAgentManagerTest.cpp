@@ -77,3 +77,26 @@ TEST(UserAgentManagerTestGroup, CreateUserAgentAfterReceiveInviteTest)
     CHECK_EQUAL(1, CountUserAgent());
     ClearTransactionManager();
 }
+
+TEST(UserAgentManagerTestGroup, GetUserAgentPositionTest)
+{
+    struct UserAgent *u1 = AddUserAgent(0);
+    struct UserAgent *u2 = AddUserAgent(1);
+    struct UserAgent *u3 = AddUserAgent(2);
+
+    CHECK_EQUAL(0, GetUserAgentPosition(u1));
+    CHECK_EQUAL(1, GetUserAgentPosition(u2));
+    CHECK_EQUAL(2, GetUserAgentPosition(u3));
+}
+
+TEST(UserAgentManagerTestGroup, GetNonExistUserAgentPositionTest)
+{
+    AddUserAgent(0);
+    AddUserAgent(1);
+    AddUserAgent(2);
+
+    struct UserAgent *ua = CreateUserAgent(0);
+    CHECK_EQUAL(-1, GetUserAgentPosition(ua));
+
+    DestroyUserAgent(&ua);
+}

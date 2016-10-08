@@ -364,7 +364,7 @@ struct Transaction *CreateClientNonInviteTransaction(MESSAGE *request, struct Tr
 struct Transaction *CreateServerInviteTransaction(MESSAGE *request, struct TransactionUser *user)
 {
     struct Transaction *t = CallocTransaction(request, user);
-    MESSAGE *trying = BuildTryingMessage(t->request);
+    MESSAGE *trying = BuildTryingMessage((struct Dialog *)user, t->request);
 
     t->state = TRANSACTION_STATE_PROCEEDING;
     t->fsm = &ServerInviteTransactionFsm;

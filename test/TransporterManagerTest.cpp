@@ -81,7 +81,7 @@ TEST(TransporterManagerTestGroup, InitTest)
     TransporterManagerInit();    
     
     POINTERS_EQUAL(&SipUdpTransporter, GetTransporter(SipUdpTransporter.fd));
-    POINTERS_EQUAL(&ClientTransporter, GetTransporter(ClientTransporter.fd));
+    POINTERS_EQUAL(&ClientUdpTransporter, GetTransporter(ClientUdpTransporter.fd));
 
     mock().clear();
 }

@@ -18,4 +18,6 @@ int ReceiveInMessage();
 int SendOutMessage(char *message, char *destaddr, int port);
 int TransporterInit(int port);
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
+
 extern struct MessageTransporter *SipTransporter;
+extern struct MessageTransporter *ClientTransporter;

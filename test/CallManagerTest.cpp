@@ -40,7 +40,7 @@ TEST_GROUP(CallManagerTestGroup)
     }
 };
 
-void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
+static void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
 {
     mock().actualCall("NotifyClient").withParameter("event", event);
 }
@@ -146,3 +146,4 @@ TEST(CallManagerTestGroup, IncomingCallTest)
     
     ClearUserAgentManager();    
 }
+

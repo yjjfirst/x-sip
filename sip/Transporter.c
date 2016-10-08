@@ -7,11 +7,12 @@
 #include "TransactionManager.h"
 #include "Messages.h"
 #include "SipUdp.h"
+#include "ClientUdp.h"
 
 int SendOutMessage(char *message, char *destaddr, int port)
 {
     if (SipTransporter->send == NULL) return -1;
-    
+
     return SipTransporter->send(message, destaddr, port, SipTransporter->fd);
 }
 
@@ -40,3 +41,4 @@ struct MessageTransporter *SetTransporter(struct MessageTransporter *t)
 }
 
 struct MessageTransporter *SipTransporter = &SipUdpTransporter;
+struct MessageTransporter *ClientTransporter = &ClientUdpTransporter;

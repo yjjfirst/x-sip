@@ -46,7 +46,7 @@ struct MessageTransporter *GetTransporter(int fd)
 void TransporterManagerInit()
 {
     AddTransporter(&SipUdpTransporter);
-    AddTransporter(&ClientTransporter);
+    AddTransporter(&ClientUdpTransporter);
 }
 
 void ClearTransporterManager()

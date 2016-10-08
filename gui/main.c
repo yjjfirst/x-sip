@@ -1,3 +1,4 @@
+#include <gdk/gdk.h>
 #include <gtk/gtk.h>
 
 #include "Init.h"
@@ -80,13 +81,27 @@ static void activate (GtkApplication* app, gpointer user_data)
     gtk_widget_show_all (window);
 }
 
+gboolean sock_callback(GIOChannel *source, GIOCondition condition, gpointer data)
+{
+    char buf[64];
+    g_io_channel_read_chars(source, buf, 64, NULL, NULL);
+    printf("%s\n", buf);
+    return TRUE;
+}
+
 int main (int argc, char **argv)
 {
     GtkApplication *app;
     int status;
+    GIOChannel *io_channel = NULL;
+
+    sockfd = UdpInit(5556);
+
+    io_channel = g_io_channel_unix_new (sockfd);    
+    g_io_channel_set_encoding (io_channel, NULL, NULL);
+    g_io_add_watch (io_channel, G_IO_IN, sock_callback, NULL);
     
     InitStack();
-    sockfd = UdpInit(5556);
     
     app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
     g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);

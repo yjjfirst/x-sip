@@ -13,7 +13,7 @@ struct Message *BuildAckMessage(struct Dialog *dialog);
 struct Message *BuildByeMessage(struct Dialog *dialog);
 struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge);
 
-struct Message *BuildTryingMessage(struct Message *invite);
+struct Message *BuildTryingMessage(struct Dialog *dialog, struct Message *invite);
 struct Message *BuildRingingMessage(struct Message *invite);
 struct Message *Build200OkMessage(struct Message *invite);
 struct Message *Build301Message(struct Message *invite);

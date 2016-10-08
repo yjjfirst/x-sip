@@ -33,6 +33,20 @@ struct UserAgent *GetUserAgent(int pos)
     return get_data_at(uam->userAgents, pos);
 }
 
+int GetUserAgentPosition(struct UserAgent *ua)
+{
+    int i = 0;
+    struct UserAgentManager *uam = &UserAgentManager;   
+    int len = CountUserAgent(uam);
+
+    for (; i < len; i ++) {
+        struct UserAgent *ua1 = get_data_at(uam->userAgents, i);
+        if (ua1 == ua) return i;
+    }
+
+    return -1;
+}
+
 void ClearUserAgentManager()
 {
     int i = 0;

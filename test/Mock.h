@@ -15,6 +15,7 @@ void GenerateBranchMockForAuthorization(char *branch);
 extern struct MessageTransporter MockTransporter;
 extern struct MessageTransporter DummyTransporter;
 extern struct MessageTransporter MockTransporterAndHandle;
+extern struct MessageTransporter ClientTransporterMock;
 
 int bind_mock(int sockfd, const struct sockaddr *addr,
               socklen_t addrlen);
