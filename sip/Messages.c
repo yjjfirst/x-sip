@@ -194,6 +194,8 @@ char *MessageGetFromTag(MESSAGE *message)
 
 char *MessageGetToTag(MESSAGE *message)
 {
+    assert(message != NULL);
+    
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
 }
@@ -355,6 +357,7 @@ void MessageDump(MESSAGE *message)
     char messageString[MAX_MESSAGE_LENGTH] = {0};
 
     printf("\n");
+    printf("%s %d\n", MessageGetDestAddr(message), MessageGetDestPort(message));
     Message2String(messageString, message);
     printf("%s\n",messageString);
 }

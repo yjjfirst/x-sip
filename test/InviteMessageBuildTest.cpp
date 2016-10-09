@@ -179,4 +179,15 @@ TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 {
     MESSAGE *ok = Build200OkMessage(dialog, inviteMessage);
     STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(ok));    
+
+    DestroyMessage(&ok);
+}
+
+
+TEST(InviteMessageBuildTestGroup, OkMessageDestPortTest)
+{
+    MESSAGE *ok = Build200OkMessage(dialog, inviteMessage);
+    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(ok));    
+
+    DestroyMessage(&ok);
 }

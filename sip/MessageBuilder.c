@@ -148,10 +148,15 @@ struct Header *BuildRequestContentLengthHeader(struct Dialog *dialog)
     return (struct Header *)c;
 }
 
-void BuildMessageDest(MESSAGE *m, struct Dialog *dialog, SIP_METHOD method)
+void BuildMessageDest(MESSAGE *m, struct Dialog *dialog)
 {
+    if (dialog == NULL) return;
+
     struct UserAgent *ua = DialogGetUserAgent(dialog);
+    if (ua == NULL) return;
+                   
     struct Account *account = UserAgentGetAccount(ua);
+    if (account == NULL) return;
 
     MessageSetDestAddr(m, AccountGetRegistrar(account));
     MessageSetDestPort(m, AccountGetRegistrarPort(account));
@@ -161,7 +166,7 @@ MESSAGE *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 {
     MESSAGE *message = CreateMessage();
 
-    BuildMessageDest(message, dialog, method);
+    BuildMessageDest(message, dialog);
     
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
@@ -420,7 +425,7 @@ MESSAGE *BuildTryingMessage(struct Dialog *dialog, MESSAGE *invite)
     if (dialog != NULL) {
         struct UserAgent *ua = DialogGetUserAgent(dialog);
         if (UserAgentGetAccount(ua) != NULL)
-            BuildMessageDest(trying, dialog, SIP_METHOD_NONE); 
+            BuildMessageDest(trying, dialog); 
     }
     return trying;
 }
@@ -437,8 +442,13 @@ MESSAGE *Build200OkMessage(struct Dialog *dialog, MESSAGE *request)
 {
     assert(request != NULL);
 
+    MESSAGE *ok;
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
-    return BuildResponseMessage(request, status);
+
+    ok =  BuildResponseMessage(request, status);
+    BuildMessageDest(ok, dialog);
+    
+    return ok;
 }
 
 MESSAGE *Build301Message(MESSAGE *invite)
