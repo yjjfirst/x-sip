@@ -43,7 +43,7 @@ int SendOutMessageMock(char *message, char *destaddr, int destport,  int fd)
     }
 }
 
-int SendOutMessageMockForTransporterTest(char *message, char *destaddr, int destport,  int fd)
+int SendOutMessageMockForMessageDestTest(char *message, char *destaddr, int destport,  int fd)
 {
     MESSAGE *m = CreateMessage();
     ParseMessage(message, m);
@@ -66,7 +66,7 @@ int SendOutMessageMockForTransporterTest(char *message, char *destaddr, int dest
         return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
             withIntParameter("StatusCode", statusCode).
             withStringParameter("destaddr", destaddr).
-            withIntParameter("port", destport).
+            withIntParameter("destport", destport).
             returnIntValue();
     }
 }
@@ -82,16 +82,16 @@ int MessageHandleMock(char *message)
 }
 
 struct MessageTransporter MockTransporter = {
-    .send = SendOutMessageMock,
-    .receive = ReceiveInMessageMock,
-    .init = InitMock,
+    .send     = SendOutMessageMock,
+    .receive  = ReceiveInMessageMock,
+    .init     = InitMock,
     .callback = SipMessageHandle,
 };
 
 struct MessageTransporter MockTransporterAndHandle = {
-    .send = SendOutMessageMockForTransporterTest,
-    .receive = ReceiveInMessageMock,
-    .init = InitMock,
+    .send     = SendOutMessageMockForMessageDestTest,
+    .receive  = ReceiveInMessageMock,
+    .init     = InitMock,
     .callback = MessageHandleMock,
 };
 
@@ -127,6 +127,7 @@ struct MessageTransporter ClientTransporterMock = {
     .init = NULL,
     .callback = NULL,
 };
+
 void GenerateBranchMock(char *branch)
 {
     strcpy(branch, "z9hG4bK1491280923");

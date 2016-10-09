@@ -25,7 +25,31 @@ extern "C" {
 #include "CSeqHeader.h"
 #include "DialogManager.h"
 #include "CallEvents.h"
+#include "Accounts.h"
 }
+
+int SendOutAckMessageMock(char *message, char *destaddr, int destport, int fd)
+{
+    MESSAGE *m = CreateMessage();
+    char *remoteTag = NULL;
+
+    ParseMessage(message, m);
+    remoteTag = MessageGetToTag(m);    
+    mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
+
+    CHECK_EQUAL(SIP_METHOD_ACK, RequestLineGetMethod(MessageGetRequestLine(m)));
+    DestroyMessage(&m);
+
+    return 0;
+}
+
+static struct MessageTransporter MockTransporterForAck = {
+    SendOutAckMessageMock,
+    ReceiveInMessageMock,
+    NULL,
+    SipMessageHandle
+
+};
 
 static struct Session *CreateSessionMock()
 {
@@ -60,33 +84,9 @@ TEST_GROUP(DialogTestGroup)
         ClearAccountManager();
         ClearTransactionManager();
         DestroyUserAgent(&ua);
-
         mock().checkExpectations();
         mock().clear();
     }
-};
-
-int SendOutAckMessageMock(char *message, char *destaddr, int destport, int fd)
-{
-    MESSAGE *m = CreateMessage();
-    char *remoteTag = NULL;
-
-    ParseMessage(message, m);
-    remoteTag = MessageGetToTag(m);    
-    mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
-
-    CHECK_EQUAL(SIP_METHOD_ACK, RequestLineGetMethod(MessageGetRequestLine(m)));
-    DestroyMessage(&m);
-
-    return 0;
-}
-
-static struct MessageTransporter MockTransporterForAck = {
-    SendOutAckMessageMock,
-    ReceiveInMessageMock,
-    NULL,
-    SipMessageHandle
-
 };
 
 TEST(DialogTestGroup, DialogCreateTest)
@@ -229,6 +229,19 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
 
 }
 
+TEST(DialogTestGroup, UASDialog200OkMessageDestTest)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200).
+        withStringParameter("destaddr", AccountGetProxyAddr(GetAccount(0))).
+        withIntParameter("destport", AccountGetProxyPort(GetAccount(0)));
+
+    DialogAddServerInviteTransaction(dialog, invite);
+    
+    UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
+    DialogOk(dialog);
+}
+
 TEST(DialogTestGroup, UACDialogTerminateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
@@ -328,18 +341,14 @@ TEST(DialogTestGroup, ReceiveInviteTest)
 {
     ClearDialogManager();
     
-    MESSAGE *expected = CreateMessage();
-    ParseMessage(INCOMMING_INVITE_MESSAGE, expected);
-
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
     ReceiveInMessage();
-
     CHECK_EQUAL(1, CountDialogs());
 
-    DestroyMessage(&expected);
     DestroyMessage(&invite);
     ClearUserAgentManager();
 }
+
 
 

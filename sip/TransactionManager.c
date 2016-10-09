@@ -161,7 +161,8 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
     struct Transaction *t = NULL;
 
     if ( (t = MatchTransaction(message)) == NULL) {
-        HandleInviteRequest(message);
+        if (MessageGetMethod(message) == SIP_METHOD_INVITE)
+            HandleInviteRequest(message);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE);
         DestroyMessage(&message);
