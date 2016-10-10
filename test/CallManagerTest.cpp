@@ -61,7 +61,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     char account = 0;
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
     CallOut(account, dest);
@@ -70,6 +70,16 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     CHECK_EQUAL(1, CountUserAgent());
     CHECK_EQUAL(1, CountDialogs());
 }
+#define BYE_200OK_MESSAGE (char *)"\
+SIP/2.0 200 OK\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1069855717\r\n\
+To: <sip:88002@192.168.10.62>;tag=as6151ad25\r\n\
+Call-ID: 97295390\r\n\
+CSeq: 20 BYE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Type: application/sdp\r\n\
+Content-Length: 289\r\n"
 
 TEST(CallManagerTestGroup, ActiveHangupTest)
 {
@@ -77,7 +87,7 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
     char account = 0;
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
     struct UserAgent *ua = CallOut(account, dest);
@@ -100,7 +110,7 @@ TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
     UT_PTR_SET(NotifyClient, NotifyClientMock);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
     
     CallOut(account, dest);
@@ -119,7 +129,7 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
     UT_PTR_SET(NotifyClient, NotifyClientMock);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
     
     CallOut(account, dest);
 

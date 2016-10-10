@@ -59,6 +59,17 @@ TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
     DestroyMessage(&invite);
 }
 
+#define INCOMMING_INVITE_MESSAGE_WITH_TO_TAG (char *)"\
+INVITE sip:88001@192.168.10.1:5061;line=987565ffceb68b1 SIP/2.0\r\n\
+Via: SIP/2.0/UDP 192.168.10.62:5060;branch=z9hG4bK27dc30b4;rport\r\n\
+Max-Forwards: 70\r\n\
+From: \"88002\" <sip:88002@192.168.10.62>;tag=as47cc7458\r\n\
+To: <sip:88001@192.168.10.1:5061;line=987565ffceb68b1>;tag=ad47cc9876\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Call-ID: 00ef25c213336598033d4bf8248deff7@192.168.10.62:5060\r\n\
+CSeq: 102 INVITE\r\n\
+Content-Length: 284\r\n"
+
 TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
 {
     MESSAGE *invite = CreateMessage();

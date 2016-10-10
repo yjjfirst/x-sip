@@ -106,7 +106,7 @@ TEST(DialogTestGroup, SetLocalTagTest)
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
    
     AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
@@ -179,7 +179,7 @@ TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);
@@ -193,13 +193,13 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     MESSAGE *ok = CreateMessage();
   
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);    
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
  
     DialogAddClientInviteTransaction(dialog, invite);
     ReceiveInMessage();
 
-    ParseMessage(INVITE_200OK_MESSAGE, ok);
+    ParseMessage(OK_MESSAGE_RECEIVED, ok);
     CONTACT_HEADER *ch = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
 
     CHECK_TRUE(UriMatched(ContactHeaderGetUri(ch), DialogGetRemoteTarget(dialog)));
@@ -219,7 +219,7 @@ TEST(DialogTestGroup, UACDialogRemoteUriTest)
 TEST(DialogTestGroup, UACDialogConfirmedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogAddClientInviteTransaction(dialog, invite);

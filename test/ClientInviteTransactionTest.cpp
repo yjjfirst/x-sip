@@ -24,6 +24,16 @@ extern "C" {
 #include "DialogManager.h"
 }
 
+#define INVITE_100TRYING_MESSAGE (char *)"\
+SIP/2.0 100 Trying\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
+From: <sip:88001@192.168.10.62>;tag=1226271270\r\n\
+To: <sip:88002@192.168.10.62>\r\n\
+Call-ID: 778885328\r\n\
+CSeq: 20 INVITE\r\n\
+Contact: <sip:88002@192.168.10.62:5060>\r\n\
+Content-Length: 0\r\n"
+
 TimerCallback TimerACallbackFunc;
 TimerCallback TimerBCallbackFunc;
 TimerCallback TimerDCallbackFunc;
@@ -124,7 +134,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
 {
     UT_PTR_SET(CreateSession, CreateSessionMock);
     
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK);
 
     ReceiveInMessage();
@@ -144,14 +154,14 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
     ReceiveInMessage();
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
     ReceiveInMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Without100ReceivedTest)
 {
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
     ReceiveInMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
 }
@@ -161,7 +171,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
     UT_PTR_SET(OnTransactionEvent, OnEventMock);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_180RINGING_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
     mock().expectOneCall("NotifyUser");
     
     ReceiveInMessage();
@@ -208,7 +218,7 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 {
     PrepareProceedingState();
 
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_200OK_MESSAGE);
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
 
     ReceiveInMessage();    
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));

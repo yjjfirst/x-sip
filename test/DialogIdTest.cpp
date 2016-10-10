@@ -74,7 +74,7 @@ TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
     MESSAGE *message = CreateMessage();
     struct DialogId *dialogid;
 
-    ParseMessage(INVITE_200OK_MESSAGE, message);
+    ParseMessage(OK_MESSAGE_RECEIVED, message);
     dialogid = CreateDialogIdFromMessage(message);
     STRCMP_EQUAL(MessageGetCallId(message), DialogIdGetCallId(dialogid));
     STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetLocalTag(dialogid));
