@@ -231,7 +231,7 @@ BOOL ValidatedNonInviteMethod(MESSAGE *message)
 
 struct Transaction *AddClientNonInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
-    struct Transaction *t = CreateClientNonInviteTransaction(message, user);
+    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
     AddTransaction(t);
     return t;
@@ -239,7 +239,7 @@ struct Transaction *AddClientNonInviteTransaction(MESSAGE *message, struct Trans
 
 struct Transaction *AddClientInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
-    struct Transaction *t = CreateClientInviteTransaction(message, user);
+    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_CLIENT_INVITE);
 
     AddTransaction(t);
     return t;
@@ -248,7 +248,7 @@ struct Transaction *AddClientInviteTransaction(MESSAGE *message, struct Transact
 
 struct Transaction *AddServerInviteTransaction(MESSAGE *message, struct TransactionUser *user)
 {
-    struct Transaction *t = CreateServerInviteTransaction(message, user);
+    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_SERVER_INVITE);
 
     AddTransaction(t);
     return t;
@@ -261,7 +261,7 @@ struct Transaction *AddServerNonInviteTransaction(MESSAGE *message, struct Trans
     assert(message != NULL);
     if (!ValidatedNonInviteMethod(message)) return NULL;
 
-    t = CreateServerNonInviteTransaction(message, user);
+    t = CreateTransaction(message, user, TRANSACTION_TYPE_SERVER_NON_INVITE);
     AddTransaction(t);
 
     return t;

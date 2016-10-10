@@ -49,10 +49,7 @@ enum TransactionEvent {
     TRANSACTION_EVENT_MAX,
 };
 
-struct Transaction *CreateClientNonInviteTransaction(struct Message *request, struct TransactionUser *user);
-struct Transaction *CreateClientInviteTransaction(struct Message *request, struct TransactionUser *user);
-struct Transaction *CreateServerInviteTransaction(struct Message *request, struct TransactionUser *user);
-struct Transaction *CreateServerNonInviteTransaction(struct Message *request, struct TransactionUser *user);
+struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
 int TransactionSendMessage(struct Message *message);
