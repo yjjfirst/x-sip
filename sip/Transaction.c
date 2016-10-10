@@ -181,8 +181,8 @@ int SendRequestMessage(struct Transaction *t)
     assert(t->request != NULL);
 
     if (TransactionSendMessage(t->request) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        return -1;
+         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+         return -1;
     }
     
     return 0;
@@ -323,38 +323,49 @@ void ReceiveDupRequest(struct Transaction *t, MESSAGE *message)
     ResendLatestResponse(t);
 }
 
+struct TransactionInitInfo {
+    enum TransactionType type;
+    enum TransactionState state;
+    struct Fsm *fsm;
+};
+
+struct TransactionInitInfo TransactionInitInfos[] = {
+    {TRANSACTION_TYPE_CLIENT_NON_INVITE, TRANSACTION_STATE_TRYING, &ClientNonInviteTransactionFsm},
+    {TRANSACTION_TYPE_CLIENT_INVITE, TRANSACTION_STATE_CALLING, &ClientInviteTransactionFsm},
+    {TRANSACTION_TYPE_SERVER_INVITE, TRANSACTION_STATE_PROCEEDING, &ServerInviteTransactionFsm},
+    {TRANSACTION_TYPE_SERVER_NON_INVITE, TRANSACTION_STATE_TRYING, &ServerNonInviteTransactionFsm},    
+};
+
+struct TransactionInitInfo *GetTransactionInitInfo(enum TransactionType type)
+{
+    int i = 0;
+
+    for (;i < TRANSACTION_TYPE_MAX;i++) {
+        if (type == TransactionInitInfos[i].type)
+            return &TransactionInitInfos[i];
+    }
+
+    return NULL;
+}
+
 struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *user, enum TransactionType type)
 {
     struct Transaction *t = CallocTransaction(request, user);
-    t->type = type;
-    
-    if (type == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-        t->state = TRANSACTION_STATE_TRYING;
-        t->fsm = &ClientNonInviteTransactionFsm;
-        
-        if (SendRequestMessage(t) < 0) {
-            DestroyTransaction(&t);
-            return NULL;
-        }
+    struct TransactionInitInfo *initInfo = GetTransactionInitInfo(type);
 
-        ClientNonInviteAddRetransmitTimer(t);
-        AddTimeoutTimer(t);
-    } else if (type == TRANSACTION_TYPE_CLIENT_INVITE){
-        t->state = TRANSACTION_STATE_CALLING;
-        t->fsm = &ClientInviteTransactionFsm;
-        
+    t->type = type;
+    t->state = initInfo->state;
+    t->fsm = initInfo->fsm;
+    
+    if (type == TRANSACTION_TYPE_CLIENT_NON_INVITE || type == TRANSACTION_TYPE_CLIENT_INVITE) {
         if (SendRequestMessage(t) < 0) {
             DestroyTransaction(&t);
             return NULL;
         }
-        
         ClientNonInviteAddRetransmitTimer(t);
         AddTimeoutTimer(t);
     } else if (type == TRANSACTION_TYPE_SERVER_INVITE) {
         MESSAGE *trying = BuildTryingMessage((struct Dialog *)user, t->request);
-        t->state = TRANSACTION_STATE_PROCEEDING;
-        t->fsm = &ServerInviteTransactionFsm;
-        
         TransactionAddResponse(t, trying);
         
         if (TransactionSendMessage(trying) < 0) {
@@ -362,8 +373,6 @@ struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *
             DestroyTransaction(&t);
             return NULL;
         }
-    } else if (type == TRANSACTION_TYPE_SERVER_NON_INVITE) {
-        t->fsm = &ServerNonInviteTransactionFsm;
     }
     
     return t;
