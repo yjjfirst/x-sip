@@ -156,7 +156,7 @@ void DialogAck(struct Dialog *dialog)
     DestroyMessage(&ack);
 }
 
-void ClientReceiveOk(struct Dialog *dialog, MESSAGE *message)
+void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
     ExtractDialogIdFromMessage(dialog, message);
     ExtractRemoteTargetFromMessage(dialog, message);
@@ -170,23 +170,10 @@ void ClientReceiveOk(struct Dialog *dialog, MESSAGE *message)
     dialog->session = CreateSession();
 }
 
-void ClientInviteRingingReceived(struct Dialog *dialog, MESSAGE *message)
+void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
     if (NotifyClient != NULL)
         NotifyClient(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
-}
-
-void HandleClientInviteEvent(struct Transaction *t)
-{
-    MESSAGE *message = TransactionGetLatestResponse(t);
-    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
-    enum TransactionEvent event = TransactionGetCurrentEvent(t);
-    
-    if (event == TRANSACTION_EVENT_200OK) {
-        ClientReceiveOk(dialog, message);
-    } else if (event == TRANSACTION_EVENT_180RINGING) {
-        ClientInviteRingingReceived(dialog, message);
-    }
 }
 
 void HandleRegisterEvent (struct Transaction *t)
@@ -214,26 +201,35 @@ void HandleByeEvent(struct Transaction *t)
     RemoveDialog(DialogGetId(dialog));
 }
 
-void HandleClientNonInviteEvent(struct Transaction *t)
+void HandleInviteEvent(struct Transaction *t)
 {
+    MESSAGE *message = TransactionGetLatestResponse(t);
+    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+    enum TransactionEvent event = TransactionGetCurrentEvent(t);
     
-    if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_REGISTER) {
+    if (event == TRANSACTION_EVENT_200OK) {
+        DialogReceiveOk(dialog, message);
+    } else if (event == TRANSACTION_EVENT_180RINGING) {
+        DialogReceiveRinging(dialog, message);
+    }
+}
+
+void HandleTransactionEvent(struct Transaction *t)
+{
+    SIP_METHOD method = MessageGetMethod(TransactionGetRequest(t));
+    
+    if (method == SIP_METHOD_REGISTER) {
         HandleRegisterEvent(t);
-    } else if (MessageGetMethod(TransactionGetRequest(t)) == SIP_METHOD_BYE) {
+    } else if (method == SIP_METHOD_BYE) {
         HandleByeEvent(t);
-    } 
-    
+    } else if (method == SIP_METHOD_INVITE) {
+        HandleInviteEvent(t);
+    }    
 }
 
 void OnTransactionEventImpl(struct Transaction *t)
 {
-    enum TransactionType type = TransactionGetType(t);
-
-    if ( type == TRANSACTION_TYPE_CLIENT_NON_INVITE) {
-        HandleClientNonInviteEvent(t);
-    } else if (type == TRANSACTION_TYPE_CLIENT_INVITE){
-        HandleClientInviteEvent(t);
-    } 
+    HandleTransactionEvent(t);
 }
 
 void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;

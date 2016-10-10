@@ -51,6 +51,6 @@ void DialogBye(struct Dialog *dialog);
 void DialogOk(struct Dialog *dialog);
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
-void ClientReceiveOk(struct Dialog *dialog, struct Message *message);
+void DialogReceiveOk(struct Dialog *dialog, struct Message *message);
 
 extern void (*OnTransactionEvent)(struct Transaction *t);
