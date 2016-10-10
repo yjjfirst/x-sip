@@ -50,19 +50,19 @@ TEST(TransactionManager, NewTransaction)
 {
     struct Transaction *transaction;
 
-    transaction = AddClientNonInviteTransaction(message, NULL);
+    transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_EQUAL(1, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildAddBindingMessage(dialog);
-    transaction = AddClientNonInviteTransaction(message, NULL);
+    transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_EQUAL(2, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     message = BuildAddBindingMessage(dialog);
-    transaction = AddClientNonInviteTransaction(message, NULL);
+    transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
     CHECK_EQUAL(3, CountTransaction());
     CHECK_FALSE(0 == transaction);
@@ -74,13 +74,13 @@ TEST(TransactionManager, MatchResponse)
 {
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
-    AddClientNonInviteTransaction(message, NULL);
+    AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_TRUE(ReceiveInMessage());
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
-    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     enum TransactionState s;
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
@@ -97,7 +97,7 @@ TEST(TransactionManager, GetTransactionByIdTest)
     char branch[64];
 
     strcpy(branch, MessageGetViaBranch(message));
-    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
     POINTERS_EQUAL(t, GetTransaction(branch, seqMethod));
 }
@@ -119,7 +119,7 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
 
 TEST(TransactionManager, TransactionIdTest)
 {
-    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = TransactionGetId(t);
 
     STRCMP_EQUAL(MessageGetViaBranch(message), TransactionIdGetBranch(tid));
@@ -128,7 +128,7 @@ TEST(TransactionManager, TransactionIdTest)
 
 TEST(TransactionManager, TransactionRemoveTest)
 {
-    struct Transaction *t = AddClientNonInviteTransaction(message, NULL);
+    struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = TransactionGetId(t);
 
     RemoveTransactionById(tid);

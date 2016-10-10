@@ -340,6 +340,8 @@ struct TransactionInitInfo *GetTransactionInitInfo(enum TransactionType type)
 {
     int i = 0;
 
+    assert( 0 <= type && type < TRANSACTION_TYPE_MAX);
+    
     for (;i < TRANSACTION_TYPE_MAX;i++) {
         if (type == TransactionInitInfos[i].type)
             return &TransactionInitInfos[i];

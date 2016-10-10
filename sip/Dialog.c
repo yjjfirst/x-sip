@@ -241,26 +241,11 @@ struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, MESS
 
     DialogIdSetLocalTag(id, MessageGetFromTag(message));
     DialogIdSetCallId(id, MessageGetCallId(message));
-
-    t = AddClientInviteTransaction(message, (struct TransactionUser *)dialog);
-    dialog->transaction = t;
-    dialog->localSeqNumber = MessageGetCSeqNumber(message);
-
-    return t;
-}
-
-struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
-{
-    return AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
-}
-
-struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
-{
-    struct Transaction *t;
-
-    t = AddServerNonInviteTransaction(message, (struct TransactionUser *)dialog);
-    dialog->transaction = t;
+    DialogSetLocalSeqNumber(dialog, MessageGetCSeqNumber(message));
     
+    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_INVITE);
+    dialog->transaction = t;
+
     return t;
 }
 
@@ -277,9 +262,29 @@ struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, MESS
         NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
     }
 
-    t = AddServerInviteTransaction(message, (struct TransactionUser *)dialog);
+    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_SERVER_INVITE);
     dialog->transaction = t;
     
+    
+    return t;
+}
+
+struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
+{
+    struct Transaction *t;
+    
+    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    dialog->transaction = t;
+
+    return t;
+}
+
+struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
+{
+    struct Transaction *t;
+
+    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_SERVER_NON_INVITE);
+    dialog->transaction = t;
     
     return t;
 }
@@ -321,13 +326,13 @@ void DialogTerminate(struct Dialog *dialog)
 void DialogInvite(struct Dialog *dialog)
 {
     MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
-    AddClientInviteTransaction(invite, (struct TransactionUser *)dialog);
+    AddTransaction(invite, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_INVITE);
 }
 
 void DialogBye(struct Dialog *dialog)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
-    AddClientNonInviteTransaction(bye, (struct TransactionUser *)dialog);
+    AddTransaction(bye, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

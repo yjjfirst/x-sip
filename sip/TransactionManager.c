@@ -214,7 +214,7 @@ void ClearTransactionManager()
 
 struct TransactionManager TransactionManager;
 
-void AddTransaction(struct Transaction *t)
+void _AddTransaction(struct Transaction *t)
 {
     if (t != NULL) {
         TransactionSetObserver(t, &TransactionManager);
@@ -229,42 +229,16 @@ BOOL ValidatedNonInviteMethod(MESSAGE *message)
         &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
 }
 
-struct Transaction *AddClientNonInviteTransaction(MESSAGE *message, struct TransactionUser *user)
+struct Transaction *AddTransaction(MESSAGE *message, struct TransactionUser *user, int type)
 {
-    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    if (type == TRANSACTION_TYPE_SERVER_NON_INVITE) {
+        if (!ValidatedNonInviteMethod(message)) return NULL;
+    }
 
-    AddTransaction(t);
+    struct Transaction *t = CreateTransaction(message, user, type);
+    _AddTransaction(t);
     return t;
-}
 
-struct Transaction *AddClientInviteTransaction(MESSAGE *message, struct TransactionUser *user)
-{
-    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_CLIENT_INVITE);
-
-    AddTransaction(t);
-    return t;
-}
-
-
-struct Transaction *AddServerInviteTransaction(MESSAGE *message, struct TransactionUser *user)
-{
-    struct Transaction *t = CreateTransaction(message, user, TRANSACTION_TYPE_SERVER_INVITE);
-
-    AddTransaction(t);
-    return t;
-}
-
-struct Transaction *AddServerNonInviteTransaction(MESSAGE *message, struct TransactionUser *user)
-{
-    struct Transaction *t = NULL;
-
-    assert(message != NULL);
-    if (!ValidatedNonInviteMethod(message)) return NULL;
-
-    t = CreateTransaction(message, user, TRANSACTION_TYPE_SERVER_NON_INVITE);
-    AddTransaction(t);
-
-    return t;
 }
 
 void TransactionManagerDump()

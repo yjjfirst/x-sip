@@ -46,7 +46,7 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
 
         request = CreateMessage();
         ParseMessage(BYE_MESSAGE, request);
-        transaction = AddServerNonInviteTransaction(request, NULL);
+        transaction = AddTransaction(request, NULL, TRANSACTION_TYPE_SERVER_NON_INVITE);
     }
 
     void teardown() 
@@ -106,7 +106,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    transaction = AddServerInviteTransaction(invite, NULL);
+    transaction = AddTransaction(invite, NULL, TRANSACTION_TYPE_SERVER_INVITE);
     
     MESSAGE *ack = BuildAckMessageWithinClientTransaction(invite);
 
@@ -120,7 +120,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithIn
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    transaction = AddServerNonInviteTransaction(invite, NULL);
+    transaction = AddTransaction(invite, NULL, TRANSACTION_TYPE_SERVER_NON_INVITE);
     
     POINTERS_EQUAL(NULL, transaction);
     
@@ -142,7 +142,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAc
 {
     MESSAGE *ack = CreateMessage();
     ParseMessage(ACK_MESSAGE, ack);
-    transaction = AddServerNonInviteTransaction(ack, NULL);
+    transaction = AddTransaction(ack, NULL, TRANSACTION_TYPE_SERVER_NON_INVITE);
     
     POINTERS_EQUAL(NULL, transaction);
     

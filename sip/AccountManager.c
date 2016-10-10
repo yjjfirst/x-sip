@@ -14,6 +14,7 @@
 #include "ContactHeader.h"
 #include "Header.h"
 #include "DialogManager.h"
+#include "Transaction.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -84,7 +85,7 @@ void AccountAddBinding(int account)
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildAddBindingMessage(dialog);
 
-    AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
+    AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }
 
 void AccountRemoveBinding(int account)
@@ -93,7 +94,7 @@ void AccountRemoveBinding(int account)
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildRemoveBindingMessage(dialog);
 
-    AddClientNonInviteTransaction(message, (struct TransactionUser *)dialog);
+    AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }
 
 void BindAllAccounts()

@@ -45,7 +45,7 @@ TEST(TransactionTestGroup, MessageOwnerTest)
     ua = CreateUserAgent(0);
     dialog = AddDialog(NULL_DIALOG_ID, ua);
     invite = BuildInviteMessage(dialog, (char *)"88002"); 
-    transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
+    transaction = AddTransaction(invite,(struct TransactionUser *) dialog, TRANSACTION_TYPE_CLIENT_INVITE);
 
     POINTERS_EQUAL(transaction, MessageBelongTo(invite));
     
@@ -60,7 +60,7 @@ TEST(TransactionTestGroup, TransactionOwnerTest)
     ua = CreateUserAgent(0);
     dialog = AddDialog(NULL_DIALOG_ID, ua);
     invite = BuildInviteMessage(dialog, (char *)"88002"); 
-    transaction = AddClientInviteTransaction(invite,(struct TransactionUser *) dialog);
+    transaction = AddTransaction(invite,(struct TransactionUser *) dialog, TRANSACTION_TYPE_CLIENT_INVITE);
     
     POINTERS_EQUAL(dialog, TransactionGetUser(transaction));
 

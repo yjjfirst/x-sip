@@ -75,7 +75,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog, (char *)"88002"); 
-        t = AddClientInviteTransaction(message,(struct TransactionUser *) dialog);
+        t = AddTransaction(message,(struct TransactionUser *) dialog, TRANSACTION_TYPE_CLIENT_INVITE);
 
         strcpy(branch, MessageGetViaBranch(message));
     }
