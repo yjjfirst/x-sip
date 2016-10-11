@@ -5,11 +5,11 @@ struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteT
 struct DialogId *CreateDialogIdFromMessage(struct Message *message);
 void DestroyDialogId(struct DialogId **id);
 
-char *DialogIdGetCallId(struct DialogId *dialid);
-void DialogIdSetCallId(struct DialogId *dialid, char *callId);
-char *DialogIdGetLocalTag(struct DialogId *dialid);
-void DialogIdSetLocalTag(struct DialogId *dialid, char *tag);
-char *DialogIdGetRemoteTag(struct DialogId *dialid);
-void DialogIdSetRemoteTag(struct DialogId *dialid, char *tag);
+char *GetCallId(struct DialogId *dialid);
+void SetCallId(struct DialogId *dialid, char *callId);
+char *GetLocalTag(struct DialogId *dialid);
+void SetLocalTag(struct DialogId *dialid, char *tag);
+char *GetRemoteTag(struct DialogId *dialid);
+void SetRemoteTag(struct DialogId *dialid, char *tag);
 BOOL DialogIdMatched(struct DialogId *id1, struct DialogId *id2);
-void DialogIdExtractFromMessage(struct DialogId *id, struct Message *message);
+void ExtractDialogId(struct DialogId *id, struct Message *message);

@@ -30,7 +30,7 @@ struct DialogId *DialogGetId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
 unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog);
-void DialogSetLocalSeqNumber(struct Dialog *dialog, int seq);
+void SetLocalSeqNumber(struct Dialog *dialog, int seq);
 unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog);
 enum DIALOG_STATE DialogGetState(struct Dialog *dialog);
 
@@ -40,10 +40,7 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog);
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void DestroyDialog(struct Dialog **dialog);
 
-struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, struct Message *message);
-struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, struct Message *message);
-struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, struct Message *message);
-struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, struct Message *message);
+struct Transaction *DialogNewTransaction(struct Dialog *dialog, struct Message *message, int type);
 
 void DialogTerminate(struct Dialog *dialog);
 void DialogInvite(struct Dialog *dialog);

@@ -14,14 +14,14 @@ struct DialogId {
     char remoteTag[TAG_MAX_LENGTH];
 };
 
-DEFINE_STRING_MEMBER_WRITER(struct DialogId, DialogIdSetCallId, callid, CALLID_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct DialogId, DialogIdGetCallId, callid);
+DEFINE_STRING_MEMBER_WRITER(struct DialogId, SetCallId, callid, CALLID_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct DialogId, GetCallId, callid);
 
-DEFINE_STRING_MEMBER_WRITER(struct DialogId, DialogIdSetLocalTag, localTag, TAG_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct DialogId, DialogIdGetLocalTag, localTag);
+DEFINE_STRING_MEMBER_WRITER(struct DialogId, SetLocalTag, localTag, TAG_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct DialogId, GetLocalTag, localTag);
 
-DEFINE_STRING_MEMBER_WRITER(struct DialogId, DialogIdSetRemoteTag, remoteTag, TAG_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct DialogId, DialogIdGetRemoteTag, remoteTag);
+DEFINE_STRING_MEMBER_WRITER(struct DialogId, SetRemoteTag, remoteTag, TAG_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct DialogId, GetRemoteTag, remoteTag);
 
 BOOL DialogIdMatched(struct DialogId *id1, struct DialogId *id2)
 {
@@ -42,28 +42,28 @@ struct DialogId *CreateEmptyDialogId()
 struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteTag)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
-    DialogIdSetCallId(dialogid, callid);
-    DialogIdSetLocalTag(dialogid, localTag);
-    DialogIdSetRemoteTag(dialogid, remoteTag);
+    SetCallId(dialogid, callid);
+    SetLocalTag(dialogid, localTag);
+    SetRemoteTag(dialogid, remoteTag);
 
     return dialogid;
 }
 
-void DialogIdExtractFromMessage(struct DialogId *dialogid, MESSAGE *message)
+void ExtractDialogId(struct DialogId *dialogid, MESSAGE *message)
 {
-    DialogIdSetCallId(dialogid, MessageGetCallId(message));
+    SetCallId(dialogid, MessageGetCallId(message));
     if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
-        DialogIdSetLocalTag(dialogid, MessageGetFromTag(message));
-        DialogIdSetRemoteTag(dialogid, MessageGetToTag(message));
+        SetLocalTag(dialogid, MessageGetFromTag(message));
+        SetRemoteTag(dialogid, MessageGetToTag(message));
     } else {
-        DialogIdSetRemoteTag(dialogid, MessageGetFromTag(message));
+        SetRemoteTag(dialogid, MessageGetFromTag(message));
     }
 }
 
 struct DialogId *CreateDialogIdFromMessage(MESSAGE *message)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
-    DialogIdExtractFromMessage(dialogid, message);
+    ExtractDialogId(dialogid, message);
     return dialogid;
 }
 

@@ -15,6 +15,7 @@ extern "C" {
 #include "AccountManager.h"
 #include "DialogManager.h"
 #include "Transporter.h"
+#include "Transaction.h"
 }
 
 TEST_GROUP(SessionTestGroup)
@@ -72,7 +73,7 @@ TEST(SessionTestGroup, UACCreateSessionTest)
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
 
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     DialogReceiveOk(dialog, ok);
     
     DestroyMessage(&ok);
@@ -84,7 +85,7 @@ TEST(SessionTestGroup, UASCreateSessionTest)
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
 }
 
@@ -93,7 +94,7 @@ TEST(SessionTestGroup, UACDestroySessionTest)
     UT_PTR_SET(CreateSession, CreateSessionMock);
     UT_PTR_SET(DestroySession,DestroySessionMock);
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
  
     mock().expectOneCall("CreateSession");
     DialogOk(dialog);
@@ -111,7 +112,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     UT_PTR_SET(CreateSession, CreateSessionMock);
     UT_PTR_SET(DestroySession,DestroySessionMock);
 
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     
     mock().expectOneCall("CreateSession");
     DialogReceiveOk(dialog, ok);

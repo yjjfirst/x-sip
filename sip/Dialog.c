@@ -40,19 +40,19 @@ URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
 
 char *DialogGetCallIdImpl(struct Dialog *dialog)
 {
-    return DialogIdGetCallId(dialog->id);
+    return GetCallId(dialog->id);
 }
 
 char *DialogGetRemoteTagImpl(struct Dialog *dialog)
 {
     assert(dialog != NULL);
-    return DialogIdGetRemoteTag(dialog->id);
+    return GetRemoteTag(dialog->id);
 }
 
 char *DialogGetLocalTagImpl(struct Dialog *dialog)
 {
     assert(dialog != NULL);
-    return DialogIdGetLocalTag(dialog->id);
+    return GetLocalTag(dialog->id);
 }
 
 URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
@@ -98,7 +98,7 @@ unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog)
     return dialog->localSeqNumber;
 }
 
-void DialogSetLocalSeqNumber(struct Dialog *dialog, int seq)
+void SetLocalSeqNumber(struct Dialog *dialog, int seq)
 {
     assert(dialog != NULL);
     dialog->localSeqNumber = seq;
@@ -107,7 +107,7 @@ void DialogSetLocalSeqNumber(struct Dialog *dialog, int seq)
 void DialogSetLocalTag(struct Dialog *dialog, const char *localTag)
 {
     struct DialogId *id = DialogGetId(dialog);
-    DialogIdSetLocalTag(id, (char *)localTag);
+    SetLocalTag(id, (char *)localTag);
 }
 
 unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog)
@@ -122,7 +122,7 @@ enum DIALOG_STATE DialogGetState(struct Dialog *dialog)
     return dialog->state;
 }
 
-void DialogSetState(struct Dialog *dialog, enum DIALOG_STATE state)
+void SetDialogState(struct Dialog *dialog, enum DIALOG_STATE state)
 {
     assert(dialog != NULL);
     dialog->state = state;
@@ -136,13 +136,7 @@ void DialogSetRemoteUri(struct Dialog *dialog, URI *uri)
     dialog->remoteUri = uri;
 }
 
-void ExtractDialogIdFromMessage(struct Dialog *dialog, MESSAGE *message)
-{
-    struct DialogId *dialogid = DialogGetId(dialog);
-    DialogIdExtractFromMessage(dialogid, message);                    
-}
-
-void ExtractRemoteTargetFromMessage(struct Dialog *dialog, MESSAGE *message)
+void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 {
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, message);
     URI *uri = ContactHeaderGetUri(c);
@@ -158,10 +152,12 @@ void DialogAck(struct Dialog *dialog)
 
 void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
-    ExtractDialogIdFromMessage(dialog, message);
-    ExtractRemoteTargetFromMessage(dialog, message);
+    struct DialogId *dialogid = DialogGetId(dialog);
 
-    DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+    ExtractDialogId(dialogid, message);                    
+    ExtractRemoteTarget(dialog, message);
+    SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
+    
     DialogAck(dialog);
 
     if (NotifyClient != NULL)
@@ -191,7 +187,7 @@ void HandleRegisterEvent (struct Transaction *t)
         }
     } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
         MESSAGE *authMessage = BuildAuthorizationMessage(dialog, message);
-        DialogAddClientNonInviteTransaction(dialog, authMessage);
+        DialogNewTransaction(dialog, authMessage, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     }
 }
 
@@ -234,58 +230,28 @@ void OnTransactionEventImpl(struct Transaction *t)
 
 void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;
 
-struct Transaction *DialogAddClientInviteTransaction(struct Dialog *dialog, MESSAGE *message)
+struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message, int type)
 {
     struct DialogId *id = DialogGetId(dialog);
     struct Transaction *t = NULL;
 
-    DialogIdSetLocalTag(id, MessageGetFromTag(message));
-    DialogIdSetCallId(id, MessageGetCallId(message));
-    DialogSetLocalSeqNumber(dialog, MessageGetCSeqNumber(message));
-    
-    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_INVITE);
-    dialog->transaction = t;
-
-    return t;
-}
-
-struct Transaction *DialogAddServerInviteTransaction(struct Dialog *dialog, MESSAGE *message)
-{
-    struct DialogId *id = DialogGetId(dialog);
-    struct Transaction *t = NULL;
-   
-    DialogIdSetRemoteTag(id, MessageGetFromTag(message));
-    DialogIdSetCallId(id, MessageGetCallId(message));
-    ExtractRemoteTargetFromMessage(dialog, message);
-
-    if (NotifyClient != NULL) {
-        NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
+    if (type == TRANSACTION_TYPE_CLIENT_INVITE) {
+        SetLocalTag(id, MessageGetFromTag(message));
+        SetCallId(id, MessageGetCallId(message));
+        SetLocalSeqNumber(dialog, MessageGetCSeqNumber(message));
+    } else if (type == TRANSACTION_TYPE_SERVER_INVITE) {
+        SetRemoteTag(id, MessageGetFromTag(message));
+        SetCallId(id, MessageGetCallId(message));
+        ExtractRemoteTarget(dialog, message);
+        
+        if (NotifyClient != NULL) {
+            NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
+        }
     }
-
-    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_SERVER_INVITE);
-    dialog->transaction = t;
     
-    
-    return t;
-}
-
-struct Transaction *DialogAddClientNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
-{
-    struct Transaction *t;
-    
-    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    t = AddTransaction(message, (struct TransactionUser *)dialog, type);
     dialog->transaction = t;
 
-    return t;
-}
-
-struct Transaction *DialogAddServerNonInviteTransaction(struct Dialog *dialog, MESSAGE *message)
-{
-    struct Transaction *t;
-
-    t = AddTransaction(message, (struct TransactionUser *)dialog, TRANSACTION_TYPE_SERVER_NON_INVITE);
-    dialog->transaction = t;
-    
     return t;
 }
 
@@ -298,12 +264,14 @@ void DialogOk(struct Dialog *dialog)
     ResponseWith200OK(dialog->transaction);
 
     if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        
-        DialogIdSetLocalTag(id, MessageGetToTag(message));
-        DialogSetState(dialog, DIALOG_STATE_CONFIRMED);
+        SetLocalTag(id, MessageGetToTag(message));
+        SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
+        
         dialog->session = CreateSession();
+
     } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
         if (DialogGetRequestMethod(dialog) == SIP_METHOD_BYE) {
-            DialogSetState(dialog, DIALOG_STATE_TERMINATED);
+            SetDialogState(dialog, DIALOG_STATE_TERMINATED);
         }
     }
 
@@ -312,14 +280,14 @@ void DialogOk(struct Dialog *dialog)
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 {
-    DialogAddServerNonInviteTransaction(dialog, bye);
+    DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_SERVER_NON_INVITE);
     DialogOk(dialog);
 }
 
 void DialogTerminate(struct Dialog *dialog)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
-    DialogAddClientNonInviteTransaction(dialog, bye);
+    DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
 

@@ -304,7 +304,7 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
     MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    DialogSetLocalSeqNumber(dialog, 1);
+    SetLocalSeqNumber(dialog, 1);
     MESSAGE *authMessage = BuildAuthorizationMessage(dialog, challenge);
     CHECK_EQUAL(MessageGetCSeqNumber(challenge) + 1,
                 MessageGetCSeqNumber(authMessage));

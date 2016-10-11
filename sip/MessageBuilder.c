@@ -128,7 +128,7 @@ struct Header *BuildRequestCSeqHeader(struct Dialog *dialog)
             cseqNumber = DialogGetLocalSeqNumber(dialog);
     }
         
-    DialogSetLocalSeqNumber(dialog, cseqNumber);
+    SetLocalSeqNumber(dialog, cseqNumber);
     struct CSeqHeader *cseq = CreateCSeqHeader(cseqNumber, MethodMap2String(method));
 
     return (struct Header *)cseq;

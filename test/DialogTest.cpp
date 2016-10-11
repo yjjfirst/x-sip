@@ -118,7 +118,7 @@ TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 TEST(DialogTestGroup, AddTransactionTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    struct Transaction *transaction = DialogAddClientNonInviteTransaction(dialog, invite);
+    struct Transaction *transaction = DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
     POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
 }
@@ -135,12 +135,12 @@ TEST(DialogTestGroup, UACDialogIdTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveInMessage();
     
-    STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogIdGetLocalTag(DialogGetId(dialog)));     
-    STRCMP_EQUAL(MessageGetCallId(originInvite), DialogIdGetCallId(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetToTag(localOk), DialogIdGetRemoteTag(DialogGetId(dialog)));    
+    STRCMP_EQUAL(MessageGetFromTag(originInvite), GetLocalTag(DialogGetId(dialog)));     
+    STRCMP_EQUAL(MessageGetCallId(originInvite), GetCallId(DialogGetId(dialog)));
+    STRCMP_EQUAL(MessageGetToTag(localOk), GetRemoteTag(DialogGetId(dialog)));    
 
     DestroyMessage(&originInvite);
     DestroyMessage(&localOk);
@@ -157,7 +157,7 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveInMessage();
 
     STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogGetLocalTag(dialog));     
@@ -171,7 +171,7 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
 TEST(DialogTestGroup, UACDialogLocalSeqNumberTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
 
     CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetLocalSeqNumber(dialog));
 }
@@ -182,7 +182,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveInMessage();
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
@@ -196,7 +196,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
  
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveInMessage();
 
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
@@ -222,7 +222,7 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
-    DialogAddClientInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveInMessage();
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
@@ -236,7 +236,7 @@ TEST(DialogTestGroup, UASDialog200OkMessageDestTest)
         withStringParameter("destaddr", AccountGetProxyAddr(GetAccount(0))).
         withIntParameter("destport", AccountGetProxyPort(GetAccount(0)));
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     
     UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
     DialogOk(dialog);
@@ -248,7 +248,7 @@ TEST(DialogTestGroup, UACDialogTerminateTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_BYE));
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
     DialogTerminate(dialog);
 
@@ -262,13 +262,13 @@ TEST(DialogTestGroup, UASDialogIdTest)
     CONTACT_HEADER *from = ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite));
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     MESSAGE *ok = Build200OkMessage(NULL, invite);
     DialogOk(dialog);
     
-    STRCMP_EQUAL(MessageGetToTag(ok), DialogIdGetLocalTag(DialogGetId(dialog)));
-    STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), DialogIdGetRemoteTag(DialogGetId(dialog)));
-    STRCMP_EQUAL(CallIdHeaderGetId(id), DialogIdGetCallId(DialogGetId(dialog)));
+    STRCMP_EQUAL(MessageGetToTag(ok), GetLocalTag(DialogGetId(dialog)));
+    STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), GetRemoteTag(DialogGetId(dialog)));
+    STRCMP_EQUAL(CallIdHeaderGetId(id), GetCallId(DialogGetId(dialog)));
 
     DestroyContactHeader((struct Header *)from);
     DestroyCallIdHeader((struct Header *)id);
@@ -280,7 +280,7 @@ TEST(DialogTestGroup, UASDialogConfirmedTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
@@ -292,7 +292,7 @@ TEST(DialogTestGroup, UASDialogRemoteSeqNumberTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
     unsigned int seq = MessageGetCSeqNumber(invite);
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
 
     CHECK_EQUAL(seq, DialogGetRemoteSeqNumber(dialog));
@@ -303,7 +303,7 @@ TEST(DialogTestGroup, UASDialogLocalSeqNumberTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
 
     CHECK_EQUAL(CSeqGenerateSeq(), DialogGetLocalSeqNumber(dialog));
@@ -316,7 +316,7 @@ TEST(DialogTestGroup, UASDialogRemoteTargetTest)
 
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, invite);
     URI *uri = UriDup(ContactHeaderGetUri(c));
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
     DialogOk(dialog);
 
     CHECK_TRUE(UriMatched(uri, DialogGetRemoteTarget(dialog)));
@@ -329,7 +329,7 @@ TEST(DialogTestGroup, UASDialogTerminateTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    DialogAddServerInviteTransaction(dialog, invite); 
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE); 
     DialogOk(dialog);
 
     MESSAGE *bye = BuildByeMessage(dialog);

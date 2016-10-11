@@ -18,9 +18,9 @@ TEST(DialogIdTestGroup, CreateDialogIdTest)
     char remoteTag[] = "3";
 
     struct DialogId *dialogId = CreateFixedDialogId(callid, localTag, remoteTag);
-    STRCMP_EQUAL("1", DialogIdGetCallId(dialogId));
-    STRCMP_EQUAL("2", DialogIdGetLocalTag(dialogId));
-    STRCMP_EQUAL("3", DialogIdGetRemoteTag(dialogId));
+    STRCMP_EQUAL("1", GetCallId(dialogId));
+    STRCMP_EQUAL("2", GetLocalTag(dialogId));
+    STRCMP_EQUAL("3", GetRemoteTag(dialogId));
 
     DestroyDialogId(&dialogId);
 }
@@ -76,9 +76,9 @@ TEST(DialogIdTestGroup, BuildDialIdFromResponseTest)
 
     ParseMessage(OK_MESSAGE_RECEIVED, message);
     dialogid = CreateDialogIdFromMessage(message);
-    STRCMP_EQUAL(MessageGetCallId(message), DialogIdGetCallId(dialogid));
-    STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetLocalTag(dialogid));
-    STRCMP_EQUAL(MessageGetToTag(message), DialogIdGetRemoteTag(dialogid));
+    STRCMP_EQUAL(MessageGetCallId(message), GetCallId(dialogid));
+    STRCMP_EQUAL(MessageGetFromTag(message), GetLocalTag(dialogid));
+    STRCMP_EQUAL(MessageGetToTag(message), GetRemoteTag(dialogid));
     
     DestroyDialogId(&dialogid);
     DestroyMessage(&message);
@@ -91,8 +91,8 @@ TEST(DialogIdTestGroup, BuildDialogIdFromRequestTest)
 
     ParseMessage(INCOMMING_INVITE_MESSAGE, message);
     dialogid = CreateDialogIdFromMessage(message);
-    STRCMP_EQUAL(MessageGetCallId(message), DialogIdGetCallId(dialogid));
-    STRCMP_EQUAL(MessageGetFromTag(message), DialogIdGetRemoteTag(dialogid));
+    STRCMP_EQUAL(MessageGetCallId(message), GetCallId(dialogid));
+    STRCMP_EQUAL(MessageGetFromTag(message), GetRemoteTag(dialogid));
     
     DestroyDialogId(&dialogid);
     DestroyMessage(&message);
@@ -102,7 +102,7 @@ TEST(DialogIdTestGroup, GenerateCallIdTest)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
     
-    CHECK_TRUE(strlen(DialogIdGetCallId(dialogid)) == 0);
+    CHECK_TRUE(strlen(GetCallId(dialogid)) == 0);
     DestroyDialogId(&dialogid);
 }
 
@@ -110,6 +110,6 @@ TEST(DialogIdTestGroup, GenerateLocalTagTest)
 {
     struct DialogId *dialogid = CreateEmptyDialogId();
     
-    CHECK_TRUE(strlen(DialogIdGetLocalTag(dialogid)) == 0);
+    CHECK_TRUE(strlen(GetLocalTag(dialogid)) == 0);
     DestroyDialogId(&dialogid);
 }

@@ -153,7 +153,7 @@ void HandleInviteRequest (MESSAGE *invite)
     struct UserAgent *ua = AddUserAgent(account);
     struct Dialog *dialog = AddDialog(NULL, ua);
 
-    DialogAddServerInviteTransaction(dialog, invite);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
 }
 
 BOOL TmHandleRequestMessage(MESSAGE *message)
