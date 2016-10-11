@@ -31,42 +31,35 @@ struct Dialog {
     enum DIALOG_STATE state;
 };
 
-URI *DialogGetRemoteUriImpl(struct Dialog *dialog)
+URI *DialogGetRemoteUri(struct Dialog *dialog)
 {
     assert(dialog != 0);
     
     return dialog->remoteUri;
 }
 
-char *DialogGetCallIdImpl(struct Dialog *dialog)
+char *DialogGetCallId(struct Dialog *dialog)
 {
     return GetCallId(dialog->id);
 }
 
-char *DialogGetRemoteTagImpl(struct Dialog *dialog)
+char *DialogGetRemoteTag(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return GetRemoteTag(dialog->id);
 }
 
-char *DialogGetLocalTagImpl(struct Dialog *dialog)
+char *DialogGetLocalTag(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return GetLocalTag(dialog->id);
 }
 
-URI *DialogGetRemoteTargetImpl(struct Dialog *dialog)
+URI *DialogGetRemoteTarget(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->remoteTarget;
 }
-
-char *(*DialogGetCallId)(struct Dialog *dialog) = DialogGetCallIdImpl;
-char *(*DialogGetRemoteTag)(struct Dialog *dialog) = DialogGetRemoteTagImpl;
-char *(*DialogGetLocalTag)(struct Dialog *dialog) = DialogGetLocalTagImpl;
-URI *(*DialogGetRemoteUri)(struct Dialog *dialog) = DialogGetRemoteUriImpl;
-URI *(*DialogGetRemoteTarget)(struct Dialog *dialog) = DialogGetRemoteTargetImpl;
-
 
 struct DialogId *DialogGetId(struct Dialog *dialog)
 {
