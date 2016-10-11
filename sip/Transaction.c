@@ -197,7 +197,7 @@ int ResendLatestResponse(struct Transaction *t)
     return 0;
 }
 
-BOOL IfResponseMatchedTransaction(struct Transaction *t, MESSAGE *response)
+BOOL ResponseTransactionMatched(struct Transaction *t, MESSAGE *response)
 {
     assert (t != NULL);
     assert (response != NULL);
@@ -215,7 +215,7 @@ BOOL RequestMethodMatched(struct Transaction *t, MESSAGE *request)
     return RequestLineMethodMatched(origin, new);
 }
 
-BOOL IfRequestMatchTransaction(struct Transaction *t, MESSAGE *request)
+BOOL RequestTransactionMatched(struct Transaction *t, MESSAGE *request)
 {
     assert(t != NULL);
     assert(request != NULL);
@@ -654,7 +654,7 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     assert (0);
 }
 
-void TransactionDump(struct Transaction *t)
+void DumpTransaction(struct Transaction *t)
 {
     printf("%s:%s:%d\n", TransactionIdGetBranch(t->id), TransactionIdGetMethod(t->id), t->state);
 }

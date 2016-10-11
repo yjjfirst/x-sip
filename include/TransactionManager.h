@@ -16,4 +16,4 @@ struct Transaction *AddTransaction(struct Message *message, struct TransactionUs
 void RemoveTransaction(struct Transaction *t);
 void RemoveTransactionById(struct TransactionId *id);
 
-void TransactionManagerDump();
+void DumpTransactionManager();

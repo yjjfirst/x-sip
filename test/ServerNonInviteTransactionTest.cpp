@@ -60,7 +60,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
     MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
 
-    CHECK_TRUE(IfRequestMatchTransaction(transaction, newRequest));
+    CHECK_TRUE(RequestTransactionMatched(transaction, newRequest));
 
     DestroyMessage(&newRequest);
 }
@@ -73,7 +73,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchT
     ParseMessage(BYE_MESSAGE, newRequest);
     MessageSetViaBranch(newRequest, branch); 
     
-    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
+    CHECK_FALSE(RequestTransactionMatched(transaction, newRequest));
 
     DestroyMessage(&newRequest);
 }
@@ -84,7 +84,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatch
     ParseMessage(BYE_MESSAGE, newRequest);
     MessageAddViaParameter(newRequest, VIA_SENDBY_PARAMETER_NAME, (char *)"192.168.10.111:777");
 
-    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
+    CHECK_FALSE(RequestTransactionMatched(transaction, newRequest));
     DestroyMessage(&newRequest);
 }
 
@@ -95,7 +95,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatche
     struct RequestLine *rl = MessageGetRequestLine(newRequest);
     
     RequestLineSetMethod(rl, (char *)SIP_METHOD_NAME_INVITE);
-    CHECK_FALSE(IfRequestMatchTransaction(transaction, newRequest));
+    CHECK_FALSE(RequestTransactionMatched(transaction, newRequest));
     
     DestroyMessage(&newRequest);
 }
@@ -110,7 +110,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
     
     MESSAGE *ack = BuildAckMessageWithinClientTransaction(invite);
 
-    CHECK_TRUE(IfRequestMatchTransaction(transaction, ack));
+    CHECK_TRUE(RequestTransactionMatched(transaction, ack));
 
     DestroyMessage(&ack);
 }

@@ -74,7 +74,7 @@ enum TransactionState GetTransactionState(struct Transaction *t);
 struct TransactionUser *GetTransactionUser(struct Transaction *t);
 enum TransactionType GetTransactionType(struct Transaction *t);
 
-BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);
-BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);
+BOOL ResponseTransactionMatched(struct Transaction *t, struct Message *response);
+BOOL RequestTransactionMatched(struct Transaction *t, struct Message *m);
 
-void TransactionDump(struct Transaction *t);
+void DumpTransaction(struct Transaction *t);

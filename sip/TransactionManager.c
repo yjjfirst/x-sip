@@ -241,7 +241,7 @@ struct Transaction *AddTransaction(MESSAGE *message, struct TransactionUser *use
 
 }
 
-void TransactionManagerDump()
+void DumpTransactionManager()
 {
     int i = 0;
     int length = CountTransaction();
@@ -249,6 +249,6 @@ void TransactionManagerDump()
     printf("\n");
     for ( ; i < length; i++) {
         struct Transaction *t = GetTransactionByPosition(i);
-        TransactionDump(t);
+        DumpTransaction(t);
     }
 }
