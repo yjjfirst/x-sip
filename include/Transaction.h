@@ -53,7 +53,7 @@ enum TransactionEvent {
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
-int TransactionSendMessage(struct Message *message);
+int  SendTransactionMessage(struct Message *message);
 void ResponseWith180Ringing(struct Transaction *t);
 void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);
@@ -62,17 +62,17 @@ void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
 void ReceiveDupRequest(struct Transaction *t, struct Message *message);
 
-struct TransactionId *TransactionGetId(struct Transaction *t);
-struct Message * TransactionGetRequest(struct Transaction *t);
-struct Message *TransactionGetLatestResponse(struct Transaction *t);
-void TransactionAddResponse(struct Transaction *t, struct Message *message);
-enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t);
+struct TransactionId *GetTransactionId(struct Transaction *t);
+struct Message * GetTransactionRequest(struct Transaction *t);
+struct Message *GetLatestResponse(struct Transaction *t);
+void AddResponse(struct Transaction *t, struct Message *message);
+enum TransactionEvent GetCurrentEvent(struct Transaction *t);
 
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
-void TransactionSetObserver(struct Transaction *t, struct TransactionManager *manager);
-enum TransactionState TransactionGetState(struct Transaction *t);
-struct TransactionUser *TransactionGetUser(struct Transaction *t);
-enum TransactionType TransactionGetType(struct Transaction *t);
+void SetTransactionObserver(struct Transaction *t, struct TransactionManager *manager);
+enum TransactionState GetTransactionState(struct Transaction *t);
+struct TransactionUser *GetTransactionUser(struct Transaction *t);
+enum TransactionType GetTransactionType(struct Transaction *t);
 
 BOOL IfResponseMatchedTransaction(struct Transaction *t, struct Message *response);
 BOOL IfRequestMatchTransaction(struct Transaction *t, struct Message *m);

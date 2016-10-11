@@ -135,7 +135,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         
         CHECK_EQUAL(1, CountTransaction());
         CHECK_TRUE(t != NULL);
-        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
     }
 
     void CheckNoTransaction()
@@ -168,7 +168,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 
         UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
         ResponseWith301(t);
-        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
         return t;
     }
@@ -179,7 +179,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         
         mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_ACK_RETRANSMITS);
         ReceiveAckRequest(t); 
-        CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, TransactionGetState(t));
+        CHECK_EQUAL(TRANSACTION_STATE_CONFIRMED, GetTransactionState(t));
         
         return t;
     }
@@ -242,7 +242,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180FromTuTest)
 
     CHECK_EQUAL(1, CountTransaction());
     CHECK_TRUE(t != NULL);
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 }
 
 TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180ErrorTest)
@@ -286,7 +286,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuTest)
     UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
     ResponseWith301(t);
 
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 }
 
 TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
@@ -301,7 +301,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
     UT_PTR_SET(AddTimer, AddTimerMock);
 
     ResponseWith301(t);
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 }
 
 TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
@@ -323,12 +323,12 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateReceiceInviteStateTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage();
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveInMessage();
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
 }
 
@@ -350,7 +350,7 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateRetransmitTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);    
     RetransmitTimerAction(t);
 
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t)); 
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 }
 
 TEST(ServerInviteTransactionTestGroup, CompletedStateRetransmitErrorTest)

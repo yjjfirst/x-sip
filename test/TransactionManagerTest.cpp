@@ -87,7 +87,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
     ReceiveInMessage();
-    s = TransactionGetState(t);
+    s = GetTransactionState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }
 
@@ -120,7 +120,7 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
 TEST(TransactionManager, TransactionIdTest)
 {
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
-    struct TransactionId *tid = TransactionGetId(t);
+    struct TransactionId *tid = GetTransactionId(t);
 
     STRCMP_EQUAL(MessageGetViaBranch(message), TransactionIdGetBranch(tid));
     STRCMP_EQUAL(MessageGetCSeqMethod(message), TransactionIdGetMethod(tid));
@@ -129,7 +129,7 @@ TEST(TransactionManager, TransactionIdTest)
 TEST(TransactionManager, TransactionRemoveTest)
 {
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
-    struct TransactionId *tid = TransactionGetId(t);
+    struct TransactionId *tid = GetTransactionId(t);
 
     RemoveTransactionById(tid);
     POINTERS_EQUAL(NULL, GetTransaction(TransactionIdGetBranch(tid), TransactionIdGetMethod(tid)));

@@ -340,7 +340,7 @@ void BuildResponseToTag(char *tag, MESSAGE *invite)
         return;
     }
 
-    dialog = (struct Dialog *)TransactionGetUser(t);
+    dialog = (struct Dialog *)GetTransactionUser(t);
     if (dialog == NULL) {
         GenerateTag(tag);
         return;        

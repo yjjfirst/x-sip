@@ -62,7 +62,7 @@ TEST(TransactionTestGroup, TransactionOwnerTest)
     invite = BuildInviteMessage(dialog, (char *)"88002"); 
     transaction = AddTransaction(invite,(struct TransactionUser *) dialog, TRANSACTION_TYPE_CLIENT_INVITE);
     
-    POINTERS_EQUAL(dialog, TransactionGetUser(transaction));
+    POINTERS_EQUAL(dialog, GetTransactionUser(transaction));
 
     DestroyUserAgent(&ua);
 

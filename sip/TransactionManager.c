@@ -41,7 +41,7 @@ void RemoveTransactionByPosition(int position)
 
 BOOL TransactionMatched(struct Transaction *t, char *branch, char *seqMethod)
 {
-    MESSAGE *request = TransactionGetRequest(t);
+    MESSAGE *request = GetTransactionRequest(t);
 
     return ViaHeaderBranchMatchedByString((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, request), branch) 
         && CSeqMethodMatchedByName((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request), seqMethod);
@@ -139,7 +139,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     statusCode = StatusLineGetStatusCode(status);
     
     if ( (t = MatchTransaction(message)) != NULL) {
-        TransactionAddResponse(t, message);
+        AddResponse(t, message);
         RunFsm(t, MapStatusCodeToEvent(statusCode));
         return TRUE;
     }
@@ -217,7 +217,7 @@ struct TransactionManager TransactionManager;
 void _AddTransaction(struct Transaction *t)
 {
     if (t != NULL) {
-        TransactionSetObserver(t, &TransactionManager);
+        SetTransactionObserver(t, &TransactionManager);
         put_in_list(&TransactionManager.transactions, t);
     }
 }

@@ -152,20 +152,20 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAc
 //Trying state test
 TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateTest)
 {
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(transaction));
-    CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, TransactionGetType(transaction));
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(transaction));
+    CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, GetTransactionType(transaction));
 }
 
 TEST(ServerNonInviteTransactionTestGroup, TryingStateSendProvisionalTest)
 {
     ResponseWith180Ringing(transaction);
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(transaction));
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(transaction));
 }
 
 TEST(ServerNonInviteTransactionTestGroup, TryingStateSendNonprovisionalTest)
 {
     ResponseWith200OK(transaction);
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
 }
 
 //Proceeding state test
@@ -176,7 +176,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
 
     for (int i = 0; i < 20; i++) {
         ResponseWith180Ringing(transaction);
-        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(transaction));
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(transaction));
     }
     DestroyMessage(&trying);
 }
@@ -189,7 +189,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
 
     for (int i = 0; i < 20; i++ ){
         ReceiveDupRequest(transaction, dupRequest);
-        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(transaction));
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(transaction));
     }
 
     DestroyMessage(&dupRequest);
@@ -221,7 +221,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingState200OKSentTest)
     ResponseWith180Ringing(transaction);
     ResponseWith200OK(transaction);
 
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
 }
 
 void PrepareCompletedState(struct Transaction *transaction)
@@ -238,7 +238,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
 
     for (int i = 0; i < 20; i++ ){
         ReceiveDupRequest(transaction, dupRequest);
-        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
     }
 
     DestroyMessage(&dupRequest);
@@ -257,7 +257,7 @@ TEST(ServerNonInviteTransactionTestGroup, CompletedStateDupRequestTest)
     for (int i = 0; i < 20; i ++) {
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
         ReceiveDupRequest(transaction, dupRequest);
-        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(transaction));
+        CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
         mock().checkExpectations();
     }
     mock().clear();

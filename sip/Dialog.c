@@ -139,7 +139,7 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 void DialogAck(struct Dialog *dialog)
 {
     MESSAGE *ack = BuildAckMessage(dialog);
-    TransactionSendMessage(ack);
+    SendTransactionMessage(ack);
     DestroyMessage(&ack);
 }
 
@@ -167,10 +167,10 @@ void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 
 void HandleRegisterEvent (struct Transaction *t)
 {
-    MESSAGE *message = TransactionGetLatestResponse(t);
-    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+    MESSAGE *message = GetLatestResponse(t);
+    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    enum TransactionEvent event = TransactionGetCurrentEvent(t);
+    enum TransactionEvent event = GetCurrentEvent(t);
     
     if (event == TRANSACTION_EVENT_200OK) {    
         if (MessageGetExpires(message) != 0) {
@@ -186,15 +186,15 @@ void HandleRegisterEvent (struct Transaction *t)
 
 void HandleByeEvent(struct Transaction *t)
 {
-    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
+    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
     RemoveDialog(DialogGetId(dialog));
 }
 
 void HandleInviteEvent(struct Transaction *t)
 {
-    MESSAGE *message = TransactionGetLatestResponse(t);
-    struct Dialog *dialog = (struct Dialog *) TransactionGetUser(t);
-    enum TransactionEvent event = TransactionGetCurrentEvent(t);
+    MESSAGE *message = GetLatestResponse(t);
+    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
+    enum TransactionEvent event = GetCurrentEvent(t);
     
     if (event == TRANSACTION_EVENT_200OK) {
         DialogReceiveOk(dialog, message);
@@ -203,9 +203,9 @@ void HandleInviteEvent(struct Transaction *t)
     }
 }
 
-void HandleTransactionEvent(struct Transaction *t)
+void OnTransactionEventImpl(struct Transaction *t)
 {
-    SIP_METHOD method = MessageGetMethod(TransactionGetRequest(t));
+    SIP_METHOD method = MessageGetMethod(GetTransactionRequest(t));
     
     if (method == SIP_METHOD_REGISTER) {
         HandleRegisterEvent(t);
@@ -214,11 +214,6 @@ void HandleTransactionEvent(struct Transaction *t)
     } else if (method == SIP_METHOD_INVITE) {
         HandleInviteEvent(t);
     }    
-}
-
-void OnTransactionEventImpl(struct Transaction *t)
-{
-    HandleTransactionEvent(t);
 }
 
 void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;
@@ -251,9 +246,9 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
 void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
-    MESSAGE *message = Build200OkMessage(NULL, TransactionGetRequest(dialog->transaction));
+    MESSAGE *message = Build200OkMessage(NULL, GetTransactionRequest(dialog->transaction));
 
-    dialog->remoteSeqNumber = MessageGetCSeqNumber(TransactionGetRequest(dialog->transaction));     
+    dialog->remoteSeqNumber = MessageGetCSeqNumber(GetTransactionRequest(dialog->transaction));     
     ResponseWith200OK(dialog->transaction);
 
     if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        

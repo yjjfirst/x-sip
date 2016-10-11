@@ -53,29 +53,29 @@ struct Fsm ClientInviteTransactionFsm;
 struct Fsm ServerInviteTransactionFsm;
 struct Fsm ServerNonInviteTransactionFsm;
 
-void TransactionAddResponse(struct Transaction *t, MESSAGE *message)
+void AddResponse(struct Transaction *t, MESSAGE *message)
 {
     put_in_list(&t->responses, message);
 }
 
-void TransactionSetObserver(struct Transaction *t, struct TransactionManager *observer)
+void SetTransactionObserver(struct Transaction *t, struct TransactionManager *observer)
 {
     t->manager = observer;
 }
 
-enum TransactionState TransactionGetState(struct Transaction *t)
+enum TransactionState GetTransactionState(struct Transaction *t)
 {
     assert(t != NULL);
     return t->state;
 }
 
-struct TransactionId *TransactionGetId(struct Transaction *t)
+struct TransactionId *GetTransactionId(struct Transaction *t)
 {
     assert(t != NULL);
     return t->id;
 }
 
-MESSAGE *TransactionGetLatestResponse(struct Transaction *t)
+MESSAGE *GetLatestResponse(struct Transaction *t)
 {
     int length = get_list_len(t->responses);
     return get_data_at(t->responses, length - 1);
@@ -167,7 +167,7 @@ int NotifyUser(struct Transaction *t)
     return 0;
 }
 
-int TransactionSendMessage(MESSAGE *message)
+int SendTransactionMessage(MESSAGE *message)
 {
     char s[MAX_MESSAGE_LENGTH] = {0};
     Message2String(s, message);
@@ -180,7 +180,7 @@ int SendRequestMessage(struct Transaction *t)
     assert(t != NULL);
     assert(t->request != NULL);
 
-    if (TransactionSendMessage(t->request) < 0) {
+    if (SendTransactionMessage(t->request) < 0) {
          RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
          return -1;
     }
@@ -190,7 +190,7 @@ int SendRequestMessage(struct Transaction *t)
 
 int ResendLatestResponse(struct Transaction *t)
 {
-    if (TransactionSendMessage(TransactionGetLatestResponse(t)) < 0) {
+    if (SendTransactionMessage(GetLatestResponse(t)) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
@@ -202,7 +202,7 @@ BOOL IfResponseMatchedTransaction(struct Transaction *t, MESSAGE *response)
     assert (t != NULL);
     assert (response != NULL);
 
-    MESSAGE *request = TransactionGetRequest(t);
+    MESSAGE *request = GetTransactionRequest(t);
     return MessageViaHeaderBranchMatched(request, response) 
         && MessageCSeqHeaderMethodMatched(request, response);
 }
@@ -220,29 +220,29 @@ BOOL IfRequestMatchTransaction(struct Transaction *t, MESSAGE *request)
     assert(t != NULL);
     assert(request != NULL);
 
-    MESSAGE *origin = TransactionGetRequest(t);
+    MESSAGE *origin = GetTransactionRequest(t);
     return MessageViaHeaderBranchMatched(origin, request)
         && MessageViaHeaderSendbyMatched(origin, request)
         && RequestMethodMatched(t, request);
 }
 
-MESSAGE *TransactionGetRequest(struct Transaction *t)
+MESSAGE *GetTransactionRequest(struct Transaction *t)
 {
     assert (t != NULL);
     return t->request;
 }
 
-enum TransactionType TransactionGetType(struct Transaction *t)
+enum TransactionType GetTransactionType(struct Transaction *t)
 {
     return t->type;
 }
 
-enum TransactionEvent TransactionGetCurrentEvent(struct Transaction *t)
+enum TransactionEvent GetCurrentEvent(struct Transaction *t)
 {
     return t->curEvent;
 }
 
-struct TransactionUser *TransactionGetUser(struct Transaction *t)
+struct TransactionUser *GetTransactionUser(struct Transaction *t)
 {
     return t->user;
 }
@@ -264,8 +264,8 @@ void ResponseWith301(struct Transaction *t)
 {
     MESSAGE *moved = Build301Message(t->request);
 
-    TransactionAddResponse(t, moved);
-    if (TransactionSendMessage(moved) < 0) {
+    AddResponse(t, moved);
+    if (SendTransactionMessage(moved) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return;
     }
@@ -276,8 +276,8 @@ void ResponseWith301(struct Transaction *t)
 void ResponseWith200OK(struct Transaction *t)
 {
     MESSAGE *ok = Build200OkMessage((struct Dialog *)t->user, t->request);
-    TransactionAddResponse(t, ok);
-    TransactionSendMessage(ok);
+    AddResponse(t, ok);
+    SendTransactionMessage(ok);
 
     RunFsm(t, TRANSACTION_SEND_200OK);
 }
@@ -286,13 +286,13 @@ void ResponseWith180Ringing(struct Transaction *t)
 {
     MESSAGE *ringing = BuildRingingMessage(t->request);
 
-    TransactionAddResponse(t, ringing);
-    if (TransactionSendMessage(ringing) < 0) {
+    AddResponse(t, ringing);
+    if (SendTransactionMessage(ringing) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return;
     }
 
-    if (TransactionGetType(t) == TRANSACTION_TYPE_SERVER_NON_INVITE)
+    if (GetTransactionType(t) == TRANSACTION_TYPE_SERVER_NON_INVITE)
         RunFsm(t, TRANSACTION_SEND_1XX);
 }
 
@@ -300,8 +300,8 @@ int SendAckRequest(struct Transaction *t)
 {
     MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
 
-    TransactionAddResponse(t, ack);
-    if (TransactionSendMessage(ack) < 0) {
+    AddResponse(t, ack);
+    if (SendTransactionMessage(ack) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
@@ -368,9 +368,9 @@ struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *
         AddTimeoutTimer(t);
     } else if (type == TRANSACTION_TYPE_SERVER_INVITE) {
         MESSAGE *trying = BuildTryingMessage((struct Dialog *)user, t->request);
-        TransactionAddResponse(t, trying);
+        AddResponse(t, trying);
         
-        if (TransactionSendMessage(trying) < 0) {
+        if (SendTransactionMessage(trying) < 0) {
             RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
             DestroyTransaction(&t);
             return NULL;
@@ -589,7 +589,7 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
 
 void RemoveTerminatedTransaction(struct Transaction *t)
 {
-    if (TransactionGetState(t) == TRANSACTION_STATE_TERMINATED)
+    if (GetTransactionState(t) == TRANSACTION_STATE_TERMINATED)
         if (t != NULL && t->manager != NULL) {
             RemoveTransaction(t);
         }
@@ -650,7 +650,7 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
-    printf("Transaction Event Handle Error: %d, %d\n", TransactionGetState(t), event);
+    printf("Transaction Event Handle Error: %d, %d\n", GetTransactionState(t), event);
     assert (0);
 }
 

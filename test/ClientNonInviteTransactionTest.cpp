@@ -72,7 +72,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
     
         t = AddTransaction(m, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
         if ( t != NULL)
-            CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
+            CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
 
         return t;
     }
@@ -81,7 +81,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
     {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
         ReceiveInMessage();
-        s = TransactionGetState(t);
+        s = GetTransactionState(t);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
         
     }
@@ -119,14 +119,14 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
 TEST(ClientNonInviteTransactionTestGroup, TryingStateInitTest)
 {
     PrepareTryingState(0);
-    CHECK_EQUAL(TRANSACTION_STATE_TRYING, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive1xxTest)
 {
     PrepareTryingState(0);
     PrepareProceedingState(); 
-    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive2xxTest)
@@ -136,7 +136,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive2xxTest)
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
     ReceiveInMessage();
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)
@@ -151,7 +151,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)
  
     
     ReceiveInMessage();
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
 
 TEST(ClientNonInviteTransactionTestGroup, TryingStateTimeETest)
@@ -263,7 +263,7 @@ TEST(ClientNonInviteTransactionTestGroup, CompletedStateTimerKTest)
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
     ReceiveInMessage();
-    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, TransactionGetState(t));
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 
     TimerKCallbackFunc(t);
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
@@ -284,7 +284,7 @@ TEST(ClientNonInviteTransactionTestGroup, GetLatestResponse)
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
     ReceiveInMessage();
 
-    MESSAGE *latestResponse = TransactionGetLatestResponse(t);
+    MESSAGE *latestResponse = GetLatestResponse(t);
     struct StatusLine *sl = MessageGetStatusLine(latestResponse);
     CHECK_EQUAL(200,StatusLineGetStatusCode(sl));
 }
