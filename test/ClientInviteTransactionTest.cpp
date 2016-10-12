@@ -52,7 +52,7 @@ static struct Timer *AddTimerMock(void *p, int interval, TimerCallback action)
     return NULL;
 }
 
-void OnEventMock(struct Transaction *t)
+void OnEventMock(struct Dialog *dialog, int event, MESSAGE *message)
 {    
     mock().actualCall("NotifyUser");
 }
@@ -75,7 +75,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
         message = BuildInviteMessage(dialog, (char *)"88002"); 
-        t = AddTransaction(message,(struct TransactionUser *) dialog, TRANSACTION_TYPE_CLIENT_INVITE);
+        t = DialogNewTransaction(dialog, message, TRANSACTION_TYPE_CLIENT_INVITE);
 
         strcpy(branch, MessageGetViaBranch(message));
     }

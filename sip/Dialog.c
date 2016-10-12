@@ -165,12 +165,9 @@ void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
         NotifyClient(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
 }
 
-void HandleRegisterEvent (struct Transaction *t)
+void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
-    MESSAGE *message = GetLatestResponse(t);
-    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    enum TransactionEvent event = GetCurrentEvent(t);
     
     if (event == TRANSACTION_EVENT_200OK) {    
         if (MessageGetExpires(message) != 0) {
@@ -184,18 +181,13 @@ void HandleRegisterEvent (struct Transaction *t)
     }
 }
 
-void HandleByeEvent(struct Transaction *t)
+void HandleByeEvent(struct Dialog *dialog, int event)
 {
-    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
     RemoveDialog(DialogGetId(dialog));
 }
 
-void HandleInviteEvent(struct Transaction *t)
+void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
-    MESSAGE *message = GetLatestResponse(t);
-    struct Dialog *dialog = (struct Dialog *) GetTransactionUser(t);
-    enum TransactionEvent event = GetCurrentEvent(t);
-    
     if (event == TRANSACTION_EVENT_200OK) {
         DialogReceiveOk(dialog, message);
     } else if (event == TRANSACTION_EVENT_180RINGING) {
@@ -203,20 +195,22 @@ void HandleInviteEvent(struct Transaction *t)
     }
 }
 
-void OnTransactionEventImpl(struct Transaction *t)
+void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
 {
+    struct Transaction *t = dialog->transaction;
     SIP_METHOD method = MessageGetMethod(GetTransactionRequest(t));
     
     if (method == SIP_METHOD_REGISTER) {
-        HandleRegisterEvent(t);
+        HandleRegisterEvent(dialog, event, message);
     } else if (method == SIP_METHOD_BYE) {
-        HandleByeEvent(t);
+        HandleByeEvent(dialog, event);
     } else if (method == SIP_METHOD_INVITE) {
-        HandleInviteEvent(t);
+        HandleInviteEvent(dialog, event, message);
     }    
 }
 
-void (*OnTransactionEvent)(struct Transaction *t) = OnTransactionEventImpl;
+void (*OnTransactionEvent)(struct Dialog *dialog, int event, MESSAGE *message) =
+    OnTransactionEventImpl;
 
 struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message, int type)
 {
@@ -282,13 +276,13 @@ void DialogTerminate(struct Dialog *dialog)
 void DialogInvite(struct Dialog *dialog)
 {
     MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
-    AddTransaction(invite, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_INVITE);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
 }
 
 void DialogBye(struct Dialog *dialog)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
-    AddTransaction(bye, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

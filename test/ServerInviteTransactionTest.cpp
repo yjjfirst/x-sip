@@ -14,6 +14,7 @@ extern "C" {
 #include "UserAgent.h"
 #include "StatusLine.h"
 #include "UserAgentManager.h"
+#include "Dialog.h"
 }
 
 TimerCallback RetransmitTimerAction;

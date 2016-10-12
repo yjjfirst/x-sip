@@ -70,7 +70,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
             .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
             .andReturnValue(sendExpected);
     
-        t = AddTransaction(m, (struct TransactionUser *)dialog, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+        t = DialogNewTransaction(dialog, m, TRANSACTION_TYPE_CLIENT_NON_INVITE);
         if ( t != NULL)
             CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
 

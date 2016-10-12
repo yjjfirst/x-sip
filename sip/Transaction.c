@@ -162,7 +162,7 @@ int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
 int NotifyUser(struct Transaction *t)
 {
     if (t && t->user) {
-        OnTransactionEvent(t);
+        OnTransactionEvent((struct Dialog *)t->user, t->curEvent, GetLatestResponse(t));
     }
     return 0;
 }
