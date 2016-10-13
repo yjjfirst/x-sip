@@ -89,7 +89,7 @@ TEST(InviteMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildRingingMessage(invite);
+    MESSAGE *ringing = BuildRingingMessage(NULL, invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 

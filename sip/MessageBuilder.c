@@ -422,20 +422,21 @@ MESSAGE *BuildTryingMessage(struct Dialog *dialog, MESSAGE *invite)
 
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
     trying = BuildResponseMessage(invite, status);
-    if (dialog != NULL) {
-        struct UserAgent *ua = DialogGetUserAgent(dialog);
-        if (UserAgentGetAccount(ua) != NULL)
-            BuildMessageDest(trying, dialog); 
-    }
+    BuildMessageDest(trying, dialog); 
+
     return trying;
 }
 
-MESSAGE *BuildRingingMessage(MESSAGE *invite)
+MESSAGE *BuildRingingMessage(struct Dialog *dialog, MESSAGE *invite)
 {
     assert(invite != NULL);
 
+    MESSAGE *ringing = NULL;
     struct StatusLine *status = CreateStatusLine(STATUS_CODE_RINGING, REASON_PHRASE_RINGING); 
-    return BuildResponseMessage(invite, status);
+    ringing = BuildResponseMessage(invite, status);
+    BuildMessageDest(ringing, dialog); 
+
+    return ringing;
 }
 
 MESSAGE *Build200OkMessage(struct Dialog *dialog, MESSAGE *request)

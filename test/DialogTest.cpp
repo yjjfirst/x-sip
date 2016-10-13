@@ -48,7 +48,6 @@ static struct MessageTransporter MockTransporterForAck = {
     ReceiveMessageMock,
     NULL,
     SipMessageHandle
-
 };
 
 static struct Session *CreateSessionMock()

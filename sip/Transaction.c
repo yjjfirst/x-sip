@@ -276,7 +276,7 @@ void ResponseWith200OK(struct Transaction *t)
 
 void ResponseWith180Ringing(struct Transaction *t)
 {
-    MESSAGE *ringing = BuildRingingMessage(t->request);
+    MESSAGE *ringing = BuildRingingMessage(NULL, t->request);
 
     AddResponse(t, ringing);
     if (SendMessage(ringing) < 0) {

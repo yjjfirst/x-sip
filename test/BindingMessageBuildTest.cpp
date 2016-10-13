@@ -157,11 +157,12 @@ TEST(BindingMessageBuildTestGroup, ContentLengthTest)
     STRCMP_EQUAL(HEADER_NAME_CONTENT_LENGTH, ContentLengthHeaderGetName(c));
 }
 
+
 TEST(BindingMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildRingingMessage(invite);
+    MESSAGE *ringing = BuildRingingMessage(NULL, invite);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
