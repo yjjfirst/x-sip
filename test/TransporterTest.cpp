@@ -50,7 +50,7 @@ TEST(MessageTransportTestGroup, InitTest)
 
     mock().expectOneCall("InitMock").withParameter("port", SipTransporter->port).andReturnValue(result);
     
-    CHECK_EQUAL(result, TransporterInit(SipTransporter->port));
+    CHECK_EQUAL(result, InitTransporter(SipTransporter->port));
     CHECK_EQUAL(result, SipTransporter->fd);
     
     mock().checkExpectations();

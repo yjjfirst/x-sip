@@ -18,7 +18,7 @@ struct MessageTransporter {
 
 int ReceiveMessage();
 int  SendMessage(struct Message *message);
-int TransporterInit(int port);
+int InitTransporter(int port);
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
 
 extern struct MessageTransporter *SipTransporter;

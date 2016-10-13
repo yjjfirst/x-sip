@@ -28,7 +28,7 @@ extern "C" {
 #include "Accounts.h"
 }
 
-int SendOutAckMessageMock(char *message, char *destaddr, int destport, int fd)
+int SendAckMessageMock(char *message, char *destaddr, int destport, int fd)
 {
     MESSAGE *m = CreateMessage();
     char *remoteTag = NULL;
@@ -44,8 +44,8 @@ int SendOutAckMessageMock(char *message, char *destaddr, int destport, int fd)
 }
 
 static struct MessageTransporter MockTransporterForAck = {
-    SendOutAckMessageMock,
-    ReceiveInMessageMock,
+    SendAckMessageMock,
+    ReceiveMessageMock,
     NULL,
     SipMessageHandle
 

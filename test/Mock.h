@@ -6,8 +6,8 @@
 #define SEND_OUT_MESSAGE_MOCK "SendOutMessageMock"
 #define RECEIVE_IN_MESSAGE_MOCK "ReceiveInMessageMock"
 struct MessageTransporter;
-int ReceiveInMessageMock(char *message, int fd);
-int SendOutMessageMock(char *message, char *destaddr, int destport, int fd);
+int ReceiveMessageMock(char *message, int fd);
+int SendMessageMock(char *message, char *destaddr, int destport, int fd);
 
 void GenerateBranchMock(char *branch);
 void GenerateBranchMockForAuthorization(char *branch);

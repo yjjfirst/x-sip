@@ -19,18 +19,18 @@ TEST_GROUP(TransporterManagerTestGroup)
     }
 };
 
-int ReceiveMessageMock(char *message, int fd)
+static int ReceiveMock(char *message, int fd)
 {
     mock().actualCall("ReceiveMessage").withParameter("fd", fd);
     return 0;
 }
 
-struct MessageTransporter t0 = {NULL, ReceiveMessageMock, NULL, NULL, 0};
-struct MessageTransporter t1 = {NULL, ReceiveMessageMock, NULL, NULL, 101};
-struct MessageTransporter t2 = {NULL, ReceiveMessageMock, NULL, NULL, 102};
-struct MessageTransporter t3 = {NULL, ReceiveMessageMock, NULL, NULL, 103};
-struct MessageTransporter t4 = {NULL, ReceiveMessageMock, NULL, NULL, 104};
-struct MessageTransporter t5 = {NULL, ReceiveMessageMock, NULL, NULL, 1023};
+struct MessageTransporter t0 = {NULL, ReceiveMock, NULL, NULL, 0};
+struct MessageTransporter t1 = {NULL, ReceiveMock, NULL, NULL, 101};
+struct MessageTransporter t2 = {NULL, ReceiveMock, NULL, NULL, 102};
+struct MessageTransporter t3 = {NULL, ReceiveMock, NULL, NULL, 103};
+struct MessageTransporter t4 = {NULL, ReceiveMock, NULL, NULL, 104};
+struct MessageTransporter t5 = {NULL, ReceiveMock, NULL, NULL, 1023};
 
 TEST(TransporterManagerTestGroup, AddTransporterTest)
 {

@@ -32,7 +32,7 @@ int SendMessage(MESSAGE *message)
                                 SipTransporter->fd);
 }
 
-int TransporterInit(int port)
+int InitTransporter(int port)
 {
     SipTransporter->fd = SipTransporter->init(port);
     return SipTransporter->fd;

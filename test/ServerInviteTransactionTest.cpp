@@ -37,7 +37,7 @@ int SendOut100TryingMock(char *message, char *destaddr, int destport, int fd)
 
 struct MessageTransporter MockTransporterFor100Trying = {
     SendOut100TryingMock,
-    ReceiveInMessageMock,
+    ReceiveMessageMock,
     NULL,
     SipMessageHandle
 };
@@ -58,7 +58,7 @@ int SendOut180RingingMock(char *message, char *destaddr, int destport, int fd)
 
 struct MessageTransporter MockTransporterFor180Ringing = {
     SendOut180RingingMock,
-    ReceiveInMessageMock,
+    ReceiveMessageMock,
     NULL,
     SipMessageHandle
 };
@@ -79,7 +79,7 @@ int SendOut301Mock(char *message, char *destaddr, int destport, int fd)
 
 struct MessageTransporter MockTransporterFor301 = {
     SendOut301Mock,
-    ReceiveInMessageMock,
+    ReceiveMessageMock,
     NULL,
     SipMessageHandle
 };
@@ -99,7 +99,7 @@ int SendOut200OKMock(char *message, char *destaddr, int destport, int fd)
 
 struct MessageTransporter MockTransporterFor200OK = {
     SendOut200OKMock,
-    ReceiveInMessageMock,
+    ReceiveMessageMock,
     NULL,
     SipMessageHandle
 };
