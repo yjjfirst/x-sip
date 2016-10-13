@@ -23,24 +23,11 @@ TEST(MessageTransportTestGroup, ReceiveMessageTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue("Receiving test string");
     mock().expectOneCall("MessageHandleMock");
 
-    ReceiveInMessage();
+    ReceiveMessage();
 
     mock().checkExpectations();
 }
 
-TEST(MessageTransportTestGroup, SendMessageTest)
-{
-    char message[32] = "Sending test string";
-
-    UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
-
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "").
-        withStringParameter("destaddr", (char *)"192.168.10.63").
-        withIntParameter("port", 5060);
-
-    SendOutMessage(message, (char *)"192.168.10.63", 5060);
-    mock().checkExpectations();
-}
 
 struct MessageTransporter NullTransporter = {
     NULL,
@@ -52,16 +39,7 @@ struct MessageTransporter NullTransporter = {
 TEST(MessageTransportTestGroup, NullReceiveTest)
 {
     UT_PTR_SET(SipTransporter, &NullTransporter);
-    CHECK_EQUAL(-1, ReceiveInMessage());
-    mock().checkExpectations();
-}
-
-TEST(MessageTransportTestGroup, NullSendTest)
-{
-    char message[32] = "Sending test string";
-
-    UT_PTR_SET(SipTransporter, &NullTransporter);
-    CHECK_EQUAL(-1, SendOutMessage(message, NULL, 0));
+    CHECK_EQUAL(-1, ReceiveMessage());
     mock().checkExpectations();
 }
 

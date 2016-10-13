@@ -72,7 +72,7 @@ TEST(UserAgentManagerTestGroup, CreateUserAgentAfterReceiveInviteTest)
 {
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CHECK_EQUAL(1, CountUserAgent());
     ClearTransactionManager();

@@ -65,7 +65,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
     CallOut(account, dest);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CHECK_EQUAL(1, CountUserAgent());
     CHECK_EQUAL(1, CountDialogs());
@@ -91,13 +91,13 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
 
     struct UserAgent *ua = CallOut(account, dest);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "BYE");
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BYE_200OK_MESSAGE);
     EndCall(ua);
 
-    ReceiveInMessage();
+    ReceiveMessage();
     
     CHECK_EQUAL(0, CountDialogs());
 }
@@ -117,7 +117,7 @@ TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
 
     mock().expectOneCall("NotifyClient").withParameter("event", CALL_ESTABLISHED);
 
-    ReceiveInMessage();
+    ReceiveMessage();
 }
 
 
@@ -135,7 +135,7 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
 
     mock().expectOneCall("NotifyClient").withParameter("event", CALL_REMOTE_RINGING);
     
-    ReceiveInMessage();
+    ReceiveMessage();
 }
 
 TEST(CallManagerTestGroup, IncomingCallTest)
@@ -150,7 +150,7 @@ TEST(CallManagerTestGroup, IncomingCallTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
 
     
-    ReceiveInMessage();
+    ReceiveMessage();
     struct UserAgent *ua = GetUserAgent(0);
     AcceptCall(ua);
     

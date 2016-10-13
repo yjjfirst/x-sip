@@ -1,5 +1,7 @@
 #include "Bool.h"
 
+struct Message;
+
 typedef int (*MessageSend) (char *message, char *destaddr, int destport, int fd);
 typedef int (*MessageReceive) (char *message, int fd);
 typedef int (*MessageHandle) (char *message);
@@ -14,8 +16,8 @@ struct MessageTransporter {
     int port;
 };
 
-int ReceiveInMessage();
-int SendOutMessage(char *message, char *destaddr, int port);
+int ReceiveMessage();
+int  SendMessage(struct Message *message);
 int TransporterInit(int port);
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
 

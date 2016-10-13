@@ -75,7 +75,7 @@ TEST(TransactionManager, MatchResponse)
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
-    CHECK_TRUE(ReceiveInMessage());
+    CHECK_TRUE(ReceiveMessage());
 }
 
 TEST(TransactionManager, BranchNonMatchTest)
@@ -86,7 +86,7 @@ TEST(TransactionManager, BranchNonMatchTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     MessageAddViaParameter(message, (char *)"branch", (char *)"z9hG4bK1491280924");
 
-    ReceiveInMessage();
+    ReceiveMessage();
     s = GetTransactionState(t);
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
 }

@@ -199,7 +199,7 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
 
     AccountAddBinding(0);    
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
     ClearUserAgentManager();
@@ -226,7 +226,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(REMOVE_BINDING_OK_MESSAGE);
     
     AccountRemoveBinding(0);    
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
@@ -258,10 +258,10 @@ TEST(AccountManagerTestGroup, AuthoriaztionNeedTest)
     AccountAddBinding(0);    
 
     UT_PTR_SET(GenerateBranch, GenerateBranchMockForAuthorization);
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
     
     ClearUserAgentManager();

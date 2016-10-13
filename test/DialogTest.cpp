@@ -106,13 +106,16 @@ TEST(DialogTestGroup, SetLocalTagTest)
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);    
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
-   
+
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     UT_PTR_SET(SipTransporter, &MockTransporterForAck);
 
-    ReceiveInMessage();
+    MESSAGE *ok = CreateMessage();
+    ParseMessage(OK_MESSAGE_RECEIVED, ok);
+    DialogReceiveOk(dialog, ok);
+
+    DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, AddTransactionTest)
@@ -136,7 +139,7 @@ TEST(DialogTestGroup, UACDialogIdTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveInMessage();
+    ReceiveMessage();
     
     STRCMP_EQUAL(MessageGetFromTag(originInvite), GetLocalTag(DialogGetId(dialog)));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), GetCallId(DialogGetId(dialog)));
@@ -158,7 +161,7 @@ TEST(DialogTestGroup, UACDialogIdDelegateTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
 
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     STRCMP_EQUAL(MessageGetFromTag(originInvite), DialogGetLocalTag(dialog));     
     STRCMP_EQUAL(MessageGetCallId(originInvite), DialogGetCallId(dialog));
@@ -183,7 +186,7 @@ TEST(DialogTestGroup, UACDialogRemoteSeqNumberTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
 }
@@ -197,7 +200,7 @@ TEST(DialogTestGroup, UACDialogRemoteTargetTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
  
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
     CONTACT_HEADER *ch = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
@@ -223,7 +226,7 @@ TEST(DialogTestGroup, UACDialogConfirmedTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
    
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
 
@@ -343,12 +346,9 @@ TEST(DialogTestGroup, ReceiveInviteTest)
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(1, CountDialogs());
 
     DestroyMessage(&invite);
     ClearUserAgentManager();
 }
-
-
-

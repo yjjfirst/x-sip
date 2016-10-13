@@ -9,14 +9,7 @@
 #include "SipUdp.h"
 #include "ClientUdp.h"
 
-int SendOutMessage(char *message, char *destaddr, int port)
-{
-    if (SipTransporter->send == NULL) return -1;
-
-    return SipTransporter->send(message, destaddr, port, SipTransporter->fd);
-}
-
-int ReceiveInMessage()
+int ReceiveMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
 
@@ -24,6 +17,19 @@ int ReceiveInMessage()
     SipTransporter->receive(received, SipTransporter->fd);
     
     return SipTransporter->callback(received);
+}
+
+int SendMessage(MESSAGE *message)
+{
+    if (SipTransporter->send == NULL) return -1;
+
+    char s[MAX_MESSAGE_LENGTH] = {0};
+    Message2String(s, message);
+
+    return SipTransporter->send(s,
+                                MessageGetDestAddr(message),
+                                MessageGetDestPort(message),
+                                SipTransporter->fd);
 }
 
 int TransporterInit(int port)

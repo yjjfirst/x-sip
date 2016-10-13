@@ -194,7 +194,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage(); 
+    ReceiveMessage(); 
     CheckOnlyOneTransactionMatched();
     ClearUserAgentManager();
 }
@@ -223,13 +223,13 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateReceiveInviteTest)
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    ReceiveInMessage(); 
+    ReceiveMessage(); 
     CheckOnlyOneTransactionMatched();
     
     //Receive retransmited INVITE message.
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
-    ReceiveInMessage(); 
+    ReceiveMessage(); 
     CheckOnlyOneTransactionMatched();
 }
 
@@ -323,12 +323,12 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateReceiceInviteStateTest)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
 }
@@ -339,7 +339,7 @@ TEST(ServerInviteTransactionTestGroup, CompletedStateSendResponseErrorTest)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CheckNoTransaction(); 
 }
@@ -389,7 +389,7 @@ TEST(ServerInviteTransactionTestGroup, ReceiveInviteTest)
 {
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     CheckOnlyOneTransactionMatched();
     ClearUserAgentManager();    

@@ -167,20 +167,12 @@ int NotifyUser(struct Transaction *t)
     return 0;
 }
 
-int SendTransactionMessage(MESSAGE *message)
-{
-    char s[MAX_MESSAGE_LENGTH] = {0};
-    Message2String(s, message);
-
-    return SendOutMessage(s, MessageGetDestAddr(message), MessageGetDestPort(message) );
-}
-
 int SendRequestMessage(struct Transaction *t)
 {
     assert(t != NULL);
     assert(t->request != NULL);
 
-    if (SendTransactionMessage(t->request) < 0) {
+    if (SendMessage(t->request) < 0) {
          RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
          return -1;
     }
@@ -190,7 +182,7 @@ int SendRequestMessage(struct Transaction *t)
 
 int ResendLatestResponse(struct Transaction *t)
 {
-    if (SendTransactionMessage(GetLatestResponse(t)) < 0) {
+    if (SendMessage(GetLatestResponse(t)) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
@@ -265,7 +257,7 @@ void ResponseWith301(struct Transaction *t)
     MESSAGE *moved = Build301Message(t->request);
 
     AddResponse(t, moved);
-    if (SendTransactionMessage(moved) < 0) {
+    if (SendMessage(moved) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return;
     }
@@ -277,7 +269,7 @@ void ResponseWith200OK(struct Transaction *t)
 {
     MESSAGE *ok = Build200OkMessage((struct Dialog *)t->user, t->request);
     AddResponse(t, ok);
-    SendTransactionMessage(ok);
+    SendMessage(ok);
 
     RunFsm(t, TRANSACTION_SEND_200OK);
 }
@@ -287,7 +279,7 @@ void ResponseWith180Ringing(struct Transaction *t)
     MESSAGE *ringing = BuildRingingMessage(t->request);
 
     AddResponse(t, ringing);
-    if (SendTransactionMessage(ringing) < 0) {
+    if (SendMessage(ringing) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return;
     }
@@ -301,7 +293,7 @@ int SendAckRequest(struct Transaction *t)
     MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
 
     AddResponse(t, ack);
-    if (SendTransactionMessage(ack) < 0) {
+    if (SendMessage(ack) < 0) {
         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
         return -1;
     }
@@ -370,7 +362,7 @@ struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *
         MESSAGE *trying = BuildTryingMessage((struct Dialog *)user, t->request);
         AddResponse(t, trying);
         
-        if (SendTransactionMessage(trying) < 0) {
+        if (SendMessage(trying) < 0) {
             RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
             DestroyTransaction(&t);
             return NULL;

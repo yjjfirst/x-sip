@@ -139,7 +139,7 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 void DialogAck(struct Dialog *dialog)
 {
     MESSAGE *ack = BuildAckMessage(dialog);
-    SendTransactionMessage(ack);
+    SendMessage(ack);
     DestroyMessage(&ack);
 }
 

@@ -53,7 +53,6 @@ enum TransactionEvent {
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
-int  SendTransactionMessage(struct Message *message);
 void ResponseWith180Ringing(struct Transaction *t);
 void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);

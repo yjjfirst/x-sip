@@ -80,7 +80,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
     void PrepareProceedingState()
     {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-        ReceiveInMessage();
+        ReceiveMessage();
         s = GetTransactionState(t);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
         
@@ -135,7 +135,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryingStateReceive2xxTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
 
@@ -150,7 +150,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryStateReceive401Test)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
  
     
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
 
@@ -262,7 +262,7 @@ TEST(ClientNonInviteTransactionTestGroup, CompletedStateTimerKTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);   
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
 
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 
     TimerKCallbackFunc(t);
@@ -275,14 +275,14 @@ TEST(ClientNonInviteTransactionTestGroup, GetLatestResponse)
     PrepareTryingState(0);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     mock().expectOneCall("AddTimer").withIntParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
-    ReceiveInMessage();
+    ReceiveMessage();
 
     MESSAGE *latestResponse = GetLatestResponse(t);
     struct StatusLine *sl = MessageGetStatusLine(latestResponse);

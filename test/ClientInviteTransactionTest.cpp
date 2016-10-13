@@ -100,7 +100,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
     {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
         
-        ReceiveInMessage();    
+        ReceiveMessage();    
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 
     }
@@ -137,7 +137,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive2xxTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", SIP_METHOD_NAME_ACK);
 
-    ReceiveInMessage();
+    ReceiveMessage();
 
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
     CHECK_EQUAL(0, CountTransaction());
@@ -151,18 +151,18 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive100Test)
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Test)
 {
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-    ReceiveInMessage();
+    ReceiveMessage();
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
-    ReceiveInMessage();    
+    ReceiveMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Without100ReceivedTest)
 {
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
-    ReceiveInMessage();    
+    ReceiveMessage();    
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 }
 
@@ -174,8 +174,8 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
     mock().expectOneCall("NotifyUser");
     
-    ReceiveInMessage();
-    ReceiveInMessage();    
+    ReceiveMessage();
+    ReceiveMessage();    
 }
 
 TEST(ClientInviteTransactionTestGroup, CallingStateTimerATest)
@@ -220,7 +220,7 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
 
-    ReceiveInMessage();    
+    ReceiveMessage();    
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
  
 }
@@ -231,7 +231,7 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)
 
     for (; i < 20; i++) {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
-        ReceiveInMessage();
+        ReceiveMessage();
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
     }
 }
