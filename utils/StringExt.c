@@ -9,3 +9,14 @@ int StrcmpExt(const char *s1, const char *s2)
 
     return strcmp(s1, s2);
 }
+
+void RemoveTailingCRLF(char *s)
+{
+    char *p = s;
+    
+    while(*p != 0) {
+        if (*p == '\r' || *p == '\n') *p = 0;
+        p++;
+    }
+
+}

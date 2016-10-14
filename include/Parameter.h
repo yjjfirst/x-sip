@@ -5,6 +5,7 @@
 
 struct Parameter;
 struct Parameters;
+struct HeaderPattern;
 /*
  *Function for parameter struct.
  */

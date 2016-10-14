@@ -6,8 +6,13 @@ enum CALL_EVENT {
     CALL_REMOTE_RINGING,
 };
 
+struct ClientEvent {
+    int ua;
+    int event;
+};
 struct UserAgent;
 
 void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event);
+void ParseClientMessage(char *msg, struct ClientEvent *event);
 
 extern void (*NotifyClient)(enum CALL_EVENT event, struct UserAgent *ua);

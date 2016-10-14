@@ -215,7 +215,8 @@ void (*OnTransactionEvent)(struct Dialog *dialog, int event, MESSAGE *message) =
 struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message, int type)
 {
     struct DialogId *id = DialogGetId(dialog);
-    struct Transaction *t = NULL;
+    struct Transaction *t = AddTransaction(message, (struct TransactionUser *)dialog, type);
+    dialog->transaction = t;
 
     if (type == TRANSACTION_TYPE_CLIENT_INVITE) {
         SetLocalTag(id, MessageGetFromTag(message));
@@ -225,15 +226,12 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
         SetRemoteTag(id, MessageGetFromTag(message));
         SetCallId(id, MessageGetCallId(message));
         ExtractRemoteTarget(dialog, message);
-        
+
         if (NotifyClient != NULL) {
             NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
         }
     }
     
-    t = AddTransaction(message, (struct TransactionUser *)dialog, type);
-    dialog->transaction = t;
-
     return t;
 }
 

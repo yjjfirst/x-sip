@@ -3,6 +3,8 @@
 #include "Mock.h"
 
 extern "C" {
+#include <assert.h>
+    
 #include "AccountManager.h"
 #include "UserAgentManager.h"
 #include "CallEvents.h"
@@ -56,7 +58,7 @@ TEST(CallEventTestGroup, BuildClientMessageTest)
     
     BuildClientMessage(msg, ua, event);
 
-    STRCMP_EQUAL("ua=0:event=call_incoming\r\n", msg);
+    STRCMP_EQUAL("ua=0;event=call_incoming\r\n", msg);
 }
 
 TEST(CallEventTestGroup, ClientMessageSendTest)
@@ -64,7 +66,7 @@ TEST(CallEventTestGroup, ClientMessageSendTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=0:event=call_incoming\r\n").
+        withParameter("message","ua=0;event=call_incoming\r\n").
         withParameter("addr", "192.168.10.1").
         withParameter("port", 5556).
         withParameter("fd", ClientTransporter->fd);
@@ -81,7 +83,7 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=1:event=call_incoming\r\n").
+        withParameter("message","ua=1;event=call_incoming\r\n").
         withParameter("addr", "192.168.10.1").
         withParameter("port", 5556).
         withParameter("fd", ClientTransporter->fd);
@@ -91,4 +93,25 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
     struct UserAgent *ua = AddUserAgent(0);
 
     NotifyClient(CALL_INCOMING, ua);
+}
+
+TEST(CallEventTestGroup, ParseClientMessage)
+{
+    char message[] = "ua=1;event=call_incoming\r\n";
+    struct ClientEvent event;
+    
+    ParseClientMessage(message, &event);
+    CHECK_EQUAL(1, event.ua);
+    CHECK_EQUAL(CALL_INCOMING, event.event);
+}
+
+TEST(CallEventTestGroup, ParseAnotherClientMessage)
+{
+    char message[] = "ua=2;event=call_established\r\n";
+    struct ClientEvent event;
+    
+    ParseClientMessage(message, &event);
+    CHECK_EQUAL(2, event.ua);
+    CHECK_EQUAL(CALL_ESTABLISHED, event.event);
+
 }

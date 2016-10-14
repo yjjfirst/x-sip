@@ -3,15 +3,9 @@
 
 #include "SipMethod.h"
 #include "StringExt.h"
+#include "Maps.h"
 
-#define SIP_METHOD_MAX_LENGTH 32
-
-struct MethodStringMap {
-    SIP_METHOD method;
-    char stringName[SIP_METHOD_MAX_LENGTH];
-};
-
-struct MethodStringMap MethodStringMaps[] = {   
+struct IntStringMap MethodStringMaps[] = {   
     {SIP_METHOD_INVITE,      SIP_METHOD_NAME_INVITE},
     {SIP_METHOD_ACK,         SIP_METHOD_NAME_ACK},
     {SIP_METHOD_OPTIONS,     SIP_METHOD_NAME_OPTIONS},
@@ -26,25 +20,20 @@ struct MethodStringMap MethodStringMaps[] = {
     {SIP_METHOD_MESSAGE,     SIP_METHOD_NAME_MESSAGE},
     {SIP_METHOD_REFER,       SIP_METHOD_NAME_REFER},
     {SIP_METHOD_PUBLISH,     SIP_METHOD_NAME_PUBLISH},
-    {SIP_METHOD_NONE, ""},
+    {-1, ""},
 };
 
 char *MethodMap2String(SIP_METHOD method)
 {
-    return MethodStringMaps[method].stringName;
+    return IntMap2String(method, MethodStringMaps);
 }
 
 SIP_METHOD StringMap2MethodNumber(char *methodString)
 {
-    struct MethodStringMap *maps = MethodStringMaps;
+    int method = String2Int(methodString, MethodStringMaps);
 
-    for ( ;maps->method != SIP_METHOD_NONE; maps++){
-        if (StrcmpExt(maps->stringName, methodString) == 0)
-            return maps->method;
-        
-    }
-
-    return SIP_METHOD_NONE;;
+    if (method == -1 ) return SIP_METHOD_NONE;
+    else return method;
 }
 
 BOOL SipMethodLegal(char *method)
