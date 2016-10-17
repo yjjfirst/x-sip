@@ -66,19 +66,19 @@ void UserAgentSetUnbinded(struct UserAgent *ua)
     AccountSetUnbinded(account);
 }
 
-void UserAgentMakeCall(struct UserAgent *ua)
+void UaMakeCall(struct UserAgent *ua)
 {
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     DialogInvite(dialog);
 }
 
-void UserAgentEndCall(struct UserAgent *ua)
+void UaEndCall(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialog(0);
     DialogBye(dialog);
 }
 
-void UserAgentAcceptCall(struct UserAgent *ua)
+void UaAcceptCall(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialogByUserAgent(ua);
 

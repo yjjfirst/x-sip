@@ -115,3 +115,14 @@ TEST(CallEventTestGroup, ParseAnotherClientMessage)
     CHECK_EQUAL(CALL_ESTABLISHED, event.event);
 
 }
+
+TEST(CallEventTestGroup, ParseCallCommandMessage)
+{
+    char message[] = "ua=3;event=accept_call\r\n";
+    struct ClientEvent event;
+    
+    ParseClientMessage(message, &event);
+
+    CHECK_EQUAL(3, event.ua);
+    CHECK_EQUAL(ACCEPT_CALL, event.event);
+}

@@ -14,6 +14,8 @@ struct IntStringMap CallEventMap[] = {
     {CALL_INCOMING, "call_incoming"},
     {CALL_ESTABLISHED, "call_established"},
     {CALL_REMOTE_RINGING,"call_remote_ringing"},
+
+    {ACCEPT_CALL, "accept_call"},
     {-1, ""},
 };
 

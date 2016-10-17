@@ -4,6 +4,8 @@ enum CALL_EVENT {
     CALL_INCOMING,
     CALL_ESTABLISHED,
     CALL_REMOTE_RINGING,
+
+    ACCEPT_CALL,
 };
 
 struct ClientEvent {

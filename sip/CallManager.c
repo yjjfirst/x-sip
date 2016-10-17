@@ -6,18 +6,18 @@
 struct UserAgent *CallOut(int account, char *dest)
 {
     struct UserAgent *ua = AddUserAgent(0);
-    UserAgentMakeCall(ua);
+    UaMakeCall(ua);
     return ua;
 }
 
 void EndCall(struct UserAgent *ua)
 {
-    UserAgentEndCall(ua);
+    UaEndCall(ua);
 }
 
 void AcceptCall(struct UserAgent *ua)
 {
-    UserAgentAcceptCall(ua);
+    UaAcceptCall(ua);
 }
 
 BOOL ClientMessageHandle(char *string)

@@ -22,9 +22,9 @@ struct Account *UserAgentGetAccount(struct UserAgent *ua);
 BOOL UserAgentBinded(struct UserAgent *ua);
 
 
-void UserAgentMakeCall(struct UserAgent *ua);
-void UserAgentEndCall(struct UserAgent *ua);
-void UserAgentAcceptCall(struct UserAgent *ua);
+void UaMakeCall(struct UserAgent *ua);
+void UaEndCall(struct UserAgent *ua);
+void UaAcceptCall(struct UserAgent *ua);
 
 
 struct UserAgent *CreateUserAgent(int account);
