@@ -7,19 +7,19 @@
 struct UserAgent;
 struct DialogId;
 
-void UserAgentSetUserName(struct UserAgent *ua, char *name);
-char *UserAgentGetUserName(struct UserAgent *ua);
-void UserAgentSetProxy(struct UserAgent *ua, char *proxy);
-char *UserAgentGetProxy(struct UserAgent *ua);
-void UserAgentSetRegistrar(struct UserAgent *ua, char *registrar);
-char *UserAgentGetRegistrar(struct UserAgent *ua);
-void UserAgentSetAuthName(struct UserAgent *ua, char *authName);
-char *UserAgentGetAuthName(struct UserAgent *ua);
-void UserAgentSetBinded(struct UserAgent *ua);
-void UserAgentSetUnbinded(struct UserAgent *ua);
-struct Account *UserAgentGetAccount(struct UserAgent *ua);
+void UaSetUserName(struct UserAgent *ua, char *name);
+char *UaGetUserName(struct UserAgent *ua);
+void UaSetProxy(struct UserAgent *ua, char *proxy);
+char *UaGetProxy(struct UserAgent *ua);
+void UaSetRegistrar(struct UserAgent *ua, char *registrar);
+char *UaGetRegistrar(struct UserAgent *ua);
+void UaSetAuthName(struct UserAgent *ua, char *authName);
+char *UaGetAuthName(struct UserAgent *ua);
+void UaSetBinded(struct UserAgent *ua);
+void UaSetUnbinded(struct UserAgent *ua);
+struct Account *UaGetAccount(struct UserAgent *ua);
 
-BOOL UserAgentBinded(struct UserAgent *ua);
+BOOL UaBinded(struct UserAgent *ua);
 
 
 void UaMakeCall(struct UserAgent *ua);
@@ -30,4 +30,4 @@ void UaAcceptCall(struct UserAgent *ua);
 struct UserAgent *CreateUserAgent(int account);
 void DestroyUserAgent(struct UserAgent **ua);
 
-void UserAgentDump(struct UserAgent *ua);
+void DumpUa(struct UserAgent *ua);

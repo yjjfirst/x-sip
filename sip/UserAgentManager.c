@@ -71,6 +71,6 @@ void UserAgentManagerDump()
     printf("\n");
     for (; i < len; i ++) {
         struct UserAgent *ua = get_data_at(uam->userAgents, i);
-        UserAgentDump(ua);
+        DumpUa(ua);
     }
 }

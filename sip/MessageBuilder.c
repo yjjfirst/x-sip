@@ -30,7 +30,7 @@ struct RequestLine *BuildRequestLine(struct Dialog *dialog)
     URI *remoteUri = UriDup(DialogGetRemoteUri(dialog));
 
     if (remoteUri == NULL) {
-        uri = CreateUri(URI_SCHEME_SIP, NULL, UserAgentGetProxy(ua), 0);
+        uri = CreateUri(URI_SCHEME_SIP, NULL, UaGetProxy(ua), 0);
     } else {
         uri = remoteUri;
     }
@@ -55,7 +55,7 @@ struct Header *BuildRequestViaHeader(struct Dialog *dialog)
 struct Header *BuildRequestFromHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), UserAgentGetProxy(ua), 0);
+    URI *uri = CreateUri(URI_SCHEME_SIP, UaGetUserName(ua), UaGetProxy(ua), 0);
     CONTACT_HEADER *from = CreateFromHeader();
     struct Parameters *ps = ContactHeaderGetParameters(from);
     char tag[MAX_TAG_LENGTH +1] = {0};
@@ -82,7 +82,7 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
     if (remoteUri != NULL)
         uri = UriDup(remoteUri);
     else
-        uri = CreateUri(URI_SCHEME_SIP, "", UserAgentGetProxy(ua), 0);
+        uri = CreateUri(URI_SCHEME_SIP, "", UaGetProxy(ua), 0);
 
     CONTACT_HEADER *to = CreateToHeader();
     ContactHeaderSetUri(to, uri);
@@ -93,7 +93,7 @@ struct Header *BuildRequestToHeader(struct Dialog *dialog)
 struct Header *BuildRequestContactHeader(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    URI *uri = CreateUri(URI_SCHEME_SIP, UserAgentGetUserName(ua), GetLocalIpAddr(), 0);
+    URI *uri = CreateUri(URI_SCHEME_SIP, UaGetUserName(ua), GetLocalIpAddr(), 0);
     UriAddParameter(uri, "line", "6c451db26592505");
     CONTACT_HEADER *contact = CreateContactHeader();
 
@@ -155,7 +155,7 @@ void BuildMessageDest(MESSAGE *m, struct Dialog *dialog)
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     if (ua == NULL) return;
                    
-    struct Account *account = UserAgentGetAccount(ua);
+    struct Account *account = UaGetAccount(ua);
     if (account == NULL) return;
 
     MessageSetDestAddr(m, AccountGetRegistrar(account));
@@ -188,7 +188,7 @@ void SetToHeaderUserName(MESSAGE *message, struct Dialog *dialog)
 {
     CONTACT_HEADER *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UserAgentGetAccount(ua);
+    struct Account *account = UaGetAccount(ua);
 
     UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));    
 }
@@ -216,7 +216,7 @@ MESSAGE *BuildRemoveBindingMessage(struct Dialog *dialog)
 URI *BuildRemoteUri(struct Dialog *dialog, char *to)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UserAgentGetAccount(ua);    
+    struct Account *account = UaGetAccount(ua);    
     URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxyAddr(account), 0);
 
     return uri;
@@ -273,7 +273,7 @@ struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, struct Dialog *dialog, 
 {
     struct AuthHeader *authHeader = CreateAuthorizationHeader(dialog);
     struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UserAgentGetAccount(ua);
+    struct Account *account = UaGetAccount(ua);
     char response[MD5_HASH_LENGTH + 1] = {0};
 
     AuthHeaderSetScheme(authHeader, DIGEST);

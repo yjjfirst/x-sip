@@ -20,46 +20,46 @@ struct UserAgent {
     struct Account *account;
 };
 
-char *UserAgentGetUserName(struct UserAgent *ua)
+char *UaGetUserName(struct UserAgent *ua)
 {
     return AccountGetUserName(ua->account);
 }
 
-char *UserAgentGetAuthName(struct UserAgent *ua)
+char *UaGetAuthName(struct UserAgent *ua)
 {
     return AccountGetAuthName(ua->account);
 }
 
-char *UserAgentGetProxy(struct UserAgent *ua)
+char *UaGetProxy(struct UserAgent *ua)
 {
     return AccountGetProxyAddr(ua->account);
 }
 
-char *UserAgentGetRegistrar(struct UserAgent *ua)
+char *UaRegistrar(struct UserAgent *ua)
 {
     return AccountGetRegistrar(ua->account);
 }
 
-struct Account *UserAgentGetAccount(struct UserAgent *ua)
+struct Account *UaGetAccount(struct UserAgent *ua)
 {
     assert(ua != NULL);
     return ua->account;
 }
 
-BOOL UserAgentBinded(struct UserAgent *ua)
+BOOL UaBinded(struct UserAgent *ua)
 {
     struct Account *account = ua->account;
     return AccountBinded(account);
 }
 
-void UserAgentSetBinded(struct UserAgent *ua)
+void UaSetBinded(struct UserAgent *ua)
 {    
     assert(ua != NULL);
     struct Account *account = ua->account;
     AccountSetBinded(account);
 }
 
-void UserAgentSetUnbinded(struct UserAgent *ua)
+void UaSetUnbinded(struct UserAgent *ua)
 {
     assert(ua != NULL);
     struct Account *account = ua->account;
@@ -103,7 +103,7 @@ void DestroyUserAgent(struct UserAgent **ua)
     }
 }
 
-void UserAgentDump(struct UserAgent *ua)
+void DumpUa(struct UserAgent *ua)
 {
     printf("%s\n", AccountGetUserName(ua->account));
 }

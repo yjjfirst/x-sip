@@ -171,9 +171,9 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
     
     if (event == TRANSACTION_EVENT_200OK) {    
         if (MessageGetExpires(message) != 0) {
-            UserAgentSetBinded(ua);
+            UaSetBinded(ua);
         } else {
-            UserAgentSetUnbinded(ua);
+            UaSetUnbinded(ua);
         }
     } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
         MESSAGE *authMessage = BuildAuthorizationMessage(dialog, message);
