@@ -22,7 +22,7 @@ struct Account *UaGetAccount(struct UserAgent *ua);
 BOOL UaBinded(struct UserAgent *ua);
 
 
-void UaMakeCall(struct UserAgent *ua);
+extern void (*UaMakeCall)(struct UserAgent *ua);
 void UaEndCall(struct UserAgent *ua);
 void UaAcceptCall(struct UserAgent *ua);
 

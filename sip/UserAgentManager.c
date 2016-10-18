@@ -33,7 +33,7 @@ struct UserAgent *GetUserAgent(int pos)
     return get_data_at(uam->userAgents, pos);
 }
 
-int GetUserAgentPosition(struct UserAgent *ua)
+int GetUaPosition(struct UserAgent *ua)
 {
     int i = 0;
     struct UserAgentManager *uam = &UserAgentManager;   

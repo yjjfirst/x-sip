@@ -45,14 +45,22 @@ static void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
     mock().actualCall("NotifyClient").withParameter("event", event);
 }
 
-TEST(CallManagerTestGroup, CallOutSendInviteTest)
+void UaMakeCallMock(struct UserAgent *ua)
+{
+    mock().actualCall("UaMakeCall");
+}
+
+TEST(CallManagerTestGroup, CallOutTest)
 {
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
+    mock().expectOneCall("UaMakeCall");
+    UT_PTR_SET(UaMakeCall, UaMakeCallMock);
 
     CallOut(account, dest);
+
+    CHECK_EQUAL(1, CountUserAgent());
 }
 
 TEST(CallManagerTestGroup, CallOutSuccessTest)
