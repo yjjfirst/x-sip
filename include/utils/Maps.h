@@ -6,4 +6,4 @@ struct IntStringMap {
 };
 
 char *IntMap2String(int integer, struct IntStringMap *map);
-int String2Int(char *string, struct IntStringMap *map);
+int StringMap2Int(char *string, struct IntStringMap *map);

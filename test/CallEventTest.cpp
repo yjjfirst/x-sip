@@ -29,15 +29,9 @@ TEST_GROUP(CallEventTestGroup)
     }
 };
 
-static void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
-{
-    mock().actualCall("NotifyClient").withParameter("event", event).
-        withParameter("ua", ua);
-}
-
 TEST(CallEventTestGroup, NotifyClientTest)
 {
-    UT_PTR_SET(NotifyClient, NotifyClientMock);
+    UT_PTR_SET(NotifyCallManager, NotifyCallManagerMock);
 
     AddUserAgent(0);
     AddUserAgent(1);
@@ -46,7 +40,7 @@ TEST(CallEventTestGroup, NotifyClientTest)
     
     mock().expectOneCall("NotifyClient").withParameter("event", CALL_INCOMING).
         withParameter("ua", GetUserAgent(0));
-    NotifyClient(CALL_INCOMING, GetUserAgent(0));
+    NotifyCallManager(CALL_INCOMING, GetUserAgent(0));
 
 }
 
@@ -61,38 +55,31 @@ TEST(CallEventTestGroup, BuildClientMessageTest)
     STRCMP_EQUAL("ua=0;event=call_incoming\r\n", msg);
 }
 
-TEST(CallEventTestGroup, ClientMessageSendTest)
+TEST(CallEventTestGroup, SendClientMessageTest)
 {
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
-    mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=0;event=call_incoming\r\n").
-        withParameter("addr", "192.168.10.1").
-        withParameter("port", 5556).
-        withParameter("fd", ClientTransporter->fd);
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=call_incoming\r\n");
     
     AccountInit();
     struct UserAgent *ua = AddUserAgent(0);
 
-    NotifyClient(CALL_INCOMING, ua);
-
+    NotifyCallManager(CALL_INCOMING, ua);
 }
 
 TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
 {
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
-    mock().expectOneCall("ClientUdpSend").
-        withParameter("message","ua=1;event=call_incoming\r\n").
-        withParameter("addr", "192.168.10.1").
-        withParameter("port", 5556).
-        withParameter("fd", ClientTransporter->fd);
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=1;event=call_incoming\r\n");
     
     AccountInit();
     AddUserAgent(0);
     struct UserAgent *ua = AddUserAgent(0);
 
-    NotifyClient(CALL_INCOMING, ua);
+    NotifyCallManager(CALL_INCOMING, ua);
 }
 
 TEST(CallEventTestGroup, ParseClientMessage)

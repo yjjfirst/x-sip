@@ -17,6 +17,8 @@ extern struct MessageTransporter DummyTransporter;
 extern struct MessageTransporter MockTransporterAndHandle;
 extern struct MessageTransporter ClientTransporterMock;
 
+void NotifyCallManagerMock(int event, struct UserAgent *ua);
+
 int bind_mock(int sockfd, const struct sockaddr *addr,
               socklen_t addrlen);
 int socket_mock(int domain, int type, int protocol);

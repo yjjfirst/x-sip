@@ -30,7 +30,7 @@ char *MethodMap2String(SIP_METHOD method)
 
 SIP_METHOD StringMap2MethodNumber(char *methodString)
 {
-    int method = String2Int(methodString, MethodStringMaps);
+    int method = StringMap2Int(methodString, MethodStringMaps);
 
     if (method == -1 ) return SIP_METHOD_NONE;
     else return method;

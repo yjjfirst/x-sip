@@ -13,36 +13,6 @@ extern "C" {
 #include "AccountManager.h"
 #include "CallManager.h"
 #include "Transporter.h"
-#include "TransactionManager.h"
-#include "Messages.h"
-#include "ViaHeader.h"
-#include "DialogManager.h"
-}
-
-TEST_GROUP(CallManagerTestGroup)
-{
-    void setup() 
-    {
-        UT_PTR_SET(SipTransporter, &MockTransporter);
-        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
-
-        AccountInit();
-    }
-    
-    void teardown()
-    {
-        ClearAccountManager();
-        ClearTransactionManager();
-        ClearUserAgentManager();
-
-        mock().checkExpectations();
-        mock().clear();
-    }
-};
-
-static void NotifyClientMock(enum CALL_EVENT event, struct UserAgent *ua)
-{
-    mock().actualCall("NotifyClient").withParameter("event", event);
 }
 
 void UaMakeCallMock(struct UserAgent *ua)
@@ -50,14 +20,44 @@ void UaMakeCallMock(struct UserAgent *ua)
     mock().actualCall("UaMakeCall");
 }
 
+void UaEndCallMock(struct UserAgent *ua)
+{
+    mock().actualCall("UaEndCall").withParameter("ua", ua);
+}
+
+void UaAcceptCallMock(struct UserAgent *ua)
+{
+    mock().actualCall("UaAcceptCall").withParameter("ua", ua);
+}
+
+TEST_GROUP(CallManagerTestGroup)
+{
+    void setup() 
+    {
+        UT_PTR_SET(UaMakeCall, UaMakeCallMock);
+        UT_PTR_SET(UaEndCall, UaEndCallMock);
+        UT_PTR_SET(UaAcceptCall, UaAcceptCallMock);
+        UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
+
+        AccountInit();
+    }
+    
+    void teardown()
+    {
+        ClearAccountManager();
+        ClearUserAgentManager();
+
+        mock().checkExpectations();
+        mock().clear();
+    }
+};
+
 TEST(CallManagerTestGroup, CallOutTest)
 {
     char dest[] = "88002";
     char account = 0;
 
     mock().expectOneCall("UaMakeCall");
-    UT_PTR_SET(UaMakeCall, UaMakeCallMock);
-
     CallOut(account, dest);
 
     CHECK_EQUAL(1, CountUserAgent());
@@ -68,100 +68,55 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
+    mock().expectOneCall("UaMakeCall");
+    struct UserAgent *ua = CallOut(account, dest);
+    
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=call_established\r\n");
 
-    CallOut(account, dest);
-    ReceiveMessage();
-
-    CHECK_EQUAL(1, CountUserAgent());
-    CHECK_EQUAL(1, CountDialogs());
+    NotifyCallManager(CALL_ESTABLISHED, ua); 
 }
-#define BYE_200OK_MESSAGE (char *)"\
-SIP/2.0 200 OK\r\n\
-Via: SIP/2.0/UDP 192.168.10.1:5061;branch=z9hG4bK1491280923;received=192.168.10.1;rport=5061\r\n\
-From: <sip:88001@192.168.10.62>;tag=1069855717\r\n\
-To: <sip:88002@192.168.10.62>;tag=as6151ad25\r\n\
-Call-ID: 97295390\r\n\
-CSeq: 20 BYE\r\n\
-Contact: <sip:88002@192.168.10.62:5060>\r\n\
-Content-Type: application/sdp\r\n\
-Content-Length: 289\r\n"
 
 TEST(CallManagerTestGroup, ActiveHangupTest)
 {
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
-
+    mock().expectOneCall("UaMakeCall");
     struct UserAgent *ua = CallOut(account, dest);
-    ReceiveMessage();
+    
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=call_established\r\n");
+    NotifyCallManager(CALL_ESTABLISHED, ua); 
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "BYE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BYE_200OK_MESSAGE);
+    mock().expectOneCall("UaEndCall").withParameter("ua", ua);
     EndCall(ua);
 
-    ReceiveMessage();
-    
-    CHECK_EQUAL(0, CountDialogs());
 }
-
-TEST(CallManagerTestGroup, CallEstablishedNotifyClientTest)
-{
-    char dest[] = "88002";
-    char account = 0;
-
-    UT_PTR_SET(NotifyClient, NotifyClientMock);
-    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "ACK");
-    
-    CallOut(account, dest);
-
-    mock().expectOneCall("NotifyClient").withParameter("event", CALL_ESTABLISHED);
-
-    ReceiveMessage();
-}
-
 
 TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
 {
     char dest[] = "88002";
     char account = 0;
 
-    UT_PTR_SET(NotifyClient, NotifyClientMock);
+    mock().expectOneCall("UaMakeCall");
+    struct UserAgent *ua = CallOut(account, dest);
     
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("Method", "INVITE");
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=call_remote_ringing\r\n");
     
-    CallOut(account, dest);
-
-    mock().expectOneCall("NotifyClient").withParameter("event", CALL_REMOTE_RINGING);
-    
-    ReceiveMessage();
+    NotifyCallManager(CALL_REMOTE_RINGING, ua);     
 }
 
 TEST(CallManagerTestGroup, IncomingCallTest)
 {
-    UT_PTR_SET(NotifyClient, NotifyClientMock);
-    
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
-    mock().expectOneCall("NotifyClient").
-        withParameter("event", CALL_INCOMING);
+    struct UserAgent *ua = AddUserAgent(0);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 200);
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=call_incoming\r\n");    
+    NotifyCallManager(CALL_INCOMING, ua);     
 
-    
-    ReceiveMessage();
-    struct UserAgent *ua = GetUserAgent(0);
-    AcceptCall(ua);
-    
-    ClearUserAgentManager();    
+    mock().expectOneCall("UaAcceptCall").withParameter("ua", ua);
+    AcceptCall(ua);    
 }
 

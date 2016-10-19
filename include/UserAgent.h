@@ -23,8 +23,8 @@ BOOL UaBinded(struct UserAgent *ua);
 
 
 extern void (*UaMakeCall)(struct UserAgent *ua);
-void UaEndCall(struct UserAgent *ua);
-void UaAcceptCall(struct UserAgent *ua);
+extern void (*UaEndCall)(struct UserAgent *ua);
+extern void (*UaAcceptCall)(struct UserAgent *ua);
 
 
 struct UserAgent *CreateUserAgent(int account);

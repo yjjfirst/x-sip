@@ -153,16 +153,16 @@ void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     
     DialogAck(dialog);
 
-    if (NotifyClient != NULL)
-        NotifyClient(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
+    if (NotifyCallManager != NULL)
+        NotifyCallManager(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
 
     dialog->session = CreateSession();
 }
 
 void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
-    if (NotifyClient != NULL)
-        NotifyClient(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
+    if (NotifyCallManager != NULL)
+        NotifyCallManager(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
 }
 
 void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
@@ -227,8 +227,8 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
         SetCallId(id, MessageGetCallId(message));
         ExtractRemoteTarget(dialog, message);
 
-        if (NotifyClient != NULL) {
-            NotifyClient(CALL_INCOMING, DialogGetUserAgent(dialog));
+        if (NotifyCallManager != NULL) {
+            NotifyCallManager(CALL_INCOMING, DialogGetUserAgent(dialog));
         }
     }
     

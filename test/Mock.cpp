@@ -76,6 +76,12 @@ int InitMock(int port)
     return mock().actualCall("InitMock").withIntParameter("port", port).returnIntValue();
 }
 
+void NotifyCallManagerMock(int event, struct UserAgent *ua)
+{
+    mock().actualCall("NotifyClient").withParameter("event", event).
+        withParameter("ua", ua);
+}
+
 int MessageHandleMock(char *message)
 {
     return mock().actualCall("MessageHandleMock").returnIntValue();
@@ -112,17 +118,14 @@ struct MessageTransporter DummyTransporter = {
     .callback = SipMessageHandle
 };
 
-int ClientSendMock(char *message, char *destaddr, int destport, int fd)
+int SendClientMessageMock(char *message, char *destaddr, int destport, int fd)
 {
-    mock().actualCall("ClientUdpSend").withStringParameter("message", message).
-        withStringParameter("addr", destaddr).
-        withIntParameter("port", destport).
-        withIntParameter("fd", fd);
+    mock().actualCall("SendEventToClient").withStringParameter("message", message);
     return 0;
 }
 
 struct MessageTransporter ClientTransporterMock = {
-    .send = ClientSendMock,
+    .send = SendClientMessageMock,
     .receive = NULL,
     .init = NULL,
     .callback = NULL,

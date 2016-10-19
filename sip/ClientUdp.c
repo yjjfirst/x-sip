@@ -31,6 +31,6 @@ struct MessageTransporter ClientUdpTransporter = {
     .send = ClientSendMessage,
     .receive = ClientReceiveMessage,
     .init = ClientInit,
-    .callback = ClientMessageHandle,
+    .callback = HandleClientMessage,
     .port = CLIENT_SERV_PORT
 };

@@ -17,4 +17,4 @@ struct UserAgent;
 void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event);
 void ParseClientMessage(char *msg, struct ClientEvent *event);
 
-extern void (*NotifyClient)(enum CALL_EVENT event, struct UserAgent *ua);
+extern void (*NotifyCallManager)(int event, struct UserAgent *ua);

@@ -11,6 +11,15 @@
 #include "Parameter.h"
 #include "utils/StringExt.h"
 
+struct IntStringMap CallEventMap[] = {
+    {CALL_INCOMING, "call_incoming"},
+    {CALL_ESTABLISHED, "call_established"},
+    {CALL_REMOTE_RINGING,"call_remote_ringing"},
+
+    {ACCEPT_CALL, "accept_call"},
+    {-1, ""},
+};
+
 struct UserAgent *CallOut(int account, char *dest)
 {
     struct UserAgent *ua = AddUserAgent(account);
@@ -29,7 +38,7 @@ void AcceptCall(struct UserAgent *ua)
     UaAcceptCall(ua);
 }
 
-BOOL ClientMessageHandle(char *string)
+BOOL HandleClientMessage(char *string)
 {
     struct UserAgent *ua = GetUserAgent(3);
     AcceptCall(ua);
@@ -37,20 +46,11 @@ BOOL ClientMessageHandle(char *string)
     return 1;
 }
 
-struct IntStringMap CallEventMap[] = {
-    {CALL_INCOMING, "call_incoming"},
-    {CALL_ESTABLISHED, "call_established"},
-    {CALL_REMOTE_RINGING,"call_remote_ringing"},
-
-    {ACCEPT_CALL, "accept_call"},
-    {-1, ""},
-};
-
 void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event)
 {
     assert(msg != NULL);
     
-    sprintf(msg, "ua=%d;event=%s\r\n", ua, "call_incoming");
+    sprintf(msg, "ua=%d;event=%s\r\n", ua, IntMap2String(event, CallEventMap));
 }
 
 void ParseClientMessage(char *msg, struct ClientEvent *event)
@@ -63,13 +63,13 @@ void ParseClientMessage(char *msg, struct ClientEvent *event)
     ParseParametersExt(msg, ps);
     
 
-    event->event = String2Int(GetParameter(ps, "event"), CallEventMap);
+    event->event = StringMap2Int(GetParameter(ps, "event"), CallEventMap);
     event->ua = atoi(GetParameter(ps, "ua"));    
 
     DestroyParameters(&ps);
 }
 
-void NotifyClientImpl(enum CALL_EVENT event, struct UserAgent *ua)
+void NotifyClientImpl(int event, struct UserAgent *ua)
 {
     char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
 
@@ -77,4 +77,4 @@ void NotifyClientImpl(enum CALL_EVENT event, struct UserAgent *ua)
     ClientTransporter->send(msg, "192.168.10.1", 5556, ClientTransporter->fd);
 }
 
-void (*NotifyClient)(enum CALL_EVENT event, struct UserAgent *ua) = NotifyClientImpl;
+void (*NotifyCallManager)(int event, struct UserAgent *ua) = NotifyClientImpl;

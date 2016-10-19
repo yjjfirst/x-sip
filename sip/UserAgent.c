@@ -73,18 +73,22 @@ void UaMakeCallImpl(struct UserAgent *ua)
 }
 void (*UaMakeCall)(struct UserAgent *ua) = UaMakeCallImpl;
 
-void UaEndCall(struct UserAgent *ua)
+void UaEndCallImpl(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialog(0);
     DialogBye(dialog);
 }
+void (*UaEndCall)(struct UserAgent *ua) = UaEndCallImpl;
 
-void UaAcceptCall(struct UserAgent *ua)
+
+void UaAcceptCallImpl(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialogByUserAgent(ua);
 
     DialogOk(dialog);
 }
+void (*UaAcceptCall)(struct UserAgent *ua) = UaAcceptCallImpl;
+
 
 struct UserAgent *CreateUserAgent(int account)
 {
