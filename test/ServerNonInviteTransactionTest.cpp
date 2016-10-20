@@ -55,7 +55,7 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     }
 };
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
+TEST(ServerNonInviteTransactionTestGroup, RequestMatchTest)
 {
     MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
@@ -65,7 +65,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMatchTest)
     DestroyMessage(&newRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchTest)
+TEST(ServerNonInviteTransactionTestGroup, RequestBranchNonMatchTest)
 {
     char branch[] = "1234567890";
     MESSAGE *newRequest = CreateMessage();
@@ -78,7 +78,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactonRequestBranchNonMatchT
     DestroyMessage(&newRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatchTest)
+TEST(ServerNonInviteTransactionTestGroup, RequestSendbyNonMatchTest)
 {
     MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
@@ -88,7 +88,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestSendbyNonMatch
     DestroyMessage(&newRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatchedTest)
+TEST(ServerNonInviteTransactionTestGroup, RequestMetodNonMatchedTest)
 {
     MESSAGE *newRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, newRequest);
@@ -100,7 +100,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionRequestMetodNonMatche
     DestroyMessage(&newRequest);
 }
 
-TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
+TEST(ServerNonInviteTransactionTestGroup, AckReqestMatchedTest)
 {
     ClearTransactionManager();
 
@@ -116,7 +116,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerTransactionAckReqestMatchedTest)
 }
 
 //Match request to transaction test
-TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithInviteTest)
+TEST(ServerNonInviteTransactionTestGroup, CreateWithInviteFailTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
@@ -138,7 +138,7 @@ Max-Forwards: 70\r\n\
 CSeq: 101 ACK\r\n\
 Content-Length: 0\r\n"
 
-TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAckTest)
+TEST(ServerNonInviteTransactionTestGroup, CreateWithAckFailTest)
 {
     MESSAGE *ack = CreateMessage();
     ParseMessage(ACK_MESSAGE, ack);
@@ -150,7 +150,7 @@ TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateWithAc
 }
 
 //Trying state test
-TEST(ServerNonInviteTransactionTestGroup, ServerNonInviteTransactionCreateTest)
+TEST(ServerNonInviteTransactionTestGroup, CreateTest)
 {
     CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(transaction));
     CHECK_EQUAL(TRANSACTION_TYPE_SERVER_NON_INVITE, GetTransactionType(transaction));

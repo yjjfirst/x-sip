@@ -158,9 +158,9 @@ void HandleInviteRequest (MESSAGE *invite)
 
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
-    struct Transaction *t = NULL;
-
-    if ( (t = MatchTransaction(message)) == NULL) {
+    struct Transaction *t = MatchTransaction(message);
+    
+    if (!t) {
         if (MessageGetMethod(message) == SIP_METHOD_INVITE)
             HandleInviteRequest(message);
     } else {
