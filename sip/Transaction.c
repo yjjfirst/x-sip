@@ -2,7 +2,6 @@
 #include <assert.h>
 
 #include "Bool.h"
-#include "Dialog.h"
 #include "Transaction.h"
 #include "TransactionId.h"
 #include "TransactionManager.h"
@@ -36,7 +35,7 @@ struct Transaction {
 struct FsmStateEventEntry {
     enum TransactionEvent event;
     enum TransactionState nextState;
-    TransactionAction actions[TRANSACTION_ACTIONS_MAX + 1];
+    TransactionEventAction actions[TRANSACTION_ACTIONS_MAX + 1];
 };
 
 struct FsmState {

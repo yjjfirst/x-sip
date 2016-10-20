@@ -5,8 +5,9 @@ struct Message;
 struct Transaction;
 struct TransactionUser;
 struct TransactionManager;
+struct Dialog;
 
-typedef int (*TransactionAction)(struct Transaction *t);
+typedef int (*TransactionEventAction)(struct Transaction *t);
 
 struct TransactionUser {
 };
@@ -49,6 +50,8 @@ enum TransactionEvent {
     TRANSACTION_EVENT_TRANSPORT_ERROR,
     TRANSACTION_EVENT_MAX,
 };
+
+extern void (*OnTransactionEvent)(struct Dialog *dialog, int event, struct Message *messge);
 
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);

@@ -49,5 +49,3 @@ void DialogOk(struct Dialog *dialog);
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void DialogReceiveOk(struct Dialog *dialog, struct Message *message);
-
-extern void (*OnTransactionEvent)(struct Dialog *dialog, int event, struct Message *messge);
