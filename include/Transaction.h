@@ -31,6 +31,7 @@ enum TransactionType {
 };
 
 enum TransactionEvent {
+    TRANSACTION_EVENT_NEW,
     TRANSACTION_EVENT_200OK,
     TRANSACTION_EVENT_ACK,
     TRANSACTION_EVENT_100TRYING,

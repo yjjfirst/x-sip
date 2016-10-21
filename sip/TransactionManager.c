@@ -14,9 +14,6 @@
 #include "DialogId.h"
 #include "Dialog.h"
 #include "RequestLine.h"
-#include "AccountManager.h"
-#include "UserAgentManager.h"
-#include "DialogManager.h"
 
 struct TransactionManager {
     t_list *transactions;
@@ -147,22 +144,12 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     return FALSE;
 }
 
-void HandleInviteRequest (MESSAGE *invite)
-{
-    int account = FindMessageDestAccount(invite);
-    struct UserAgent *ua = AddUserAgent(account);
-    struct Dialog *dialog = AddDialog(NULL, ua);
-
-    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
-}
-
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
     struct Transaction *t = MatchTransaction(message);
     
     if (!t) {
-        if (MessageGetMethod(message) == SIP_METHOD_INVITE)
-            HandleInviteRequest(message);
+        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
     } else {
         RunFsm(t, TRANSACTION_EVENT_INVITE);
         DestroyMessage(&message);

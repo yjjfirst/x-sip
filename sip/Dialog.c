@@ -4,6 +4,7 @@
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
+#include "UserAgentManager.h"
 #include "Accounts.h"
 #include "TransactionManager.h"
 #include "Messages.h"
@@ -16,6 +17,7 @@
 #include "Session.h"
 #include "CallEvents.h"
 #include "DialogManager.h"
+#include "AccountManager.h"
 
 struct Dialog {
     struct Transaction *transaction;
@@ -165,7 +167,7 @@ void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
         NotifyCallManager(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
 }
 
-void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
+void HandleRegisterTransactionEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     
@@ -181,12 +183,12 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
     }
 }
 
-void HandleByeEvent(struct Dialog *dialog, int event)
+void HandleByeTransactionEvent(struct Dialog *dialog, int event)
 {
     RemoveDialog(DialogGetId(dialog));
 }
 
-void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
+void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Message *message)
 {
     if (event == TRANSACTION_EVENT_200OK) {
         DialogReceiveOk(dialog, message);
@@ -197,15 +199,24 @@ void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message
 
 void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
 {
+    if (event == TRANSACTION_EVENT_NEW) {
+        int account = FindMessageDestAccount(message);
+        struct UserAgent *ua = AddUserAgent(account);
+        struct Dialog *dialog = AddDialog(NULL, ua);
+
+        DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+        return ;
+    }
+    
     struct Transaction *t = dialog->transaction;
     SIP_METHOD method = MessageGetMethod(GetTransactionRequest(t));
     
     if (method == SIP_METHOD_REGISTER) {
-        HandleRegisterEvent(dialog, event, message);
+        HandleRegisterTransactionEvent(dialog, event, message);
     } else if (method == SIP_METHOD_BYE) {
-        HandleByeEvent(dialog, event);
+        HandleByeTransactionEvent(dialog, event);
     } else if (method == SIP_METHOD_INVITE) {
-        HandleInviteEvent(dialog, event, message);
+        HandleInviteTransactionEvent(dialog, event, message);
     }    
 }
 
