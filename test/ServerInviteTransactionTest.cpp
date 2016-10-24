@@ -39,7 +39,7 @@ struct MessageTransporter MockTransporterFor100Trying = {
     SendOut100TryingMock,
     ReceiveMessageMock,
     NULL,
-    SipMessageHandle
+    SipMessageCallback
 };
 
 int SendOut180RingingMock(char *message, char *destaddr, int destport, int fd)
@@ -60,7 +60,7 @@ struct MessageTransporter MockTransporterFor180Ringing = {
     SendOut180RingingMock,
     ReceiveMessageMock,
     NULL,
-    SipMessageHandle
+    SipMessageCallback
 };
 
 int SendOut301Mock(char *message, char *destaddr, int destport, int fd)
@@ -81,7 +81,7 @@ struct MessageTransporter MockTransporterFor301 = {
     SendOut301Mock,
     ReceiveMessageMock,
     NULL,
-    SipMessageHandle
+    SipMessageCallback
 };
 
 int SendOut200OKMock(char *message, char *destaddr, int destport, int fd)
@@ -101,7 +101,7 @@ struct MessageTransporter MockTransporterFor200OK = {
     SendOut200OKMock,
     ReceiveMessageMock,
     NULL,
-    SipMessageHandle
+    SipMessageCallback
 };
 
 static struct Timer *AddTimerMock(void *data, int interval, TimerCallback action)

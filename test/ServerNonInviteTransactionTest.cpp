@@ -52,8 +52,30 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     void teardown() 
     {
         ClearTransactionManager();
+
+        mock().checkExpectations();
+        mock().clear();
     }
 };
+
+void OnTransactionEventMock(struct Dialog *dialog,  int event, MESSAGE *message)
+{
+    mock().actualCall("OnTransactionEvent").withParameter("event", event);
+}
+
+TEST(ServerNonInviteTransactionTestGroup, NewTransactionNotifyUserTest)
+{
+
+    UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
+
+    ClearTransactionManager();
+    request = CreateMessage();
+    ParseMessage(BYE_MESSAGE, request);
+
+    mock().expectOneCall("OnTransactionEvent").withParameter("event", TRANSACTION_EVENT_NEW);    
+    SipMessageInput(request);
+    DestroyMessage(&request);
+}
 
 TEST(ServerNonInviteTransactionTestGroup, RequestMatchTest)
 {

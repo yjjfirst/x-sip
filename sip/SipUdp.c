@@ -32,7 +32,7 @@ struct MessageTransporter SipUdpTransporter = {
     .send = SipUdpSendMessage,
     .receive = SipUdpReceiveMessage,
     .init = SipUdpInit,
-    .callback = SipMessageHandle,
+    .callback = SipMessageCallback,
     .port = SIP_SERV_PORT,
 };
 

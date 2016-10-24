@@ -33,7 +33,7 @@ struct MessageTransporter NullTransporter = {
     NULL,
     NULL,
     NULL,
-    SipMessageHandle
+    SipMessageCallback
 };
 
 TEST(MessageTransportTestGroup, NullReceiveTest)

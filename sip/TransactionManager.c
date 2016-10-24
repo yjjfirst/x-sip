@@ -100,7 +100,6 @@ struct Transaction *MatchTransaction(MESSAGE *message)
 {
     char *branch = MessageGetViaBranch(message);
     char *method = MessageGetCSeqMethod(message);
-    
     return GetTransaction(branch, method);
 }
 
@@ -134,8 +133,9 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
+    t = MatchTransaction(message);
     
-    if ( (t = MatchTransaction(message)) != NULL) {
+    if (t) {
         AddResponse(t, message);
         RunFsm(t, MapStatusCodeToEvent(statusCode));
         return TRUE;
@@ -147,25 +147,21 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
     struct Transaction *t = MatchTransaction(message);
-    
+
     if (!t) {
         OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
     } else {
-        RunFsm(t, TRANSACTION_EVENT_INVITE);
+        if (MessageGetMethod(message) == SIP_METHOD_INVITE)
+            RunFsm(t, TRANSACTION_EVENT_INVITE);
         DestroyMessage(&message);
     }
 
     return TRUE;
 }
 
-BOOL SipMessageHandle(char *string)
+BOOL SipMessageInput(struct Message *message)
 {
-    MESSAGE *message = CreateMessage();
     BOOL garbage;
-
-    if (ParseMessage(string, message) < 0) {
-        return FALSE;
-    }
 
     if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
         garbage = !TmHandleReponseMessage(message);
@@ -179,6 +175,18 @@ BOOL SipMessageHandle(char *string)
     }
 
     return TRUE;
+
+}
+
+BOOL SipMessageCallback(char *string)
+{
+    MESSAGE *message = CreateMessage();
+
+    if (ParseMessage(string, message) < 0) {
+        return FALSE;
+    }
+
+    return SipMessageInput(message);
 }
 
 void DestroyTransactions(struct TransactionManager *manager)

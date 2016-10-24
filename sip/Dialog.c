@@ -33,6 +33,12 @@ struct Dialog {
     enum DIALOG_STATE state;
 };
 
+struct TransactionEventAction {
+    SIP_METHOD requestMethod;
+    int event;
+    void (*action)(struct Dialog *dialog, int event, MESSAGE *message);
+};
+
 URI *DialogGetRemoteUri(struct Dialog *dialog)
 {
     assert(dialog != 0);
@@ -185,7 +191,7 @@ void HandleRegisterTransactionEvent (struct Dialog *dialog, int event, MESSAGE *
 
 void HandleByeTransactionEvent(struct Dialog *dialog, int event)
 {
-    RemoveDialog(DialogGetId(dialog));
+    //RemoveDialog(DialogGetId(dialog));
 }
 
 void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Message *message)
@@ -197,26 +203,43 @@ void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Messa
     }
 }
 
+void HandleNewTransactionEvent(MESSAGE *message)
+{
+    int account = FindMessageDestAccount(message);
+    struct UserAgent *ua = AddUserAgent(account);
+    struct Dialog *dialog = AddDialog(NULL, ua);
+
+    DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+}
+
+struct TransactionEventAction TransactionEventActions[] = {
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_200OK, HandleRegisterTransactionEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_401UNAUTHORIZED, HandleRegisterTransactionEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_200OK, HandleInviteTransactionEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_180RINGING, HandleInviteTransactionEvent},
+    {-1, -1, 0},
+};
+
 void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
 {
-    if (event == TRANSACTION_EVENT_NEW) {
-        int account = FindMessageDestAccount(message);
-        struct UserAgent *ua = AddUserAgent(account);
-        struct Dialog *dialog = AddDialog(NULL, ua);
+    struct Transaction *t;
+    SIP_METHOD requestMethod;
+    struct TransactionEventAction *action;
 
-        DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+    if (event == TRANSACTION_EVENT_NEW) {
+        HandleNewTransactionEvent(message);
         return ;
     }
+
+    t = dialog->transaction;
+    requestMethod = MessageGetMethod(GetTransactionRequest(t));
+    action = TransactionEventActions;
     
-    struct Transaction *t = dialog->transaction;
-    SIP_METHOD method = MessageGetMethod(GetTransactionRequest(t));
-    
-    if (method == SIP_METHOD_REGISTER) {
-        HandleRegisterTransactionEvent(dialog, event, message);
-    } else if (method == SIP_METHOD_BYE) {
-        HandleByeTransactionEvent(dialog, event);
-    } else if (method == SIP_METHOD_INVITE) {
-        HandleInviteTransactionEvent(dialog, event, message);
+    for (; action->requestMethod != -1; action ++)
+    {
+        if (requestMethod == action->requestMethod && event == action->event) {
+            action->action(dialog, event, message);
+        }
     }    
 }
 

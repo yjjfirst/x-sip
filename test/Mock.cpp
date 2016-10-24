@@ -91,7 +91,7 @@ struct MessageTransporter MockTransporter = {
     .send     = SendMessageMock,
     .receive  = ReceiveMessageMock,
     .init     = InitMock,
-    .callback = SipMessageHandle,
+    .callback = SipMessageCallback,
 };
 
 struct MessageTransporter MockTransporterAndHandle = {
@@ -115,7 +115,7 @@ struct MessageTransporter DummyTransporter = {
     .send = DummySend,
     .receive = DummyReceive,
     .init = NULL,
-    .callback = SipMessageHandle
+    .callback = SipMessageCallback
 };
 
 int SendClientMessageMock(char *message, char *destaddr, int destport, int fd)
