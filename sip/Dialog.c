@@ -203,13 +203,17 @@ void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Messa
     }
 }
 
-void HandleNewTransactionEvent(MESSAGE *message)
+struct Transaction *OnNewTransactionEvent(MESSAGE *message)
 {
+    SIP_METHOD method = MessageGetMethod(message);
     int account = FindMessageDestAccount(message);
     struct UserAgent *ua = AddUserAgent(account);
     struct Dialog *dialog = AddDialog(NULL, ua);
 
-    DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+    if (method == SIP_METHOD_INVITE)
+        return DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+    else
+        return DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_NON_INVITE);
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
@@ -227,7 +231,7 @@ void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
     struct TransactionEventAction *action;
 
     if (event == TRANSACTION_EVENT_NEW) {
-        HandleNewTransactionEvent(message);
+        OnNewTransactionEvent(message);
         return ;
     }
 

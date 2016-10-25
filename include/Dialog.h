@@ -49,3 +49,6 @@ void DialogOk(struct Dialog *dialog);
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void DialogReceiveOk(struct Dialog *dialog, struct Message *message);
+
+struct Transaction *OnNewTransactionEvent(struct Message *message);
+

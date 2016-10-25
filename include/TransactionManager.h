@@ -14,7 +14,7 @@ struct TransactionId *TransactionIdExtract(struct TransactionId *tid, struct Mes
 struct Transaction *GetTransaction(char *branch, char *seqMethod);
 int CountTransaction(void);
 
-struct Transaction *AddTransaction(struct Message *message, struct TransactionUser *user, int type);
+extern struct Transaction *(*AddTransaction)(struct Message *message, struct TransactionUser *user, int type);
 void RemoveTransaction(struct Transaction *t);
 void RemoveTransactionById(struct TransactionId *id);
 

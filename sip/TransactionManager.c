@@ -224,7 +224,7 @@ BOOL ValidatedNonInviteMethod(MESSAGE *message)
         &&  RequestLineGetMethod(rl) != SIP_METHOD_ACK;
 }
 
-struct Transaction *AddTransaction(MESSAGE *message, struct TransactionUser *user, int type)
+struct Transaction *AddTransactionImpl(MESSAGE *message, struct TransactionUser *user, int type)
 {
     if (type == TRANSACTION_TYPE_SERVER_NON_INVITE) {
         if (!ValidatedNonInviteMethod(message)) return NULL;
@@ -235,6 +235,8 @@ struct Transaction *AddTransaction(MESSAGE *message, struct TransactionUser *use
     return t;
 
 }
+
+struct Transaction *(*AddTransaction)(MESSAGE *message, struct TransactionUser *user, int type) = AddTransactionImpl;
 
 void DumpTransactionManager()
 {

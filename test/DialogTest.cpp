@@ -35,7 +35,7 @@ int SendAckMessageMock(char *message, char *destaddr, int destport, int fd)
 
     ParseMessage(message, m);
     remoteTag = MessageGetToTag(m);    
-    mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag).returnIntValue();
+    mock().actualCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", remoteTag);
 
     CHECK_EQUAL(SIP_METHOD_ACK, RequestLineGetMethod(MessageGetRequestLine(m)));
     DestroyMessage(&m);
@@ -58,6 +58,14 @@ static struct Session *CreateSessionMock()
 unsigned int CSeqGenerateSeqMock()
 {
     return 100;
+}
+
+struct Transaction *AddTransactionMock(MESSAGE *message, struct TransactionUser *user, int type)
+{
+    mock().actualCall("AddTransaction").withParameter("message", message).
+        withParameter("type", type); 
+
+    return NULL;
 }
 
 TEST_GROUP(DialogTestGroup)
@@ -104,25 +112,34 @@ TEST(DialogTestGroup, SetLocalTagTest)
 
 TEST(DialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
+    UT_PTR_SET(AddTransaction, AddTransactionMock);
+    UT_PTR_SET(SipTransporter, &MockTransporterForAck);
+
+    mock().expectOneCall("AddTransaction").withParameter("message", invite).
+        withParameter("type", TRANSACTION_TYPE_CLIENT_INVITE);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("RemoteTag", "as6151ad25");
 
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    UT_PTR_SET(SipTransporter, &MockTransporterForAck);
 
     MESSAGE *ok = CreateMessage();
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
     DialogReceiveOk(dialog, ok);
 
+    DestroyMessage(&invite);
     DestroyMessage(&ok);
 }
 
 TEST(DialogTestGroup, AddTransactionTest)
 {
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    struct Transaction *transaction = DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    UT_PTR_SET(AddTransaction, AddTransactionMock);
 
-    POINTERS_EQUAL(transaction, GetTransaction(MessageGetViaBranch(invite), MessageGetCSeqMethod(invite)));
+    mock().expectOneCall("AddTransaction").withParameter("message", invite).
+        withParameter("type", TRANSACTION_TYPE_CLIENT_INVITE);
+
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
+
+    DestroyMessage(&invite);
 }
 
 TEST(DialogTestGroup, UACDialogIdTest)
@@ -351,3 +368,18 @@ TEST(DialogTestGroup, ReceiveInviteTest)
     DestroyMessage(&invite);
     ClearUserAgentManager();
 }
+
+TEST(DialogTestGroup, NewServerInviteTransaction)
+{
+    UT_PTR_SET(AddTransaction, AddTransactionMock);
+
+    mock().expectOneCall("AddTransaction").withParameter("message", invite).
+        withParameter("type", TRANSACTION_TYPE_SERVER_INVITE);
+    
+    OnNewTransactionEvent(invite);
+    DestroyMessage(&invite);
+
+    ClearUserAgentManager();
+    ClearDialogManager();
+}
+
