@@ -211,10 +211,10 @@ struct TransactionManager TransactionManager;
 
 void _AddTransaction(struct Transaction *t)
 {
-    if (t != NULL) {
-        SetTransactionObserver(t, &TransactionManager);
-        put_in_list(&TransactionManager.transactions, t);
-    }
+    if (t == NULL)  return;
+    
+    SetTransactionObserver(t, &TransactionManager);
+    put_in_list(&TransactionManager.transactions, t);
 }
 
 BOOL ValidatedNonInviteMethod(MESSAGE *message)
@@ -232,6 +232,8 @@ struct Transaction *AddTransactionImpl(MESSAGE *message, struct TransactionUser 
 
     struct Transaction *t = CreateTransaction(message, user, type);
     _AddTransaction(t);
+    RunFsm(t, TRANSACTION_EVENT_INIT);
+    
     return t;
 
 }

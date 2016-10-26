@@ -54,7 +54,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
 {
     MESSAGE *m;
     struct Transaction *t;
-    enum TransactionState s;
+    enum TransactionState state;
     struct UserAgent *ua;
     struct Dialog *dialog;
     char branch[64];
@@ -69,10 +69,8 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
             .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER))
             .andReturnValue(sendExpected);
-    
+
         t = DialogNewTransaction(dialog, m, TRANSACTION_TYPE_CLIENT_NON_INVITE);
-        if ( t != NULL)
-            CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
 
         return t;
     }
@@ -81,8 +79,8 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
     {
         mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(BINDING_TRYING_MESSAGE);
         ReceiveMessage();
-        s = GetTransactionState(t);
-        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
+        state = GetTransactionState(t);
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, state);
         
     }
 
@@ -168,7 +166,8 @@ TEST(ClientNonInviteTransactionTestGroup, TryingStateTimeETest)
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK)
             .withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         TimerECallbackFunc(t);
-        CHECK_EQUAL(TRANSACTION_STATE_TRYING, s);
+        
+        CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
         mock().checkExpectations();
     }
 }
@@ -183,6 +182,7 @@ TEST(ClientNonInviteTransactionTestGroup, TryingStateTimerFTest)
 TEST(ClientNonInviteTransactionTestGroup, TryingStateEnterSendOutMessageError)
 {
     PrepareTryingState(-1);
+//    DumpTransactionManager();
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_REGISTER));
 }
 
@@ -226,7 +226,7 @@ TEST(ClientNonInviteTransactionTestGroup, ProceedingStateTimeETest)
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
         TimerECallbackFunc(t);
-        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, s);
+        CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
         mock().checkExpectations();
     }
 }

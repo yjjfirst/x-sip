@@ -287,6 +287,18 @@ void ResponseWith180Ringing(struct Transaction *t)
         RunFsm(t, TRANSACTION_SEND_1XX);
 }
 
+int ResponseWith100Trying(struct Transaction *t)
+{
+    MESSAGE *trying = BuildTryingMessage((struct Dialog *)t->user, t->request);
+    AddResponse(t, trying);
+    
+    if (SendMessage(trying) < 0) {
+        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+    }
+
+    return 0;
+}
+
 int SendAckRequest(struct Transaction *t)
 {
     MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
@@ -316,15 +328,14 @@ void ReceiveDupRequest(struct Transaction *t, MESSAGE *message)
 
 struct TransactionInitInfo {
     enum TransactionType type;
-    enum TransactionState state;
     struct Fsm *fsm;
 };
 
 struct TransactionInitInfo TransactionInitInfos[] = {
-    {TRANSACTION_TYPE_CLIENT_NON_INVITE, TRANSACTION_STATE_TRYING, &ClientNonInviteTransactionFsm},
-    {TRANSACTION_TYPE_CLIENT_INVITE, TRANSACTION_STATE_CALLING, &ClientInviteTransactionFsm},
-    {TRANSACTION_TYPE_SERVER_INVITE, TRANSACTION_STATE_PROCEEDING, &ServerInviteTransactionFsm},
-    {TRANSACTION_TYPE_SERVER_NON_INVITE, TRANSACTION_STATE_TRYING, &ServerNonInviteTransactionFsm},    
+    {TRANSACTION_TYPE_CLIENT_NON_INVITE, &ClientNonInviteTransactionFsm},
+    {TRANSACTION_TYPE_CLIENT_INVITE,     &ClientInviteTransactionFsm},
+    {TRANSACTION_TYPE_SERVER_INVITE,     &ServerInviteTransactionFsm},
+    {TRANSACTION_TYPE_SERVER_NON_INVITE, &ServerNonInviteTransactionFsm},    
 };
 
 struct TransactionInitInfo *GetTransactionInitInfo(enum TransactionType type)
@@ -347,26 +358,8 @@ struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *
     struct TransactionInitInfo *initInfo = GetTransactionInitInfo(type);
 
     t->type = type;
-    t->state = initInfo->state;
+    t->state = TRANSACTION_STATE_INIT;
     t->fsm = initInfo->fsm;
-    
-    if (type == TRANSACTION_TYPE_CLIENT_NON_INVITE || type == TRANSACTION_TYPE_CLIENT_INVITE) {
-        if (SendRequestMessage(t) < 0) {
-            DestroyTransaction(&t);
-            return NULL;
-        }
-        ClientNonInviteAddRetransmitTimer(t);
-        AddTimeoutTimer(t);
-    } else if (type == TRANSACTION_TYPE_SERVER_INVITE) {
-        MESSAGE *trying = BuildTryingMessage((struct Dialog *)user, t->request);
-        AddResponse(t, trying);
-        
-        if (SendMessage(trying) < 0) {
-            RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-            DestroyTransaction(&t);
-            return NULL;
-        }
-    }
     
     return t;
 }
@@ -394,6 +387,18 @@ void DestroyTransaction(struct Transaction **t)
         *t = NULL;
     }
 }
+
+struct FsmState ClientNonInviteInitState = {
+    TRANSACTION_STATE_INIT,
+    {
+        {TRANSACTION_EVENT_INIT, TRANSACTION_STATE_TRYING,{
+                SendRequestMessage,
+                ClientNonInviteAddRetransmitTimer,
+                AddTimeoutTimer}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_MAX}
+    }
+};
 
 struct FsmState ClientNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
@@ -437,10 +442,23 @@ struct FsmState ClientNonInviteCompletedState = {
 
 struct Fsm ClientNonInviteTransactionFsm = {
     {
+        &ClientNonInviteInitState,
         &ClientNonInviteTryingState,
         &ClientNonInviteProceedingState,
         &ClientNonInviteCompletedState,
         NULL,
+    }
+};
+
+struct FsmState ClientInviteInitState = {
+    TRANSACTION_STATE_INIT,
+    {
+        {TRANSACTION_EVENT_INIT, TRANSACTION_STATE_CALLING,{
+                SendRequestMessage,
+                ClientNonInviteAddRetransmitTimer,
+                AddTimeoutTimer}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_MAX}
     }
 };
 
@@ -484,10 +502,20 @@ struct FsmState ClientInviteCompletedState = {
 
 struct Fsm ClientInviteTransactionFsm = {
     {
+        &ClientInviteInitState,
         &ClientInviteCallingState,
         &ClientInviteProceedingState,
         &ClientInviteCompletedState,
         NULL,
+    }
+};
+
+struct FsmState ServerInviteInitState = {
+    TRANSACTION_STATE_INIT,
+    {
+        {TRANSACTION_EVENT_INIT, TRANSACTION_STATE_PROCEEDING, {ResponseWith100Trying}},
+        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_MAX}
     }
 };
 
@@ -523,10 +551,19 @@ struct FsmState ServerInviteConfirmedState = {
 
 struct Fsm ServerInviteTransactionFsm = {
     {
+        &ServerInviteInitState,
         &ServerInviteProceedingState,
         &ServerInviteCompletedState,
         &ServerInviteConfirmedState,
         NULL,
+    }
+};
+
+struct FsmState ServerNonInviteInitState = {
+    TRANSACTION_STATE_INIT,
+    {
+        {TRANSACTION_EVENT_INIT, TRANSACTION_STATE_TRYING},
+        {TRANSACTION_EVENT_MAX}
     }
 };
 
@@ -561,6 +598,7 @@ struct FsmState ServerNonInviteCompletedState = {
 
 struct Fsm ServerNonInviteTransactionFsm = {
     {
+        &ServerNonInviteInitState,
         &ServerNonInviteTryingState,
         &ServerNonInviteProceedingState,
         &ServerNonInviteCompletedState,

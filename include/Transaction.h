@@ -13,6 +13,7 @@ struct TransactionUser {
 };
 
 enum TransactionState {
+    TRANSACTION_STATE_INIT,
     TRANSACTION_STATE_TRYING, 
     TRANSACTION_STATE_CALLING,
     TRANSACTION_STATE_PROCEEDING,
@@ -32,6 +33,7 @@ enum TransactionType {
 
 enum TransactionEvent {
     TRANSACTION_EVENT_NEW,
+    TRANSACTION_EVENT_INIT,
     TRANSACTION_EVENT_200OK,
     TRANSACTION_EVENT_ACK,
     TRANSACTION_EVENT_100TRYING,
@@ -61,6 +63,8 @@ void DestroyTransaction(struct Transaction **t);
 void ResponseWith180Ringing(struct Transaction *t);
 void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);
+int ResponseWith100Trying(struct Transaction *t);
+
 
 void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);

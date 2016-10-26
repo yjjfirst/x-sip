@@ -187,6 +187,20 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
 };
 
 //Create transaction tests.
+TEST(ServerInviteTransactionTestGroup, CreateTransactionStateTest)
+{
+
+    UT_PTR_SET(SipTransporter, &MockTransporterFor100Trying);
+
+    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INCOMMING_INVITE_MESSAGE);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
+    ReceiveMessage(); 
+
+    struct Transaction *t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
+    CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
+    ClearUserAgentManager();
+}
+
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
 {
 
