@@ -3,15 +3,20 @@
 #include "StringExt.h"
 
 char *IntMap2String(int integer, struct IntStringMap *map)
-{
-    return map[integer].string;
+{    
+    for ( ;map->integer != -1; map++){
+        if (map->integer == integer)        
+            return map->string;
+    }
+    
+    return NULL;
 }
 
 int StringMap2Int(char *string, struct IntStringMap *map)
 {
-    for ( ;map->method != -1; map++){
+    for ( ;map->integer != -1; map++){
         if (StrcmpExt(map->string, string) == 0)
-            return map->method;        
+            return map->integer;        
     }
 
     return -1;

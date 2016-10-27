@@ -1,7 +1,10 @@
-#define MAP_STRING_MAX_LENGTH 32
+#define MAP_STRING_MAX_LENGTH 64
+
+#define INT_STRING_MAP(integer) \
+    {integer, #integer}
 
 struct IntStringMap {
-    int method;
+    int integer;
     char string[MAP_STRING_MAX_LENGTH];
 };
 

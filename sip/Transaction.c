@@ -14,6 +14,7 @@
 #include "ViaHeader.h"
 #include "CSeqHeader.h"
 #include "utils/list/include/list.h"
+#include "utils/Maps.h"
 
 #define TRANSACTION_ACTIONS_MAX 10
 
@@ -388,6 +389,19 @@ void DestroyTransaction(struct Transaction **t)
     }
 }
 
+void RemoveTerminatedTransaction(struct Transaction *t)
+{
+    if (GetTransactionState(t) == TRANSACTION_STATE_TERMINATED)
+        if (t != NULL && t->manager != NULL) {
+            RemoveTransaction(t);
+        }
+}
+
+void DumpTransaction(struct Transaction *t)
+{
+    printf("%s:%s:%d\n", TransactionIdGetBranch(t->id), TransactionIdGetMethod(t->id), t->state);
+}
+
 struct FsmState ClientNonInviteInitState = {
     TRANSACTION_STATE_INIT,
     {
@@ -616,14 +630,6 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
     }
 }
 
-void RemoveTerminatedTransaction(struct Transaction *t)
-{
-    if (GetTransactionState(t) == TRANSACTION_STATE_TERMINATED)
-        if (t != NULL && t->manager != NULL) {
-            RemoveTransaction(t);
-        }
-}
-
 void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
 {
 
@@ -668,6 +674,52 @@ struct FsmStateEventEntry *LocateEventEntry(struct Transaction *t, enum Transact
     return NULL;
 }
 
+struct IntStringMap TransactionStateStringMap[] = {
+    INT_STRING_MAP(TRANSACTION_STATE_INIT),
+    INT_STRING_MAP(TRANSACTION_STATE_TRYING),
+    INT_STRING_MAP(TRANSACTION_STATE_CALLING),
+    INT_STRING_MAP(TRANSACTION_STATE_PROCEEDING),
+    INT_STRING_MAP(TRANSACTION_STATE_COMPLETED),
+    INT_STRING_MAP(TRANSACTION_STATE_CONFIRMED),
+    INT_STRING_MAP(TRANSACTION_STATE_TERMINATED),
+    {-1,""}
+};
+
+struct IntStringMap TransactionEventStringMap[] = {
+    INT_STRING_MAP(TRANSACTION_EVENT_NEW),
+    INT_STRING_MAP(TRANSACTION_EVENT_INIT),
+    INT_STRING_MAP(TRANSACTION_EVENT_200OK),
+    INT_STRING_MAP(TRANSACTION_EVENT_ACK),
+    INT_STRING_MAP(TRANSACTION_EVENT_100TRYING),
+    INT_STRING_MAP(TRANSACTION_EVENT_180RINGING),
+    INT_STRING_MAP(TRANSACTION_EVENT_401UNAUTHORIZED),
+    INT_STRING_MAP(TRANSACTION_EVENT_3XX),
+    INT_STRING_MAP(TRANSACTION_EVENT_INVITE),
+    INT_STRING_MAP(TRANSACTION_EVENT_BYE),
+    
+    INT_STRING_MAP(TRANSACTION_SEND_1XX),
+    INT_STRING_MAP(TRANSACTION_SEND_200OK),
+    INT_STRING_MAP(TRANSACTION_SEND_301MOVED),
+
+    INT_STRING_MAP(TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED),
+    INT_STRING_MAP(TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED),
+    INT_STRING_MAP(TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED),
+    INT_STRING_MAP(TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED),
+    INT_STRING_MAP(TRANSACTION_EVENT_TRANSPORT_ERROR),
+    INT_STRING_MAP(TRANSACTION_EVENT_MAX),
+    {-1, ""}
+};
+
+char *TransactionState2String(enum TransactionState s)
+{
+    return IntMap2String(s, TransactionStateStringMap);
+}
+
+char *TransactionEvent2String(enum TransactionEvent e)
+{
+    return IntMap2String(e, TransactionEventStringMap);
+}
+
 void RunFsm(struct Transaction *t, enum TransactionEvent event)
 {
     assert(t != NULL);
@@ -679,11 +731,8 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
-    printf("Transaction Event Handle Error: %d, %d\n", GetTransactionState(t), event);
+    printf("Transaction Event Handle Error: State %s, event %s\n",
+           TransactionState2String(GetTransactionState(t)),
+           TransactionEvent2String(event));
     assert (0);
-}
-
-void DumpTransaction(struct Transaction *t)
-{
-    printf("%s:%s:%d\n", TransactionIdGetBranch(t->id), TransactionIdGetMethod(t->id), t->state);
 }

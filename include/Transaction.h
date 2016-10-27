@@ -86,3 +86,5 @@ BOOL ResponseTransactionMatched(struct Transaction *t, struct Message *response)
 BOOL RequestTransactionMatched(struct Transaction *t, struct Message *m);
 
 void DumpTransaction(struct Transaction *t);
+char *TransactionState2String(enum TransactionState s);
+char *TransactionEvent2String(enum TransactionEvent e);
