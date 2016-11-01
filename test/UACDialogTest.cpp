@@ -147,29 +147,6 @@ TEST(UACDialogTestGroup, UACDialogIdTest)
     char okString[MAX_MESSAGE_LENGTH] = {0};
     MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
     MESSAGE *localOk = Build200OkMessage(NULL, originInvite);
-    
-    Message2String(okString, localOk);
-    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(okString);    
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
-
-    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    ReceiveMessage();
-    
-    STRCMP_EQUAL(MessageGetFromTag(originInvite), GetLocalTag(DialogGetId(dialog)));     
-    STRCMP_EQUAL(MessageGetCallId(originInvite), GetCallId(DialogGetId(dialog)));
-    STRCMP_EQUAL(MessageGetToTag(localOk), GetRemoteTag(DialogGetId(dialog)));    
-
-    DestroyMessage(&originInvite);
-    DestroyMessage(&localOk);
-}
-
-TEST(UACDialogTestGroup, UACDialogIdDelegateTest)
-{
-    char okString[MAX_MESSAGE_LENGTH] = {0};
-    MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    MESSAGE *localOk = Build200OkMessage(NULL, originInvite);
     Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));

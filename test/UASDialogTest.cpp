@@ -28,11 +28,6 @@ extern "C" {
 #include "Accounts.h"
 }
 
-static unsigned int CSeqGenerateSeqMock()
-{
-    return 100;
-}
-
 static struct Transaction *AddTransactionMock(MESSAGE *message, struct TransactionUser *user, int type)
 {
     mock().actualCall("AddTransaction").withParameter("message", message).
@@ -47,8 +42,6 @@ TEST_GROUP(UASDialogTestGroup)
     void setup()
     {
         UT_PTR_SET(SipTransporter, &MockTransporter);
-        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
-        UT_PTR_SET(CSeqGenerateSeq, CSeqGenerateSeqMock);
 
         AccountInit();
         invite = CreateMessage();
