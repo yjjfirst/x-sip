@@ -5,6 +5,7 @@
 
 extern "C" {
 #include <stdio.h>
+
 #include "UserAgentManager.h"
 #include "Transaction.h"
 #include "UserAgent.h"
@@ -91,6 +92,7 @@ TEST_GROUP(UACDialogTestGroup)
         ClearAccountManager();
         ClearTransactionManager();
         DestroyUserAgent(&ua);
+        
         mock().checkExpectations();
         mock().clear();
     }

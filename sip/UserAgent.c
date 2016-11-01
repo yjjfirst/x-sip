@@ -110,5 +110,5 @@ void DestroyUserAgent(struct UserAgent **ua)
 
 void DumpUa(struct UserAgent *ua)
 {
-    printf("%s\n", AccountGetUserName(ua->account));
+    printf("User Name: %s\n", AccountGetUserName(ua->account));
 }

@@ -87,16 +87,16 @@ TEST(UASDialogTestGroup, UASDialogIdTest)
     MESSAGE *ok = Build200OkMessage(NULL, invite);
     DialogOk(GetDialog(0));
     
-    STRCMP_EQUAL(MessageGetToTag(ok), GetLocalTag(DialogGetId(GetDialog(0))));
-    STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), GetRemoteTag(DialogGetId(GetDialog(0))));
-    STRCMP_EQUAL(CallIdHeaderGetId(id), GetCallId(DialogGetId(GetDialog(0))));
+    STRCMP_EQUAL(MessageGetToTag(ok), GetLocalTag(GetDialogId(GetDialog(0))));
+    STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), GetRemoteTag(GetDialogId(GetDialog(0))));
+    STRCMP_EQUAL(CallIdHeaderGetId(id), GetCallId(GetDialogId(GetDialog(0))));
 
     DestroyContactHeader((struct Header *)from);
     DestroyCallIdHeader((struct Header *)id);
     DestroyMessage(&ok);
 }
 
-TEST(UASDialogTestGroup, UASDialogConfirmedTest)
+TEST(UASDialogTestGroup, UASDialogConfirmedStateTest)
 {
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
@@ -161,6 +161,16 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
     CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(GetDialog(0)));
 }
 
+TEST(UASDialogTestGroup, MatchedRequestToDialog)
+{
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
+    OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
+    DialogOk(GetDialog(0));
+
+}
+
 TEST(UASDialogTestGroup, ReceiveInviteCountDialogTest)
 {
     UT_PTR_SET(AddTransaction, AddTransactionMock);
@@ -184,4 +194,3 @@ TEST(UASDialogTestGroup,ReceiveInviteAddTransactionTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DestroyMessage(&invite);
 }
-

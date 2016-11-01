@@ -68,7 +68,7 @@ void AccountSetUnbinded(struct Account *account)
 
 void AccountDump(struct Account *account)
 {
-    printf("%s:%s:%s:%s:%s:%d\n",
+    printf("User Name: %s | Auth Name: %s | Pass word:%s | Proxy:%s | Registrar :%s | Binded:%d\n",
            AccountGetUserName(account),
            AccountGetAuthName(account),
            AccountGetPasswd(account),

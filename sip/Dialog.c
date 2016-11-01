@@ -69,7 +69,7 @@ URI *DialogGetRemoteTarget(struct Dialog *dialog)
     return dialog->remoteTarget;
 }
 
-struct DialogId *DialogGetId(struct Dialog *dialog)
+struct DialogId *GetDialogId(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->id;
@@ -107,7 +107,7 @@ void SetLocalSeqNumber(struct Dialog *dialog, int seq)
 
 void DialogSetLocalTag(struct Dialog *dialog, const char *localTag)
 {
-    struct DialogId *id = DialogGetId(dialog);
+    struct DialogId *id = GetDialogId(dialog);
     SetLocalTag(id, (char *)localTag);
 }
 
@@ -153,7 +153,7 @@ void DialogAck(struct Dialog *dialog)
 
 void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
-    struct DialogId *dialogid = DialogGetId(dialog);
+    struct DialogId *dialogid = GetDialogId(dialog);
 
     ExtractDialogId(dialogid, message);                    
     ExtractRemoteTarget(dialog, message);
@@ -237,9 +237,9 @@ void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
     for (; action->requestMethod != -1; action ++)
     {
         if (requestMethod == action->requestMethod && event == action->event) {
-            action->action(dialog, event, message);
+            return action->action(dialog, event, message);
         }
-    }    
+    }
 }
 
 void (*OnTransactionEvent)(struct Dialog *dialog, int event, MESSAGE *message) =
@@ -247,7 +247,7 @@ void (*OnTransactionEvent)(struct Dialog *dialog, int event, MESSAGE *message) =
 
 struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message, int type)
 {
-    struct DialogId *id = DialogGetId(dialog);
+    struct DialogId *id = GetDialogId(dialog);
     struct Transaction *t = AddTransaction(message, (struct TransactionUser *)dialog, type);
     dialog->transaction = t;
 
@@ -270,7 +270,7 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
 
 void DialogOk(struct Dialog *dialog)
 {
-    struct DialogId *id = DialogGetId(dialog);
+    struct DialogId *id = GetDialogId(dialog);
     MESSAGE *message = Build200OkMessage(dialog, GetTransactionRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(GetTransactionRequest(dialog->transaction));     
@@ -341,4 +341,12 @@ void DestroyDialog(struct Dialog **dialog)
         free(d);
         *dialog = NULL;
     }
+}
+
+void DumpDialog(struct Dialog *dialog)
+{
+    printf("Local seq: %s | Remote seq: %s | Dialog Id: %s",
+           DialogGetLocalTag(dialog),
+           DialogGetRemoteTag(dialog),
+           DialogGetCallId(dialog));
 }

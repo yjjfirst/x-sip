@@ -26,7 +26,7 @@ void DialogSetLocalTag(struct Dialog *dialog, const char *localTag);
 char *DialogGetCallId(struct Dialog *dialog);
 
 
-struct DialogId *DialogGetId(struct Dialog *dialog);
+struct DialogId *GetDialogId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
 unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog);
@@ -50,3 +50,4 @@ void DialogOk(struct Dialog *dialog);
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void DialogReceiveOk(struct Dialog *dialog, struct Message *message);
 
+void DumpDialog(struct Dialog *dialog);

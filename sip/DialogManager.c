@@ -40,7 +40,7 @@ struct Dialog *GetDialogById(struct DialogId *dialogid)
 
     for (; i < length ; i ++) {
         struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
-        if (DialogGetId(dialog) != NULL && DialogIdMatched(DialogGetId(dialog), dialogid))
+        if (GetDialogId(dialog) != NULL && DialogIdMatched(GetDialogId(dialog), dialogid))
            return dialog;
     }
 
@@ -67,7 +67,7 @@ int CountDialogs()
 
 bool MatchedDialogId (void *dialog, void *id)
 {
-    return DialogIdMatched(DialogGetId(dialog), id);
+    return DialogIdMatched(GetDialogId(dialog), id);
 }
 
 void RemoveDialog(struct DialogId *dialogId)
@@ -110,5 +110,16 @@ void DestroyDialogs(struct DialogManager **dialogs)
         DestroyDialogList(dm);
         free(dm);
         *dialogs = NULL;
+    }
+}
+
+void DumpDialogManager()
+{
+    int length = get_list_len(DialogManager.dialogList);
+    int i = 0;
+    
+    for (; i < length; i++) {
+        struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
+        DumpDialog(dialog);
     }
 }
