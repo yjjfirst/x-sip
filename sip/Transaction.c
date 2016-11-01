@@ -274,6 +274,14 @@ void ResponseWith200OK(struct Transaction *t)
     RunFsm(t, TRANSACTION_SEND_200OK);
 }
 
+void ResponseWith(struct Transaction *t, struct Message *message)
+{
+    AddResponse(t, message);
+    SendMessage(message);
+
+    RunFsm(t, TRANSACTION_SEND_200OK);
+}
+
 void ResponseWith180Ringing(struct Transaction *t)
 {
     MESSAGE *ringing = BuildRingingMessage((struct Dialog *)t->user, t->request);

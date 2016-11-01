@@ -271,15 +271,13 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
 void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = DialogGetId(dialog);
-    MESSAGE *message = Build200OkMessage(NULL, GetTransactionRequest(dialog->transaction));
+    MESSAGE *message = Build200OkMessage(dialog, GetTransactionRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(GetTransactionRequest(dialog->transaction));     
-    ResponseWith200OK(dialog->transaction);
-
-    if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {        
+    if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {
         SetLocalTag(id, MessageGetToTag(message));
         SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
-        
+        SetLocalSeqNumber(dialog, MessageGetCSeqNumber(message)); 
         dialog->session = CreateSession();
 
     } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
@@ -288,7 +286,7 @@ void DialogOk(struct Dialog *dialog)
         }
     }
 
-    DestroyMessage(&message);
+    ResponseWith(dialog->transaction, message);    
 }
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)

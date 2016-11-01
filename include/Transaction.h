@@ -61,6 +61,7 @@ struct Transaction *CreateTransaction(struct Message *request, struct Transactio
 void DestroyTransaction(struct Transaction **t);
 
 void ResponseWith180Ringing(struct Transaction *t);
+void ResponseWith(struct Transaction *t, struct Message *message);
 void ResponseWith200OK(struct Transaction *t);
 void ResponseWith301(struct Transaction *t);
 int ResponseWith100Trying(struct Transaction *t);
