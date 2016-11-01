@@ -9,7 +9,7 @@ char *IntMap2String(int integer, struct IntStringMap *map)
             return map->string;
     }
     
-    return NULL;
+    return "UNKNOWN";
 }
 
 int StringMap2Int(char *string, struct IntStringMap *map)

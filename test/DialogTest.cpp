@@ -376,7 +376,7 @@ TEST(DialogTestGroup, NewServerInviteTransaction)
     mock().expectOneCall("AddTransaction").withParameter("message", invite).
         withParameter("type", TRANSACTION_TYPE_SERVER_INVITE);
     
-    OnNewTransactionEvent(invite);
+    HandleNewTransactionEvent(dialog, 0, invite);
     DestroyMessage(&invite);
 
     ClearUserAgentManager();

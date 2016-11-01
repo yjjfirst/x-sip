@@ -191,7 +191,6 @@ void HandleRegisterTransactionEvent (struct Dialog *dialog, int event, MESSAGE *
 
 void HandleByeTransactionEvent(struct Dialog *dialog, int event)
 {
-    //RemoveDialog(DialogGetId(dialog));
 }
 
 void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Message *message)
@@ -203,17 +202,13 @@ void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Messa
     }
 }
 
-struct Transaction *OnNewTransactionEvent(MESSAGE *message)
+void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
-    SIP_METHOD method = MessageGetMethod(message);
     int account = FindMessageDestAccount(message);
     struct UserAgent *ua = AddUserAgent(account);
-    struct Dialog *dialog = AddDialog(NULL, ua);
+    struct Dialog *newDialog = AddDialog(NULL, ua);
 
-    if (method == SIP_METHOD_INVITE)
-        return DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_INVITE);
-    else
-        return DialogNewTransaction(dialog, message, TRANSACTION_TYPE_SERVER_NON_INVITE);
+    DialogNewTransaction(newDialog, message, TRANSACTION_TYPE_SERVER_INVITE);
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
@@ -221,6 +216,7 @@ struct TransactionEventAction TransactionEventActions[] = {
     {SIP_METHOD_REGISTER, TRANSACTION_EVENT_401UNAUTHORIZED, HandleRegisterTransactionEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_200OK, HandleInviteTransactionEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_180RINGING, HandleInviteTransactionEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {-1, -1, 0},
 };
 
@@ -230,15 +226,14 @@ void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
     SIP_METHOD requestMethod;
     struct TransactionEventAction *action;
 
-    if (event == TRANSACTION_EVENT_NEW) {
-        OnNewTransactionEvent(message);
-        return ;
+    if (dialog == NULL) {
+        requestMethod = MessageGetMethod(message);
+    } else {
+        t = dialog->transaction;
+        requestMethod = MessageGetMethod(GetTransactionRequest(t));
     }
 
-    t = dialog->transaction;
-    requestMethod = MessageGetMethod(GetTransactionRequest(t));
-    action = TransactionEventActions;
-    
+    action = TransactionEventActions;    
     for (; action->requestMethod != -1; action ++)
     {
         if (requestMethod == action->requestMethod && event == action->event) {
