@@ -14,3 +14,5 @@ struct Dialog *AddDialog(struct DialogId *dialogid, struct UserAgent *ua);
 void RemoveDialog(struct DialogId *dialogId);
 struct Dialog *GetDialog(int pos);
 int CountDialogs();
+
+void DumpDialogManager();

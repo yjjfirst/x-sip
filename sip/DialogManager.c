@@ -118,6 +118,7 @@ void DumpDialogManager()
     int length = get_list_len(DialogManager.dialogList);
     int i = 0;
     
+    printf("\n");
     for (; i < length; i++) {
         struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
         DumpDialog(dialog);

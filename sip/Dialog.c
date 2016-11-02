@@ -345,7 +345,7 @@ void DestroyDialog(struct Dialog **dialog)
 
 void DumpDialog(struct Dialog *dialog)
 {
-    printf("Local seq: %s | Remote seq: %s | Dialog Id: %s",
+    printf("Local Tag: %s | Remote Tag: %s | Dialog Id: %s\n",
            DialogGetLocalTag(dialog),
            DialogGetRemoteTag(dialog),
            DialogGetCallId(dialog));
