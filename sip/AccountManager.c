@@ -48,7 +48,7 @@ void RemoveAccount(int pos)
     del_node_at(&am->accounts, pos);
 }
 
-int TotalAccount()
+int CountAccounts()
 {
     struct AccountManager *am = &AccountManager;
     return get_list_len(am->accounts);
@@ -58,7 +58,7 @@ void ClearAccountManager()
 {
     int i = 0;
     struct AccountManager *am = &AccountManager;
-    int len = TotalAccount();
+    int len = CountAccounts();
 
     for (; i < len; i++) {
         struct Account *a = (struct Account *)get_data_at(am->accounts, i);
@@ -70,7 +70,7 @@ void ClearAccountManager()
 
 int FindAccountByUserName(char *user)
 {
-    for (int i =0; i < TotalAccount(); i++) {
+    for (int i =0; i < CountAccounts(); i++) {
         struct Account *account = GetAccount(i);
         if (strcmp(user, AccountGetUserName(account)) == 0)
             return i;
@@ -101,7 +101,7 @@ void BindAllAccounts()
 {
     int i = 0;
 
-    for (; i < TotalAccount(); i++) {
+    for (; i < CountAccounts(); i++) {
         AccountAddBinding(i);
     }
 }
@@ -141,7 +141,7 @@ int AccountInitImpl()
                    (char *)"192.168.10.62", 
                    (char *)"192.168.10.62"));
     
-    return TotalAccount();
+    return CountAccounts();
 }
 
 int (*AccountInit)() = AccountInitImpl;

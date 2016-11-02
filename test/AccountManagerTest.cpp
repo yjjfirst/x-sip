@@ -48,7 +48,7 @@ TEST(AccountManagerTestGroup, AddOneAccountTest)
     STRCMP_EQUAL("88001", AccountGetAuthName(retrived));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(retrived));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(retrived));
-    CHECK_EQUAL(1, TotalAccount());
+    CHECK_EQUAL(1, CountAccounts());
 
 }
 
@@ -61,7 +61,7 @@ TEST(AccountManagerTestGroup, AddTwoAccountsTest)
                    (char *)"192.168.10.62", 
                    (char *)"192.168.10.72"));
 
-    CHECK_EQUAL(2, TotalAccount());
+    CHECK_EQUAL(2, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, AddThreeAccountsTest)
@@ -79,13 +79,13 @@ TEST(AccountManagerTestGroup, AddThreeAccountsTest)
                    (char *)"192.168.10.62", 
                    (char *)"192.168.10.72"));
 
-    CHECK_EQUAL(3, TotalAccount());
+    CHECK_EQUAL(3, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, ClearAccountTest)
 {
     ClearAccountManager();
-    CHECK_EQUAL(0, TotalAccount());
+    CHECK_EQUAL(0, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, ClearMulitAccountTest)
@@ -103,13 +103,13 @@ TEST(AccountManagerTestGroup, ClearMulitAccountTest)
                    (char *)"192.168.10.62", 
                    (char *)"192.168.10.72"));
     ClearAccountManager();
-    CHECK_EQUAL(0, TotalAccount());
+    CHECK_EQUAL(0, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, RemoveAccountTest)
 {
     RemoveAccount(0);
-    CHECK_EQUAL(0, TotalAccount());
+    CHECK_EQUAL(0, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
@@ -128,11 +128,11 @@ TEST(AccountManagerTestGroup, RemoveMultiAccountTest)
                    (char *)"192.168.10.72"));
 
     RemoveAccount(0);
-    CHECK_EQUAL(2, TotalAccount());
+    CHECK_EQUAL(2, CountAccounts());
     RemoveAccount(0);
-    CHECK_EQUAL(1, TotalAccount());
+    CHECK_EQUAL(1, CountAccounts());
     RemoveAccount(0);
-    CHECK_EQUAL(0, TotalAccount());
+    CHECK_EQUAL(0, CountAccounts());
 }
 
 TEST(AccountManagerTestGroup, InitTest)
@@ -140,7 +140,7 @@ TEST(AccountManagerTestGroup, InitTest)
     ClearAccountManager();
 
     AccountInit();
-    CHECK_EQUAL(3, TotalAccount());
+    CHECK_EQUAL(3, CountAccounts());
 
     struct Account *a = GetAccount( 0);
     STRCMP_EQUAL("88001", AccountGetUserName(a));
@@ -164,7 +164,7 @@ TEST(AccountManagerTestGroup, GetOurOfRangeAccountTest)
     ClearAccountManager();
 
     int total = AccountInit();
-    CHECK_EQUAL(total, TotalAccount());
+    CHECK_EQUAL(total, CountAccounts());
 
     struct Account *a = GetAccount( -100);
     POINTERS_EQUAL(NULL, a);
@@ -272,7 +272,7 @@ TEST(AccountManagerTestGroup, BindAllAccountsTest)
 {
     AccountInit();
 
-    mock().expectNCalls(TotalAccount(), SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
+    mock().expectNCalls(CountAccounts(), SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
     BindAllAccounts();
 
     ClearUserAgentManager();
