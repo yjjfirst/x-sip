@@ -93,7 +93,7 @@ SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
     return dialog->requestMethod;
 }
 
-unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog)
+unsigned int GetLocalSeqNumber(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->localSeqNumber;
@@ -111,13 +111,13 @@ void DialogSetLocalTag(struct Dialog *dialog, const char *localTag)
     SetLocalTag(id, (char *)localTag);
 }
 
-unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog)
+unsigned int GetRemoteSeqNumber(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->remoteSeqNumber;
 }
 
-enum DIALOG_STATE DialogGetState(struct Dialog *dialog)
+enum DIALOG_STATE GetDialogState(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->state;
@@ -151,7 +151,7 @@ void DialogAck(struct Dialog *dialog)
     DestroyMessage(&ack);
 }
 
-void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
+void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
     struct DialogId *dialogid = GetDialogId(dialog);
 
@@ -167,13 +167,13 @@ void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     dialog->session = CreateSession();
 }
 
-void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
+void InviteDialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
     if (NotifyCallManager != NULL)
         NotifyCallManager(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
 }
 
-void HandleRegisterTransactionEvent (struct Dialog *dialog, int event, MESSAGE *message)
+void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     
@@ -193,30 +193,36 @@ void HandleByeTransactionEvent(struct Dialog *dialog, int event)
 {
 }
 
-void HandleInviteTransactionEvent(struct Dialog *dialog, int event, struct Message *message)
+void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
     if (event == TRANSACTION_EVENT_200OK) {
-        DialogReceiveOk(dialog, message);
+        InviteDialogReceiveOk(dialog, message);
     } else if (event == TRANSACTION_EVENT_180RINGING) {
-        DialogReceiveRinging(dialog, message);
+        InviteDialogReceiveRinging(dialog, message);
     }
 }
 
 void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
-    int account = FindMessageDestAccount(message);
-    struct UserAgent *ua = AddUserAgent(account);
-    struct Dialog *newDialog = AddDialog(NULL, ua);
-
-    DialogNewTransaction(newDialog, message, TRANSACTION_TYPE_SERVER_INVITE);
+    struct Dialog *matched = MatchMessage2Dialog(message);
+    if (matched == NULL) {    
+        int account = FindMessageDestAccount(message);
+        struct UserAgent *ua = AddUserAgent(account);
+        struct Dialog *d = AddDialog(NULL, ua);
+        
+        DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
+    } else {
+        DialogReceiveBye(matched, message);
+    }
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_200OK, HandleRegisterTransactionEvent},
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_401UNAUTHORIZED, HandleRegisterTransactionEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_200OK, HandleInviteTransactionEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_180RINGING, HandleInviteTransactionEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_200OK, HandleRegisterEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_401UNAUTHORIZED, HandleRegisterEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_200OK, HandleInviteEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_180RINGING, HandleInviteEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
+    {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {-1, -1, 0},
 };
 
@@ -271,16 +277,17 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
 void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = GetDialogId(dialog);
+
     MESSAGE *message = Build200OkMessage(dialog, GetTransactionRequest(dialog->transaction));
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(GetTransactionRequest(dialog->transaction));     
-    if (DialogGetState(dialog) == DIALOG_STATE_NON_EXIST) {
+    if (GetDialogState(dialog) == DIALOG_STATE_NON_EXIST) {
         SetLocalTag(id, MessageGetToTag(message));
         SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
         SetLocalSeqNumber(dialog, MessageGetCSeqNumber(message)); 
         dialog->session = CreateSession();
 
-    } else if (DialogGetState(dialog) == DIALOG_STATE_CONFIRMED) {
+    } else if (GetDialogState(dialog) == DIALOG_STATE_CONFIRMED) {
         if (DialogGetRequestMethod(dialog) == SIP_METHOD_BYE) {
             SetDialogState(dialog, DIALOG_STATE_TERMINATED);
         }

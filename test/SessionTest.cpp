@@ -74,7 +74,7 @@ TEST(SessionTestGroup, UACCreateSessionTest)
     mock().expectOneCall("CreateSession");
 
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-    DialogReceiveOk(dialog, ok);
+    InviteDialogReceiveOk(dialog, ok);
     
     DestroyMessage(&ok);
     ClearTransactionManager();
@@ -115,7 +115,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     
     mock().expectOneCall("CreateSession");
-    DialogReceiveOk(dialog, ok);
+    InviteDialogReceiveOk(dialog, ok);
     mock().expectOneCall("DestroySession");
     MESSAGE *bye = BuildByeMessage(dialog);
     DialogReceiveBye(dialog, bye);

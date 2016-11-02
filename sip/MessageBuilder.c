@@ -119,13 +119,13 @@ struct Header *BuildRequestCSeqHeader(struct Dialog *dialog)
     SIP_METHOD method = DialogGetRequestMethod(dialog);
     int cseqNumber;
     
-    if (DialogGetLocalSeqNumber(dialog) == EMPTY_DIALOG_SEQNUMBER) {
+    if (GetLocalSeqNumber(dialog) == EMPTY_DIALOG_SEQNUMBER) {
         cseqNumber = CSeqGenerateSeq();
     } else {
         if (DialogGetRequestMethod(dialog) != SIP_METHOD_ACK)
-            cseqNumber = DialogGetLocalSeqNumber(dialog) + 1;
+            cseqNumber = GetLocalSeqNumber(dialog) + 1;
         else
-            cseqNumber = DialogGetLocalSeqNumber(dialog);
+            cseqNumber = GetLocalSeqNumber(dialog);
     }
         
     SetLocalSeqNumber(dialog, cseqNumber);

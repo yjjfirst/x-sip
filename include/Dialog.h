@@ -29,10 +29,14 @@ char *DialogGetCallId(struct Dialog *dialog);
 struct DialogId *GetDialogId(struct Dialog *dialog);
 struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
-unsigned int DialogGetLocalSeqNumber(struct Dialog *dialog);
+
+unsigned int GetLocalSeqNumber(struct Dialog *dialog);
 void SetLocalSeqNumber(struct Dialog *dialog, int seq);
-unsigned int DialogGetRemoteSeqNumber(struct Dialog *dialog);
-enum DIALOG_STATE DialogGetState(struct Dialog *dialog);
+
+unsigned int GetRemoteSeqNumber(struct Dialog *dialog);
+
+enum DIALOG_STATE GetDialogState(struct Dialog *dialog);
+void SetDialogState(struct Dialog *dialog, enum DIALOG_STATE state);
 
 void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method);
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog);
@@ -48,6 +52,6 @@ void DialogBye(struct Dialog *dialog);
 void DialogOk(struct Dialog *dialog);
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
-void DialogReceiveOk(struct Dialog *dialog, struct Message *message);
+void InviteDialogReceiveOk(struct Dialog *dialog, struct Message *message);
 
 void DumpDialog(struct Dialog *dialog);

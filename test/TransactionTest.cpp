@@ -112,3 +112,19 @@ TEST(TransactionTestGroup, TransactionEventToStringTest)
     STRCMP_EQUAL("TRANSACTION_EVENT_BYE",TransactionEvent2String(TRANSACTION_EVENT_BYE));
     
 }
+
+TEST(TransactionTestGroup, SetTransactionStateTest)
+{
+    AccountInit();
+    
+    ua = CreateUserAgent(0);
+    dialog = AddDialog(NULL_DIALOG_ID, ua);
+    invite = BuildInviteMessage(dialog, (char *)"88002");     
+    struct Transaction *t = CreateTransaction(invite, (struct TransactionUser*)dialog, TRANSACTION_TYPE_SERVER_INVITE);
+
+    SetTransactionState(t, TRANSACTION_STATE_TRYING);
+    CHECK_EQUAL(TRANSACTION_STATE_TRYING, GetTransactionState(t));
+    
+    DestroyUserAgent(&ua);
+    DestroyTransaction(&t);
+}

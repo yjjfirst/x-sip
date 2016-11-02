@@ -1,11 +1,13 @@
 #include "CppUTest/TestHarness.h"
+#include "TestingMessages.h"
 
 extern "C" {
 #include "DialogManager.h"
 #include "Dialog.h"
 #include "DialogId.h"
 #include "UserAgent.h"
-#include "UserAgentManager.h"    
+#include "UserAgentManager.h"
+#include "Messages.h"
 }
 
 TEST_GROUP(DialogsTestGroup)
@@ -135,6 +137,8 @@ TEST(DialogsTestGroup, GetDialogInMiddleUserAgentTest)
 TEST(DialogsTestGroup, ClearDialogMangerTest)
 {
 
+    ClearDialogManager();
+    
     struct UserAgent *ua =  CreateUserAgent(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
     struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
@@ -149,4 +153,43 @@ TEST(DialogsTestGroup, ClearDialogMangerTest)
     CHECK_EQUAL(0, CountDialogs());
 
     DestroyUserAgent(&ua);
+}
+
+TEST(DialogsTestGroup, RequestMatch2DialogTest)
+{
+    struct Message *bye = CreateMessage();
+    ParseMessage(INCOMMING_BYE_MESSAGE,bye);
+
+    struct UserAgent *ua = AddUserAgent(0);
+    struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
+                                              (char *)"as317b5f26",
+                                              (char *)"2074940689");
+    struct DialogId *dialogid1 = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
+    struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
+
+    AddConfirmedDialog(dialogid1, ua);
+    struct Dialog *dialog = AddConfirmedDialog(id, ua);
+    AddConfirmedDialog(dialogid2, ua);
+
+    POINTERS_EQUAL(dialog, MatchMessage2Dialog(bye));
+
+    ClearUserAgentManager();
+}
+
+TEST(DialogsTestGroup, AddConfirmedDialogTest)
+{
+    char localTag[] = "asdf-local-tag";
+    char remoteTag[] = "asdf-remote-tag";
+    char callid[] = "test-call-id";
+
+    struct UserAgent *ua = AddUserAgent(0);
+    struct DialogId *id = CreateFixedDialogId(callid, localTag, remoteTag);
+    struct Dialog *dialog = AddConfirmedDialog(id, ua);
+
+    CHECK_EQUAL(GetDialogState(dialog), DIALOG_STATE_CONFIRMED);
+    STRCMP_EQUAL(DialogGetLocalTag(dialog), localTag);
+    STRCMP_EQUAL(DialogGetRemoteTag(dialog), remoteTag);
+    STRCMP_EQUAL(DialogGetCallId(dialog), callid);
+
+    ClearUserAgentManager();
 }

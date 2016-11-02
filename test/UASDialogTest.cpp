@@ -104,7 +104,7 @@ TEST(UASDialogTestGroup, UASDialogConfirmedStateTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DialogOk(GetDialog(0));
 
-    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(GetDialog(0)));
+    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, GetDialogState(GetDialog(0)));
 }
 
 TEST(UASDialogTestGroup, UASDialogRemoteSeqNumberTest)
@@ -117,7 +117,7 @@ TEST(UASDialogTestGroup, UASDialogRemoteSeqNumberTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DialogOk(GetDialog(0));
 
-    CHECK_EQUAL(seq, DialogGetRemoteSeqNumber(GetDialog(0)));
+    CHECK_EQUAL(seq, GetRemoteSeqNumber(GetDialog(0)));
 }
 
 TEST(UASDialogTestGroup, UASDialogLocalSeqNumberTest)
@@ -129,7 +129,7 @@ TEST(UASDialogTestGroup, UASDialogLocalSeqNumberTest)
     unsigned int cseq =  MessageGetCSeqNumber(invite);
     DialogOk(GetDialog(0));
 
-    CHECK_EQUAL(cseq, DialogGetLocalSeqNumber(GetDialog(0)));
+    CHECK_EQUAL(cseq, GetLocalSeqNumber(GetDialog(0)));
 }
 
 TEST(UASDialogTestGroup, UASDialogRemoteTargetTest)
@@ -158,7 +158,7 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
 
     MESSAGE *bye = BuildByeMessage(GetDialog(0));
     DialogReceiveBye(GetDialog(0), bye);
-    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(GetDialog(0)));
+    CHECK_EQUAL(DIALOG_STATE_TERMINATED, GetDialogState(GetDialog(0)));
 }
 
 TEST(UASDialogTestGroup, MatchedRequestToDialog)
@@ -184,7 +184,7 @@ TEST(UASDialogTestGroup, ReceiveInviteCountDialogTest)
     DestroyMessage(&invite);
 }
 
-TEST(UASDialogTestGroup,ReceiveInviteAddTransactionTest)
+TEST(UASDialogTestGroup, ReceiveInviteAddTransactionTest)
 {
     UT_PTR_SET(AddTransaction, AddTransactionMock);
 
@@ -193,4 +193,20 @@ TEST(UASDialogTestGroup,ReceiveInviteAddTransactionTest)
 
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DestroyMessage(&invite);
+}
+
+TEST(UASDialogTestGroup, ReceiveByeAddTransactionTest)
+{
+    struct Message *bye = CreateMessage();
+    ParseMessage(INCOMMING_BYE_MESSAGE,bye);
+
+    struct UserAgent *ua = AddUserAgent(0);
+    struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
+                                              (char *)"as317b5f26",
+                                              (char *)"2074940689");
+    AddConfirmedDialog(id, ua);
+    
+    mock().expectOneCall("SendOutMessageMock").withParameter("StatusCode", 200);
+
+    OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);
 }

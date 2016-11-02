@@ -69,6 +69,12 @@ enum TransactionState GetTransactionState(struct Transaction *t)
     return t->state;
 }
 
+void SetTransactionState(struct Transaction *t, enum TransactionState state)
+{
+    assert(t != NULL);
+    t->state = state;
+}
+
 struct TransactionId *GetTransactionId(struct Transaction *t)
 {
     assert(t != NULL);

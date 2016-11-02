@@ -5,6 +5,7 @@
 #include "Dialog.h"
 #include "DialogId.h"
 #include "CallIdHeader.h"
+#include "Messages.h"
 #include "utils/list/include/list.h"
 
 #define TAG_MAX_LENGTH 64
@@ -29,6 +30,17 @@ struct Dialog *GetDialogByUserAgent(struct UserAgent *ua)
 
     return NULL;
 
+}
+
+struct Dialog *MatchMessage2Dialog(struct Message *message)
+{
+    char *localTag = MessageGetToTag(message);
+    char *remoteTag = MessageGetFromTag(message);
+    char *callid = MessageGetCallId(message);
+
+    struct DialogId *id = CreateFixedDialogId(callid, localTag, remoteTag);
+
+    return GetDialogById(id);
 }
 
 struct Dialog *GetDialogById(struct DialogId *dialogid)
@@ -57,6 +69,14 @@ struct Dialog *AddDialog(struct DialogId *dialogid, struct UserAgent *ua)
     struct Dialog *dialog = CreateDialog(dialogid, ua);
     put_in_list(&DialogManager.dialogList, dialog);
     
+    return dialog;
+}
+
+struct Dialog *AddConfirmedDialog(struct DialogId *dialogid, struct UserAgent *ua)
+{
+    struct Dialog *dialog = AddDialog(dialogid, ua);
+    SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
+
     return dialog;
 }
 

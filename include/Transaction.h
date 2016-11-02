@@ -80,6 +80,7 @@ enum TransactionEvent GetCurrentEvent(struct Transaction *t);
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
 void SetTransactionObserver(struct Transaction *t, struct TransactionManager *manager);
 enum TransactionState GetTransactionState(struct Transaction *t);
+void SetTransactionState(struct Transaction *t, enum TransactionState state);
 struct TransactionUser *GetTransactionUser(struct Transaction *t);
 enum TransactionType GetTransactionType(struct Transaction *t);
 

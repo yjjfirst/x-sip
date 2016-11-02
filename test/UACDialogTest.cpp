@@ -100,7 +100,7 @@ TEST_GROUP(UACDialogTestGroup)
 
 TEST(UACDialogTestGroup, DialogCreateTest)
 {
-    CHECK_EQUAL(DIALOG_STATE_NON_EXIST, DialogGetState(dialog));
+    CHECK_EQUAL(DIALOG_STATE_NON_EXIST, GetDialogState(dialog));
     DestroyMessage(&invite);
 }
 
@@ -126,7 +126,7 @@ TEST(UACDialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 
     MESSAGE *ok = CreateMessage();
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
-    DialogReceiveOk(dialog, ok);
+    InviteDialogReceiveOk(dialog, ok);
 
     DestroyMessage(&invite);
     DestroyMessage(&ok);
@@ -171,7 +171,7 @@ TEST(UACDialogTestGroup, UACDialogLocalSeqNumberTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
 
-    CHECK_EQUAL(MessageGetCSeqNumber(invite), DialogGetLocalSeqNumber(dialog));
+    CHECK_EQUAL(MessageGetCSeqNumber(invite), GetLocalSeqNumber(dialog));
 }
 
 TEST(UACDialogTestGroup, UACDialogRemoteSeqNumberTest)
@@ -183,7 +183,7 @@ TEST(UACDialogTestGroup, UACDialogRemoteSeqNumberTest)
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveMessage();
 
-    CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, DialogGetRemoteSeqNumber(dialog));
+    CHECK_EQUAL(EMPTY_DIALOG_SEQNUMBER, GetRemoteSeqNumber(dialog));
 }
 
 TEST(UACDialogTestGroup, UACDialogRemoteTargetTest)
@@ -223,7 +223,7 @@ TEST(UACDialogTestGroup, UACDialogConfirmedTest)
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
     ReceiveMessage();
 
-    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, DialogGetState(dialog));
+    CHECK_EQUAL(DIALOG_STATE_CONFIRMED, GetDialogState(dialog));
 
 }
 
@@ -238,6 +238,6 @@ TEST(UACDialogTestGroup, UACDialogTerminateTest)
     DialogOk(dialog);
     DialogTerminate(dialog);
 
-    CHECK_EQUAL(DIALOG_STATE_TERMINATED, DialogGetState(dialog));
+    CHECK_EQUAL(DIALOG_STATE_TERMINATED, GetDialogState(dialog));
 }
 
