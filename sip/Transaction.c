@@ -173,26 +173,27 @@ int NotifyUser(struct Transaction *t)
     return 0;
 }
 
+int SendTransactionMessage(struct Transaction *t, struct Message *message)
+{
+    if (SendMessage(message) < 0) {
+         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
+         return -1;
+    }
+
+    return 0;
+}
+
 int SendRequestMessage(struct Transaction *t)
 {
     assert(t != NULL);
     assert(t->request != NULL);
 
-    if (SendMessage(t->request) < 0) {
-         RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-         return -1;
-    }
-    
-    return 0;
+    return SendTransactionMessage(t, t->request);
 }
 
 int ResendLatestResponse(struct Transaction *t)
 {
-    if (SendMessage(GetLatestResponse(t)) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        return -1;
-    }
-    return 0;
+    return SendTransactionMessage(t, GetLatestResponse(t));
 }
 
 BOOL ResponseTransactionMatched(struct Transaction *t, MESSAGE *response)
@@ -258,59 +259,34 @@ struct Transaction *CallocTransaction(MESSAGE *request, struct TransactionUser *
     return t;
 }
 
-void ResponseWith301(struct Transaction *t)
-{
-    MESSAGE *moved = Build301Message(t->request);
-
-    AddResponse(t, moved);
-    if (SendMessage(moved) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        return;
-    }
-
-    RunFsm(t, TRANSACTION_SEND_301MOVED);
-}
-
-void ResponseWith200OK(struct Transaction *t)
-{
-    MESSAGE *ok = Build200OkMessage((struct Dialog *)t->user, t->request);
-    AddResponse(t, ok);
-    SendMessage(ok);
-
-    RunFsm(t, TRANSACTION_SEND_200OK);
-}
-
-void ResponseWith(struct Transaction *t, struct Message *message)
+int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event)
 {
     AddResponse(t, message);
-    SendMessage(message);
+    if (SendTransactionMessage(t, message) < 0) return -1;    
+    RunFsm(t, event);
 
-    RunFsm(t, TRANSACTION_SEND_200OK);
+    return 0;
 }
 
-void ResponseWith180Ringing(struct Transaction *t)
+void Response(struct Transaction *t, enum TransactionEvent e)
 {
-    MESSAGE *ringing = BuildRingingMessage((struct Dialog *)t->user, t->request);
-
-    AddResponse(t, ringing);
-    if (SendMessage(ringing) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        return;
+    struct Message *message = NULL;
+    
+    if (e == TRANSACTION_SEND_200OK) {
+        message = Build200OkMessage((struct Dialog *)t->user, t->request);
+    } else if (e == TRANSACTION_SEND_301MOVED) {
+        message = Build301Message(t->request);
+    } else if (e == TRANSACTION_SEND_180RINGING) { 
+        message = BuildRingingMessage((struct Dialog *)t->user, t->request); 
     }
-
-    if (GetTransactionType(t) == TRANSACTION_TYPE_SERVER_NON_INVITE)
-        RunFsm(t, TRANSACTION_SEND_1XX);
+        
+    ResponseWith(t, message, e);
 }
 
 int ResponseWith100Trying(struct Transaction *t)
 {
     MESSAGE *trying = BuildTryingMessage((struct Dialog *)t->user, t->request);
-    AddResponse(t, trying);
-    
-    if (SendMessage(trying) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-    }
-
+    ResponseWith(t, trying, TRANSACTION_SEND_100TRYING);
     return 0;
 }
 
@@ -319,11 +295,7 @@ int SendAckRequest(struct Transaction *t)
     MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
 
     AddResponse(t, ack);
-    if (SendMessage(ack) < 0) {
-        RunFsm(t, TRANSACTION_EVENT_TRANSPORT_ERROR);
-        return -1;
-    }
-    return 0;
+    return SendTransactionMessage(t, ack);
 }
 
 void ReceiveAckRequest(struct Transaction *t)
@@ -553,6 +525,8 @@ struct FsmState ServerInviteInitState = {
 struct FsmState ServerInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
+        {TRANSACTION_SEND_100TRYING, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_SEND_180RINGING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_INVITE, TRANSACTION_STATE_PROCEEDING,{ResendLatestResponse}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_SEND_200OK, TRANSACTION_STATE_TERMINATED},
@@ -601,7 +575,7 @@ struct FsmState ServerNonInviteInitState = {
 struct FsmState ServerNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_SEND_1XX, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_SEND_180RINGING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_SEND_200OK, TRANSACTION_STATE_COMPLETED, {
                 AddServerNonInviteWaitRequestRetransmitTimer}},
         {TRANSACTION_EVENT_MAX}
@@ -611,7 +585,7 @@ struct FsmState ServerNonInviteTryingState = {
 struct FsmState ServerNonInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_SEND_1XX, TRANSACTION_STATE_PROCEEDING},
+        {TRANSACTION_SEND_180RINGING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_SEND_200OK, TRANSACTION_STATE_COMPLETED, {
                 AddServerNonInviteWaitRequestRetransmitTimer }},
@@ -714,7 +688,8 @@ struct IntStringMap TransactionEventStringMap[] = {
     INT_STRING_MAP(TRANSACTION_EVENT_INVITE),
     INT_STRING_MAP(TRANSACTION_EVENT_BYE),
     
-    INT_STRING_MAP(TRANSACTION_SEND_1XX),
+    INT_STRING_MAP(TRANSACTION_SEND_180RINGING),
+    INT_STRING_MAP(TRANSACTION_SEND_100TRYING),
     INT_STRING_MAP(TRANSACTION_SEND_200OK),
     INT_STRING_MAP(TRANSACTION_SEND_301MOVED),
 

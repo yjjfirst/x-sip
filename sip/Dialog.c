@@ -293,7 +293,7 @@ void DialogOk(struct Dialog *dialog)
         }
     }
 
-    ResponseWith(dialog->transaction, message);    
+    ResponseWith(dialog->transaction, message, TRANSACTION_SEND_200OK);    
 }
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)

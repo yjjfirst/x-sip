@@ -43,7 +43,8 @@ enum TransactionEvent {
     TRANSACTION_EVENT_INVITE,
     TRANSACTION_EVENT_BYE,
     
-    TRANSACTION_SEND_1XX,
+    TRANSACTION_SEND_180RINGING,
+    TRANSACTION_SEND_100TRYING,
     TRANSACTION_SEND_200OK,
     TRANSACTION_SEND_301MOVED,
 
@@ -60,11 +61,8 @@ extern void (*OnTransactionEvent)(struct Dialog *dialog, int event, struct Messa
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
-void ResponseWith180Ringing(struct Transaction *t);
-void ResponseWith(struct Transaction *t, struct Message *message);
-void ResponseWith200OK(struct Transaction *t);
-void ResponseWith301(struct Transaction *t);
-int ResponseWith100Trying(struct Transaction *t);
+int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event);
+void Response(struct Transaction *t, enum TransactionEvent e);
 
 
 void ReceiveAckRequest(struct Transaction *t);
