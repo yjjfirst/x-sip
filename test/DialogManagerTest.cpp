@@ -173,6 +173,7 @@ TEST(DialogsTestGroup, RequestMatch2DialogTest)
 
     POINTERS_EQUAL(dialog, MatchMessage2Dialog(bye));
 
+    DestroyMessage(&bye);
     ClearUserAgentManager();
 }
 

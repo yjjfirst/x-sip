@@ -42,10 +42,7 @@ TEST_GROUP(UASDialogTestGroup)
     void setup()
     {
         UT_PTR_SET(SipTransporter, &MockTransporter);
-
         AccountInit();
-        invite = CreateMessage();
-        ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     }
 
     void teardown()
@@ -63,6 +60,9 @@ TEST_GROUP(UASDialogTestGroup)
 
 TEST(UASDialogTestGroup, UASDialog200OkMessageDestTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200).
         withStringParameter("destaddr", AccountGetProxyAddr(GetAccount(0))).
@@ -78,6 +78,9 @@ TEST(UASDialogTestGroup, UASDialog200OkMessageDestTest)
 
 TEST(UASDialogTestGroup, UASDialogIdTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
     CONTACT_HEADER *from = ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite));
@@ -98,6 +101,9 @@ TEST(UASDialogTestGroup, UASDialogIdTest)
 
 TEST(UASDialogTestGroup, UASDialogConfirmedStateTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
@@ -109,6 +115,9 @@ TEST(UASDialogTestGroup, UASDialogConfirmedStateTest)
 
 TEST(UASDialogTestGroup, UASDialogRemoteSeqNumberTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
@@ -122,6 +131,9 @@ TEST(UASDialogTestGroup, UASDialogRemoteSeqNumberTest)
 
 TEST(UASDialogTestGroup, UASDialogLocalSeqNumberTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
@@ -134,6 +146,9 @@ TEST(UASDialogTestGroup, UASDialogLocalSeqNumberTest)
 
 TEST(UASDialogTestGroup, UASDialogRemoteTargetTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
@@ -149,6 +164,9 @@ TEST(UASDialogTestGroup, UASDialogRemoteTargetTest)
 
 TEST(UASDialogTestGroup, UASDialogTerminateTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
@@ -163,6 +181,9 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
 
 TEST(UASDialogTestGroup, MatchedRequestToDialog)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
@@ -175,6 +196,9 @@ TEST(UASDialogTestGroup, ReceiveInviteCountDialogTest)
 {
     UT_PTR_SET(AddTransaction, AddTransactionMock);
 
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     mock().expectOneCall("AddTransaction").withParameter("message", invite).
         withParameter("type", TRANSACTION_TYPE_SERVER_INVITE);
 
@@ -186,6 +210,9 @@ TEST(UASDialogTestGroup, ReceiveInviteCountDialogTest)
 
 TEST(UASDialogTestGroup, ReceiveInviteAddTransactionTest)
 {
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
     UT_PTR_SET(AddTransaction, AddTransactionMock);
 
     mock().expectOneCall("AddTransaction").withParameter("message", invite).

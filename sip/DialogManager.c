@@ -34,13 +34,15 @@ struct Dialog *GetDialogByUserAgent(struct UserAgent *ua)
 
 struct Dialog *MatchMessage2Dialog(struct Message *message)
 {
-    char *localTag = MessageGetToTag(message);
-    char *remoteTag = MessageGetFromTag(message);
-    char *callid = MessageGetCallId(message);
+    struct DialogId *id = CreateFixedDialogId(
+        MessageGetCallId(message),
+        MessageGetToTag(message),
+        MessageGetFromTag(message));
 
-    struct DialogId *id = CreateFixedDialogId(callid, localTag, remoteTag);
+    struct Dialog *d = GetDialogById(id);
+    DestroyDialogId(&id);
 
-    return GetDialogById(id);
+    return d;
 }
 
 struct Dialog *GetDialogById(struct DialogId *dialogid)
