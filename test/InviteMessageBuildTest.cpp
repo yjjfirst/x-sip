@@ -89,7 +89,7 @@ TEST(InviteMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildRingingMessage(NULL, invite);
+    MESSAGE *ringing = BuildResponse(NULL, invite, STATUS_CODE_RINGING);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -104,7 +104,7 @@ TEST(InviteMessageBuildTestGroup, OKMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(NULL, invite);    
+    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);    
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
@@ -118,7 +118,7 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(NULL, invite);
+    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     URI *uri = ContactHeaderGetUri(c);
     
@@ -135,7 +135,7 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *moved = Build301Message(invite);
+    Message *moved = BuildResponse(NULL, invite, STATUS_CODE_MOVED_PERMANENTLY);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
@@ -177,7 +177,7 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 
 TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 {
-    MESSAGE *ok = Build200OkMessage(dialog, inviteMessage);
+    MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
     STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(ok));    
 
     DestroyMessage(&ok);
@@ -186,7 +186,7 @@ TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 
 TEST(InviteMessageBuildTestGroup, OkMessageDestPortTest)
 {
-    MESSAGE *ok = Build200OkMessage(dialog, inviteMessage);
+    MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
     CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(ok));    
 
     DestroyMessage(&ok);

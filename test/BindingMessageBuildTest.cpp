@@ -162,7 +162,7 @@ TEST(BindingMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildRingingMessage(NULL, invite);
+    MESSAGE *ringing = BuildResponse(NULL, invite, STATUS_CODE_RINGING);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -177,7 +177,7 @@ TEST(BindingMessageBuildTestGroup, OKMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(NULL, invite);
+    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
@@ -192,7 +192,7 @@ TEST(BindingMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = Build200OkMessage(NULL, invite);
+    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     URI *uri = ContactHeaderGetUri(c);
     
@@ -209,7 +209,7 @@ TEST(BindingMessageBuildTestGroup, 301MessageStatueLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *moved = Build301Message(invite);
+    MESSAGE *moved = BuildResponse(NULL, invite, STATUS_CODE_MOVED_PERMANENTLY);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 

@@ -258,13 +258,14 @@ int ResponseWith(struct Transaction *t, struct Message *message, enum Transactio
 void Response(struct Transaction *t, enum TransactionEvent e)
 {
     struct Message *message = NULL;
+    struct Dialog *dialog = (struct Dialog *)t->user;
     
     if (e == TRANSACTION_SEND_200OK) {
-        message = Build200OkMessage((struct Dialog *)t->user, t->request);
+        message = BuildResponse(dialog, t->request, STATUS_CODE_OK);
     } else if (e == TRANSACTION_SEND_301MOVED) {
-        message = Build301Message(t->request);
+        message = BuildResponse(dialog, t->request,STATUS_CODE_MOVED_PERMANENTLY);
     } else if (e == TRANSACTION_SEND_180RINGING) { 
-        message = BuildRingingMessage((struct Dialog *)t->user, t->request); 
+        message = BuildResponse(dialog, t->request, STATUS_CODE_RINGING); 
     }
         
     ResponseWith(t, message, e);
@@ -272,7 +273,7 @@ void Response(struct Transaction *t, enum TransactionEvent e)
 
 int ResponseWith100Trying(struct Transaction *t)
 {
-    MESSAGE *trying = BuildTryingMessage((struct Dialog *)t->user, t->request);
+    MESSAGE *trying = BuildResponse((struct Dialog *)t->user, t->request, STATUS_CODE_TRYING);
     ResponseWith(t, trying, TRANSACTION_SEND_100TRYING);
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Maps.h"
 #include "StatusLine.h"
 #include "RequestLine.h"
 #include "MessageBuilder.h"
@@ -148,7 +149,7 @@ struct Header *BuildRequestContentLengthHeader(struct Dialog *dialog)
     return (struct Header *)c;
 }
 
-void BuildMessageDest(MESSAGE *m, struct Dialog *dialog)
+void SetMessageDestIpaddr(MESSAGE *m, struct Dialog *dialog)
 {
     if (dialog == NULL) return;
 
@@ -166,7 +167,7 @@ MESSAGE *BuildRequestMessage(struct Dialog *dialog, SIP_METHOD method)
 {
     MESSAGE *message = CreateMessage();
 
-    BuildMessageDest(message, dialog);
+    SetMessageDestIpaddr(message, dialog);
     
     DialogSetRequestMethod(dialog, method);
     MessageSetType(message, MESSAGE_TYPE_REQUEST);
@@ -404,60 +405,30 @@ void AddResponseHeaders(MESSAGE *response, MESSAGE *request)
     AddResponseContactHeader(response, request);
 }
 
-MESSAGE *BuildResponseMessage(MESSAGE *request, struct StatusLine *status)
-{
-    assert(request != NULL);
-    
-    MESSAGE *message = CreateMessage();
-    MessageSetStatusLine(message, status);
-    AddResponseHeaders(message, request);
+struct IntStringMap statusCode2ReasePhraseMaps[] = {
+    {STATUS_CODE_TRYING, REASON_PHRASE_TRYING},
+    {STATUS_CODE_OK, REASON_PHRASE_OK},
+    {STATUS_CODE_RINGING, REASON_PHRASE_RINGING},
+    {STATUS_CODE_MOVED_PERMANENTLY, REASON_PHRASE_MOVED_PERMANENTLY},
+    {-1, ""},
+};
 
-    return message;  
-}
-
-MESSAGE *BuildTryingMessage(struct Dialog *dialog, MESSAGE *invite)
+MESSAGE *BuildResponse(struct Dialog *dialog, MESSAGE *invite, int statusCode)
 {
-    MESSAGE *trying = NULL;
+    MESSAGE *response = NULL;
+    struct StatusLine *status = NULL;
+
     assert(invite != NULL);
 
-    struct StatusLine *status = CreateStatusLine(STATUS_CODE_TRYING, REASON_PHRASE_TRYING); 
-    trying = BuildResponseMessage(invite, status);
-    BuildMessageDest(trying, dialog); 
+    status = CreateStatusLine(statusCode, IntMap2String(statusCode,statusCode2ReasePhraseMaps)); 
+    response = CreateMessage();
 
-    return trying;
-}
+    MessageSetStatusLine(response, status);
+    AddResponseHeaders(response, invite);
 
-MESSAGE *BuildRingingMessage(struct Dialog *dialog, MESSAGE *invite)
-{
-    assert(invite != NULL);
+    SetMessageDestIpaddr(response, dialog); 
 
-    MESSAGE *ringing = NULL;
-    struct StatusLine *status = CreateStatusLine(STATUS_CODE_RINGING, REASON_PHRASE_RINGING); 
-    ringing = BuildResponseMessage(invite, status);
-    BuildMessageDest(ringing, dialog); 
-
-    return ringing;
-}
-
-MESSAGE *Build200OkMessage(struct Dialog *dialog, MESSAGE *request)
-{
-    assert(request != NULL);
-
-    MESSAGE *ok;
-    struct StatusLine *status = CreateStatusLine(STATUS_CODE_OK, REASON_PHRASE_OK);
-
-    ok =  BuildResponseMessage(request, status);
-    BuildMessageDest(ok, dialog);
-    
-    return ok;
-}
-
-MESSAGE *Build301Message(MESSAGE *invite)
-{
-    assert(invite != NULL);
-
-    struct StatusLine *status = CreateStatusLine(STATUS_CODE_MOVED_PERMANENTLY, REASON_PHRASE_MOVED_PERMANENTLY);
-    return BuildResponseMessage(invite, status);
+    return response;    
 }
 
 MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite)

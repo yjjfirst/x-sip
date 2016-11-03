@@ -32,7 +32,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageStatusLineTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
@@ -49,7 +49,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageFromHeaderTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
     CONTACT_HEADER *inviteFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite);
     CONTACT_HEADER *tryingFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, trying);
 
@@ -75,7 +75,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithTagTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE_WITH_TO_TAG, invite);
     
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
 
     CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -91,7 +91,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageToWithNoTagTest)
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
 
     CONTACT_HEADER *inviteTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     CONTACT_HEADER *tryingTo = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, trying);
@@ -110,7 +110,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCallIdTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
 
     struct CallIdHeader *inviteCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite);
     struct CallIdHeader *tryingCallId = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, trying);
@@ -125,7 +125,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageCSeqTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
     
     struct CSeqHeader *inviteCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite);
     struct CSeqHeader *tryingCSeq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, trying);
@@ -140,7 +140,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageViaTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *trying = BuildTryingMessage(NULL, invite);
+    MESSAGE *trying = BuildResponse(NULL, invite, STATUS_CODE_TRYING);
 
     VIA_HEADER *inviteVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite);
     VIA_HEADER *tryingVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, trying);
@@ -160,7 +160,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDestPortTest)
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
 
-    trying = BuildTryingMessage(dialog, invite);
+    trying = BuildResponse(dialog, invite, STATUS_CODE_TRYING);
 
     CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(trying));
 
@@ -181,7 +181,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
 
-    trying = BuildTryingMessage(dialog, invite);
+    trying = BuildResponse(dialog, invite, STATUS_CODE_TRYING);
 
     STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(trying));
 

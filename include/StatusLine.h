@@ -1,16 +1,6 @@
 #include "SipMethod.h"
 struct StatusLine;
 
-#define STATUS_CODE_TRYING 100
-#define STATUS_CODE_RINGING 180
-#define STATUS_CODE_OK 200
-#define STATUS_CODE_MOVED_PERMANENTLY 301
-
-#define REASON_PHRASE_TRYING "Trying"
-#define REASON_PHRASE_RINGING "Ringing"
-#define REASON_PHRASE_OK "OK"
-#define REASON_PHRASE_MOVED_PERMANENTLY "Moved Permanently"
-
 char *StatusLineGetSipVersion(struct StatusLine *s);
 int StatusLineGetStatusCode(struct StatusLine *s);
 char *StatusLineGetReasonPhrase(struct StatusLine *s);

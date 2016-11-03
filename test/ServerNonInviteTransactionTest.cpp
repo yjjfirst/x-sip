@@ -193,7 +193,7 @@ TEST(ServerNonInviteTransactionTestGroup, TryingStateSendNonprovisionalTest)
 //Proceeding state test
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
 {
-    MESSAGE *trying = BuildTryingMessage(NULL, request);
+    MESSAGE *trying = BuildResponse(NULL, request, STATUS_CODE_TRYING);
     Response(transaction, TRANSACTION_SEND_180RINGING);
 
     for (int i = 0; i < 20; i++) {

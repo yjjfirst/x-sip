@@ -278,7 +278,9 @@ void DialogOk(struct Dialog *dialog)
 {
     struct DialogId *id = GetDialogId(dialog);
 
-    MESSAGE *message = Build200OkMessage(dialog, GetTransactionRequest(dialog->transaction));
+    MESSAGE *message = BuildResponse(dialog,
+                                     GetTransactionRequest(dialog->transaction),
+                                     STATUS_CODE_OK);
 
     dialog->remoteSeqNumber = MessageGetCSeqNumber(GetTransactionRequest(dialog->transaction));     
     if (GetDialogState(dialog) == DIALOG_STATE_NON_EXIST) {
