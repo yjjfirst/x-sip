@@ -62,7 +62,7 @@ void ClearUserAgentManager()
     uam->userAgents = NULL;
 }
 
-void UserAgentManagerDump()
+void DumpUaManager()
 {
     int i = 0;
     struct UserAgentManager *uam = &UserAgentManager;   

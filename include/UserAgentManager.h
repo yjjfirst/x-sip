@@ -8,4 +8,4 @@ struct UserAgent *GetUserAgent(int pos);
 int GetUaPosition(struct UserAgent *ua);
 void ClearUserAgentManager();
 
-void UserAgentManagerDump();
+void DumpUaManager();

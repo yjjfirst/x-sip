@@ -146,7 +146,7 @@ int AccountInitImpl()
 
 int (*AccountInit)() = AccountInitImpl;
 
-void AccountManagerDump()
+void DumpAccountManager()
 {
     int i = 0;
     struct AccountManager *am = &AccountManager;

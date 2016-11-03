@@ -13,4 +13,4 @@ void BindAllAccounts();
 int FindMessageDestAccount(struct Message *invite);
 
 extern int (*AccountInit)();
-void AccountManagerDump();
+void DumpAccountManager();

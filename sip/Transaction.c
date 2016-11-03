@@ -413,8 +413,10 @@ void RemoveTerminatedTransaction(struct Transaction *t)
 
 void DumpTransaction(struct Transaction *t)
 {
-    printf("Branch: %s| Method: %s | State:% d\n",
-           TransactionIdGetBranch(t->id), TransactionIdGetMethod(t->id), t->state);
+    printf("Branch: %s| Method: %s | State: %s\n",
+           TransactionIdGetBranch(t->id),
+           TransactionIdGetMethod(t->id),
+           TransactionState2String(t->state));
 }
 
 struct FsmState ClientNonInviteInitState = {
