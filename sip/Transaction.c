@@ -246,19 +246,6 @@ struct TransactionUser *GetTransactionUser(struct Transaction *t)
     return t->user;
 }
 
-struct Transaction *CallocTransaction(MESSAGE *request, struct TransactionUser *user)
-{
-    struct Transaction *t = calloc(1, sizeof (struct Transaction));
-
-    t->id = CreateTransactionId();
-    t->request = request;
-    t->user = user;
-
-    TransactionIdExtract(t->id, request);
-    MessageSetOwner(request, t);
-    return t;
-}
-
 int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event)
 {
     AddResponse(t, message);
@@ -341,12 +328,19 @@ struct TransactionInitInfo *GetTransactionInitInfo(enum TransactionType type)
 
 struct Transaction *CreateTransaction(MESSAGE *request, struct TransactionUser *user, enum TransactionType type)
 {
-    struct Transaction *t = CallocTransaction(request, user);
+    struct Transaction *t = calloc(1, sizeof (struct Transaction));
     struct TransactionInitInfo *initInfo = GetTransactionInitInfo(type);
 
+    t->request = request;
+    t->user = user;
     t->type = type;
     t->state = TRANSACTION_STATE_INIT;
     t->fsm = initInfo->fsm;
+    
+    t->id = CreateTransactionId();
+    ExtractTransactionId(t->id, request);
+
+    MessageSetOwner(request, t);
     
     return t;
 }

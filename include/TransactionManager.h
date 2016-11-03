@@ -9,7 +9,7 @@ void ClearTransactionManager();
 int SipMessageCallback(char *string);
 BOOL SipMessageInput(struct Message *message);
 
-struct TransactionId *TransactionIdExtract(struct TransactionId *tid, struct Message *message);
+struct TransactionId *ExtractTransactionId(struct TransactionId *tid, struct Message *message);
 
 struct Transaction *GetTransaction(char *branch, char *seqMethod);
 int CountTransaction(void);
