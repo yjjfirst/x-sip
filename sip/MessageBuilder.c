@@ -318,23 +318,23 @@ MESSAGE *BuildAuthorizationMessage(struct Dialog *dialog, MESSAGE *challenge)
     return message;
 }
 
-void AddResponseViaHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseViaHeader(MESSAGE *request)
 {
-    VIA_HEADER *via = ViaHeaderDup((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, invite));
-    MessageAddHeader(response, (HEADER *)via);
+    VIA_HEADER *via = ViaHeaderDup((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, request));
+    return (struct Header *)via;
 }
 
-void AddResponseFromHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseFromHeader(MESSAGE *request)
 {
     CONTACT_HEADER *from = 
-        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, invite));
-    MessageAddHeader(response, (struct Header *)from);
+        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, request));
+    return (struct Header *)from;
 }
 
-void BuildResponseToTag(char *tag, MESSAGE *invite)
+void BuildResponseToTag(char *tag, MESSAGE *request)
 {
     struct Dialog *dialog = NULL;    
-    struct Transaction *t = MessageBelongTo(invite);
+    struct Transaction *t = MessageBelongTo(request);
 
     if (t == NULL) {
         GenerateTag(tag);
@@ -355,54 +355,53 @@ void BuildResponseToTag(char *tag, MESSAGE *invite)
     }
 }
 
-void AddResponseToHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseToHeader(MESSAGE *request)
 {
     char tag[MAX_TAG_LENGTH] = {0};
     CONTACT_HEADER *to =
-        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite));
+        ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, request));
 
-    BuildResponseToTag(tag, invite);
+    BuildResponseToTag(tag, request);
     
     if (ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG) == NULL) {
         ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);
     }
     
-    MessageAddHeader(response, (struct Header *)to);
+    return (struct Header *)to;
 }
 
-void AddResponseCallIdHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseCallIdHeader(MESSAGE *request)
 {
     struct CallIdHeader *callId = 
-        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
-    MessageAddHeader(response, (struct Header *)callId);
+        CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, request));
+    return (struct Header *)callId;
 }
 
-void AddResponseCSeqHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseCSeqHeader(MESSAGE *request)
 {
-    struct CSeqHeader *cseqId =              
-        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, invite));
-    MessageAddHeader(response, (struct Header *)cseqId);
-
+    struct CSeqHeader *cseq =              
+        CSeqHeaderDup((struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, request));
+    return (struct Header *)cseq;
 }
 
-void AddResponseContactHeader(MESSAGE *response, MESSAGE *invite)
+struct Header *BuildResponseContactHeader(MESSAGE *request)
 {
     CONTACT_HEADER *c = CreateContactHeader();
     URI *uri = CreateUri(URI_SCHEME_SIP, "88001", GetLocalIpAddr(), LOCAL_PORT);
 
     ContactHeaderSetUri(c, uri);
-    MessageAddHeader(response, (struct Header *)c);
-    
+
+    return (struct Header *)c;
 }
 
 void AddResponseHeaders(MESSAGE *response, MESSAGE *request)
 {
-    AddResponseViaHeader(response, request);
-    AddResponseFromHeader(response, request);
-    AddResponseToHeader(response, request);
-    AddResponseCallIdHeader(response, request);
-    AddResponseCSeqHeader(response, request);
-    AddResponseContactHeader(response, request);
+    MessageAddHeader(response, BuildResponseViaHeader(request));
+    MessageAddHeader(response, BuildResponseFromHeader(request));
+    MessageAddHeader(response, BuildResponseToHeader(request));
+    MessageAddHeader(response, BuildResponseCallIdHeader(request));
+    MessageAddHeader(response, BuildResponseCSeqHeader(request));
+    MessageAddHeader(response, BuildResponseContactHeader(request));
 }
 
 struct IntStringMap statusCode2ReasePhraseMaps[] = {
