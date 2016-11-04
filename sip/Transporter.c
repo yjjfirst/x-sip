@@ -27,8 +27,8 @@ int SendMessage(MESSAGE *message)
     Message2String(s, message);
 
     return SipTransporter->send(s,
-                                MessageGetDestAddr(message),
-                                MessageGetDestPort(message),
+                                GetMessageDestAddr(message),
+                                GetMessageDestPort(message),
                                 SipTransporter->fd);
 }
 

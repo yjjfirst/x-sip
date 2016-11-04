@@ -162,7 +162,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDestPortTest)
 
     trying = BuildResponse(dialog, invite, STATUS_CODE_TRYING);
 
-    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(trying));
+    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),GetMessageDestPort(trying));
 
     DestroyMessage(&trying);
     DestroyMessage(&invite);
@@ -183,7 +183,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
 
     trying = BuildResponse(dialog, invite, STATUS_CODE_TRYING);
 
-    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(trying));
+    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),GetMessageDestAddr(trying));
 
     DestroyMessage(&trying);
     DestroyMessage(&invite);

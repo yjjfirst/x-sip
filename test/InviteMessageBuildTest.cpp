@@ -178,7 +178,7 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 {
     MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
-    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),MessageGetDestAddr(ok));    
+    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),GetMessageDestAddr(ok));    
 
     DestroyMessage(&ok);
 }
@@ -187,7 +187,7 @@ TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 TEST(InviteMessageBuildTestGroup, OkMessageDestPortTest)
 {
     MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
-    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),MessageGetDestPort(ok));    
+    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),GetMessageDestPort(ok));    
 
     DestroyMessage(&ok);
 }

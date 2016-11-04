@@ -61,7 +61,7 @@ TEST(RingingMessageBuildTestGroup, RingingMessageDestAddrTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     MESSAGE *ringing = BuildResponse(dialog, invite, STATUS_CODE_RINGING);
-    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)), MessageGetDestAddr(ringing));
+    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)), GetMessageDestAddr(ringing));
     
     DestroyMessage(&invite);
     DestroyMessage(&ringing);
@@ -73,7 +73,7 @@ TEST(RingingMessageBuildTestGroup, RingingMessageDestPortTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     MESSAGE *ringing = BuildResponse(dialog, invite, STATUS_CODE_RINGING);
-    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)), MessageGetDestPort(ringing));
+    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)), GetMessageDestPort(ringing));
     
     DestroyMessage(&invite);
     DestroyMessage(&ringing);
