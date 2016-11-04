@@ -34,7 +34,7 @@ struct Message {
 };
 
 
-void MessageSetType(MESSAGE *message, enum MESSAGE_TYPE type)
+void SetMessageType(MESSAGE *message, enum MESSAGE_TYPE type)
 {
     assert (message != NULL);
     message->type = type;
@@ -161,7 +161,7 @@ struct RequestLine *MessageGetRequestLine(MESSAGE *message)
     return message->rr.request;
 }
 
-void MessageSetRequestLine(MESSAGE *message, struct RequestLine *rl)
+void SetMessageRequestLine(MESSAGE *message, struct RequestLine *rl)
 {
     message->rr.request = rl;
 }
@@ -172,7 +172,7 @@ struct StatusLine *MessageGetStatusLine(MESSAGE *message)
     return message->rr.status;
 }
 
-void MessageSetStatusLine(MESSAGE *message, struct StatusLine *status)
+void SetMessageStatusLine(MESSAGE *message, struct StatusLine *status)
 {
     assert (message != NULL);
     assert (status != NULL);

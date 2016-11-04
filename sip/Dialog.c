@@ -90,7 +90,11 @@ void DialogSetRequestMethod(struct Dialog *dialog, SIP_METHOD method)
 SIP_METHOD DialogGetRequestMethod(struct Dialog *dialog)
 {
     assert(dialog != NULL);
-    return dialog->requestMethod;
+
+    struct Transaction *t = dialog->transaction;
+    struct Message *request = GetTransactionRequest(t);
+
+    return MessageGetMethod(request);
 }
 
 unsigned int GetLocalSeqNumber(struct Dialog *dialog)

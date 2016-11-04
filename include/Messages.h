@@ -28,11 +28,11 @@ void DestroyMessage(struct Message **message);
 
 enum MESSAGE_TYPE MessageGetType(struct Message *message);
 SIP_METHOD MessageGetMethod(struct Message *message);
-void MessageSetType(struct Message *message, enum MESSAGE_TYPE type);
+void SetMessageType(struct Message *message, enum MESSAGE_TYPE type);
 struct RequestLine *MessageGetRequestLine(struct Message *message);
 struct StatusLine *MessageGetStatusLine(struct Message *message);
-void MessageSetRequestLine(struct Message *message, struct RequestLine *rl);
-void MessageSetStatusLine(struct Message *message, struct StatusLine *status);
+void SetMessageRequestLine(struct Message *message, struct RequestLine *rl);
+void SetMessageStatusLine(struct Message *message, struct StatusLine *status);
 struct Header *MessageGetHeader(const char *name, struct Message *message);
 void MessageAddHeader(struct Message *message, struct Header *header);
 
