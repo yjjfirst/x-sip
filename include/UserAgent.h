@@ -25,7 +25,7 @@ BOOL UaBinded(struct UserAgent *ua);
 extern void (*UaMakeCall)(struct UserAgent *ua);
 extern void (*UaEndCall)(struct UserAgent *ua);
 extern void (*UaAcceptCall)(struct UserAgent *ua);
-
+extern void (*UaRinging)(struct UserAgent *ua);
 
 struct UserAgent *CreateUserAgent(int account);
 void DestroyUserAgent(struct UserAgent **ua);

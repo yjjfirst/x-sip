@@ -89,6 +89,11 @@ void UaAcceptCallImpl(struct UserAgent *ua)
 }
 void (*UaAcceptCall)(struct UserAgent *ua) = UaAcceptCallImpl;
 
+void UaRingingImpl(struct UserAgent *ua)
+{
+
+}
+void (*UaRinging)(struct UserAgent *ua) = UaRingingImpl;
 
 struct UserAgent *CreateUserAgent(int account)
 {

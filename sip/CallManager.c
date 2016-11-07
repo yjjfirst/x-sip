@@ -18,6 +18,7 @@ struct IntStringMap CallEventMap[] = {
     INT_STRING_MAP(CALL_FINISHED),
     
     INT_STRING_MAP(ACCEPT_CALL),
+    INT_STRING_MAP(CLIENT_RINGING),
     {-1, ""},
 };
 
@@ -39,11 +40,25 @@ void AcceptCall(struct UserAgent *ua)
     UaAcceptCall(ua);
 }
 
+void Ringing(struct UserAgent *ua)
+{
+    UaRinging(ua);
+}
+
 BOOL HandleClientMessage(char *string)
 {
-    struct UserAgent *ua = GetUa(3);
-    AcceptCall(ua);
-    
+    struct ClientEvent event;
+    struct UserAgent *ua = NULL;
+
+    ParseClientMessage(string, &event);     
+    ua = GetUa(event.ua);
+
+    if (event.event == ACCEPT_CALL) {
+        AcceptCall(ua);
+    }else if (event.event == CLIENT_RINGING) {
+        Ringing(ua);
+    }
+        
     return 1;
 }
 

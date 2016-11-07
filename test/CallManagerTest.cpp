@@ -30,6 +30,11 @@ void UaAcceptCallMock(struct UserAgent *ua)
     mock().actualCall("UaAcceptCall").withParameter("ua", ua);
 }
 
+void UaRingingMock(struct UserAgent *ua)
+{
+    mock().actualCall("UaRinging").withParameter("ua", ua);
+}
+
 TEST_GROUP(CallManagerTestGroup)
 {
     void setup() 
@@ -38,6 +43,7 @@ TEST_GROUP(CallManagerTestGroup)
         UT_PTR_SET(UaEndCall, UaEndCallMock);
         UT_PTR_SET(UaAcceptCall, UaAcceptCallMock);
         UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
+        UT_PTR_SET(UaRinging, UaRingingMock);
 
         AccountInit();
     }
@@ -118,5 +124,46 @@ TEST(CallManagerTestGroup, IncomingCallTest)
 
     mock().expectOneCall("UaAcceptCall").withParameter("ua", ua);
     AcceptCall(ua);    
+}
+
+TEST(CallManagerTestGroup, ClientAcceptCallMessageTest)
+{
+    char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=ACCEPT_CALL";
+    char buf1[CLIENT_MESSAGE_MAX_LENGTH] = "ua=1;event=ACCEPT_CALL";
+    char buf2[CLIENT_MESSAGE_MAX_LENGTH] = "ua=2;event=ACCEPT_CALL";
+    
+    struct UserAgent *ua = AddUa(0);
+    struct UserAgent *ua1 = AddUa(1);
+    struct UserAgent *ua2 = AddUa(0);
+    
+    mock().expectOneCall("UaAcceptCall").withParameter("ua", ua);
+    HandleClientMessage(buf);
+
+    mock().expectOneCall("UaAcceptCall").withParameter("ua", ua1);
+    HandleClientMessage(buf1);
+
+    mock().expectOneCall("UaAcceptCall").withParameter("ua", ua2);
+    HandleClientMessage(buf2);
+}
+
+TEST(CallManagerTestGroup, ClientRingingMessageTest)
+{
+    char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=CLIENT_RINGING";
+    char buf1[CLIENT_MESSAGE_MAX_LENGTH] = "ua=1;event=CLIENT_RINGING";
+    char buf2[CLIENT_MESSAGE_MAX_LENGTH] = "ua=2;event=CLIENT_RINGING";
+    
+    struct UserAgent *ua = AddUa(0);
+    struct UserAgent *ua1 = AddUa(1);
+    struct UserAgent *ua2 = AddUa(0);
+    
+    mock().expectOneCall("UaRinging").withParameter("ua", ua);
+    HandleClientMessage(buf);
+
+    mock().expectOneCall("UaRinging").withParameter("ua", ua1);
+    HandleClientMessage(buf1);
+
+    mock().expectOneCall("UaRinging").withParameter("ua", ua2);
+    HandleClientMessage(buf2);
+
 }
 

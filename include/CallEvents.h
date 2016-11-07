@@ -7,6 +7,7 @@ enum CALL_EVENT {
     CALL_FINISHED,
     
     ACCEPT_CALL,
+    CLIENT_RINGING,
 };
 
 struct ClientEvent {

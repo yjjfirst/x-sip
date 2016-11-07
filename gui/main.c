@@ -3,11 +3,16 @@
 
 #include "Init.h"
 #include "Udp.h"
+#include "CallEvents.h"
 
 static int sockfd;
+struct ClientEvent CurrEvent;
 static void send_hello (GtkWidget *widget, gpointer   data)
 {
-    UdpSend("Hello World\n","192.168.10.1", 5555,  sockfd);
+    char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
+    BuildClientMessage(msg, CurrEvent.ua, CurrEvent.event);
+    
+    UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 }
 
 static void add_all_widget(GtkWidget *window)
@@ -88,6 +93,7 @@ gboolean sock_callback(GIOChannel *source, GIOCondition condition, gpointer data
     
     g_io_channel_read_line(source, &buf, &length, NULL, NULL);
     printf("%s\n", buf);
+    ParseClientMessage(buf, &CurrEvent);
     return TRUE;
 }
 
