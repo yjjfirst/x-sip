@@ -72,9 +72,9 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=0;event=call_established\r\n");
+        withParameter("message","ua=0;event=CALL_ESTABLISHED\r\n");
 
-    NotifyCallManager(CALL_ESTABLISHED, ua); 
+    NotifyCm(CALL_ESTABLISHED, ua); 
 }
 
 TEST(CallManagerTestGroup, ActiveHangupTest)
@@ -86,15 +86,15 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=0;event=call_established\r\n");
-    NotifyCallManager(CALL_ESTABLISHED, ua); 
+        withParameter("message","ua=0;event=CALL_ESTABLISHED\r\n");
+    NotifyCm(CALL_ESTABLISHED, ua); 
 
     mock().expectOneCall("UaEndCall").withParameter("ua", ua);
     EndCall(ua);
 
 }
 
-TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
+TEST(CallManagerTestGroup, RemoteRingingNotifyCmTest)
 {
     char dest[] = "88002";
     char account = 0;
@@ -103,9 +103,9 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=0;event=call_remote_ringing\r\n");
+        withParameter("message","ua=0;event=CALL_REMOTE_RINGING\r\n");
     
-    NotifyCallManager(CALL_REMOTE_RINGING, ua);     
+    NotifyCm(CALL_REMOTE_RINGING, ua);     
 }
 
 TEST(CallManagerTestGroup, IncomingCallTest)
@@ -113,8 +113,8 @@ TEST(CallManagerTestGroup, IncomingCallTest)
     struct UserAgent *ua = AddUa(0);
 
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=0;event=call_incoming\r\n");    
-    NotifyCallManager(CALL_INCOMING, ua);     
+        withParameter("message","ua=0;event=CALL_INCOMING\r\n");    
+    NotifyCm(CALL_INCOMING, ua);     
 
     mock().expectOneCall("UaAcceptCall").withParameter("ua", ua);
     AcceptCall(ua);    

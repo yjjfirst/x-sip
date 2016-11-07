@@ -12,11 +12,12 @@
 #include "utils/StringExt.h"
 
 struct IntStringMap CallEventMap[] = {
-    {CALL_INCOMING, "call_incoming"},
-    {CALL_ESTABLISHED, "call_established"},
-    {CALL_REMOTE_RINGING,"call_remote_ringing"},
-
-    {ACCEPT_CALL, "accept_call"},
+    INT_STRING_MAP(CALL_INCOMING),
+    INT_STRING_MAP(CALL_ESTABLISHED),
+    INT_STRING_MAP(CALL_REMOTE_RINGING),
+    INT_STRING_MAP(CALL_FINISHED),
+    
+    INT_STRING_MAP(ACCEPT_CALL),
     {-1, ""},
 };
 
@@ -69,7 +70,7 @@ void ParseClientMessage(char *msg, struct ClientEvent *event)
     DestroyParameters(&ps);
 }
 
-void NotifyClientImpl(int event, struct UserAgent *ua)
+void NotifyCmImpl(int event, struct UserAgent *ua)
 {
     char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
 
@@ -77,4 +78,4 @@ void NotifyClientImpl(int event, struct UserAgent *ua)
     ClientTransporter->send(msg, "192.168.10.1", 5556, ClientTransporter->fd);
 }
 
-void (*NotifyCallManager)(int event, struct UserAgent *ua) = NotifyClientImpl;
+void (*NotifyCm)(int event, struct UserAgent *ua) = NotifyCmImpl;

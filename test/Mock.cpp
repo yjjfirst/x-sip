@@ -78,7 +78,7 @@ int InitMock(int port)
 
 void NotifyCallManagerMock(int event, struct UserAgent *ua)
 {
-    mock().actualCall("NotifyClient").withParameter("event", event).
+    mock().actualCall("NotifyCm").withParameter("event", event).
         withParameter("ua", ua);
 }
 

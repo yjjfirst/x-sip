@@ -29,18 +29,18 @@ TEST_GROUP(CallEventTestGroup)
     }
 };
 
-TEST(CallEventTestGroup, NotifyClientTest)
+TEST(CallEventTestGroup, NotifyCmTest)
 {
-    UT_PTR_SET(NotifyCallManager, NotifyCallManagerMock);
+    UT_PTR_SET(NotifyCm, NotifyCallManagerMock);
 
     AddUa(0);
     AddUa(1);
     AddUa(2);
     AddUa(3);
     
-    mock().expectOneCall("NotifyClient").withParameter("event", CALL_INCOMING).
+    mock().expectOneCall("NotifyCm").withParameter("event", CALL_INCOMING).
         withParameter("ua", GetUa(0));
-    NotifyCallManager(CALL_INCOMING, GetUa(0));
+    NotifyCm(CALL_INCOMING, GetUa(0));
 
 }
 
@@ -52,7 +52,7 @@ TEST(CallEventTestGroup, BuildClientMessageTest)
     
     BuildClientMessage(msg, ua, event);
 
-    STRCMP_EQUAL("ua=0;event=call_incoming\r\n", msg);
+    STRCMP_EQUAL("ua=0;event=CALL_INCOMING\r\n", msg);
 }
 
 TEST(CallEventTestGroup, SendClientMessageTest)
@@ -60,12 +60,12 @@ TEST(CallEventTestGroup, SendClientMessageTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=0;event=call_incoming\r\n");
+        withParameter("message","ua=0;event=CALL_INCOMING\r\n");
     
     AccountInit();
     struct UserAgent *ua = AddUa(0);
 
-    NotifyCallManager(CALL_INCOMING, ua);
+    NotifyCm(CALL_INCOMING, ua);
 }
 
 TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
@@ -73,18 +73,18 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
     UT_PTR_SET(ClientTransporter, &ClientTransporterMock);
     
     mock().expectOneCall("SendEventToClient").
-        withParameter("message","ua=1;event=call_incoming\r\n");
+        withParameter("message","ua=1;event=CALL_INCOMING\r\n");
     
     AccountInit();
     AddUa(0);
     struct UserAgent *ua = AddUa(0);
 
-    NotifyCallManager(CALL_INCOMING, ua);
+    NotifyCm(CALL_INCOMING, ua);
 }
 
 TEST(CallEventTestGroup, ParseClientMessage)
 {
-    char message[] = "ua=1;event=call_incoming\r\n";
+    char message[] = "ua=1;event=CALL_INCOMING\r\n";
     struct ClientEvent event;
     
     ParseClientMessage(message, &event);
@@ -94,7 +94,7 @@ TEST(CallEventTestGroup, ParseClientMessage)
 
 TEST(CallEventTestGroup, ParseAnotherClientMessage)
 {
-    char message[] = "ua=2;event=call_established\r\n";
+    char message[] = "ua=2;event=CALL_ESTABLISHED\r\n";
     struct ClientEvent event;
     
     ParseClientMessage(message, &event);
@@ -105,7 +105,7 @@ TEST(CallEventTestGroup, ParseAnotherClientMessage)
 
 TEST(CallEventTestGroup, ParseCallCommandMessage)
 {
-    char message[] = "ua=3;event=accept_call\r\n";
+    char message[] = "ua=3;event=ACCEPT_CALL\r\n";
     struct ClientEvent event;
     
     ParseClientMessage(message, &event);

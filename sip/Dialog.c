@@ -165,16 +165,16 @@ void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     
     DialogAck(dialog);
 
-    if (NotifyCallManager != NULL)
-        NotifyCallManager(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
+    if (NotifyCm != NULL)
+        NotifyCm(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
 
     dialog->session = CreateSession();
 }
 
 void InviteDialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
-    if (NotifyCallManager != NULL)
-        NotifyCallManager(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
+    if (NotifyCm != NULL)
+        NotifyCm(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
 }
 
 void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
@@ -266,8 +266,8 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
         SetCallId(id, MessageGetCallId(message));
         ExtractRemoteTarget(dialog, message);
 
-        if (NotifyCallManager != NULL) {
-            NotifyCallManager(CALL_INCOMING, DialogGetUserAgent(dialog));
+        if (NotifyCm != NULL) {
+            NotifyCm(CALL_INCOMING, DialogGetUserAgent(dialog));
         }
     }
     
@@ -304,7 +304,7 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_SERVER_NON_INVITE);
     DialogOk(dialog);
 
-    NotifyCallManager(CALL_FINISHED, dialog->ua);
+    NotifyCm(CALL_FINISHED, dialog->ua);
     RemoveUa(dialog->ua);
     
     id = GetDialogId(dialog);

@@ -262,9 +262,9 @@ TEST(UASDialogTestGroup, ReceiveByeRemoveDialogTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
 }
 
-TEST(UASDialogTestGroup, ReceiveByeNotifyClientTest)
+TEST(UASDialogTestGroup, ReceiveByeNotifyCmTest)
 {
-    UT_PTR_SET(NotifyCallManager, NotifyCallManagerMock);
+    UT_PTR_SET(NotifyCm, NotifyCallManagerMock);
     
     struct Message *bye = CreateMessage();
     ParseMessage(INCOMMING_BYE_MESSAGE,bye);
@@ -275,7 +275,7 @@ TEST(UASDialogTestGroup, ReceiveByeNotifyClientTest)
                                               (char *)"2074940689");
     AddConfirmedDialog(id, ua);
 
-    mock().expectOneCall("NotifyClient").
+    mock().expectOneCall("NotifyCm").
         withParameter("event", CALL_FINISHED).
         withParameter("ua", ua);
     
