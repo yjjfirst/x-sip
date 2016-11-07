@@ -239,3 +239,47 @@ TEST(UASDialogTestGroup, ReceiveByeTest)
     CHECK_EQUAL(0, CountDialogs());
 }
 
+void RemoveUaMock(struct UserAgent *ua)
+{
+    mock().actualCall("RemoveUa").withParameter("ua", ua);
+}
+
+TEST(UASDialogTestGroup, ReceiveByeRemoveDialogTest)
+{
+    UT_PTR_SET(RemoveUa, RemoveUaMock);
+    
+    struct Message *bye = CreateMessage();
+    ParseMessage(INCOMMING_BYE_MESSAGE,bye);
+
+    struct UserAgent *ua = AddUa(0);
+    struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
+                                              (char *)"as317b5f26",
+                                              (char *)"2074940689");
+    AddConfirmedDialog(id, ua);
+    
+    mock().expectOneCall("RemoveUa").withParameter("ua", ua);
+    mock().expectOneCall("SendOutMessageMock").withParameter("StatusCode", 200);
+    OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
+}
+
+TEST(UASDialogTestGroup, ReceiveByeNotifyClientTest)
+{
+    UT_PTR_SET(NotifyCallManager, NotifyCallManagerMock);
+    
+    struct Message *bye = CreateMessage();
+    ParseMessage(INCOMMING_BYE_MESSAGE,bye);
+
+    struct UserAgent *ua = AddUa(0);
+    struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
+                                              (char *)"as317b5f26",
+                                              (char *)"2074940689");
+    AddConfirmedDialog(id, ua);
+
+    mock().expectOneCall("NotifyClient").
+        withParameter("event", CALL_FINISHED).
+        withParameter("ua", ua);
+    
+    mock().expectOneCall("SendOutMessageMock").withParameter("StatusCode", 200);
+    OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
+}
+

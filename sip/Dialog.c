@@ -304,8 +304,11 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_SERVER_NON_INVITE);
     DialogOk(dialog);
 
+    NotifyCallManager(CALL_FINISHED, dialog->ua);
+    RemoveUa(dialog->ua);
+    
     id = GetDialogId(dialog);
-    RemoveDialogById(id);
+    RemoveDialogById(id);    
 }
 
 void DialogTerminate(struct Dialog *dialog)

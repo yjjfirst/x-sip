@@ -22,7 +22,7 @@ struct UserAgent *AddUa(int account)
     return ua;
 }
 
-void RemoveUa(struct UserAgent *ua)
+void RemoveUaImpl(struct UserAgent *ua)
 {
     int i = 0;
     struct UserAgentManager *uam = &UserAgentManager;
@@ -34,6 +34,8 @@ void RemoveUa(struct UserAgent *ua)
         }
     }
 }
+
+void (*RemoveUa)(struct UserAgent *ua) = RemoveUaImpl;
 
 int CountUas()
 {
@@ -82,7 +84,7 @@ void DumpUaManager()
     struct UserAgentManager *uam = &UserAgentManager;   
     int len = CountUas(uam);
 
-    printf("\n");
+    printf("\nUser Agent Manager:\n");
     for (; i < len; i ++) {
         struct UserAgent *ua = get_data_at(uam->userAgents, i);
         DumpUa(ua);

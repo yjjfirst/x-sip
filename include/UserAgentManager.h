@@ -8,5 +8,5 @@ struct UserAgent *GetUa(int pos);
 int GetUaPosition(struct UserAgent *ua);
 void ClearUaManager();
 
-void RemoveUa(struct UserAgent *ua);
+extern void (*RemoveUa)(struct UserAgent *ua);
 void DumpUaManager();
