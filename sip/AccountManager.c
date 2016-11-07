@@ -81,7 +81,7 @@ int FindAccountByUserName(char *user)
 
 void AccountAddBinding(int account)
 {
-    struct UserAgent *ua = AddUserAgent(account);
+    struct UserAgent *ua = AddUa(account);
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildAddBindingMessage(dialog);
 
@@ -90,7 +90,7 @@ void AccountAddBinding(int account)
 
 void AccountRemoveBinding(int account)
 {
-    struct UserAgent *ua = AddUserAgent(account);
+    struct UserAgent *ua = AddUa(account);
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildRemoveBindingMessage(dialog);
 

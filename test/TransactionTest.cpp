@@ -30,7 +30,7 @@ TEST_GROUP(TransactionTestGroup)
         ClearTransactionManager();
         ClearAccountManager();
         ClearDialogManager();
-        ClearUserAgentManager();
+        ClearUaManager();
 
         mock().checkExpectations();
         mock().clear();

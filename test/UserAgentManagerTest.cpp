@@ -21,7 +21,7 @@ TEST_GROUP(UserAgentManagerTestGroup)
     
     void teardown()
     {
-        ClearUserAgentManager();
+        ClearUaManager();
         ClearAccountManager();
 
         mock().checkExpectations();
@@ -29,43 +29,43 @@ TEST_GROUP(UserAgentManagerTestGroup)
     }
 };
 
-TEST(UserAgentManagerTestGroup, AddUserAgentTest)
+TEST(UserAgentManagerTestGroup, AddUaTest)
 {
-    AddUserAgent(0);    
+    AddUa(0);    
     
-    CHECK_EQUAL(1, CountUserAgent());
+    CHECK_EQUAL(1, CountUas());
 }
 
 TEST(UserAgentManagerTestGroup, AddTwoUserAgentTest)
 {
-    AddUserAgent(0);    
-    AddUserAgent(1);    
+    AddUa(0);    
+    AddUa(1);    
     
-    CHECK_EQUAL(2, CountUserAgent());
+    CHECK_EQUAL(2, CountUas());
 }
 
-TEST(UserAgentManagerTestGroup, GetUserAgentTest)
+TEST(UserAgentManagerTestGroup, GetUaTest)
 {
-    struct UserAgent *ua = AddUserAgent(0);
-    POINTERS_EQUAL(ua, GetUserAgent(0));
+    struct UserAgent *ua = AddUa(0);
+    POINTERS_EQUAL(ua, GetUa(0));
 
-    ua = AddUserAgent(1);
-    POINTERS_EQUAL(ua, GetUserAgent(1));
+    ua = AddUa(1);
+    POINTERS_EQUAL(ua, GetUa(1));
 
-    ua = AddUserAgent(2);
-    POINTERS_EQUAL(ua, GetUserAgent(2));
+    ua = AddUa(2);
+    POINTERS_EQUAL(ua, GetUa(2));
 }
 
-TEST(UserAgentManagerTestGroup, GetUserAgentOutOfRangeTest)
+TEST(UserAgentManagerTestGroup, GetUaOutOfRangeTest)
 {
-    AddUserAgent(0);
-    AddUserAgent(1);
-    AddUserAgent(2);
+    AddUa(0);
+    AddUa(1);
+    AddUa(2);
 
-    POINTERS_EQUAL(NULL, GetUserAgent(-1));
-    POINTERS_EQUAL(NULL, GetUserAgent(-100));
-    POINTERS_EQUAL(NULL, GetUserAgent(3));
-    POINTERS_EQUAL(NULL, GetUserAgent(100));
+    POINTERS_EQUAL(NULL, GetUa(-1));
+    POINTERS_EQUAL(NULL, GetUa(-100));
+    POINTERS_EQUAL(NULL, GetUa(3));
+    POINTERS_EQUAL(NULL, GetUa(100));
 }
 
 TEST(UserAgentManagerTestGroup, CreateUserAgentAfterReceiveInviteTest)
@@ -74,15 +74,15 @@ TEST(UserAgentManagerTestGroup, CreateUserAgentAfterReceiveInviteTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 100);
     ReceiveMessage();
 
-    CHECK_EQUAL(1, CountUserAgent());
+    CHECK_EQUAL(1, CountUas());
     ClearTransactionManager();
 }
 
-TEST(UserAgentManagerTestGroup, GetUserAgentPositionTest)
+TEST(UserAgentManagerTestGroup, GetUaPositionTest)
 {
-    struct UserAgent *u1 = AddUserAgent(0);
-    struct UserAgent *u2 = AddUserAgent(1);
-    struct UserAgent *u3 = AddUserAgent(2);
+    struct UserAgent *u1 = AddUa(0);
+    struct UserAgent *u2 = AddUa(1);
+    struct UserAgent *u3 = AddUa(2);
 
     CHECK_EQUAL(0, GetUaPosition(u1));
     CHECK_EQUAL(1, GetUaPosition(u2));
@@ -91,12 +91,48 @@ TEST(UserAgentManagerTestGroup, GetUserAgentPositionTest)
 
 TEST(UserAgentManagerTestGroup, GetNonExistUserAgentPositionTest)
 {
-    AddUserAgent(0);
-    AddUserAgent(1);
-    AddUserAgent(2);
+    AddUa(0);
+    AddUa(1);
+    AddUa(2);
 
     struct UserAgent *ua = CreateUserAgent(0);
     CHECK_EQUAL(-1, GetUaPosition(ua));
 
     DestroyUserAgent(&ua);
+}
+
+TEST(UserAgentManagerTestGroup, RemoveFirstUserAgentTest)
+{
+    struct UserAgent *ua1 = AddUa(0);
+    struct UserAgent *ua2 = AddUa(1);
+    struct UserAgent *ua3 = AddUa(2);
+
+    RemoveUa(ua1);
+
+    POINTERS_EQUAL(ua2, GetUa(0));
+    POINTERS_EQUAL(ua3, GetUa(1));
+}
+
+TEST(UserAgentManagerTestGroup, RemoveSecondUserAgentTest)
+{
+    struct UserAgent *ua1 = AddUa(0);
+    struct UserAgent *ua2 = AddUa(1);
+    struct UserAgent *ua3 = AddUa(2);
+
+    RemoveUa(ua2);
+
+    POINTERS_EQUAL(ua1, GetUa(0));
+    POINTERS_EQUAL(ua3, GetUa(1));
+}
+
+TEST(UserAgentManagerTestGroup, RemoveLastUserAgentTest)
+{
+    struct UserAgent *ua1 = AddUa(0);
+    struct UserAgent *ua2 = AddUa(1);
+    struct UserAgent *ua3 = AddUa(2);
+
+    RemoveUa(ua3);
+
+    POINTERS_EQUAL(ua1, GetUa(0));
+    POINTERS_EQUAL(ua2, GetUa(1));
 }

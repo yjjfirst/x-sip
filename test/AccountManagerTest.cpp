@@ -202,7 +202,7 @@ TEST(AccountManagerTestGroup, AccountAddBindingTest)
     ReceiveMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
 
-    ClearUserAgentManager();
+    ClearUaManager();
     ClearTransactionManager();
 }
 #define REMOVE_BINDING_OK_MESSAGE (char *)"\
@@ -230,7 +230,7 @@ TEST(AccountManagerTestGroup, AccountRemoveBindingTest)
 
     CHECK_EQUAL(FALSE, AccountBinded(account));
 
-    ClearUserAgentManager();
+    ClearUaManager();
     ClearTransactionManager();
 
 }
@@ -264,7 +264,7 @@ TEST(AccountManagerTestGroup, AuthoriaztionNeedTest)
     ReceiveMessage();
     CHECK_EQUAL(TRUE, AccountBinded(account));
     
-    ClearUserAgentManager();
+    ClearUaManager();
     ClearTransactionManager();
 }
 
@@ -275,7 +275,7 @@ TEST(AccountManagerTestGroup, BindAllAccountsTest)
     mock().expectNCalls(CountAccounts(), SEND_OUT_MESSAGE_MOCK).withParameter("Method", "REGISTER");
     BindAllAccounts();
 
-    ClearUserAgentManager();
+    ClearUaManager();
     ClearTransactionManager();
 }
 

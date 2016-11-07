@@ -67,21 +67,21 @@ TEST(UserAgentTestGroup, AddDialogTest)
 
 TEST(UserAgentTestGroup, CountDialogTest)
 {
-    ua = AddUserAgent(0);
+    ua = AddUa(0);
     struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
     dialog = AddDialog(dialogid, ua);
 
     CHECK_EQUAL(1, CountDialogs());
 
-    ClearUserAgentManager();
+    ClearUaManager();
     
 }
 
 TEST(UserAgentTestGroup, GetDialogTest)
 {
-    ua = AddUserAgent(0);
+    ua = AddUa(0);
     dialog = AddDialog(NULL_DIALOG_ID, ua);
     
     POINTERS_EQUAL(dialog, GetDialog(0));
-    ClearUserAgentManager();
+    ClearUaManager();
 }

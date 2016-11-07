@@ -25,7 +25,7 @@ TEST_GROUP(CallEventTestGroup)
         mock().clear();
 
         ClearAccountManager();
-        ClearUserAgentManager();
+        ClearUaManager();
     }
 };
 
@@ -33,14 +33,14 @@ TEST(CallEventTestGroup, NotifyClientTest)
 {
     UT_PTR_SET(NotifyCallManager, NotifyCallManagerMock);
 
-    AddUserAgent(0);
-    AddUserAgent(1);
-    AddUserAgent(2);
-    AddUserAgent(3);
+    AddUa(0);
+    AddUa(1);
+    AddUa(2);
+    AddUa(3);
     
     mock().expectOneCall("NotifyClient").withParameter("event", CALL_INCOMING).
-        withParameter("ua", GetUserAgent(0));
-    NotifyCallManager(CALL_INCOMING, GetUserAgent(0));
+        withParameter("ua", GetUa(0));
+    NotifyCallManager(CALL_INCOMING, GetUa(0));
 
 }
 
@@ -63,7 +63,7 @@ TEST(CallEventTestGroup, SendClientMessageTest)
         withParameter("message","ua=0;event=call_incoming\r\n");
     
     AccountInit();
-    struct UserAgent *ua = AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
 
     NotifyCallManager(CALL_INCOMING, ua);
 }
@@ -76,8 +76,8 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
         withParameter("message","ua=1;event=call_incoming\r\n");
     
     AccountInit();
-    AddUserAgent(0);
-    struct UserAgent *ua = AddUserAgent(0);
+    AddUa(0);
+    struct UserAgent *ua = AddUa(0);
 
     NotifyCallManager(CALL_INCOMING, ua);
 }

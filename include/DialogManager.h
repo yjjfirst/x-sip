@@ -14,7 +14,7 @@ struct Dialog *GetDialogByUserAgent(struct UserAgent *ua);
 struct Dialog *AddDialog(struct DialogId *dialogid, struct UserAgent *ua);
 struct Dialog *AddConfirmedDialog(struct DialogId *dialogid, struct UserAgent *ua);
 struct Dialog *MatchMessage2Dialog(struct Message *bye);
-void RemoveDialog(struct DialogId *dialogId);
+void RemoveDialogById(struct DialogId *dialogId);
 struct Dialog *GetDialog(int pos);
 int CountDialogs();
 

@@ -39,7 +39,7 @@ TEST(DialogsTestGroup, RemoveDialogTest)
     struct DialogId *dialogid = CreateFixedDialogId((char *)"a",(char *) "b",(char *)"c");    
     AddDialog(dialogid, ua);
 
-    RemoveDialog(dialogid);
+    RemoveDialogById(dialogid);
     POINTERS_EQUAL(NULL, GetDialogById(dialogid));
 
     DestroyUserAgent(&ua);
@@ -52,7 +52,7 @@ TEST(DialogsTestGroup, RemoveDialogWithWrongId)
     struct DialogId *dialogid2 = CreateFixedDialogId((char *)"aa",(char *) "bb",(char *)"cc");    
     struct Dialog *dialog = AddDialog(dialogid, ua);
 
-    RemoveDialog(dialogid2);
+    RemoveDialogById(dialogid2);
     POINTERS_EQUAL(dialog, GetDialogById(dialogid));
 
     DestroyUserAgent(&ua);
@@ -91,47 +91,47 @@ TEST(DialogsTestGroup, GetDialogTest)
 
 TEST(DialogsTestGroup, GetDialogInFirstUserAgentTest)
 {
-    struct UserAgent *ua = AddUserAgent(0);
-    AddUserAgent(1);
-    AddUserAgent(0);
-    AddUserAgent(0);
-    AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
+    AddUa(1);
+    AddUa(0);
+    AddUa(0);
+    AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
 
     POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
 
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(DialogsTestGroup, GetDialogInLastUserAgentTest)
 {
-    AddUserAgent(0);
-    AddUserAgent(1);
-    AddUserAgent(0);
-    AddUserAgent(0);
-    struct UserAgent *ua = AddUserAgent(0);
+    AddUa(0);
+    AddUa(1);
+    AddUa(0);
+    AddUa(0);
+    struct UserAgent *ua = AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
 
     POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
 
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(DialogsTestGroup, GetDialogInMiddleUserAgentTest)
 {
-    AddUserAgent(0);
-    AddUserAgent(1);
-    struct UserAgent *ua = AddUserAgent(0);
-    AddUserAgent(0);
-    AddUserAgent(0);
+    AddUa(0);
+    AddUa(1);
+    struct UserAgent *ua = AddUa(0);
+    AddUa(0);
+    AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
 
     POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
 
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(DialogsTestGroup, ClearDialogMangerTest)
@@ -160,7 +160,7 @@ TEST(DialogsTestGroup, RequestMatch2DialogTest)
     struct Message *bye = CreateMessage();
     ParseMessage(INCOMMING_BYE_MESSAGE,bye);
 
-    struct UserAgent *ua = AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
     struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
                                               (char *)"as317b5f26",
                                               (char *)"2074940689");
@@ -174,7 +174,7 @@ TEST(DialogsTestGroup, RequestMatch2DialogTest)
     POINTERS_EQUAL(dialog, MatchMessage2Dialog(bye));
 
     DestroyMessage(&bye);
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(DialogsTestGroup, AddConfirmedDialogTest)
@@ -183,7 +183,7 @@ TEST(DialogsTestGroup, AddConfirmedDialogTest)
     char remoteTag[] = "asdf-remote-tag";
     char callid[] = "test-call-id";
 
-    struct UserAgent *ua = AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
     struct DialogId *id = CreateFixedDialogId(callid, localTag, remoteTag);
     struct Dialog *dialog = AddConfirmedDialog(id, ua);
 
@@ -192,5 +192,5 @@ TEST(DialogsTestGroup, AddConfirmedDialogTest)
     STRCMP_EQUAL(DialogGetRemoteTag(dialog), remoteTag);
     STRCMP_EQUAL(DialogGetCallId(dialog), callid);
 
-    ClearUserAgentManager();
+    ClearUaManager();
 }

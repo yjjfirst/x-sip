@@ -48,7 +48,7 @@ TEST_GROUP(UASDialogTestGroup)
     void teardown()
     {
         ClearDialogManager();
-        ClearUserAgentManager();
+        ClearUaManager();
         ClearAccountManager();
         ClearTransactionManager();
 
@@ -73,7 +73,7 @@ TEST(UASDialogTestGroup, UASDialog200OkMessageDestTest)
     UT_PTR_SET(SipTransporter, &MockTransporterAndHandle);
     DialogOk(GetDialog(0));
 
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(UASDialogTestGroup, UASDialogIdTest)
@@ -176,7 +176,7 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
 
     MESSAGE *bye = BuildByeMessage(GetDialog(0));
     DialogReceiveBye(GetDialog(0), bye);
-    CHECK_EQUAL(DIALOG_STATE_TERMINATED, GetDialogState(GetDialog(0)));
+    CHECK_EQUAL(0, CountDialogs());
 }
 
 TEST(UASDialogTestGroup, MatchedRequestToDialog)
@@ -208,7 +208,7 @@ TEST(UASDialogTestGroup, ReceiveInviteCountDialogTest)
     DestroyMessage(&invite);
 }
 
-TEST(UASDialogTestGroup, ReceiveInviteAddTransactionTest)
+TEST(UASDialogTestGroup, ReceiveInviteTest)
 {
     invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
@@ -219,21 +219,23 @@ TEST(UASDialogTestGroup, ReceiveInviteAddTransactionTest)
         withParameter("type", TRANSACTION_TYPE_SERVER_INVITE);
 
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
+    CHECK_EQUAL(1, CountDialogs());
     DestroyMessage(&invite);
 }
 
-TEST(UASDialogTestGroup, ReceiveByeAddTransactionTest)
+TEST(UASDialogTestGroup, ReceiveByeTest)
 {
     struct Message *bye = CreateMessage();
     ParseMessage(INCOMMING_BYE_MESSAGE,bye);
 
-    struct UserAgent *ua = AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
     struct DialogId *id = CreateFixedDialogId((char *)"1312549293",
                                               (char *)"as317b5f26",
                                               (char *)"2074940689");
-    AddConfirmedDialog(id, ua);
-    
+    AddConfirmedDialog(id, ua);    
     mock().expectOneCall("SendOutMessageMock").withParameter("StatusCode", 200);
-
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);
+
+    CHECK_EQUAL(0, CountDialogs());
 }
+

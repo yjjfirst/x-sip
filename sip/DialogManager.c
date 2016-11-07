@@ -92,7 +92,7 @@ bool MatchedDialogId (void *dialog, void *id)
     return DialogIdMatched(GetDialogId(dialog), id);
 }
 
-void RemoveDialog(struct DialogId *dialogId)
+void RemoveDialogById(struct DialogId *dialogId)
 {
     struct Dialog *dialog = del_node_as_arg(&DialogManager.dialogList, MatchedDialogId, dialogId);
     DestroyDialog(&dialog);

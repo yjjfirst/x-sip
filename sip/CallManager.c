@@ -22,7 +22,7 @@ struct IntStringMap CallEventMap[] = {
 
 struct UserAgent *CallOut(int account, char *dest)
 {
-    struct UserAgent *ua = AddUserAgent(account);
+    struct UserAgent *ua = AddUa(account);
     UaMakeCall(ua);
 
     return ua;
@@ -40,7 +40,7 @@ void AcceptCall(struct UserAgent *ua)
 
 BOOL HandleClientMessage(char *string)
 {
-    struct UserAgent *ua = GetUserAgent(3);
+    struct UserAgent *ua = GetUa(3);
     AcceptCall(ua);
     
     return 1;

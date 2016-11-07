@@ -193,10 +193,6 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
     }
 }
 
-void HandleByeTransactionEvent(struct Dialog *dialog, int event)
-{
-}
-
 void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
     if (event == TRANSACTION_EVENT_200OK) {
@@ -211,7 +207,7 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
     struct Dialog *matched = MatchMessage2Dialog(message);
     if (matched == NULL) {    
         int account = FindMessageDestAccount(message);
-        struct UserAgent *ua = AddUserAgent(account);
+        struct UserAgent *ua = AddUa(account);
         struct Dialog *d = AddDialog(NULL, ua);
         
         DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
@@ -304,8 +300,12 @@ void DialogOk(struct Dialog *dialog)
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 {
+    struct DialogId *id;
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_SERVER_NON_INVITE);
     DialogOk(dialog);
+
+    id = GetDialogId(dialog);
+    RemoveDialogById(id);
 }
 
 void DialogTerminate(struct Dialog *dialog)

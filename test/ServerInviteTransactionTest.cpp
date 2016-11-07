@@ -198,7 +198,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionStateTest)
 
     struct Transaction *t = GetTransaction((char *)"z9hG4bK27dc30b4",(char *)"INVITE");
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
@@ -210,7 +210,7 @@ TEST(ServerInviteTransactionTestGroup, CreateTransactionTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     ReceiveMessage(); 
     CheckOnlyOneTransactionMatched();
-    ClearUserAgentManager();
+    ClearUaManager();
 }
 
 TEST(ServerInviteTransactionTestGroup, CreateTransactionTransportErrorTest)
@@ -406,5 +406,5 @@ TEST(ServerInviteTransactionTestGroup, ReceiveInviteTest)
     ReceiveMessage();
 
     CheckOnlyOneTransactionMatched();
-    ClearUserAgentManager();    
+    ClearUaManager();    
 }

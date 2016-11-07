@@ -27,7 +27,7 @@ TEST_GROUP(RingingMessageBuildTestGroup)
     void setup()
     {
         AccountInit();
-        ua = AddUserAgent(0);
+        ua = AddUa(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
     }
 
@@ -35,7 +35,7 @@ TEST_GROUP(RingingMessageBuildTestGroup)
     {
         ClearAccountManager();
         ClearDialogManager();
-        ClearUserAgentManager();
+        ClearUaManager();
         DestroyMessage(&m);
     }
 };

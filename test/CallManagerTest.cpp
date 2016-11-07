@@ -45,7 +45,7 @@ TEST_GROUP(CallManagerTestGroup)
     void teardown()
     {
         ClearAccountManager();
-        ClearUserAgentManager();
+        ClearUaManager();
 
         mock().checkExpectations();
         mock().clear();
@@ -60,7 +60,7 @@ TEST(CallManagerTestGroup, CallOutTest)
     mock().expectOneCall("UaMakeCall");
     CallOut(account, dest);
 
-    CHECK_EQUAL(1, CountUserAgent());
+    CHECK_EQUAL(1, CountUas());
 }
 
 TEST(CallManagerTestGroup, CallOutSuccessTest)
@@ -110,7 +110,7 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyClientTest)
 
 TEST(CallManagerTestGroup, IncomingCallTest)
 {
-    struct UserAgent *ua = AddUserAgent(0);
+    struct UserAgent *ua = AddUa(0);
 
     mock().expectOneCall("SendEventToClient").
         withParameter("message","ua=0;event=call_incoming\r\n");    

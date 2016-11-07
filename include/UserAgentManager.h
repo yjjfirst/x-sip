@@ -2,10 +2,11 @@ struct UserAgent;
 struct Account;
 struct UserAgentManager;
 
-struct UserAgent *AddUserAgent(int account);
-int CountUserAgent();
-struct UserAgent *GetUserAgent(int pos);
+struct UserAgent *AddUa(int account);
+int CountUas();
+struct UserAgent *GetUa(int pos);
 int GetUaPosition(struct UserAgent *ua);
-void ClearUserAgentManager();
+void ClearUaManager();
 
+void RemoveUa(struct UserAgent *ua);
 void DumpUaManager();
