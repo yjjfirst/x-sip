@@ -180,13 +180,13 @@ TEST(ServerNonInviteTransactionTestGroup, CreateTest)
 
 TEST(ServerNonInviteTransactionTestGroup, TryingStateSendProvisionalTest)
 {
-    Response(transaction, TRANSACTION_SEND_180RINGING);
+    Response(transaction, TRANSACTION_SEND_RINGING);
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(transaction));
 }
 
 TEST(ServerNonInviteTransactionTestGroup, TryingStateSendNonprovisionalTest)
 {
-    Response(transaction, TRANSACTION_SEND_200OK);
+    Response(transaction, TRANSACTION_SEND_OK);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
 }
 
@@ -194,10 +194,10 @@ TEST(ServerNonInviteTransactionTestGroup, TryingStateSendNonprovisionalTest)
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendProvisionalTest)
 {
     MESSAGE *trying = BuildResponse(NULL, request, STATUS_CODE_TRYING);
-    Response(transaction, TRANSACTION_SEND_180RINGING);
+    Response(transaction, TRANSACTION_SEND_RINGING);
 
     for (int i = 0; i < 20; i++) {
-        Response(transaction, TRANSACTION_SEND_180RINGING);
+        Response(transaction, TRANSACTION_SEND_RINGING);
         CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(transaction));
     }
     DestroyMessage(&trying);
@@ -207,7 +207,7 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateRequestReceivedTest)
 {
     MESSAGE *dupRequest = CreateMessage();
     ParseMessage(BYE_MESSAGE, dupRequest);
-    Response(transaction, TRANSACTION_SEND_180RINGING);
+    Response(transaction, TRANSACTION_SEND_RINGING);
 
     for (int i = 0; i < 20; i++ ){
         ReceiveDupRequest(transaction, dupRequest);
@@ -226,11 +226,11 @@ void CheckNoTransaction()
 
 TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendErrorTest)
 {
-    Response(transaction, TRANSACTION_SEND_180RINGING);
+    Response(transaction, TRANSACTION_SEND_RINGING);
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withParameter("StatusCode", 180).andReturnValue(-1);
     UT_PTR_SET(SipTransporter, &MockTransporter);
-    Response(transaction, TRANSACTION_SEND_180RINGING);
+    Response(transaction, TRANSACTION_SEND_RINGING);
 
     CheckNoTransaction();
 
@@ -240,16 +240,16 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingStateSendErrorTest)
 
 TEST(ServerNonInviteTransactionTestGroup, ProceedingState200OKSentTest)
 {
-    Response(transaction, TRANSACTION_SEND_180RINGING);
-    Response(transaction, TRANSACTION_SEND_200OK);
+    Response(transaction, TRANSACTION_SEND_RINGING);
+    Response(transaction, TRANSACTION_SEND_OK);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
 }
 
 void PrepareCompletedState(struct Transaction *transaction)
 {
-    Response(transaction, TRANSACTION_SEND_180RINGING);
-    Response(transaction, TRANSACTION_SEND_200OK);
+    Response(transaction, TRANSACTION_SEND_RINGING);
+    Response(transaction, TRANSACTION_SEND_OK);
 }
 //Completed state test
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
@@ -320,7 +320,7 @@ TEST(ServerNonInviteTransactionTestGroup, ToCompletedStateFromTryinbgAddTimerTes
     UT_PTR_SET(AddTimer, AddTimerMock);
     mock().expectOneCall("AddTimerMock").withParameter("interval", WAIT_TIME_FOR_REQUEST_RETRANSMITS);
 
-    Response(transaction,TRANSACTION_SEND_200OK);
+    Response(transaction,TRANSACTION_SEND_OK);
     
     mock().checkExpectations();
     mock().clear();

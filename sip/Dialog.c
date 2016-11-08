@@ -181,13 +181,13 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
     
-    if (event == TRANSACTION_EVENT_200OK) {    
+    if (event == TRANSACTION_EVENT_OK) {    
         if (MessageGetExpires(message) != 0) {
             UaSetBinded(ua);
         } else {
             UaSetUnbinded(ua);
         }
-    } else if (event == TRANSACTION_EVENT_401UNAUTHORIZED) {
+    } else if (event == TRANSACTION_EVENT_UNAUTHORIZED) {
         MESSAGE *authMessage = BuildAuthorizationMessage(dialog, message);
         DialogNewTransaction(dialog, authMessage, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     }
@@ -195,9 +195,9 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 
 void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
-    if (event == TRANSACTION_EVENT_200OK) {
+    if (event == TRANSACTION_EVENT_OK) {
         InviteDialogReceiveOk(dialog, message);
-    } else if (event == TRANSACTION_EVENT_180RINGING) {
+    } else if (event == TRANSACTION_EVENT_RINGING) {
         InviteDialogReceiveRinging(dialog, message);
     }
 }
@@ -217,10 +217,10 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_200OK, HandleRegisterEvent},
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_401UNAUTHORIZED, HandleRegisterEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_200OK, HandleInviteEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_180RINGING, HandleInviteEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_OK, HandleRegisterEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_UNAUTHORIZED, HandleRegisterEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_OK, HandleInviteEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_RINGING, HandleInviteEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {-1, -1, 0},
@@ -295,7 +295,7 @@ void DialogOk(struct Dialog *dialog)
         }
     }
 
-    ResponseWith(dialog->transaction, message, TRANSACTION_SEND_200OK);    
+    ResponseWith(dialog->transaction, message, TRANSACTION_SEND_OK);    
 }
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
@@ -321,7 +321,7 @@ void (*DialogTerminate)(struct Dialog *dialog) = DialogTerminateImpl;
 
 void DialogRingingImpl(struct Dialog *dialog)
 {
-    Response(dialog->transaction, TRANSACTION_SEND_180RINGING);
+    Response(dialog->transaction, TRANSACTION_SEND_RINGING);
 }
 void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 

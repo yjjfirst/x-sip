@@ -168,7 +168,7 @@ TEST_GROUP(ServerInviteTransactionTestGroup)
         mock().expectOneCall("AddTimerMock").withIntParameter("interval", WAIT_TIME_FOR_ACK_RECEIPT);
 
         UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
-        Response(t, TRANSACTION_SEND_301MOVED);
+        Response(t, TRANSACTION_SEND_MOVED);
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 
         return t;
@@ -253,7 +253,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180FromTuTest)
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(SipTransporter, &MockTransporterFor180Ringing);
-    Response(t, TRANSACTION_SEND_180RINGING);
+    Response(t, TRANSACTION_SEND_RINGING);
 
     CHECK_EQUAL(1, CountTransaction());
     CHECK_TRUE(t != NULL);
@@ -266,7 +266,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend180ErrorTest)
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     UT_PTR_SET(SipTransporter, &MockTransporterFor180Ringing);
-    Response(t, TRANSACTION_SEND_180RINGING);
+    Response(t, TRANSACTION_SEND_RINGING);
 
     CheckNoTransaction();
 }
@@ -277,7 +277,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKFromTuTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(SipTransporter, &MockTransporterFor200OK);    
-    Response(t, TRANSACTION_SEND_200OK);
+    Response(t, TRANSACTION_SEND_OK);
     
     CheckNoTransaction();
 }
@@ -288,7 +288,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend200OKSendErrorTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);
     UT_PTR_SET(SipTransporter, &MockTransporterFor200OK);    
-    Response(t, TRANSACTION_SEND_200OK);
+    Response(t, TRANSACTION_SEND_OK);
     
     CheckNoTransaction();
 }
@@ -299,7 +299,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuTest)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK);
     UT_PTR_SET(SipTransporter, &MockTransporterFor301);    
-    Response(t, TRANSACTION_SEND_301MOVED);
+    Response(t, TRANSACTION_SEND_MOVED);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 }
@@ -315,7 +315,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingStateSend301FromTuAddTimerTest)
         .andReturnValue(0);    
     UT_PTR_SET(AddTimer, AddTimerMock);
 
-    Response(t, TRANSACTION_SEND_301MOVED);
+    Response(t, TRANSACTION_SEND_MOVED);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t)); 
 }
 
@@ -325,7 +325,7 @@ TEST(ServerInviteTransactionTestGroup, ProceedingState301TransportErrorTest)
 
     UT_PTR_SET(SipTransporter, &MockTransporterFor301);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).andReturnValue(-1);    
-    Response(t, TRANSACTION_SEND_301MOVED);
+    Response(t, TRANSACTION_SEND_MOVED);
  
     CheckNoTransaction();
 }
