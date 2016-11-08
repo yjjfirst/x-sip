@@ -98,8 +98,7 @@ TEST(DialogsTestGroup, GetDialogInFirstUserAgentTest)
     AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
-
-    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+    POINTERS_EQUAL(d, GetDialogByUa(ua));
 
     ClearUaManager();
 }
@@ -113,8 +112,7 @@ TEST(DialogsTestGroup, GetDialogInLastUserAgentTest)
     struct UserAgent *ua = AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
-
-    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+    POINTERS_EQUAL(d, GetDialogByUa(ua));
 
     ClearUaManager();
 }
@@ -128,8 +126,7 @@ TEST(DialogsTestGroup, GetDialogInMiddleUserAgentTest)
     AddUa(0);
 
     struct Dialog *d = AddDialog(NULL_DIALOG_ID, ua);
-
-    POINTERS_EQUAL(d, GetDialogByUserAgent(ua));
+    POINTERS_EQUAL(d, GetDialogByUa(ua));
 
     ClearUaManager();
 }

@@ -76,22 +76,22 @@ void (*UaMakeCall)(struct UserAgent *ua) = UaMakeCallImpl;
 void UaEndCallImpl(struct UserAgent *ua)
 {
     struct Dialog *dialog = GetDialog(0);
-    DialogBye(dialog);
+    DialogTerminate(dialog);
 }
 void (*UaEndCall)(struct UserAgent *ua) = UaEndCallImpl;
 
 
 void UaAcceptCallImpl(struct UserAgent *ua)
 {
-    struct Dialog *dialog = GetDialogByUserAgent(ua);
-
+    struct Dialog *dialog = GetDialogByUa(ua);
     DialogOk(dialog);
 }
 void (*UaAcceptCall)(struct UserAgent *ua) = UaAcceptCallImpl;
 
 void UaRingingImpl(struct UserAgent *ua)
 {
-
+    struct Dialog *d = GetDialogByUa(ua);
+    DialogRinging(d);
 }
 void (*UaRinging)(struct UserAgent *ua) = UaRingingImpl;
 

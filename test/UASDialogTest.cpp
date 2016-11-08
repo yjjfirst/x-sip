@@ -283,3 +283,17 @@ TEST(UASDialogTestGroup, ReceiveByeNotifyCmTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
 }
 
+TEST(UASDialogTestGroup, RingingTest)
+{
+    struct UserAgent *ua = AddUa(0);
+    struct Dialog *dialog = AddDialog(NULL, ua);
+
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 180);
+    DialogRinging(dialog);    
+}

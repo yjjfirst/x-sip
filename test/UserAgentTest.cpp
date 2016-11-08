@@ -40,6 +40,7 @@ TEST_GROUP(UserAgentTestGroup)
     void teardown()
     {
         ClearAccountManager();
+        mock().checkExpectations();
         mock().clear();
     }    
 };
@@ -67,9 +68,9 @@ TEST(UserAgentTestGroup, AddDialogTest)
 
 TEST(UserAgentTestGroup, CountDialogTest)
 {
+    ClearUaManager();
     ua = AddUa(0);
-    struct DialogId *dialogid = CreateFixedDialogId((char *)"1", (char *)"2",(char *)"3");
-    dialog = AddDialog(dialogid, ua);
+    dialog = AddDialog(NULL, ua);
 
     CHECK_EQUAL(1, CountDialogs());
 
@@ -79,9 +80,26 @@ TEST(UserAgentTestGroup, CountDialogTest)
 
 TEST(UserAgentTestGroup, GetDialogTest)
 {
+    ClearUaManager();
     ua = AddUa(0);
     dialog = AddDialog(NULL_DIALOG_ID, ua);
     
     POINTERS_EQUAL(dialog, GetDialog(0));
+    ClearUaManager();
+}
+
+void DialogRingingMock(struct Dialog *dialog)
+{
+    mock().actualCall("DialogTerminate").withParameter("dialog", dialog);
+}
+
+TEST(UserAgentTestGroup, RingingTest)
+{
+    UT_PTR_SET(DialogRinging, DialogRingingMock);
+    ua = AddUa(0);
+    dialog = AddDialog(NULL, ua);
+
+    mock().expectOneCall("DialogTerminate").withParameter("dialog", dialog);
+    UaRinging(ua);
     ClearUaManager();
 }

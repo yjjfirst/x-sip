@@ -46,10 +46,10 @@ void DestroyDialog(struct Dialog **dialog);
 
 struct Transaction *DialogNewTransaction(struct Dialog *dialog, struct Message *message, int type);
 
-void DialogTerminate(struct Dialog *dialog);
+extern void (*DialogTerminate)(struct Dialog *dialog);
 void DialogInvite(struct Dialog *dialog);
-void DialogBye(struct Dialog *dialog);
 void DialogOk(struct Dialog *dialog);
+extern void (*DialogRinging)(struct Dialog *dialog);
 
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void InviteDialogReceiveOk(struct Dialog *dialog, struct Message *message);

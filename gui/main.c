@@ -7,11 +7,29 @@
 
 static int sockfd;
 struct ClientEvent CurrEvent;
-static void send_hello (GtkWidget *widget, gpointer   data)
+
+static void send_ringing()
 {
     char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
-    BuildClientMessage(msg, CurrEvent.ua, CurrEvent.event);
-    
+    struct ClientEvent event;
+
+    event.ua = CurrEvent.ua;
+    event.event = CLIENT_RINGING;
+    BuildClientMessage(msg, event.ua, event.event);
+
+    UdpSend(msg, "192.168.10.1", 5555,  sockfd);
+
+}
+
+static void send_accept (GtkWidget *widget, gpointer   data)
+{
+    char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
+    struct ClientEvent event;
+
+    event.ua = CurrEvent.ua;
+    event.event = ACCEPT_CALL;
+    BuildClientMessage(msg, event.ua, event.event);
+
     UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 }
 
@@ -26,7 +44,7 @@ static void add_all_widget(GtkWidget *window)
 
     
     make_call_button = gtk_button_new_with_label ("Make Call");
-    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (send_hello), window);
+    g_signal_connect_swapped (make_call_button, "clicked", G_CALLBACK (send_accept), window);
     
     number = gtk_entry_new();
     vbox =  gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
@@ -94,6 +112,8 @@ gboolean sock_callback(GIOChannel *source, GIOCondition condition, gpointer data
     g_io_channel_read_line(source, &buf, &length, NULL, NULL);
     printf("%s\n", buf);
     ParseClientMessage(buf, &CurrEvent);
+    if (CurrEvent.event == CALL_INCOMING)
+        send_ringing();
     return TRUE;
 }
 

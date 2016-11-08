@@ -311,23 +311,24 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
     RemoveDialogById(id);    
 }
 
-void DialogTerminate(struct Dialog *dialog)
+void DialogTerminateImpl(struct Dialog *dialog)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
+void (*DialogTerminate)(struct Dialog *dialog) = DialogTerminateImpl;
+
+void DialogRingingImpl(struct Dialog *dialog)
+{
+    Response(dialog->transaction, TRANSACTION_SEND_180RINGING);
+}
+void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 
 void DialogInvite(struct Dialog *dialog)
 {
     MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
-}
-
-void DialogBye(struct Dialog *dialog)
-{
-    MESSAGE *bye = BuildByeMessage(dialog);
-    DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }
 
 struct Dialog *CreateDialog(struct DialogId *dialogid, struct UserAgent *ua)

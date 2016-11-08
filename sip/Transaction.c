@@ -259,13 +259,13 @@ void Response(struct Transaction *t, enum TransactionEvent e)
 {
     struct Message *message = NULL;
     struct Dialog *dialog = (struct Dialog *)t->user;
-    
+
     if (e == TRANSACTION_SEND_200OK) {
         message = BuildResponse(dialog, t->request, STATUS_CODE_OK);
     } else if (e == TRANSACTION_SEND_301MOVED) {
         message = BuildResponse(dialog, t->request,STATUS_CODE_MOVED_PERMANENTLY);
-    } else if (e == TRANSACTION_SEND_180RINGING) { 
-        message = BuildResponse(dialog, t->request, STATUS_CODE_RINGING); 
+    } else if (e == TRANSACTION_SEND_180RINGING) {
+        message = BuildResponse(dialog, t->request, STATUS_CODE_RINGING);
     }
         
     ResponseWith(t, message, e);
