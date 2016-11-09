@@ -70,7 +70,7 @@ TEST(TransactionManager, NewTransaction)
     mock().checkExpectations();
 }
 
-TEST(TransactionManager, MatchResponse)
+TEST(TransactionManager, MatchResponseTest)
 {
     
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
@@ -133,4 +133,48 @@ TEST(TransactionManager, TransactionRemoveTest)
 
     RemoveTransactionById(tid);
     POINTERS_EQUAL(NULL, GetTransaction(TransactionIdGetBranch(tid), TransactionIdGetMethod(tid)));
+}
+
+TEST(TransactionManager, MatchResponseToTransactionTest)
+{
+    struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
+    struct Message *response = CreateMessage();
+
+    ParseMessage(ADD_BINDING_OK_MESSAGE, response);
+    POINTERS_EQUAL(t, MatchResponse(response));
+
+    DestroyMessage(&response);
+}
+
+
+TEST(TransactionManager, MatchRequestToTransactionTest)
+{
+    UT_PTR_SET(SipTransporter, &DummyTransporter);
+    
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite); 
+
+    struct Transaction *t = AddTransaction(invite, NULL, TRANSACTION_TYPE_SERVER_INVITE);
+    struct Message *reInvite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, reInvite);    
+    POINTERS_EQUAL(t, MatchRequest(reInvite));
+
+    DestroyMessage(&reInvite);
+    DestroyMessage(&message);
+}
+
+TEST(TransactionManager, MatchCancelRequestToTransactionTest)
+{
+    UT_PTR_SET(SipTransporter, &DummyTransporter);
+    
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite); 
+
+    struct Transaction *t = AddTransaction(invite, NULL, TRANSACTION_TYPE_SERVER_INVITE);
+    struct Message *cancel = CreateMessage();
+    ParseMessage(INCOMMING_CANCEL_MESSAGE, cancel);    
+    POINTERS_EQUAL(t, MatchRequest(cancel));
+
+    DestroyMessage(&cancel);
+    DestroyMessage(&message);
 }

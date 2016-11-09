@@ -209,7 +209,6 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
         int account = FindMessageDestAccount(message);
         struct UserAgent *ua = AddUa(account);
         struct Dialog *d = AddDialog(NULL, ua);
-        
         DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
     } else {
         DialogReceiveBye(matched, message);

@@ -96,7 +96,20 @@ struct Transaction *GetTransaction(char *branch, char *seqMethod)
     return NULL;
 }
 
-struct Transaction *MatchTransaction(MESSAGE *message)
+struct Transaction *MatchRequest(MESSAGE *message)
+{
+    char *branch = MessageGetViaBranch(message);
+    
+    SIP_METHOD method = MessageGetMethod(message);
+    if (method == SIP_METHOD_CANCEL) {
+        method = SIP_METHOD_INVITE;
+    }
+
+    char *methodName = MethodMap2String(method);
+    return GetTransaction(branch, methodName);
+}
+
+struct Transaction *MatchResponse(MESSAGE *message)
 {
     char *branch = MessageGetViaBranch(message);
     char *method = MessageGetCSeqMethod(message);
@@ -133,7 +146,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
-    t = MatchTransaction(message);
+    t = MatchResponse(message);
     
     if (t) {
         AddResponse(t, message);
@@ -146,7 +159,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
-    struct Transaction *t = MatchTransaction(message);
+    struct Transaction *t = MatchRequest(message);
 
     if (!t) {
         OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
