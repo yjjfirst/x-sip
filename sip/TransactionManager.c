@@ -11,6 +11,7 @@
 #include "Transaction.h"
 #include "TransactionId.h"
 #include "Messages.h"
+#include "MessageBuilder.h"
 #include "DialogId.h"
 #include "Dialog.h"
 #include "RequestLine.h"
@@ -160,13 +161,19 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 BOOL TmHandleRequestMessage(MESSAGE *message)
 {
     struct Transaction *t = MatchRequest(message);
-
+    SIP_METHOD method = MessageGetMethod(message);
+    
     if (!t) {
-        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
     } else {
-        if (MessageGetMethod(message) == SIP_METHOD_INVITE)
+        if (method == SIP_METHOD_INVITE) {
             RunFsm(t, TRANSACTION_EVENT_INVITE);
-        DestroyMessage(&message);
+            DestroyMessage(&message);
+        } else if (method == SIP_METHOD_CANCEL) {
+            struct Message *rt = BuildResponse((struct Dialog *)GetTransactionUser(t), message, 487);
+            ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
+            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+        }        
     }
 
     return TRUE;

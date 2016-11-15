@@ -205,11 +205,18 @@ void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message
 void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct Dialog *matched = MatchMessage2Dialog(message);
+    SIP_METHOD method = MessageGetMethod(message);
+    
     if (matched == NULL) {    
         int account = FindMessageDestAccount(message);
         struct UserAgent *ua = AddUa(account);
         struct Dialog *d = AddDialog(NULL, ua);
-        DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
+        if (method == SIP_METHOD_INVITE) {
+            DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
+        } else { 
+            struct Transaction *t = DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_NON_INVITE);
+            Response(t,TRANSACTION_SEND_OK);
+        }
     } else {
         DialogReceiveBye(matched, message);
     }
@@ -222,6 +229,7 @@ struct TransactionEventAction TransactionEventActions[] = {
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_RINGING, HandleInviteEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
+    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {-1, -1, 0},
 };
 

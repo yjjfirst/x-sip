@@ -18,38 +18,40 @@ extern "C" {
 #include "AccountManager.h"
 #include "ViaHeader.h"
 #include "DialogManager.h"
+#include "UserAgentManager.h"
 }
 
 TEST_GROUP(TransactionManager)
 {
     struct UserAgent *ua;
     struct Dialog *dialog;
-    MESSAGE *message;
     
     void setup() {
         UT_PTR_SET(SipTransporter, &MockTransporter);
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
 
         AccountInit();
-        mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
-            withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-        ua = CreateUserAgent(0);
+        ua = AddUa(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        message = BuildAddBindingMessage(dialog);
     }
 
     void teardown() {
         ClearAccountManager();
-        mock().clear();
-        DestroyUserAgent(&ua);
+        ClearUaManager();
         ClearTransactionManager();
+
+        mock().checkExpectations();
+        mock().clear();
     }
 };
 
 TEST(TransactionManager, NewTransaction)
 {
     struct Transaction *transaction;
+    struct Message *message = BuildAddBindingMessage(dialog);
 
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
     transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_EQUAL(1, CountTransaction());
 
@@ -72,7 +74,11 @@ TEST(TransactionManager, NewTransaction)
 
 TEST(TransactionManager, MatchResponseTest)
 {
-    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+
+    struct Message *message = BuildAddBindingMessage(dialog);
+        
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_TRUE(ReceiveMessage());
@@ -80,6 +86,10 @@ TEST(TransactionManager, MatchResponseTest)
 
 TEST(TransactionManager, BranchNonMatchTest)
 {
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+
+    struct Message *message = BuildAddBindingMessage(dialog);    
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     enum TransactionState s;
 
@@ -96,6 +106,10 @@ TEST(TransactionManager, GetTransactionByIdTest)
     char seqMethod[] = SIP_METHOD_NAME_REGISTER;
     char branch[64];
 
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+
+    struct Message *message = BuildAddBindingMessage(dialog);
     strcpy(branch, MessageGetViaBranch(message));
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
@@ -114,11 +128,14 @@ TEST(TransactionManager, ExtractTransactionIdFromMessageTest)
    
     DestroyMessage(&localMessage);
     DestroyTransactionId(&tid);
-    DestroyMessage(&message);
 }
 
 TEST(TransactionManager, TransactionIdTest)
 {
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+
+    struct Message *message = BuildAddBindingMessage(dialog);
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = GetTransactionId(t);
 
@@ -128,6 +145,10 @@ TEST(TransactionManager, TransactionIdTest)
 
 TEST(TransactionManager, TransactionRemoveTest)
 {
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+   
+    struct Message *message = BuildAddBindingMessage(dialog);        
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = GetTransactionId(t);
 
@@ -137,6 +158,10 @@ TEST(TransactionManager, TransactionRemoveTest)
 
 TEST(TransactionManager, MatchResponseToTransactionTest)
 {
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
+        withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
+
+    struct Message *message = BuildAddBindingMessage(dialog);
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct Message *response = CreateMessage();
 
@@ -160,7 +185,6 @@ TEST(TransactionManager, MatchRequestToTransactionTest)
     POINTERS_EQUAL(t, MatchRequest(reInvite));
 
     DestroyMessage(&reInvite);
-    DestroyMessage(&message);
 }
 
 TEST(TransactionManager, MatchCancelRequestToTransactionTest)
@@ -176,5 +200,20 @@ TEST(TransactionManager, MatchCancelRequestToTransactionTest)
     POINTERS_EQUAL(t, MatchRequest(cancel));
 
     DestroyMessage(&cancel);
-    DestroyMessage(&message);
+}
+
+TEST(TransactionManager, RemoteCancelTest)
+{
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
+    struct Message *cancel = CreateMessage();
+    ParseMessage(INCOMMING_CANCEL_MESSAGE, cancel);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    SipMessageInput(invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 487);
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+    SipMessageInput(cancel);
 }

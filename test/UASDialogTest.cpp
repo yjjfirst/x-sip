@@ -297,16 +297,3 @@ TEST(UASDialogTestGroup, RingingTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 180);
     DialogRinging(dialog);    
 }
-
-IGNORE_TEST(UASDialogTestGroup, RemoteCancelTest)
-{
-    struct UserAgent *ua = AddUa(0);
-    struct Dialog *dialog = AddDialog(NULL, ua);
-    
-    struct Message *cancel = CreateMessage();
-    ParseMessage(INCOMMING_CANCEL_MESSAGE, cancel);
-
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 481);
-    DialogNewTransaction(dialog, cancel, TRANSACTION_TYPE_SERVER_NON_INVITE);
-    
-}

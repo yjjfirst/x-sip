@@ -147,6 +147,22 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 
 }
 
+TEST(InviteMessageBuildTestGroup, 487MessageStatueLineTest)
+{
+    MESSAGE *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+    Message *moved = BuildResponse(NULL, invite, STATUS_CODE_REQUEST_TERMINATED);
+    
+    struct StatusLine *sl = MessageGetStatusLine(moved);
+
+    CHECK_EQUAL(487, StatusLineGetStatusCode(sl));
+    STRCMP_EQUAL(REASON_PHRASE_REQUEST_TERMINATED, StatusLineGetReasonPhrase(sl));
+
+    DestroyMessage(&invite);
+    DestroyMessage(&moved);
+
+}
+
 TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
     MESSAGE *bye = BuildByeMessage(dialog);
