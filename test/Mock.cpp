@@ -82,6 +82,11 @@ void NotifyCallManagerMock(int event, struct UserAgent *ua)
         withParameter("ua", ua);
 }
 
+void OnTransactionEventMock(struct Dialog *dialog,  int event, MESSAGE *message)
+{
+    mock().actualCall("OnTransactionEvent").withParameter("event", event);
+}
+
 int MessageHandleMock(char *message)
 {
     return mock().actualCall("MessageHandleMock").returnIntValue();

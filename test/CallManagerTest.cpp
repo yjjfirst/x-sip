@@ -126,6 +126,16 @@ TEST(CallManagerTestGroup, IncomingCallTest)
     AcceptCall(ua);    
 }
 
+TEST(CallManagerTestGroup, CancelCallTest)
+{
+    struct UserAgent *ua = AddUa(0);
+
+    mock().expectOneCall("SendEventToClient").
+        withParameter("message","ua=0;event=CALL_PEER_CANCELED\r\n");    
+
+    NotifyCm(CALL_PEER_CANCELED, ua);
+}
+
 TEST(CallManagerTestGroup, ClientAcceptCallMessageTest)
 {
     char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=ACCEPT_CALL";

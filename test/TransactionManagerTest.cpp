@@ -217,3 +217,24 @@ TEST(TransactionManager, RemoteCancelTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
     SipMessageInput(cancel);
 }
+
+TEST(TransactionManager, RemoteCancelNotifyCmTest)
+{
+    UT_PTR_SET(SipTransporter, &DummyTransporter);
+   
+    struct Message *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
+    struct Message *cancel = CreateMessage();
+    ParseMessage(INCOMMING_CANCEL_MESSAGE, cancel);
+
+    SipMessageInput(invite);
+
+    UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
+    mock().expectOneCall("OnTransactionEvent").withParameter("event", TRANSACTION_EVENT_CANCELED);    
+    mock().expectOneCall("OnTransactionEvent").withParameter("event", TRANSACTION_EVENT_NEW);    
+
+    SipMessageInput(cancel);
+
+    DestroyMessage(&cancel);
+}

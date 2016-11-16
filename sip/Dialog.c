@@ -211,6 +211,7 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
         int account = FindMessageDestAccount(message);
         struct UserAgent *ua = AddUa(account);
         struct Dialog *d = AddDialog(NULL, ua);
+
         if (method == SIP_METHOD_INVITE) {
             DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
         } else { 
@@ -222,6 +223,11 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
     }
 }
 
+void HandleCancelEvent(struct Dialog *dialog, int event, MESSAGE *message)
+{
+    NotifyCm(CALL_PEER_CANCELED, DialogGetUserAgent(dialog));
+}
+
 struct TransactionEventAction TransactionEventActions[] = {
     {SIP_METHOD_REGISTER, TRANSACTION_EVENT_OK, HandleRegisterEvent},
     {SIP_METHOD_REGISTER, TRANSACTION_EVENT_UNAUTHORIZED, HandleRegisterEvent},
@@ -230,6 +236,7 @@ struct TransactionEventAction TransactionEventActions[] = {
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_CANCEL, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
+    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_CANCELED, HandleCancelEvent},
     {-1, -1, 0},
 };
 
@@ -246,6 +253,11 @@ void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
         requestMethod = MessageGetMethod(GetTransactionRequest(t));
     }
 
+    if (MessageGetMethod(message) == SIP_METHOD_CANCEL)
+    {
+        requestMethod = SIP_METHOD_CANCEL;
+    }
+    
     action = TransactionEventActions;    
     for (; action->requestMethod != -1; action ++)
     {

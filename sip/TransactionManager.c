@@ -170,9 +170,13 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
             RunFsm(t, TRANSACTION_EVENT_INVITE);
             DestroyMessage(&message);
         } else if (method == SIP_METHOD_CANCEL) {
-            struct Message *rt = BuildResponse((struct Dialog *)GetTransactionUser(t), message, 487);
+            struct Dialog *d = (struct Dialog *)GetTransactionUser(t);
+            struct Message *rt = BuildResponse(d, message, 487);
+
+            OnTransactionEvent(d, TRANSACTION_EVENT_CANCELED, message);            
             ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
-            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+
+            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);            
         }        
     }
 

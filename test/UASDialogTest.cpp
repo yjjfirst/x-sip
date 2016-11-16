@@ -262,6 +262,21 @@ TEST(UASDialogTestGroup, ReceiveByeRemoveDialogTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
 }
 
+TEST(UASDialogTestGroup, RingingTest)
+{
+    struct UserAgent *ua = AddUa(0);
+    struct Dialog *dialog = AddDialog(NULL, ua);
+
+    invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
+    DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 180);
+    DialogRinging(dialog);    
+}
+
 TEST(UASDialogTestGroup, ReceiveByeNotifyCmTest)
 {
     UT_PTR_SET(NotifyCm, NotifyCallManagerMock);
@@ -283,7 +298,7 @@ TEST(UASDialogTestGroup, ReceiveByeNotifyCmTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, bye);    
 }
 
-TEST(UASDialogTestGroup, RingingTest)
+TEST(UASDialogTestGroup, PeerCanceledNotifyCmTest)
 {
     struct UserAgent *ua = AddUa(0);
     struct Dialog *dialog = AddDialog(NULL, ua);
@@ -291,9 +306,21 @@ TEST(UASDialogTestGroup, RingingTest)
     invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
+    struct Message *cancel = CreateMessage();
+    ParseMessage(INCOMMING_CANCEL_MESSAGE, cancel);
+
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_SERVER_INVITE);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 180);
-    DialogRinging(dialog);    
+    UT_PTR_SET(NotifyCm, NotifyCallManagerMock);
+
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
+    mock().expectOneCall("NotifyCm").
+        withParameter("event", CALL_PEER_CANCELED).
+        withParameter("ua", ua);
+    
+    OnTransactionEvent(dialog, TRANSACTION_EVENT_CANCELED, cancel);
+    OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, cancel);
 }
+

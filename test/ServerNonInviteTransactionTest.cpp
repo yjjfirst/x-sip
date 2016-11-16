@@ -58,11 +58,6 @@ TEST_GROUP(ServerNonInviteTransactionTestGroup)
     }
 };
 
-void OnTransactionEventMock(struct Dialog *dialog,  int event, MESSAGE *message)
-{
-    mock().actualCall("OnTransactionEvent").withParameter("event", event);
-}
-
 TEST(ServerNonInviteTransactionTestGroup, NewTransactionNotifyUserTest)
 {
 
