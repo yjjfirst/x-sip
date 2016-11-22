@@ -68,7 +68,7 @@ TEST(SessionTestGroup, CreateSessionStructTest)
 
 TEST(SessionTestGroup, UACCreateSessionTest)
 {
-    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
     mock().expectOneCall("CreateSession");
@@ -107,7 +107,7 @@ TEST(SessionTestGroup, UACDestroySessionTest)
 
 TEST(SessionTestGroup, UASDestroySessionTest)
 {
-    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);
 
     UT_PTR_SET(CreateSession, CreateSessionMock);
     UT_PTR_SET(DestroySession,DestroySessionMock);

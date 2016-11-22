@@ -89,7 +89,7 @@ TEST(UASDialogTestGroup, UASDialogIdTest)
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
-    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);
     DialogOk(GetDialog(0));
     
     STRCMP_EQUAL(MessageGetToTag(ok), GetLocalTag(GetDialogId(GetDialog(0))));

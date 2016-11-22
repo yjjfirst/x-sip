@@ -148,7 +148,7 @@ TEST(UACDialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
     MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
-    MESSAGE *localOk = BuildResponse(NULL, originInvite, STATUS_CODE_OK);
+    MESSAGE *localOk = BuildResponse(originInvite, STATUS_CODE_OK);
     Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));

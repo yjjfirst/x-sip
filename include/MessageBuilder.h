@@ -14,4 +14,4 @@ struct Message *BuildByeMessage(struct Dialog *dialog);
 struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge);
 struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite);
 
-struct Message *BuildResponse(struct Dialog *dialog, struct Message *invite, int statusCode);
+struct Message *BuildResponse(struct Message *request, int statusCode);

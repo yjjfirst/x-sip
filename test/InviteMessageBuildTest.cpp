@@ -89,7 +89,7 @@ TEST(InviteMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildResponse(NULL, invite, STATUS_CODE_RINGING);
+    MESSAGE *ringing = BuildResponse(invite, STATUS_CODE_RINGING);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -104,7 +104,7 @@ TEST(InviteMessageBuildTestGroup, OKMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);    
+    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);    
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
     CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
@@ -118,7 +118,7 @@ TEST(InviteMessageBuildTestGroup,OKMessageContactHeaderTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ok = BuildResponse(NULL, invite, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);
     CONTACT_HEADER *c = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_CONTACT, ok);
     URI *uri = ContactHeaderGetUri(c);
     
@@ -135,7 +135,7 @@ TEST(InviteMessageBuildTestGroup, 301MessageStatueLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    Message *moved = BuildResponse(NULL, invite, STATUS_CODE_MOVED_PERMANENTLY);
+    Message *moved = BuildResponse(invite, STATUS_CODE_MOVED_PERMANENTLY);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
@@ -151,7 +151,7 @@ TEST(InviteMessageBuildTestGroup, 487MessageStatueLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    Message *moved = BuildResponse(NULL, invite, STATUS_CODE_REQUEST_TERMINATED);
+    Message *moved = BuildResponse(invite, STATUS_CODE_REQUEST_TERMINATED);
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
@@ -193,7 +193,7 @@ TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 
 TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 {
-    MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(inviteMessage, STATUS_CODE_OK);
     STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),GetMessageAddr(ok));    
 
     DestroyMessage(&ok);
@@ -202,7 +202,7 @@ TEST(InviteMessageBuildTestGroup, OkMessageDestAddrTest)
 
 TEST(InviteMessageBuildTestGroup, OkMessageDestPortTest)
 {
-    MESSAGE *ok = BuildResponse(dialog, inviteMessage, STATUS_CODE_OK);
+    MESSAGE *ok = BuildResponse(inviteMessage, STATUS_CODE_OK);
     CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),GetMessagePort(ok));    
 
     DestroyMessage(&ok);

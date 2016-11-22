@@ -435,21 +435,21 @@ struct IntStringMap statusCode2ReasePhraseMaps[] = {
     {-1, ""},
 };
 
-MESSAGE *BuildResponse(struct Dialog *dialog, MESSAGE *invite, int statusCode)
+MESSAGE *BuildResponse(MESSAGE *request, int statusCode)
 {
     MESSAGE *response = NULL;
     struct StatusLine *status = NULL;
 
-    assert(invite != NULL);
+    assert(request != NULL);
 
     status = CreateStatusLine(statusCode, IntMap2String(statusCode,statusCode2ReasePhraseMaps)); 
     response = CreateMessage();
 
     SetMessageStatusLine(response, status);
-    AddResponseHeaders(response, invite);
+    AddResponseHeaders(response, request);
 
-    SetMessagePort(response, GetMessagePort(invite));
-    SetMessageAddr(response, GetMessageAddr(invite));
+    SetMessagePort(response, GetMessagePort(request));
+    SetMessageAddr(response, GetMessageAddr(request));
 
     return response;    
 }

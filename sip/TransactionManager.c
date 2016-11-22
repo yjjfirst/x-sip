@@ -171,7 +171,7 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
             DestroyMessage(&message);
         } else if (method == SIP_METHOD_CANCEL) {
             struct Dialog *d = (struct Dialog *)GetTransactionUser(t);
-            struct Message *rt = BuildResponse(d, message, 487);
+            struct Message *rt = BuildResponse(message, 487);
 
             OnTransactionEvent(d, TRANSACTION_EVENT_CANCELED, message);            
             ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);

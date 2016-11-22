@@ -44,7 +44,7 @@ TEST(RingingMessageBuildTestGroup, RingingMessageStatusLineTest)
 {
     MESSAGE *invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
-    MESSAGE *ringing = BuildResponse(NULL, invite, STATUS_CODE_RINGING);
+    MESSAGE *ringing = BuildResponse(invite, STATUS_CODE_RINGING);
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
@@ -61,7 +61,7 @@ TEST(RingingMessageBuildTestGroup, RingingMessageDestAddrTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     SetMessageAddr(invite, (char *)"192.168.10.62");
-    MESSAGE *ringing = BuildResponse(dialog, invite, STATUS_CODE_RINGING);
+    MESSAGE *ringing = BuildResponse(invite, STATUS_CODE_RINGING);
     STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)), GetMessageAddr(ringing));
     
     DestroyMessage(&invite);
@@ -74,7 +74,7 @@ TEST(RingingMessageBuildTestGroup, RingingMessageDestPortTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
     SetMessagePort(invite, 5060);
-    MESSAGE *ringing = BuildResponse(dialog, invite, STATUS_CODE_RINGING);
+    MESSAGE *ringing = BuildResponse(invite, STATUS_CODE_RINGING);
     CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)), GetMessagePort(ringing));
     
     DestroyMessage(&invite);
