@@ -94,7 +94,7 @@ void ReceiveMessages(fd_set *fdsr)
         t = (struct MessageTransporter *)get_data_at(TransporterManager.transporters, i);
         if (FD_ISSET(t->fd, fdsr)) {
             if (t->receive != NULL) t->receive(message, t->fd);
-            if (t->callback != NULL) t->callback(message);
+            if (t->callback != NULL) t->callback(message, "192.168.10.62", 5060);
         }
     }    
 }

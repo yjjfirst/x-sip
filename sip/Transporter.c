@@ -9,14 +9,22 @@
 #include "SipUdp.h"
 #include "ClientUdp.h"
 
+struct ReceivedInfo {
+    char buf[MAX_MESSAGE_LENGTH];
+    char peerIpAddr[16];
+    int peerPort;
+};
+
 int ReceiveMessage()
 {
     char received[MAX_MESSAGE_LENGTH] = {0};
-
+    struct ReceivedInfo info;
+    bzero(&info, sizeof(struct ReceivedInfo));
+    
     if (SipTransporter->receive == NULL) return -1;
     SipTransporter->receive(received, SipTransporter->fd);
     
-    return SipTransporter->callback(received);
+    return SipTransporter->callback(received,"192.168.10.62", 5060);
 }
 
 int SendMessage(MESSAGE *message)
@@ -27,8 +35,8 @@ int SendMessage(MESSAGE *message)
     Message2String(s, message);
 
     return SipTransporter->send(s,
-                                GetMessageDestAddr(message),
-                                GetMessageDestPort(message),
+                                GetMessageAddr(message),
+                                GetMessagePort(message),
                                 SipTransporter->fd);
 }
 

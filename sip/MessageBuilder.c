@@ -166,8 +166,8 @@ void SetMessageDestIpaddr(MESSAGE *m, struct Dialog *dialog)
     struct Account *account = UaGetAccount(ua);
     if (account == NULL) return;
 
-    SetMessageDestAddr(m, AccountGetRegistrar(account));
-    SetMessageDestPort(m, AccountGetRegistrarPort(account));
+    SetMessageAddr(m, AccountGetRegistrar(account));
+    SetMessagePort(m, AccountGetRegistrarPort(account));
 }
 
 struct HeaderBuilderMap RequestHeaderBuilderMap[] = {
@@ -448,7 +448,8 @@ MESSAGE *BuildResponse(struct Dialog *dialog, MESSAGE *invite, int statusCode)
     SetMessageStatusLine(response, status);
     AddResponseHeaders(response, invite);
 
-    SetMessageDestIpaddr(response, dialog); 
+    SetMessagePort(response, GetMessagePort(invite));
+    SetMessageAddr(response, GetMessageAddr(invite));
 
     return response;    
 }

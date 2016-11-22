@@ -331,22 +331,22 @@ void Message2String(char *result, MESSAGE *message)
     return ;
 }
 
-char *GetMessageDestAddr(MESSAGE *message)
+char *GetMessageAddr(MESSAGE *message)
 {
     return message->dest.addr;
 }
 
-void SetMessageDestAddr(MESSAGE *m, char *addr)
+void SetMessageAddr(MESSAGE *m, char *addr)
 {
     strcpy(m->dest.addr, addr);
 }
 
-int  GetMessageDestPort(MESSAGE *m)
+int  GetMessagePort(MESSAGE *m)
 {
     return m->dest.port;
 }
 
-void SetMessageDestPort(MESSAGE *m, int port)
+void SetMessagePort(MESSAGE *m, int port)
 {
     m->dest.port = port;
 }
@@ -357,7 +357,7 @@ void MessageDump(MESSAGE *message)
     char messageString[MAX_MESSAGE_LENGTH] = {0};
 
     printf("\n");
-    printf("%s %d\n", GetMessageDestAddr(message), GetMessageDestPort(message));
+    printf("%s %d\n", GetMessageAddr(message), GetMessagePort(message));
     Message2String(messageString, message);
     printf("%s\n",messageString);
 }

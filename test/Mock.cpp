@@ -87,7 +87,7 @@ void OnTransactionEventMock(struct Dialog *dialog,  int event, MESSAGE *message)
     mock().actualCall("OnTransactionEvent").withParameter("event", event);
 }
 
-int MessageHandleMock(char *message)
+int MessageHandleMock(char *message, char *ipAddr, int port)
 {
     return mock().actualCall("MessageHandleMock").returnIntValue();
 }

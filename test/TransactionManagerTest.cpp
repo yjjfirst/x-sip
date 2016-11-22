@@ -233,7 +233,6 @@ TEST(TransactionManager, RemoteCancelNotifyCmTest)
     UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
     mock().expectOneCall("OnTransactionEvent").withParameter("event", TRANSACTION_EVENT_CANCELED);    
     mock().expectOneCall("OnTransactionEvent").withParameter("event", TRANSACTION_EVENT_NEW);    
-
     SipMessageInput(cancel);
 
     DestroyMessage(&cancel);

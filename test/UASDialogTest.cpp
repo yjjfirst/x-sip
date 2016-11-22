@@ -63,6 +63,8 @@ TEST(UASDialogTestGroup, UASDialog200OkMessageDestTest)
     invite = CreateMessage();
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
 
+    SetMessageAddr(invite, (char *)"192.168.10.62");
+    SetMessagePort(invite, 5060);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 100);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200).
         withStringParameter("destaddr", AccountGetProxyAddr(GetAccount(0))).

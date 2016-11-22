@@ -202,10 +202,13 @@ BOOL SipMessageInput(struct Message *message)
 
 }
 
-BOOL SipMessageCallback(char *string)
+BOOL SipMessageCallback(char *string, char *ip, int port)
 {
     MESSAGE *message = CreateMessage();
 
+    SetMessageAddr(message, ip);
+    SetMessagePort(message, port);
+    
     if (ParseMessage(string, message) < 0) {
         return FALSE;
     }

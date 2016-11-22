@@ -6,7 +6,7 @@ struct TransactionUser;
 
 
 void ClearTransactionManager();
-int SipMessageCallback(char *string);
+int SipMessageCallback(char *string, char *ipAddr, int port);
 BOOL SipMessageInput(struct Message *message);
 
 struct TransactionId *ExtractTransactionId(struct TransactionId *tid, struct Message *message);

@@ -317,12 +317,12 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, MessageDestAddrTest)
 {
-    STRCMP_EQUAL(AccountGetRegistrar(GetAccount(0)),GetMessageDestAddr(m));
+    STRCMP_EQUAL(AccountGetRegistrar(GetAccount(0)),GetMessageAddr(m));
 }
 
 
 TEST(BindingMessageBuildTestGroup, MessageDestPortTest)
 {
     struct Account *account = GetAccount(0);
-    CHECK_EQUAL(AccountGetRegistrarPort(account),GetMessageDestPort(m));
+    CHECK_EQUAL(AccountGetRegistrarPort(account),GetMessagePort(m));
 }

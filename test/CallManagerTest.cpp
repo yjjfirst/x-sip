@@ -147,13 +147,13 @@ TEST(CallManagerTestGroup, ClientAcceptCallMessageTest)
     struct UserAgent *ua2 = AddUa(0);
     
     mock().expectOneCall("UaAcceptCall").withParameter("ua", ua);
-    HandleClientMessage(buf);
+    HandleClientMessage(buf, (char *)"192.168.10.62", 5060);
 
     mock().expectOneCall("UaAcceptCall").withParameter("ua", ua1);
-    HandleClientMessage(buf1);
+    HandleClientMessage(buf1, (char *)"192.168.10.62", 5060);
 
     mock().expectOneCall("UaAcceptCall").withParameter("ua", ua2);
-    HandleClientMessage(buf2);
+    HandleClientMessage(buf2, (char *)"192.168.10.62", 5060);
 }
 
 TEST(CallManagerTestGroup, ClientRingingMessageTest)
@@ -167,13 +167,13 @@ TEST(CallManagerTestGroup, ClientRingingMessageTest)
     struct UserAgent *ua2 = AddUa(0);
     
     mock().expectOneCall("UaRinging").withParameter("ua", ua);
-    HandleClientMessage(buf);
+    HandleClientMessage(buf, (char *)"192.168.10.62", 5060);
 
     mock().expectOneCall("UaRinging").withParameter("ua", ua1);
-    HandleClientMessage(buf1);
+    HandleClientMessage(buf1, (char *)"192.168.10.62", 5060);
 
     mock().expectOneCall("UaRinging").withParameter("ua", ua2);
-    HandleClientMessage(buf2);
+    HandleClientMessage(buf2, (char *)"192.168.10.62", 5060);
 
 }
 

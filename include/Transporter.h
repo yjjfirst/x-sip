@@ -4,7 +4,7 @@ struct Message;
 
 typedef int (*MessageSend) (char *message, char *destaddr, int destport, int fd);
 typedef int (*MessageReceive) (char *message, int fd);
-typedef int (*MessageHandle) (char *message);
+typedef int (*MessageHandle) (char *message, char *ipAddr, int port);
 typedef int (*Init) (int port);
 
 struct MessageTransporter {        
@@ -14,6 +14,9 @@ struct MessageTransporter {
     MessageHandle callback;
     int fd;
     int port;
+
+    char peerIpAddr[16];
+    int peerPort;
 };
 
 int ReceiveMessage();

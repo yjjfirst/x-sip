@@ -243,21 +243,22 @@ struct TransactionEventAction TransactionEventActions[] = {
 void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
 {
     struct Transaction *t;
+    SIP_METHOD method;
     SIP_METHOD requestMethod;
     struct TransactionEventAction *action;
 
+    method = MessageGetMethod(message);
     if (dialog == NULL) {
-        requestMethod = MessageGetMethod(message);
+        requestMethod = method;
     } else {
         t = dialog->transaction;
-        requestMethod = MessageGetMethod(GetTransactionRequest(t));
+        if (method != SIP_METHOD_CANCEL) {
+            requestMethod = MessageGetMethod(GetTransactionRequest(t));
+        } else {
+            requestMethod = SIP_METHOD_CANCEL;
+        }
     }
 
-    if (MessageGetMethod(message) == SIP_METHOD_CANCEL)
-    {
-        requestMethod = SIP_METHOD_CANCEL;
-    }
-    
     action = TransactionEventActions;    
     for (; action->requestMethod != -1; action ++)
     {

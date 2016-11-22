@@ -66,7 +66,7 @@ BOOL MessageViaHeaderSendbyMatched(struct Message *m, struct Message *mm);
 BOOL MessageCSeqHeaderMethodMatched(struct Message *m, struct Message *mm);
 
 
-char *GetMessageDestAddr(MESSAGE *message);
-void SetMessageDestAddr(MESSAGE *m, char *addr);
-int  GetMessageDestPort(MESSAGE *message);
-void SetMessageDestPort(MESSAGE *m, int port);
+char *GetMessageAddr(MESSAGE *message);
+void SetMessageAddr(MESSAGE *m, char *addr);
+int  GetMessagePort(MESSAGE *message);
+void SetMessagePort(MESSAGE *m, int port);

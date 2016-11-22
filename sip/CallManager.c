@@ -46,7 +46,7 @@ void Ringing(struct UserAgent *ua)
     UaRinging(ua);
 }
 
-BOOL HandleClientMessage(char *string)
+BOOL HandleClientMessage(char *string, char *ipAddr, int port)
 {
     struct ClientEvent event;
     struct UserAgent *ua = NULL;
