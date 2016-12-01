@@ -171,7 +171,8 @@ char *AuthHeader2String(char *result, struct Header *auth)
     char *end = ToString(result, auth, AuthHeaderPattern);
     int len = strlen(result);
 
-    for (int i = 0; i < len; i++) {
+    int i;
+    for (i = 0; i < len; i++) {
         if (result[i] == SEMICOLON)
             result[i] =',';
     }

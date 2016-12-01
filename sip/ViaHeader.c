@@ -156,7 +156,9 @@ void GenerateBranchImpl(char *branch)
 
 
     srand(GetSeed());    
-    for (int i = VIA_BRANCH_COOKIE_LENGTH; i < VIA_BRANCH_LENGTH; i++) {
+
+    int i ;
+    for (i = VIA_BRANCH_COOKIE_LENGTH; i < VIA_BRANCH_LENGTH; i++) {
         branch[i] = 48 + rand() % 10 ;
     }
 

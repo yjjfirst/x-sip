@@ -70,7 +70,8 @@ void ClearAccountManager()
 
 int FindAccountByUserName(char *user)
 {
-    for (int i =0; i < CountAccounts(); i++) {
+    int i = 0;
+    for (; i < CountAccounts(); i++) {
         struct Account *account = GetAccount(i);
         if (strcmp(user, AccountGetUserName(account)) == 0)
             return i;

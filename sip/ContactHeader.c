@@ -203,7 +203,8 @@ BOOL ContactHeaderMatched(CONTACT_HEADER *header1, CONTACT_HEADER *header2)
 void GenerateTagImpl(char *tag)
 {
     srand(GetSeed());
-    for (int i = 0 ; i < MAX_TAG_LENGTH; i ++) {
+    int i = 0;
+    for ( ; i < MAX_TAG_LENGTH; i ++) {
         tag[i] = 48 + rand() % 10;
     }
 

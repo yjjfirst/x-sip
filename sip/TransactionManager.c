@@ -130,7 +130,8 @@ struct StatusCodeEventMap {
 
 enum TransactionEvent MapStatusCodeToEvent(int statusCode)
 {
-    for (int i = 0; StatusCodeEventMap[i].statusCode != 0; i++) {
+    int i = 0;
+    for (; StatusCodeEventMap[i].statusCode != 0; i++) {
         if (StatusCodeEventMap[i].statusCode == statusCode) {
             return StatusCodeEventMap[i].event;
         }

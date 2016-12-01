@@ -78,8 +78,9 @@ void GenerateCallIdString(char *id)
 {
     assert (id != NULL); 
 
+    int i = 0;
     srand(GetSeed());
-    for (int i = 0; i < 8; i ++) {
+    for (; i < 8; i ++) {
         id[i] = 48 + rand() % 10;
     }
 
