@@ -33,6 +33,7 @@ static void send_accept (GtkWidget *widget, gpointer   data)
     UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 }
 
+
 static void add_all_widget(GtkWidget *window)
 {
     GtkWidget *make_call_button;

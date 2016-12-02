@@ -42,7 +42,7 @@ TEST_GROUP(InviteMessageBuildTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        inviteMessage = BuildInviteMessage(dialog , (char *)"88002");
+        inviteMessage = DialogBuildInvite(dialog , (char *)"88002");
     }
 
     void teardown()

@@ -133,12 +133,17 @@ void SetDialogState(struct Dialog *dialog, enum DIALOG_STATE state)
     dialog->state = state;
 }
 
-void DialogSetRemoteUri(struct Dialog *dialog, URI *uri)
+URI *DialogSetRemoteUri(struct Dialog *dialog, char *to)
 {
-    assert(uri != NULL);
-    assert(dialog != NULL);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);    
+
+    if (dialog->remoteUri != NULL) return NULL;
     
+    URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxyAddr(account), 0);
     dialog->remoteUri = uri;
+
+    return uri;
 }
 
 void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
@@ -344,9 +349,18 @@ void DialogRingingImpl(struct Dialog *dialog)
 }
 void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 
+
+struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
+{
+    DialogSetRemoteUri(dialog, to);
+    struct Message *invite = BuildInviteMessage(dialog, to);    
+
+    return invite;
+}
+
 void DialogInvite(struct Dialog *dialog)
 {
-    MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
+    struct Message *invite = DialogBuildInvite(dialog, (char *)"88002");
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
 }
 

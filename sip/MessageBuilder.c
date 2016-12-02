@@ -228,27 +228,12 @@ MESSAGE *BuildRemoveBindingMessage(struct Dialog *dialog)
     return remove;
 }
 
-URI *BuildRemoteUri(struct Dialog *dialog, char *to)
-{
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);    
-    URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxyAddr(account), 0);
-
-    return uri;
-}
-
 MESSAGE *BuildInviteMessage(struct Dialog *dialog, char *to)
 {
     MESSAGE *invite = BuildRequest(dialog, SIP_METHOD_INVITE);
     struct ContactHeader *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
-    URI *uri = NULL;
-
-    if (DialogGetRemoteUri(dialog) == NULL) {
-        uri = BuildRemoteUri(dialog, to);        
-        DialogSetRemoteUri(dialog, uri);
-    }
-
+    
     UriSetUser(RequestLineGetUri(rl), to);
     UriSetUser(ContactHeaderGetUri(toHeader), to);
     
@@ -418,14 +403,6 @@ struct HeaderBuilderMap ResponseHeaderBuilderMap[] = {
     {NULL, NULL, NULL},
 };
 
-void AddResponseHeaders(MESSAGE *response, MESSAGE *request)
-{
-    struct HeaderBuilderMap *p = ResponseHeaderBuilderMap;
-    for ( ;p->headerName != NULL; p ++) {
-        MessageAddHeader(response, p->buildResponseHeader(request));
-    }
-}
-
 struct IntStringMap statusCode2ReasePhraseMaps[] = {
     {STATUS_CODE_TRYING, REASON_PHRASE_TRYING},
     {STATUS_CODE_OK, REASON_PHRASE_OK},
@@ -434,6 +411,14 @@ struct IntStringMap statusCode2ReasePhraseMaps[] = {
     {STATUS_CODE_REQUEST_TERMINATED, REASON_PHRASE_REQUEST_TERMINATED},
     {-1, ""},
 };
+
+void AddResponseHeaders(MESSAGE *response, MESSAGE *request)
+{
+    struct HeaderBuilderMap *p = ResponseHeaderBuilderMap;
+    for ( ;p->headerName != NULL; p ++) {
+        MessageAddHeader(response, p->buildResponseHeader(request));
+    }
+}
 
 MESSAGE *BuildResponse(MESSAGE *request, int statusCode)
 {

@@ -84,7 +84,7 @@ TEST_GROUP(UACDialogTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        invite = BuildInviteMessage(dialog, (char *)"88002");
+        invite = DialogBuildInvite(dialog, (char *)"88002");
     }
 
     void teardown()
@@ -147,8 +147,9 @@ TEST(UACDialogTestGroup, AddTransactionTest)
 TEST(UACDialogTestGroup, UACDialogIdTest)
 {
     char okString[MAX_MESSAGE_LENGTH] = {0};
-    MESSAGE *originInvite = BuildInviteMessage(dialog, (char *)"88002");
+    MESSAGE *originInvite = DialogBuildInvite(dialog, (char *)"88002");
     MESSAGE *localOk = BuildResponse(originInvite, STATUS_CODE_OK);
+
     Message2String(okString, localOk);
     
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", MethodMap2String(SIP_METHOD_INVITE));

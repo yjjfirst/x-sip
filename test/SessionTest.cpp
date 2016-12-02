@@ -31,7 +31,7 @@ TEST_GROUP(SessionTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);    
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        invite = BuildInviteMessage(dialog, (char *)"88002");
+        invite = DialogBuildInvite(dialog, (char *)"88002");
     }
 
     void teardown()
