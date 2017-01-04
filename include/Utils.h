@@ -17,3 +17,16 @@
         return object->field;                                \
     }                                                        \
 
+#define DEFINE_INT_MEMBER_WRITER(struct, name, field)   \
+    void name (struct *object, int field)               \
+    {                                                   \
+        assert(object != NULL);                         \
+        object->field = field;                          \
+    }
+
+#define DEFINE_INT_MEMBER_READER(struct, name, field) \
+    int name(struct *object)                          \
+    {                                                 \
+        assert(object != NULL);                       \
+        return object->field;                         \
+    }

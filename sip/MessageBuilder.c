@@ -208,7 +208,7 @@ void SetToHeaderUserName(MESSAGE *message, struct Dialog *dialog)
     UriSetUser(ContactHeaderGetUri(toHeader), AccountGetUserName(account));    
 }
 
-MESSAGE *BuildAddBindingMessage(struct Dialog *dialog)
+MESSAGE *BuildAddBindingMessage(struct Dialog *dialog, char *ipaddr, int port)
 {
     MESSAGE *binding = BuildRequest(dialog, SIP_METHOD_REGISTER);    
 
@@ -220,7 +220,7 @@ MESSAGE *BuildAddBindingMessage(struct Dialog *dialog)
 
 MESSAGE *BuildRemoveBindingMessage(struct Dialog *dialog)
 {
-    MESSAGE *remove = BuildAddBindingMessage(dialog);
+    MESSAGE *remove = BuildAddBindingMessage(dialog, 0, 0);
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
     
     ExpiresHeaderSetExpires(e, 0);

@@ -7,7 +7,7 @@ struct UserAgent;
 struct Dialog;
 
 struct Message *BuildRemoveBindingMessage(struct Dialog *dialog);
-struct Message *BuildAddBindingMessage(struct Dialog *dialog);
+struct Message *BuildAddBindingMessage(struct Dialog *dialog, char *ipaddr, int port);
 struct Message *BuildInviteMessage(struct Dialog *dialog, char *to);
 struct Message *BuildAckMessage(struct Dialog *dialog);
 struct Message *BuildByeMessage(struct Dialog *dialog);

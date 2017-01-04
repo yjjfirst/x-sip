@@ -25,28 +25,14 @@ DEFINE_STRING_MEMBER_READER(struct Account, AccountGetAuthName, authName);
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetProxyAddr, proxy, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetProxyAddr, proxy);
 
+DEFINE_INT_MEMBER_WRITER(struct Account, AccountSetProxyPort, proxyPort);
+DEFINE_INT_MEMBER_READER(struct Account, AccountGetProxyPort, proxyPort);
+
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetRegistrar, registrar, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetRegistrar, registrar);
 
-int AccountGetRegistrarPort(struct Account *account)
-{
-    return account->registrarPort;
-}
-
-void AccountSetRegistrarPort(struct Account *account, int port)
-{
-    account->registrarPort = port;
-}
-
-int AccountGetProxyPort(struct Account *account)
-{
-    return account->proxyPort;
-}
-
-void AccountSetProxyPort(struct Account *account, int port)
-{
-    account->proxyPort = port;
-}
+DEFINE_INT_MEMBER_WRITER(struct Account, AccountSetRegistrarPort, registrarPort);
+DEFINE_INT_MEMBER_READER(struct Account, AccountGetRegistrarPort, registrarPort);
 
 BOOL AccountBinded(struct Account *account)
 {

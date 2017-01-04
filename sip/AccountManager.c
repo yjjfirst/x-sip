@@ -84,7 +84,7 @@ void AccountAddBinding(int account)
 {
     struct UserAgent *ua = AddUa(account);
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
-    MESSAGE *message = BuildAddBindingMessage(dialog);
+    MESSAGE *message = BuildAddBindingMessage(dialog, 0, 0);
 
     DialogNewTransaction(dialog, message, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 }

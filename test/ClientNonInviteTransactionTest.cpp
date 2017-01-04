@@ -98,7 +98,7 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        m = BuildAddBindingMessage(dialog);
+        m = BuildAddBindingMessage(dialog, 0, 0);
 
         strcpy(branch, MessageGetViaBranch(m));
     }

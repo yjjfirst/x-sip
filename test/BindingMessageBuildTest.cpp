@@ -43,7 +43,7 @@ TEST_GROUP(BindingMessageBuildTestGroup)
         AccountSetRegistrarPort(GetAccount(0), 1000);
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        m = BuildAddBindingMessage(dialog);
+        m = BuildAddBindingMessage(dialog, 0, 0);
     }
 
     void teardown()
