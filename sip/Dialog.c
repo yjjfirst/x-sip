@@ -364,11 +364,17 @@ void DialogRingingImpl(struct Dialog *dialog)
 }
 void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 
+char *DialogGetUser(struct Dialog *dialog)
+{
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);
 
+    return AccountGetUserName(account);
+}
 struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
 {
     DialogSetRemoteUri(dialog, to);
-    struct Message *invite = BuildInviteMessage(to);    
+    struct Message *invite = BuildInviteMessage(DialogGetUser(dialog), to);    
 
     return invite;
 }

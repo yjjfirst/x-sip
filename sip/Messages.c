@@ -17,6 +17,7 @@
 #include "Parameter.h"
 #include "RequestLine.h"
 #include "Sdp.h"
+#include "URI.h"
 
 struct MessageDestation {
     char addr[64];
@@ -372,6 +373,24 @@ int  GetMessagePort(MESSAGE *m)
 void SetMessagePort(MESSAGE *m, int port)
 {
     m->dest.port = port;
+}
+
+void GetFromUser(struct Message *invite, char **from)
+{
+    if (invite != NULL) {
+        struct ContactHeader *header = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_FROM, invite);
+        struct URI *uri = ContactHeaderGetUri(header);
+        *from = UriGetUser(uri);        
+    }
+}
+
+void GetToUser(struct Message *invite, char **to)
+{
+    if (invite != NULL) {
+        struct ContactHeader *header = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO, invite);
+        struct URI *uri = ContactHeaderGetUri(header);
+        *to = UriGetUser(uri);
+    }
 }
 
 //Only for debug, no unit test for this funciton.

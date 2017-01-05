@@ -263,6 +263,8 @@ TEST(BindingMessageBuildTestGroup, BindingsContactHeaderTest)
 TEST(BindingMessageBuildTestGroup, UnbindingMessage)
 {
     MESSAGE *remove = BuildRemoveBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),        
         AccountGetRegistrarAddr(GetAccount(0)),
         AccountGetRegistrarPort(GetAccount(0)));
     

@@ -163,9 +163,9 @@ MESSAGE *BuildAddBindingMessage(char *from, char *to, char *ipaddr, int port)
     return binding;
 }
 
-MESSAGE *BuildRemoveBindingMessage(char *ipaddr, int port)
+MESSAGE *BuildRemoveBindingMessage(char *from, char *to, char *ipaddr, int port)
 {
-    MESSAGE *remove = BuildAddBindingMessage("88001", "88001", ipaddr, port);
+    MESSAGE *remove = BuildAddBindingMessage(from, to, ipaddr, port);
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
     
     ExpiresHeaderSetExpires(e, 0);
@@ -173,9 +173,9 @@ MESSAGE *BuildRemoveBindingMessage(char *ipaddr, int port)
     return remove;
 }
 
-MESSAGE *BuildInviteMessage(char *to)
+MESSAGE *BuildInviteMessage(char *from, char *to)
 {
-    MESSAGE *invite = BuildRequest(SIP_METHOD_INVITE,"88001", "88002", "192.168.10.62", 5060);
+    MESSAGE *invite = BuildRequest(SIP_METHOD_INVITE, from, to, "192.168.10.62", 5060);
     struct ContactHeader *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
     
@@ -187,7 +187,14 @@ MESSAGE *BuildInviteMessage(char *to)
 
 MESSAGE *BuildAckMessage(struct Message *invite)
 {
-    MESSAGE *ack = BuildRequest(SIP_METHOD_ACK, "88001", "88002", "192.168.10.62", 5060);
+    MESSAGE *ack = NULL;
+    char *from = NULL;
+    char *to = NULL;
+
+    GetFromUser(invite, &from);
+    GetToUser(invite, &to);
+
+    ack = BuildRequest(SIP_METHOD_ACK, from, to, "192.168.10.62", 5060);
 
     if (invite != NULL) {
         MessageSetCSeqNumber(ack, MessageGetCSeqNumber(invite));
@@ -200,7 +207,13 @@ MESSAGE *BuildAckMessage(struct Message *invite)
 
 MESSAGE *BuildByeMessage(struct Message *invite)
 {
-    MESSAGE *bye = BuildRequest(SIP_METHOD_BYE, "88001", "88002", "192.168.10.62", 5060);
+    char *from = NULL;
+    char *to = NULL;
+
+    GetFromUser(invite, &from);
+    GetToUser(invite, &to);
+
+    MESSAGE *bye = BuildRequest(SIP_METHOD_BYE, from, to, "192.168.10.62", 5060);
 
     if (invite != NULL) {
         char *tag = MessageGetToTag(invite);
@@ -312,8 +325,11 @@ struct Header *BuildResponseCSeqHeader(MESSAGE *request)
 
 struct Header *BuildResponseContactHeader(MESSAGE *request)
 {
+    char *to;
     CONTACT_HEADER *c = CreateContactHeader();
-    URI *uri = CreateUri(URI_SCHEME_SIP, "88001", GetLocalIpAddr(), LOCAL_PORT);
+
+    GetToUser(request, &to);
+    URI *uri = CreateUri(URI_SCHEME_SIP, to, GetLocalIpAddr(), LOCAL_PORT);
 
     ContactHeaderSetUri(c, uri);
 

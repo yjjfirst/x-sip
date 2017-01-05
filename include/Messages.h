@@ -76,3 +76,7 @@ char *GetMessageAddr(MESSAGE *message);
 void SetMessageAddr(MESSAGE *m, char *addr);
 int  GetMessagePort(MESSAGE *message);
 void SetMessagePort(MESSAGE *m, int port);
+
+void GetFromUser(struct Message *invite, char **from);
+void GetToUser(struct Message *invite, char **to);
+

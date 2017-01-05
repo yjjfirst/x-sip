@@ -178,7 +178,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
     
     AccountInit();
     struct UserAgent *ua = CreateUserAgent(0);
-    MESSAGE *invite = BuildInviteMessage((char *)"88002");
+    MESSAGE *invite = BuildInviteMessage((char *)"88001", (char *)"88002");
 
     trying = BuildResponse(invite, STATUS_CODE_TRYING);
 

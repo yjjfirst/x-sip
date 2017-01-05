@@ -101,6 +101,8 @@ void AccountRemoveBinding(int account)
     struct Account *a = GetAccount(account);
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
     MESSAGE *message = BuildRemoveBindingMessage(
+        AccountGetUserName(a),
+        AccountGetUserName(a),
         AccountGetRegistrarAddr(a),
         AccountGetRegistrarPort(a));
 
