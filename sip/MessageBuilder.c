@@ -55,14 +55,14 @@ struct Header *BuildRequestFromHeader(MESSAGE *message, char *from, char *to, ch
     return (struct Header *)fromHeader;
 }
 
-struct Header *BuildRequestToHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestToHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {
-    URI *uri = CreateUri(URI_SCHEME_SIP, "", ipaddr, 0);
+    URI *uri = CreateUri(URI_SCHEME_SIP, to, ipaddr, 0);
 
-    CONTACT_HEADER *to = CreateToHeader();
-    ContactHeaderSetUri(to, uri);
+    CONTACT_HEADER *toHeader = CreateToHeader();
+    ContactHeaderSetUri(toHeader, uri);
 
-    return (struct Header *)to;
+    return (struct Header *)toHeader;
 }
 
 struct Header *BuildRequestContactHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
@@ -149,12 +149,6 @@ MESSAGE *BuildRequest(SIP_METHOD method, char *from, char *to, char *ipaddr, int
     return message;
 }
 
-
-void SetToHeaderUserName(MESSAGE *message, char *to)
-{
-    CONTACT_HEADER *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
-    UriSetUser(ContactHeaderGetUri(toHeader), to);    
-}
 
 MESSAGE *BuildAddBindingMessage(char *from, char *to, char *ipaddr, int port)
 {
@@ -255,7 +249,9 @@ MESSAGE *BuildAuthorizationMessage(MESSAGE *challenge, char *user, char *secret)
     struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);
     CallIdHeaderSetID(callidHeader, callid);
 
-    SetToHeaderUserName(message, "88001");
+    int cseq = MessageGetCSeqNumber(challenge);
+    MessageSetCSeqNumber(message, cseq + 1);
+    
     MessageAddHeader(message, (struct Header *)BuildAuthHeader(message, user, secret, challenge));
 
     return message;

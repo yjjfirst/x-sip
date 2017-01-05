@@ -44,6 +44,7 @@ char *MessageGetToTag(struct Message *message);
 void MessageSetToTag(struct Message *message, char *tag);
 int MessageGetExpires(struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);
+void MessageSetCSeqNumber(MESSAGE *message, int cseq);
 char *MessageGetViaBranch(struct Message *message);
 void MessageSetViaBranch(struct Message *message, char *branch);
 char *MessageGetCSeqMethod(struct Message *message);

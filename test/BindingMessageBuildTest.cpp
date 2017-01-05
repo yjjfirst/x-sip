@@ -307,7 +307,7 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageToHeaderTest)
     DestroyMessage(&challenge);
 }
 
-IGNORE_TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
+TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
 {
     MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);

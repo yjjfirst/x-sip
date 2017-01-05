@@ -220,6 +220,14 @@ unsigned int MessageGetCSeqNumber(MESSAGE *message)
     return CSeqHeaderGetSeq(c);
 }
 
+void MessageSetCSeqNumber(MESSAGE *message, int cseq)
+{
+    assert (message != NULL);
+    struct CSeqHeader *c = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, message);
+   
+    CSeqHeaderSetSeq(c, cseq);
+}
+
 char *MessageGetViaBranch(MESSAGE *message)
 {
     assert (message != NULL);
