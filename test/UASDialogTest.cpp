@@ -89,16 +89,13 @@ TEST(UASDialogTestGroup, UASDialogIdTest)
     struct CallIdHeader *id = CallIdHeaderDup((struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, invite));
 
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
-    MESSAGE *ok = BuildResponse(invite, STATUS_CODE_OK);
+
     DialogOk(GetDialog(0));
-    
-    STRCMP_EQUAL(MessageGetToTag(ok), GetLocalTag(GetDialogId(GetDialog(0))));
     STRCMP_EQUAL(ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG), GetRemoteTag(GetDialogId(GetDialog(0))));
     STRCMP_EQUAL(CallIdHeaderGetId(id), GetCallId(GetDialogId(GetDialog(0))));
 
     DestroyContactHeader((struct Header *)from);
     DestroyCallIdHeader((struct Header *)id);
-    DestroyMessage(&ok);
 }
 
 TEST(UASDialogTestGroup, UASDialogConfirmedStateTest)
@@ -316,12 +313,11 @@ TEST(UASDialogTestGroup, PeerCanceledNotifyCmTest)
 
     UT_PTR_SET(NotifyCm, NotifyCallManagerMock);
 
-    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
-
     mock().expectOneCall("NotifyCm").
         withParameter("event", CALL_PEER_CANCELED).
         withParameter("ua", ua);
-    
+    mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
+
     OnTransactionEvent(dialog, TRANSACTION_EVENT_CANCELED, cancel);
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, cancel);
 }

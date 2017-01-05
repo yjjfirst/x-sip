@@ -52,6 +52,7 @@ void DialogInvite(struct Dialog *dialog);
 void DialogOk(struct Dialog *dialog);
 extern void (*DialogRinging)(struct Dialog *dialog);
 
+void DialogReceiveCancel(struct Dialog *diaog, struct Message *cancel);
 void DialogReceiveBye(struct Dialog *dialog, struct Message *message);
 void InviteDialogReceiveOk(struct Dialog *dialog, struct Message *message);
 

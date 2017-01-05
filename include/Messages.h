@@ -41,7 +41,7 @@ void MessageAddHeader(struct Message *message, struct Header *header);
 char *MessageGetCallId(struct Message *message);
 char *MessageGetFromTag(struct Message *message);
 char *MessageGetToTag(struct Message *message);
-void MessageSetRemoteTag(struct Message *message, char *tag);
+void MessageSetToTag(struct Message *message, char *tag);
 int MessageGetExpires(struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);
 char *MessageGetViaBranch(struct Message *message);

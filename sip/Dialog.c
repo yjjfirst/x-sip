@@ -156,6 +156,8 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 void DialogAck(struct Dialog *dialog)
 {
     MESSAGE *ack = BuildAckMessage();
+
+    MessageSetToTag(ack, DialogGetRemoteTag(dialog));
     SendMessage(ack);
     DestroyMessage(&ack);
 }
@@ -215,7 +217,7 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
 {
     struct Dialog *matched = MatchMessage2Dialog(message);
     SIP_METHOD method = MessageGetMethod(message);
-    
+
     if (matched == NULL) {    
         int account = FindMessageDestAccount(message);
         struct UserAgent *ua = AddUa(account);
@@ -228,7 +230,10 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
             Response(t,TRANSACTION_SEND_OK);
         }
     } else {
-        DialogReceiveBye(matched, message);
+        if (method == SIP_METHOD_BYE)
+            DialogReceiveBye(matched, message);
+        else if (method == SIP_METHOD_CANCEL)
+            DialogReceiveCancel(matched, message);;
     }
 }
 
@@ -324,6 +329,12 @@ void DialogOk(struct Dialog *dialog)
     }
 
     ResponseWith(dialog->transaction, message, TRANSACTION_SEND_OK);    
+}
+
+void DialogReceiveCancel(struct Dialog *dialog, MESSAGE *cancel)
+{
+    DialogNewTransaction(dialog, cancel, TRANSACTION_TYPE_SERVER_NON_INVITE);
+    DialogOk(dialog);
 }
 
 void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)

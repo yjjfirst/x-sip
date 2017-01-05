@@ -200,7 +200,7 @@ char *MessageGetToTag(MESSAGE *message)
     return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
 }
 
-void MessageSetRemoteTag(MESSAGE *message, char *tag)
+void MessageSetToTag(MESSAGE *message, char *tag)
 {
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
     return ContactHeaderSetParameter(to, HEADER_PARAMETER_NAME_TAG, tag);

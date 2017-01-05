@@ -129,7 +129,12 @@ MESSAGE *BuildRequest(SIP_METHOD method, char *from, char *to, char *ipaddr, int
 {
     MESSAGE *message = CreateMessage();
     struct HeaderBuilderMap *p = RequestHeaderBuilderMap;
-    URI *uri = CreateUri(URI_SCHEME_SIP, NULL, ipaddr, 0);
+    URI *uri = NULL;
+
+    if (method == SIP_METHOD_REGISTER)
+        uri = CreateUri(URI_SCHEME_SIP, NULL, ipaddr, 0);
+    else
+        uri = CreateUri(URI_SCHEME_SIP, to, ipaddr, 0);
     
     SetMessageAddr(message, ipaddr);
     SetMessagePort(message, port);
