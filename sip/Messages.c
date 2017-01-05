@@ -87,7 +87,6 @@ struct Header *MessageGetHeader(const char *name, MESSAGE *message)
 {
     assert (name != NULL);
     assert (message != NULL);
-
     return RawHeadersGetHeader(name, message->headers);
 }
 
@@ -192,12 +191,22 @@ char *MessageGetFromTag(MESSAGE *message)
     return ContactHeaderGetParameter(from, HEADER_PARAMETER_NAME_TAG);
 }
 
+void MessageSetFromTag(struct Message *message, char *tag)
+{
+    CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, message);
+    ContactHeaderSetParameter(from, HEADER_PARAMETER_NAME_TAG, tag);    
+}
+
 char *MessageGetToTag(MESSAGE *message)
 {
+    char *tag;
     assert(message != NULL);
-    
+
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, message);
-    return ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
+    tag = ContactHeaderGetParameter(to, HEADER_PARAMETER_NAME_TAG);
+
+    if (tag == NULL) return "";
+    return tag;
 }
 
 void MessageSetToTag(MESSAGE *message, char *tag)

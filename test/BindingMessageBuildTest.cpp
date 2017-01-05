@@ -66,7 +66,7 @@ TEST(BindingMessageBuildTestGroup, MessageTypeTest)
     CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 
-    tmpMessage = BuildAckMessage();
+    tmpMessage = BuildAckMessage(NULL);
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 }

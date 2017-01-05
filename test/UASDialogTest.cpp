@@ -173,7 +173,7 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DialogOk(GetDialog(0));
 
-    MESSAGE *bye = BuildByeMessage();
+    MESSAGE *bye = BuildByeMessage(NULL);
     DialogReceiveBye(GetDialog(0), bye);
     CHECK_EQUAL(0, CountDialogs());
 }
@@ -320,9 +320,4 @@ TEST(UASDialogTestGroup, PeerCanceledNotifyCmTest)
 
     OnTransactionEvent(dialog, TRANSACTION_EVENT_CANCELED, cancel);
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, cancel);
-}
-
-IGNORE_TEST(UASDialogTestGroup, CallIdHeaderTest)
-{
-    //TODO: testing message with correctly call ID.
 }

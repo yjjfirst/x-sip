@@ -155,7 +155,7 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 
 void DialogAck(struct Dialog *dialog)
 {
-    MESSAGE *ack = BuildAckMessage();
+    MESSAGE *ack = BuildAckMessage(NULL);
 
     MessageSetToTag(ack, DialogGetRemoteTag(dialog));
     SendMessage(ack);
@@ -352,7 +352,7 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 
 void DialogTerminateImpl(struct Dialog *dialog)
 {
-    MESSAGE *bye = BuildByeMessage();
+    MESSAGE *bye = BuildByeMessage(NULL);
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }

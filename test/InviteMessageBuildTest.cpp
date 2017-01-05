@@ -163,9 +163,9 @@ TEST(InviteMessageBuildTestGroup, 487MessageStatueLineTest)
 
 }
 
-IGNORE_TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
+TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
-    MESSAGE *bye = BuildByeMessage();
+    MESSAGE *bye = BuildByeMessage(inviteMessage);
     CONTACT_HEADER *to = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, bye);
     URI *uri = ContactHeaderGetUri(to);
     URI *remoteUri = DialogGetRemoteUri(dialog);
@@ -176,10 +176,9 @@ IGNORE_TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
     DestroyMessage(&bye);
 }
 
-
 TEST(InviteMessageBuildTestGroup, ByeMessageRequestLineTest)
 {
-    MESSAGE *bye = BuildByeMessage();
+    MESSAGE *bye = BuildByeMessage(inviteMessage);
     struct RequestLine *rl = MessageGetRequestLine(bye);
     URI *uri = RequestLineGetUri(rl);
     URI *remoteUri = DialogGetRemoteUri(dialog);

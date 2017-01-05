@@ -118,7 +118,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTes
 
 TEST(AckMessageBuildTestGroup, AckMessageRequestLineTest)
 {
-    MESSAGE *ackMessage = BuildAckMessage();
+    MESSAGE *ackMessage = BuildAckMessage(inviteMessage);
     struct RequestLine *requestLine = MessageGetRequestLine(ackMessage);
     URI *uri = RequestLineGetUri(requestLine);
     URI *inviteUri = RequestLineGetUri(MessageGetRequestLine(inviteMessage));
@@ -132,15 +132,15 @@ TEST(AckMessageBuildTestGroup, AckMessageRequestLineTest)
 
 TEST(AckMessageBuildTestGroup, AckMessageCallIdTest)
 {
-    MESSAGE *ackMessage = BuildAckMessage();
+    MESSAGE *ackMessage = BuildAckMessage(inviteMessage);
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ackMessage));
     DestroyMessage(&ackMessage);
 }
 
-IGNORE_TEST(AckMessageBuildTestGroup, AckMessageFromTest)
+TEST(AckMessageBuildTestGroup, AckMessageFromTest)
 {
-    MESSAGE *ackMessage = BuildAckMessage();
+    MESSAGE *ackMessage = BuildAckMessage(inviteMessage);
     CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, ackMessage);
     CONTACT_HEADER *inviteFrom = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, inviteMessage);
 
@@ -149,9 +149,9 @@ IGNORE_TEST(AckMessageBuildTestGroup, AckMessageFromTest)
     DestroyMessage(&ackMessage);
 }
 
-IGNORE_TEST(AckMessageBuildTestGroup, AckMessageCSeqTest)
+TEST(AckMessageBuildTestGroup, AckMessageCSeqTest)
 {
-    MESSAGE *ackMessage = BuildAckMessage();
+    MESSAGE *ackMessage = BuildAckMessage(inviteMessage);
 
     CHECK_EQUAL(MessageGetCSeqNumber(ackMessage),MessageGetCSeqNumber(inviteMessage));
 
@@ -160,7 +160,7 @@ IGNORE_TEST(AckMessageBuildTestGroup, AckMessageCSeqTest)
 
 TEST(AckMessageBuildTestGroup, AckMessageViaTest)
 {
-    MESSAGE *ackMessage = BuildAckMessage();
+    MESSAGE *ackMessage = BuildAckMessage(inviteMessage);
     VIA_HEADER *inviteVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage);
     VIA_HEADER *ackVia = (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, ackMessage);
 

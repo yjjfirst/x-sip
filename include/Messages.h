@@ -39,9 +39,13 @@ struct Header *MessageGetHeader(const char *name, struct Message *message);
 void MessageAddHeader(struct Message *message, struct Header *header);
 
 char *MessageGetCallId(struct Message *message);
+
 char *MessageGetFromTag(struct Message *message);
+void MessageSetFromTag(struct Message *message, char *tag);
+
 char *MessageGetToTag(struct Message *message);
 void MessageSetToTag(struct Message *message, char *tag);
+
 int MessageGetExpires(struct Message *message);
 unsigned int MessageGetCSeqNumber(struct Message *message);
 void MessageSetCSeqNumber(MESSAGE *message, int cseq);

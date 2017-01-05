@@ -184,17 +184,26 @@ MESSAGE *BuildInviteMessage(char *to)
     return invite;
 }
 
-MESSAGE *BuildAckMessage()
+MESSAGE *BuildAckMessage(struct Message *invite)
 {
     MESSAGE *ack = BuildRequest(SIP_METHOD_ACK, "88001", "88002", "192.168.10.62", 5060);
-   
+
+    if (invite != NULL) {
+        MessageSetCSeqNumber(ack, MessageGetCSeqNumber(invite));
+        MessageSetFromTag(ack, MessageGetFromTag(invite));
+    }
+    
     return ack;
 }
 
-MESSAGE *BuildByeMessage()
+MESSAGE *BuildByeMessage(struct Message *invite)
 {
     MESSAGE *bye = BuildRequest(SIP_METHOD_BYE, "88001", "88002", "192.168.10.62", 5060);
 
+    if (invite != NULL) {
+        char *tag = MessageGetToTag(invite);
+        MessageSetToTag(bye, tag);
+    }
     return bye;
 }
 
