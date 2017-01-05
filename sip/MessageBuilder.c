@@ -254,7 +254,7 @@ struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, char *user, char *secre
 
 MESSAGE *BuildAuthorizationMessage(MESSAGE *challenge, char *user, char *secret)
 {
-    MESSAGE *message = BuildRequest(SIP_METHOD_REGISTER, "88001", "88001", "192.168.10.62", 5060);
+    MESSAGE *message = BuildRequest(SIP_METHOD_REGISTER, user, secret, "192.168.10.62", 5060);
 
     char *callid = MessageGetCallId(challenge);
     struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);
