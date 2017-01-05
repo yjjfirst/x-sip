@@ -185,6 +185,12 @@ char *MessageGetCallId(MESSAGE *message)
     return CallIdHeaderGetId(id);
 }
 
+void MessageSetCallId(MESSAGE *message, char *idString)
+{
+    struct CallIdHeader *id = (struct CallIdHeader *) MessageGetHeader(HEADER_NAME_CALLID, message);
+    CallIdHeaderSetID(id, idString);
+}
+
 char *MessageGetFromTag(MESSAGE *message)
 {
     CONTACT_HEADER *from = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM, message);

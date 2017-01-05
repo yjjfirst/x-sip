@@ -81,14 +81,15 @@ struct Header *BuildRequestMaxForwardsHeader(MESSAGE *message, char *from, char 
     return  (struct Header *)mf;
 }
 
-struct Header *BuildRequestCallIdHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestCallIdHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {    
-    struct CallIdHeader *id = CreateCallIdHeader("1234567890");
+    char idString[16] = {0};
+    struct CallIdHeader *id = CreateCallIdHeader(idString);
 
     return (struct Header *)id;
 }
 
-struct Header *BuildRequestCSeqHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestCSeqHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {
     SIP_METHOD method = MessageGetMethod(message);
     int cseqNumber;
@@ -191,6 +192,7 @@ MESSAGE *BuildAckMessage(struct Message *invite)
     if (invite != NULL) {
         MessageSetCSeqNumber(ack, MessageGetCSeqNumber(invite));
         MessageSetFromTag(ack, MessageGetFromTag(invite));
+        MessageSetCallId(ack, MessageGetCallId(invite));
     }
     
     return ack;

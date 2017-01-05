@@ -39,6 +39,7 @@ struct Header *MessageGetHeader(const char *name, struct Message *message);
 void MessageAddHeader(struct Message *message, struct Header *header);
 
 char *MessageGetCallId(struct Message *message);
+void MessageSetCallId(MESSAGE *message, char *idString);
 
 char *MessageGetFromTag(struct Message *message);
 void MessageSetFromTag(struct Message *message, char *tag);
