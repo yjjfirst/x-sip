@@ -19,6 +19,7 @@ extern "C" {
 #include "ViaHeader.h"
 #include "DialogManager.h"
 #include "UserAgentManager.h"
+#include "Accounts.h"
 }
 
 TEST_GROUP(TransactionManager)
@@ -48,7 +49,12 @@ TEST_GROUP(TransactionManager)
 TEST(TransactionManager, NewTransaction)
 {
     struct Transaction *transaction;
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
@@ -57,13 +63,23 @@ TEST(TransactionManager, NewTransaction)
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-    message = BuildAddBindingMessage(dialog, 0, 0);
+    message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+
     transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     CHECK_EQUAL(2, CountTransaction());
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
-    message = BuildAddBindingMessage(dialog, 0, 0);
+    message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+
     transaction = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
     CHECK_EQUAL(3, CountTransaction());
@@ -77,7 +93,11 @@ TEST(TransactionManager, MatchResponseTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
 
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));        
         
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(ADD_BINDING_OK_MESSAGE);
     AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
@@ -89,7 +109,12 @@ TEST(TransactionManager, BranchNonMatchTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
 
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);    
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+        
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     enum TransactionState s;
 
@@ -109,7 +134,12 @@ TEST(TransactionManager, GetTransactionByIdTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
 
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+        
     strcpy(branch, MessageGetViaBranch(message));
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
 
@@ -135,7 +165,12 @@ TEST(TransactionManager, TransactionIdTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
 
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+        
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = GetTransactionId(t);
 
@@ -148,7 +183,12 @@ TEST(TransactionManager, TransactionRemoveTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
    
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);        
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+        
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct TransactionId *tid = GetTransactionId(t);
 
@@ -161,7 +201,12 @@ TEST(TransactionManager, MatchResponseToTransactionTest)
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
         withStringParameter("Method", MethodMap2String(SIP_METHOD_REGISTER));
 
-    struct Message *message = BuildAddBindingMessage(dialog, 0, 0);
+    struct Message *message = BuildAddBindingMessage(
+        AccountGetUserName(GetAccount(0)),
+        AccountGetUserName(GetAccount(0)),
+        AccountGetProxyAddr(GetAccount(0)),
+        AccountGetProxyPort(GetAccount(0)));
+        
     struct Transaction *t = AddTransaction(message, NULL, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     struct Message *response = CreateMessage();
 

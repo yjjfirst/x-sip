@@ -77,13 +77,13 @@ TEST(TransactionTestGroup, MessageDestTest)
     AccountInit();    
 
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
-        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(0))).
+        withStringParameter("destaddr", (char *)AccountGetRegistrarAddr(GetAccount(0))).
         withIntParameter("port", AccountGetRegistrarPort(GetAccount(0)));
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
-        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(1))).
+        withStringParameter("destaddr", (char *)AccountGetRegistrarAddr(GetAccount(1))).
         withIntParameter("port", AccountGetRegistrarPort(GetAccount(1)));
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withStringParameter("Method", "REGISTER").
-        withStringParameter("destaddr", (char *)AccountGetRegistrar(GetAccount(2))).
+        withStringParameter("destaddr", (char *)AccountGetRegistrarAddr(GetAccount(2))).
         withIntParameter("port", AccountGetRegistrarPort(GetAccount(2)));
 
     BindAllAccounts();

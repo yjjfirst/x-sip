@@ -20,8 +20,8 @@ char *AccountGetAuthName(struct Account *account);
 void AccountSetProxyAddr(struct Account *account, char *proxy);
 char *AccountGetProxyAddr(struct Account *account);
 
-void AccountSetRegistrar(struct Account *account, char *registrar);
-char *AccountGetRegistrar(struct Account *account);
+void AccountSetRegistrarAddr(struct Account *account, char *registrar);
+char *AccountGetRegistrarAddr(struct Account *account);
 
 int AccountGetRegistrarPort(struct Account *account);
 void AccountSetRegistrarPort(struct Account *account, int port);

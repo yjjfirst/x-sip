@@ -6,12 +6,12 @@ struct Message;
 struct UserAgent;
 struct Dialog;
 
-struct Message *BuildRemoveBindingMessage(struct Dialog *dialog);
-struct Message *BuildAddBindingMessage(struct Dialog *dialog, char *ipaddr, int port);
-struct Message *BuildInviteMessage(struct Dialog *dialog, char *to);
-struct Message *BuildAckMessage(struct Dialog *dialog);
-struct Message *BuildByeMessage(struct Dialog *dialog);
-struct Message *BuildAuthorizationMessage(struct Dialog *dialog, struct Message *challenge);
+struct Message *BuildRemoveBindingMessage(char *ipaddr, int port);
+struct Message *BuildAddBindingMessage(char *from, char *to, char *ipaddr, int port);
+struct Message *BuildInviteMessage(char *to);
+struct Message *BuildAckMessage();
+struct Message *BuildByeMessage();
+struct Message *BuildAuthorizationMessage(struct Message *challenge, char *user, char *secret);
 struct Message *BuildAckMessageWithinClientTransaction(struct Message *invite);
 
 struct Message *BuildResponse(struct Message *request, int statusCode);

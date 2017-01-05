@@ -37,7 +37,7 @@ char *UaGetProxy(struct UserAgent *ua)
 
 char *UaRegistrar(struct UserAgent *ua)
 {
-    return AccountGetRegistrar(ua->account);
+    return AccountGetRegistrarAddr(ua->account);
 }
 
 struct Account *UaGetAccount(struct UserAgent *ua)

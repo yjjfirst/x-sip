@@ -21,6 +21,7 @@ extern "C" {
 #include "AccountManager.h"
 #include "ViaHeader.h"
 #include "DialogManager.h"
+#include "Accounts.h"
 }
 
 #define  BINDING_TRYING_MESSAGE (char *)"\
@@ -98,8 +99,12 @@ TEST_GROUP(ClientNonInviteTransactionTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        m = BuildAddBindingMessage(dialog, 0, 0);
-
+        m = BuildAddBindingMessage(
+            AccountGetUserName(GetAccount(0)),
+            AccountGetUserName(GetAccount(0)),
+            AccountGetProxyAddr(GetAccount(0)),
+            AccountGetProxyPort(GetAccount(0)));
+        
         strcpy(branch, MessageGetViaBranch(m));
     }
 

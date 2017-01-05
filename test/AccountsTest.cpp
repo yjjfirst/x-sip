@@ -43,7 +43,7 @@ TEST(AccountsTestGroup, AccountCreateTest)
     STRCMP_EQUAL("88001", AccountGetAuthName(acc));
     STRCMP_EQUAL("88001", AccountGetPasswd(acc));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(acc));
-    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrar(acc));
+    STRCMP_EQUAL("192.168.10.72", AccountGetRegistrarAddr(acc));
 
     DestroyAccount(&acc);
     DestroyAccount(&account);
@@ -99,11 +99,11 @@ TEST(AccountsTestGroup, AccountSetRegistrarTest)
     char r[] = "Test.r";
     char ar[] = "Another.ar";
 
-    AccountSetRegistrar(account, r);
-    STRCMP_EQUAL(r, AccountGetRegistrar(account));
+    AccountSetRegistrarAddr(account, r);
+    STRCMP_EQUAL(r, AccountGetRegistrarAddr(account));
 
-    AccountSetRegistrar(account, ar);
-    STRCMP_EQUAL(ar, AccountGetRegistrar(account));
+    AccountSetRegistrarAddr(account, ar);
+    STRCMP_EQUAL(ar, AccountGetRegistrarAddr(account));
     DestroyAccount(&account);
 }
 
@@ -134,9 +134,9 @@ TEST(AccountsTestGroup, SetVeryLongRegistrarTest)
 {
     char registrar[] = "1234567890.1234567890.1234567890.1234567890123456789012345678901234";
 
-    AccountSetRegistrar(account, registrar);
-    STRCMP_CONTAINS(AccountGetRegistrar(account), registrar);
-    CHECK_EQUAL(REGISTRAR_MAX_LENGTH -1 , strlen(AccountGetRegistrar(account)));
+    AccountSetRegistrarAddr(account, registrar);
+    STRCMP_CONTAINS(AccountGetRegistrarAddr(account), registrar);
+    CHECK_EQUAL(REGISTRAR_MAX_LENGTH -1 , strlen(AccountGetRegistrarAddr(account)));
 
     DestroyAccount(&account);
 }

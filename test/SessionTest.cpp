@@ -117,7 +117,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     mock().expectOneCall("CreateSession");
     InviteDialogReceiveOk(dialog, ok);
     mock().expectOneCall("DestroySession");
-    MESSAGE *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage();
     DialogReceiveBye(dialog, bye);
     DestroyMessage(&ok);
     ClearTransactionManager();

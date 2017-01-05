@@ -28,8 +28,8 @@ DEFINE_STRING_MEMBER_READER(struct Account, AccountGetProxyAddr, proxy);
 DEFINE_INT_MEMBER_WRITER(struct Account, AccountSetProxyPort, proxyPort);
 DEFINE_INT_MEMBER_READER(struct Account, AccountGetProxyPort, proxyPort);
 
-DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetRegistrar, registrar, USER_NAME_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct Account, AccountGetRegistrar, registrar);
+DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetRegistrarAddr, registrar, USER_NAME_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct Account, AccountGetRegistrarAddr, registrar);
 
 DEFINE_INT_MEMBER_WRITER(struct Account, AccountSetRegistrarPort, registrarPort);
 DEFINE_INT_MEMBER_READER(struct Account, AccountGetRegistrarPort, registrarPort);
@@ -59,7 +59,7 @@ void AccountDump(struct Account *account)
            AccountGetAuthName(account),
            AccountGetPasswd(account),
            AccountGetProxyAddr(account),
-           AccountGetRegistrar(account),
+           AccountGetRegistrarAddr(account),
            AccountBinded(account));
 }
 
@@ -71,7 +71,7 @@ struct Account *CreateAccount(char *username, char *authname, char *passwd, char
     AccountSetAuthName(account, authname);
     AccountSetPasswd(account, passwd);
     AccountSetProxyAddr(account, proxy);
-    AccountSetRegistrar(account, registrar);
+    AccountSetRegistrarAddr(account, registrar);
 
     AccountSetProxyPort(account, 5060);
     AccountSetRegistrarPort(account, 5060);

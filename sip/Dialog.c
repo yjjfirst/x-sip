@@ -155,7 +155,7 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 
 void DialogAck(struct Dialog *dialog)
 {
-    MESSAGE *ack = BuildAckMessage(dialog);
+    MESSAGE *ack = BuildAckMessage();
     SendMessage(ack);
     DestroyMessage(&ack);
 }
@@ -185,6 +185,7 @@ void InviteDialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);
     
     if (event == TRANSACTION_EVENT_OK) {    
         if (MessageGetExpires(message) != 0) {
@@ -193,7 +194,10 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
             UaSetUnbinded(ua);
         }
     } else if (event == TRANSACTION_EVENT_UNAUTHORIZED) {
-        MESSAGE *authMessage = BuildAuthorizationMessage(dialog, message);
+        MESSAGE *authMessage = BuildAuthorizationMessage(
+            message,
+            AccountGetAuthName(account),
+            AccountGetPasswd(account));
         DialogNewTransaction(dialog, authMessage, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     }
 }
@@ -337,7 +341,7 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 
 void DialogTerminateImpl(struct Dialog *dialog)
 {
-    MESSAGE *bye = BuildByeMessage(dialog);
+    MESSAGE *bye = BuildByeMessage();
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
@@ -353,7 +357,7 @@ void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
 {
     DialogSetRemoteUri(dialog, to);
-    struct Message *invite = BuildInviteMessage(dialog, to);    
+    struct Message *invite = BuildInviteMessage(to);    
 
     return invite;
 }

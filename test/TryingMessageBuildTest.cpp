@@ -178,8 +178,7 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
     
     AccountInit();
     struct UserAgent *ua = CreateUserAgent(0);
-    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
-    MESSAGE *invite = BuildInviteMessage(dialog, (char *)"88002");
+    MESSAGE *invite = BuildInviteMessage((char *)"88002");
 
     trying = BuildResponse(invite, STATUS_CODE_TRYING);
 
