@@ -117,7 +117,7 @@ TEST(SessionTestGroup, UASDestroySessionTest)
     mock().expectOneCall("CreateSession");
     InviteDialogReceiveOk(dialog, ok);
     mock().expectOneCall("DestroySession");
-    MESSAGE *bye = BuildByeMessage(NULL);
+    MESSAGE *bye = BuildByeMessage(NULL, (char *)"192.168.10.62", 5060);
     DialogReceiveBye(dialog, bye);
     DestroyMessage(&ok);
     ClearTransactionManager();

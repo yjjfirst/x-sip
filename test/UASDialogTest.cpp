@@ -173,7 +173,7 @@ TEST(UASDialogTestGroup, UASDialogTerminateTest)
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, invite);
     DialogOk(GetDialog(0));
 
-    MESSAGE *bye = BuildByeMessage(NULL);
+    MESSAGE *bye = BuildByeMessage(NULL, (char *)"192.168.10.62", 5060);
     DialogReceiveBye(GetDialog(0), bye);
     CHECK_EQUAL(0, CountDialogs());
 }

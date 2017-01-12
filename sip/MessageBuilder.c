@@ -22,7 +22,7 @@
 struct HeaderBuilderMap
 {
     char *headerName;
-    struct Header *(*buildRequestHeader)(MESSAGE *message, char *from, char *toto, char *ipaddr);
+    struct Header *(*buildRequestHeader)(MESSAGE *message, char *from, char *to, char *ipaddr);
     struct Header *(*buildResponseHeader)(struct Message *request);
 };
 
@@ -65,7 +65,7 @@ struct Header *BuildRequestToHeader(MESSAGE *message, char *from, char *to, char
     return (struct Header *)toHeader;
 }
 
-struct Header *BuildRequestContactHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestContactHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {
     URI *uri = CreateUri(URI_SCHEME_SIP, from, GetLocalIpAddr(), 0);
     UriAddParameter(uri, "line", "6c451db26592505");
@@ -75,7 +75,7 @@ struct Header *BuildRequestContactHeader(MESSAGE *message, char *from, char *tot
     return  (struct Header *)contact;
 }
 
-struct Header *BuildRequestMaxForwardsHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestMaxForwardsHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {
     struct MaxForwardsHeader *mf = CreateMaxForwardsHeader();
     return  (struct Header *)mf;
@@ -107,7 +107,7 @@ struct Header *BuildRequestExpiresHeader(MESSAGE *message)
     return (struct Header *)e;
 }
 
-struct Header *BuildRequestContentLengthHeader(MESSAGE *message, char *from, char *toto, char *ipaddr)
+struct Header *BuildRequestContentLengthHeader(MESSAGE *message, char *from, char *to, char *ipaddr)
 {
     struct ContentLengthHeader *c = CreateContentLengthHeader();
 
@@ -173,9 +173,9 @@ MESSAGE *BuildRemoveBindingMessage(char *from, char *to, char *ipaddr, int port)
     return remove;
 }
 
-MESSAGE *BuildInviteMessage(char *from, char *to)
+MESSAGE *BuildInviteMessage(char *from, char *to, char *ipaddr, int port)
 {
-    MESSAGE *invite = BuildRequest(SIP_METHOD_INVITE, from, to, "192.168.10.62", 5060);
+    MESSAGE *invite = BuildRequest(SIP_METHOD_INVITE, from, to, ipaddr, port);
     struct ContactHeader *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, invite);
     struct RequestLine *rl = (struct RequestLine *)MessageGetRequestLine(invite);
     
@@ -185,7 +185,7 @@ MESSAGE *BuildInviteMessage(char *from, char *to)
     return invite;
 }
 
-MESSAGE *BuildAckMessage(struct Message *invite)
+MESSAGE *BuildAckMessage(struct Message *invite, char *ipaddr, int port)
 {
     MESSAGE *ack = NULL;
     char *from = NULL;
@@ -194,7 +194,7 @@ MESSAGE *BuildAckMessage(struct Message *invite)
     GetFromUser(invite, &from);
     GetToUser(invite, &to);
 
-    ack = BuildRequest(SIP_METHOD_ACK, from, to, "192.168.10.62", 5060);
+    ack = BuildRequest(SIP_METHOD_ACK, from, to, ipaddr, port);
 
     if (invite != NULL) {
         MessageSetCSeqNumber(ack, MessageGetCSeqNumber(invite));
@@ -205,7 +205,7 @@ MESSAGE *BuildAckMessage(struct Message *invite)
     return ack;
 }
 
-MESSAGE *BuildByeMessage(struct Message *invite)
+MESSAGE *BuildByeMessage(struct Message *invite, char *ipaddr, int port)
 {
     char *from = NULL;
     char *to = NULL;
@@ -213,7 +213,7 @@ MESSAGE *BuildByeMessage(struct Message *invite)
     GetFromUser(invite, &from);
     GetToUser(invite, &to);
 
-    MESSAGE *bye = BuildRequest(SIP_METHOD_BYE, from, to, "192.168.10.62", 5060);
+    MESSAGE *bye = BuildRequest(SIP_METHOD_BYE, from, to, ipaddr, port);
 
     if (invite != NULL) {
         char *tag = MessageGetToTag(invite);
@@ -244,20 +244,23 @@ struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, char *user, char *secre
     struct AuthHeader
         *challengeAuthHeader = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_WWW_AUTHENTICATE, challenge);
 
-    AuthHeaderSetParameter(authHeader,
-                           AUTH_HEADER_REALM,
-                           AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM));
+    AuthHeaderSetParameter(
+        authHeader,
+        AUTH_HEADER_REALM,
+        AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM));
 
-    AuthHeaderSetParameter(authHeader,
-                           AUTH_HEADER_NONCE,
-                           AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE));
+    AuthHeaderSetParameter(
+        authHeader,
+        AUTH_HEADER_NONCE,
+        AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE));
 
-    CalculateResponse(user,
-                      secret,
-                      AuthHeaderGetParameter(authHeader,AUTH_HEADER_URI),
-                      AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM),
-                      AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE),
-                      response);
+    CalculateResponse(
+        user,
+        secret,
+        AuthHeaderGetParameter(authHeader,AUTH_HEADER_URI),
+        AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_REALM),
+        AuthHeaderGetParameter(challengeAuthHeader, AUTH_HEADER_NONCE),
+        response);
 
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_RESPONSE, response);
     AuthHeaderSetParameter(authHeader, AUTH_HEADER_ALGORITHM, ALGORITHM_MD5);
@@ -265,9 +268,9 @@ struct AuthHeader *BuildAuthHeader(MESSAGE *authMessage, char *user, char *secre
     return authHeader;
 }
 
-MESSAGE *BuildAuthorizationMessage(MESSAGE *challenge, char *user, char *secret)
+MESSAGE *BuildAuthorizationMessage(MESSAGE *challenge, char *user, char *secret, char *ipaddr, int port)
 {
-    MESSAGE *message = BuildRequest(SIP_METHOD_REGISTER, user, secret, "192.168.10.62", 5060);
+    MESSAGE *message = BuildRequest(SIP_METHOD_REGISTER, user, secret, ipaddr, port);
 
     char *callid = MessageGetCallId(challenge);
     struct CallIdHeader *callidHeader = (struct CallIdHeader *)MessageGetHeader(HEADER_NAME_CALLID, message);

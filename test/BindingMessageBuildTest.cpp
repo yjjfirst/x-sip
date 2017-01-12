@@ -66,7 +66,7 @@ TEST(BindingMessageBuildTestGroup, MessageTypeTest)
     CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 
-    tmpMessage = BuildAckMessage(NULL);
+    tmpMessage = BuildAckMessage(NULL, (char *)"192.168.10.62", 5060);
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 }
@@ -279,7 +279,9 @@ TEST(BindingMessageBuildTestGroup, MessageAuthorizationHeaderTest)
     MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001");
+    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001",
+                                                     (char *)"192.168.10.62",
+                                                     5060);
     struct AuthHeader *authHeader = (struct AuthHeader *)MessageGetHeader(HEADER_NAME_AUTHORIZATION, authMessage);
     
     CHECK_FALSE(authHeader == NULL);
@@ -300,7 +302,9 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageToHeaderTest)
     MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001");
+    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001",
+                                                     (char *)"192.168.10.62",
+                                                     5060);
     CONTACT_HEADER *toHeader = (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, authMessage);
     URI *uri = ContactHeaderGetUri(toHeader);
     STRCMP_EQUAL("88001", UriGetUser(uri));
@@ -315,7 +319,10 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
     SetLocalSeqNumber(dialog, 1);
-    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001");
+    MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001",
+                                                     (char *)"192.168.10.62",
+                                                     5060);
+
     CHECK_EQUAL(MessageGetCSeqNumber(challenge) + 1,
                 MessageGetCSeqNumber(authMessage));
     

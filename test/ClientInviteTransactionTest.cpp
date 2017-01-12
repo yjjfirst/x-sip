@@ -74,7 +74,7 @@ TEST_GROUP(ClientInviteTransactionTestGroup)
         AccountInit();
         ua = CreateUserAgent(0);
         dialog = AddDialog(NULL_DIALOG_ID, ua);
-        message = BuildInviteMessage((char *)"88001", (char *)"88002"); 
+        message = BuildInviteMessage((char *)"88001", (char *)"88002", (char *)"192.168.10.62", 5060); 
 
         t = DialogNewTransaction(dialog, message, TRANSACTION_TYPE_CLIENT_INVITE);
 

@@ -155,7 +155,10 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 
 void DialogAck(struct Dialog *dialog)
 {
-    MESSAGE *ack = BuildAckMessage(NULL);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);
+    
+    MESSAGE *ack = BuildAckMessage(NULL, AccountGetProxyAddr(account), AccountGetProxyPort(account));
 
     MessageSetToTag(ack, DialogGetRemoteTag(dialog));
     SendMessage(ack);
@@ -199,7 +202,9 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
         MESSAGE *authMessage = BuildAuthorizationMessage(
             message,
             AccountGetAuthName(account),
-            AccountGetPasswd(account));
+            AccountGetPasswd(account),
+            AccountGetProxyAddr(account),
+            AccountGetProxyPort(account));
         DialogNewTransaction(dialog, authMessage, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     }
 }
@@ -352,7 +357,13 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 
 void DialogTerminateImpl(struct Dialog *dialog)
 {
-    MESSAGE *bye = BuildByeMessage(NULL);
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);
+
+    MESSAGE *bye = BuildByeMessage(
+        NULL,
+        AccountGetProxyAddr(account),
+        AccountGetProxyPort(account));
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
@@ -371,10 +382,19 @@ char *DialogGetUser(struct Dialog *dialog)
 
     return AccountGetUserName(account);
 }
+
 struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
 {
+    struct UserAgent *ua = DialogGetUserAgent(dialog);
+    struct Account *account = UaGetAccount(ua);
+
     DialogSetRemoteUri(dialog, to);
-    struct Message *invite = BuildInviteMessage(DialogGetUser(dialog), to);    
+    
+    struct Message *invite = BuildInviteMessage(
+        DialogGetUser(dialog),
+        to,
+        AccountGetProxyAddr(account),
+        AccountGetProxyPort(account));    
 
     return invite;
 }
