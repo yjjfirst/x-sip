@@ -23,7 +23,7 @@ struct Dialog *GetDialogByUa(struct UserAgent *ua)
     
     for (; i < length ; i ++) {
         struct Dialog *dialog = get_data_at(DialogManager.dialogList, i);
-        if (DialogGetUserAgent(dialog) == ua) {
+        if (DialogGetUa(dialog) == ua) {
             return dialog;
         }
     }

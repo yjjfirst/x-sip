@@ -1,12 +1,15 @@
 struct UserAgent;
 struct Account;
 struct UserAgentManager;
+struct Message;
 
 struct UserAgent *AddUa(int account);
-int CountUas();
 struct UserAgent *GetUa(int pos);
-int GetUaPosition(struct UserAgent *ua);
-void ClearUaManager();
+struct UserAgent *PassiveAddUa(struct Message *message);
 
+int CountUas();
+int GetUaPosition(struct UserAgent *ua);
 extern void (*RemoveUa)(struct UserAgent *ua);
+
+void ClearUaManager();
 void DumpUaManager();

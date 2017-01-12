@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "Messages.h"
 #include "AccountManager.h"
 #include "UserAgentManager.h"
 #include "UserAgent.h"
@@ -20,6 +21,12 @@ struct UserAgent *AddUa(int account)
     put_in_list(&uam->userAgents, ua);
 
     return ua;
+}
+
+struct UserAgent *PassiveAddUa(struct Message *message)
+{
+    int account = FindMessageDestAccount(message);
+    return  AddUa(account);
 }
 
 void RemoveUaImpl(struct UserAgent *ua)

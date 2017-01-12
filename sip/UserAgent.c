@@ -20,19 +20,29 @@ struct UserAgent {
     struct Account *account;
 };
 
-char *UaGetUserName(struct UserAgent *ua)
+char *UaGetUsername(struct UserAgent *ua)
 {
     return AccountGetUserName(ua->account);
 }
 
-char *UaGetAuthName(struct UserAgent *ua)
+char *UaGetAuthname(struct UserAgent *ua)
 {
     return AccountGetAuthName(ua->account);
+}
+
+char *UaGetPassword(struct UserAgent *ua)
+{
+    return AccountGetPassword(ua->account);
 }
 
 char *UaGetProxy(struct UserAgent *ua)
 {
     return AccountGetProxyAddr(ua->account);
+}
+
+int UaGetProxyPort(struct UserAgent *ua)
+{
+    return AccountGetProxyPort(ua->account);
 }
 
 char *UaRegistrar(struct UserAgent *ua)

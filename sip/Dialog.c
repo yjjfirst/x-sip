@@ -5,7 +5,6 @@
 #include "DialogId.h"
 #include "UserAgent.h"
 #include "UserAgentManager.h"
-#include "Accounts.h"
 #include "TransactionManager.h"
 #include "Messages.h"
 #include "Transaction.h"
@@ -17,7 +16,6 @@
 #include "Session.h"
 #include "CallEvents.h"
 #include "DialogManager.h"
-#include "AccountManager.h"
 
 struct Dialog {
     struct Transaction *transaction;
@@ -75,7 +73,7 @@ struct DialogId *GetDialogId(struct Dialog *dialog)
     return dialog->id;
 }
 
-struct UserAgent *DialogGetUserAgent(struct Dialog *dialog)
+struct UserAgent *DialogGetUa(struct Dialog *dialog)
 {
     assert(dialog != NULL);
     return dialog->ua;
@@ -135,12 +133,11 @@ void SetDialogState(struct Dialog *dialog, enum DIALOG_STATE state)
 
 URI *DialogSetRemoteUri(struct Dialog *dialog, char *to)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);    
+    struct UserAgent *ua = DialogGetUa(dialog);
 
     if (dialog->remoteUri != NULL) return NULL;
     
-    URI *uri = CreateUri(URI_SCHEME_SIP, to, AccountGetProxyAddr(account), 0);
+    URI *uri = CreateUri(URI_SCHEME_SIP, to, UaGetProxy(ua), 0);
     dialog->remoteUri = uri;
 
     return uri;
@@ -155,10 +152,9 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 
 void DialogAck(struct Dialog *dialog)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);
+    struct UserAgent *ua = DialogGetUa(dialog);
     
-    MESSAGE *ack = BuildAckMessage(NULL, AccountGetProxyAddr(account), AccountGetProxyPort(account));
+    MESSAGE *ack = BuildAckMessage(NULL, UaGetProxy(ua), UaGetProxyPort(ua));
 
     MessageSetToTag(ack, DialogGetRemoteTag(dialog));
     SendMessage(ack);
@@ -176,7 +172,7 @@ void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     DialogAck(dialog);
 
     if (NotifyCm != NULL)
-        NotifyCm(CALL_ESTABLISHED, DialogGetUserAgent(dialog));
+        NotifyCm(CALL_ESTABLISHED, DialogGetUa(dialog));
 
     dialog->session = CreateSession();
 }
@@ -184,13 +180,12 @@ void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 void InviteDialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
     if (NotifyCm != NULL)
-        NotifyCm(CALL_REMOTE_RINGING, DialogGetUserAgent(dialog));
+        NotifyCm(CALL_REMOTE_RINGING, DialogGetUa(dialog));
 }
 
 void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);
+    struct UserAgent *ua = DialogGetUa(dialog);
     
     if (event == TRANSACTION_EVENT_OK) {    
         if (MessageGetExpires(message) != 0) {
@@ -201,10 +196,10 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
     } else if (event == TRANSACTION_EVENT_UNAUTHORIZED) {
         MESSAGE *authMessage = BuildAuthorizationMessage(
             message,
-            AccountGetAuthName(account),
-            AccountGetPasswd(account),
-            AccountGetProxyAddr(account),
-            AccountGetProxyPort(account));
+            UaGetAuthname(ua),
+            UaGetPassword(ua),
+            UaGetProxy(ua),
+            UaGetProxyPort(ua));
         DialogNewTransaction(dialog, authMessage, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     }
 }
@@ -224,8 +219,7 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
     SIP_METHOD method = MessageGetMethod(message);
 
     if (matched == NULL) {    
-        int account = FindMessageDestAccount(message);
-        struct UserAgent *ua = AddUa(account);
+        struct UserAgent *ua = PassiveAddUa(message);
         struct Dialog *d = AddDialog(NULL, ua);
 
         if (method == SIP_METHOD_INVITE) {
@@ -244,7 +238,7 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
 
 void HandleCancelEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
-    NotifyCm(CALL_PEER_CANCELED, DialogGetUserAgent(dialog));
+    NotifyCm(CALL_PEER_CANCELED, DialogGetUa(dialog));
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
@@ -306,7 +300,7 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
         ExtractRemoteTarget(dialog, message);
 
         if (NotifyCm != NULL) {
-            NotifyCm(CALL_INCOMING, DialogGetUserAgent(dialog));
+            NotifyCm(CALL_INCOMING, DialogGetUa(dialog));
         }
     }
     
@@ -357,13 +351,12 @@ void DialogReceiveBye(struct Dialog *dialog, MESSAGE *bye)
 
 void DialogTerminateImpl(struct Dialog *dialog)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);
+    struct UserAgent *ua = DialogGetUa(dialog);
 
     MESSAGE *bye = BuildByeMessage(
         NULL,
-        AccountGetProxyAddr(account),
-        AccountGetProxyPort(account));
+        UaGetProxy(ua),
+        UaGetProxyPort(ua));
     DialogNewTransaction(dialog, bye, TRANSACTION_TYPE_CLIENT_NON_INVITE);
     dialog->state = DIALOG_STATE_TERMINATED;
 }
@@ -375,26 +368,16 @@ void DialogRingingImpl(struct Dialog *dialog)
 }
 void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 
-char *DialogGetUser(struct Dialog *dialog)
-{
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);
-
-    return AccountGetUserName(account);
-}
-
 struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
 {
-    struct UserAgent *ua = DialogGetUserAgent(dialog);
-    struct Account *account = UaGetAccount(ua);
+    struct UserAgent *ua = DialogGetUa(dialog);    
+    struct Message *invite = BuildInviteMessage(
+        UaGetUsername(ua),
+        to,
+        UaGetProxy(ua),
+        UaGetProxyPort(ua));    
 
     DialogSetRemoteUri(dialog, to);
-    
-    struct Message *invite = BuildInviteMessage(
-        DialogGetUser(dialog),
-        to,
-        AccountGetProxyAddr(account),
-        AccountGetProxyPort(account));    
 
     return invite;
 }

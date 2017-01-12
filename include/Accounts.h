@@ -11,8 +11,8 @@ struct Account;
 void AccountSetUserName(struct Account *account, char *user);
 char *AccountGetUserName(struct Account *account);
 
-void AccountSetPasswd(struct Account *account, char *passwd);
-char *AccountGetPasswd(struct Account *account);
+void AccountSetPassword(struct Account *account, char *passwd);
+char *AccountGetPassword(struct Account *account);
 
 void AccountSetAuthName(struct Account *account, char *userName);
 char *AccountGetAuthName(struct Account *account);

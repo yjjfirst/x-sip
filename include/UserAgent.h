@@ -7,18 +7,20 @@
 struct UserAgent;
 struct DialogId;
 
-void UaSetUserName(struct UserAgent *ua, char *name);
-char *UaGetUserName(struct UserAgent *ua);
-void UaSetProxy(struct UserAgent *ua, char *proxy);
+char *UaGetUsername(struct UserAgent *ua);
+char *UaGetPassword(struct UserAgent *ua);
 char *UaGetProxy(struct UserAgent *ua);
-void UaSetRegistrar(struct UserAgent *ua, char *registrar);
+int UaGetProxyPort(struct UserAgent *ua);
 char *UaGetRegistrar(struct UserAgent *ua);
-void UaSetAuthName(struct UserAgent *ua, char *authName);
-char *UaGetAuthName(struct UserAgent *ua);
-void UaSetBinded(struct UserAgent *ua);
-void UaSetUnbinded(struct UserAgent *ua);
+int UaGetRegistrarPort(struct UserAgent *ua);
+char *UaGetAuthname(struct UserAgent *ua);
+
+
 struct Account *UaGetAccount(struct UserAgent *ua);
 
+
+void UaSetBinded(struct UserAgent *ua);
+void UaSetUnbinded(struct UserAgent *ua);
 BOOL UaBinded(struct UserAgent *ua);
 
 

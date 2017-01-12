@@ -16,8 +16,8 @@ struct Account {
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetUserName, userName, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetUserName, userName);
 
-DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetPasswd, passwd, PASS_WORD_MAX_LENGTH);
-DEFINE_STRING_MEMBER_READER(struct Account, AccountGetPasswd, passwd);
+DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetPassword, passwd, PASS_WORD_MAX_LENGTH);
+DEFINE_STRING_MEMBER_READER(struct Account, AccountGetPassword, passwd);
 
 DEFINE_STRING_MEMBER_WRITER(struct Account, AccountSetAuthName, authName, USER_NAME_MAX_LENGTH);
 DEFINE_STRING_MEMBER_READER(struct Account, AccountGetAuthName, authName);
@@ -57,7 +57,7 @@ void AccountDump(struct Account *account)
     printf("User Name: %s | Auth Name: %s | Pass word:%s | Proxy:%s | Registrar :%s | Binded:%d\n",
            AccountGetUserName(account),
            AccountGetAuthName(account),
-           AccountGetPasswd(account),
+           AccountGetPassword(account),
            AccountGetProxyAddr(account),
            AccountGetRegistrarAddr(account),
            AccountBinded(account));
@@ -69,7 +69,7 @@ struct Account *CreateAccount(char *username, char *authname, char *passwd, char
 
     AccountSetUserName(account, username);
     AccountSetAuthName(account, authname);
-    AccountSetPasswd(account, passwd);
+    AccountSetPassword(account, passwd);
     AccountSetProxyAddr(account, proxy);
     AccountSetRegistrarAddr(account, registrar);
 

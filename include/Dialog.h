@@ -28,7 +28,7 @@ char *DialogGetCallId(struct Dialog *dialog);
 
 
 struct DialogId *GetDialogId(struct Dialog *dialog);
-struct UserAgent *DialogGetUserAgent(struct Dialog *dialog);
+struct UserAgent *DialogGetUa(struct Dialog *dialog);
 struct Message *DialogGetRequest(struct Dialog *dialog);
 
 unsigned int GetLocalSeqNumber(struct Dialog *dialog);

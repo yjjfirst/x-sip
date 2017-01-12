@@ -41,7 +41,7 @@ TEST(AccountsTestGroup, AccountCreateTest)
 
     STRCMP_EQUAL("88001", AccountGetUserName(acc));
     STRCMP_EQUAL("88001", AccountGetAuthName(acc));
-    STRCMP_EQUAL("88001", AccountGetPasswd(acc));
+    STRCMP_EQUAL("88001", AccountGetPassword(acc));
     STRCMP_EQUAL("192.168.10.62", AccountGetProxyAddr(acc));
     STRCMP_EQUAL("192.168.10.72", AccountGetRegistrarAddr(acc));
 
@@ -145,8 +145,8 @@ TEST(AccountsTestGroup, SetPasswordTest)
 {
     char passwd[] = "asdf";
 
-    AccountSetPasswd(account, passwd);
-    STRCMP_EQUAL(passwd, AccountGetPasswd(account));
+    AccountSetPassword(account, passwd);
+    STRCMP_EQUAL(passwd, AccountGetPassword(account));
     
     DestroyAccount(&account);
 }
