@@ -19,36 +19,27 @@ extern "C" {
 #include "ContentLengthHeader.h"
 #include "Header.h"
 #include "Parameter.h"
-#include "UserAgent.h"
-#include "Dialog.h"
 #include "Provision.h"
 #include "TestingMessages.h"
-#include "UserAgentManager.h"
-#include "AccountManager.h"
-#include "DialogManager.h"
-#include "WWW_AuthenticationHeader.h"
 }
 
 TEST_GROUP(AckMessageBuildTestGroup)
 {
-    struct UserAgent *ua;
-    struct Dialog *dialog;
     MESSAGE *inviteMessage;
     void setup()
     {
-        UT_PTR_SET(GenerateBranch, GenerateBranchMock);
+        char from[] = "88001";
+        char to[] = "88002";
+        char proxy[] = "192.168.10.62";
+        int port = 5060;
         
-        AccountInit();
-        ua = CreateUserAgent(0);
-        dialog = AddDialog(NULL_DIALOG_ID, ua);
-        inviteMessage = DialogBuildInvite(dialog, (char *)"88002");
+        UT_PTR_SET(GenerateBranch, GenerateBranchMock);        
+        inviteMessage = BuildInviteMessage(from, to, proxy, port);
     }
 
     void teardown()
     {
-        ClearAccountManager();
         DestroyMessage(&inviteMessage);
-        DestroyUserAgent(&ua);
     }
 };
 

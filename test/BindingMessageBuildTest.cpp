@@ -19,42 +19,27 @@ extern "C" {
 #include "ContentLengthHeader.h"
 #include "Header.h"
 #include "Parameter.h"
-#include "UserAgent.h"
-#include "Dialog.h"
 #include "Provision.h"
 #include "TestingMessages.h"
-#include "UserAgentManager.h"
-#include "AccountManager.h"
 #include "WWW_AuthenticationHeader.h"
-#include "DialogManager.h"
-#include "Accounts.h"
 }
 
 TEST_GROUP(BindingMessageBuildTestGroup)
 {
-    struct UserAgent *ua;
     MESSAGE *m;
-    struct Dialog *dialog;
     void setup()
     {
         UT_PTR_SET(GenerateBranch, GenerateBranchMock);
-        
-        AccountInit();
-        AccountSetRegistrarPort(GetAccount(0), 1000);
-        ua = CreateUserAgent(0);
-        dialog = AddDialog(NULL_DIALOG_ID, ua);
-        m = BuildAddBindingMessage(
-            AccountGetUserName(GetAccount(0)),
-            AccountGetUserName(GetAccount(0)),
-            AccountGetRegistrarAddr(GetAccount(0)),
-            AccountGetRegistrarPort(GetAccount(0)));
+
+        char username[] = "88001";
+        char registrar[] = "192.168.10.62";
+        int port = 5060;
+        m = BuildAddBindingMessage(username, username, registrar, port);
     }
 
     void teardown()
     {
-        ClearAccountManager();
         DestroyMessage(&m);
-        DestroyUserAgent(&ua);
     }
 };
 
@@ -262,11 +247,11 @@ TEST(BindingMessageBuildTestGroup, BindingsContactHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, UnbindingMessage)
 {
-    MESSAGE *remove = BuildRemoveBindingMessage(
-        AccountGetUserName(GetAccount(0)),
-        AccountGetUserName(GetAccount(0)),        
-        AccountGetRegistrarAddr(GetAccount(0)),
-        AccountGetRegistrarPort(GetAccount(0)));
+    char username[] = "88001";
+    char registrar[] = "192.168.10.62";
+    int port = 5060;
+
+    MESSAGE *remove = BuildRemoveBindingMessage(username, username, registrar, port);
     
     struct ExpiresHeader *e = (struct ExpiresHeader *)MessageGetHeader(HEADER_NAME_EXPIRES, remove);
     
@@ -318,7 +303,6 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
     MESSAGE *challenge = CreateMessage();
     ParseMessage(UNAUTHORIZED_MESSAGE, challenge);
 
-    SetLocalSeqNumber(dialog, 1);
     MESSAGE *authMessage = BuildAuthorizationMessage(challenge, (char *)"88001", (char *)"88001",
                                                      (char *)"192.168.10.62",
                                                      5060);
@@ -333,12 +317,13 @@ TEST(BindingMessageBuildTestGroup, AuthorizationMessageCSeqHeaderTest)
 
 TEST(BindingMessageBuildTestGroup, MessageDestAddrTest)
 {
-    STRCMP_EQUAL(AccountGetRegistrarAddr(GetAccount(0)),GetMessageAddr(m));
+    char registrar[] = "192.168.10.62";
+    STRCMP_EQUAL(registrar, GetMessageAddr(m));
 }
 
 
 TEST(BindingMessageBuildTestGroup, MessageDestPortTest)
 {
-    struct Account *account = GetAccount(0);
-    CHECK_EQUAL(AccountGetRegistrarPort(account),GetMessagePort(m));
+    int port = 5060;
+    CHECK_EQUAL(port,GetMessagePort(m));
 }

@@ -14,13 +14,7 @@ extern "C" {
 #include "CallIdHeader.h"
 #include "CSeqHeader.h"
 #include "Header.h"
-#include "UserAgent.h"
-#include "Dialog.h"
 #include "TestingMessages.h"
-#include "UserAgentManager.h"
-#include "AccountManager.h"
-#include "DialogManager.h"
-#include "Accounts.h"
 }
 
 TEST_GROUP(TryingMessageBuildTestGroup)
@@ -155,39 +149,24 @@ TEST(TryingMessageBuildTestGroup, TryingMessageDestPortTest)
 {
     MESSAGE *trying = NULL;
     
-    AccountInit();
-    struct UserAgent *ua = CreateUserAgent(0);
-    struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
-    MESSAGE *invite = DialogBuildInvite(dialog, (char *)"88002");
-
+    MESSAGE *invite = BuildInviteMessage((char *)"88001", (char *)"88002", (char *)"192.168.10.62", 5060);
     trying = BuildResponse(invite, STATUS_CODE_TRYING);
 
-    CHECK_EQUAL(AccountGetProxyPort(GetAccount(0)),GetMessagePort(trying));
+    CHECK_EQUAL(5060,GetMessagePort(trying));
 
     DestroyMessage(&trying);
     DestroyMessage(&invite);
-
-    ClearDialogManager();
-    ClearAccountManager();
-    DestroyUserAgent(&ua);
 }
 
 TEST(TryingMessageBuildTestGroup, TryingMessageDesAddrtTest)
 {
     MESSAGE *trying = NULL;
-    
-    AccountInit();
-    struct UserAgent *ua = CreateUserAgent(0);
     MESSAGE *invite = BuildInviteMessage((char *)"88001", (char *)"88002", (char *)"192.168.10.62", 5060);
 
     trying = BuildResponse(invite, STATUS_CODE_TRYING);
 
-    STRCMP_EQUAL(AccountGetProxyAddr(GetAccount(0)),GetMessageAddr(trying));
+    STRCMP_EQUAL((char *)"192.168.10.62", GetMessageAddr(trying));
 
     DestroyMessage(&trying);
     DestroyMessage(&invite);
-
-    ClearDialogManager();
-    ClearAccountManager();
-    DestroyUserAgent(&ua);
 }
