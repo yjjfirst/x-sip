@@ -17,7 +17,7 @@ extern "C" {
 
 void UaMakeCallMock(struct UserAgent *ua)
 {
-    mock().actualCall("UaMakeCall");
+    mock().actualCall("UaMakeCall").withParameter("dest", "88002");
 }
 
 void UaEndCallMock(struct UserAgent *ua)
@@ -63,7 +63,7 @@ TEST(CallManagerTestGroup, CallOutTest)
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall("UaMakeCall");
+    mock().expectOneCall("UaMakeCall").withParameter("dest", dest);
     CallOut(account, dest);
 
     CHECK_EQUAL(1, CountUas());
@@ -74,7 +74,7 @@ TEST(CallManagerTestGroup, CallOutSuccessTest)
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall("UaMakeCall");
+    mock().expectOneCall("UaMakeCall").withParameter("dest", dest);
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
@@ -88,7 +88,7 @@ TEST(CallManagerTestGroup, ActiveHangupTest)
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall("UaMakeCall");
+    mock().expectOneCall("UaMakeCall").withParameter("dest", dest);
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
@@ -105,7 +105,7 @@ TEST(CallManagerTestGroup, RemoteRingingNotifyCmTest)
     char dest[] = "88002";
     char account = 0;
 
-    mock().expectOneCall("UaMakeCall");
+    mock().expectOneCall("UaMakeCall").withParameter("dest", dest);
     struct UserAgent *ua = CallOut(account, dest);
     
     mock().expectOneCall("SendEventToClient").
