@@ -24,7 +24,7 @@ void UaSetUnbinded(struct UserAgent *ua);
 BOOL UaBinded(struct UserAgent *ua);
 
 
-extern void (*UaMakeCall)(struct UserAgent *ua);
+extern void (*UaMakeCall)(struct UserAgent *ua, char *dest);
 extern void (*UaEndCall)(struct UserAgent *ua);
 extern void (*UaAcceptCall)(struct UserAgent *ua);
 extern void (*UaRinging)(struct UserAgent *ua);

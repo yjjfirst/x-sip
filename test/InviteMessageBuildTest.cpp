@@ -153,7 +153,7 @@ TEST(InviteMessageBuildTestGroup, 487MessageStatueLineTest)
 
 }
 
-IGNORE_TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
+TEST(InviteMessageBuildTestGroup, ByeMessageToHeaderTest)
 {
     MESSAGE *bye = BuildByeMessage(inviteMessage, (char *)"192.168.10.62", 5060);
     DestroyMessage(&bye);

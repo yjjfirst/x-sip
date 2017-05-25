@@ -26,7 +26,7 @@ struct IntStringMap CallEventMap[] = {
 struct UserAgent *CallOut(int account, char *dest)
 {
     struct UserAgent *ua = AddUa(account);
-    UaMakeCall(ua);
+    UaMakeCall(ua, dest);
 
     return ua;
 }

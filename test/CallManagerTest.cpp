@@ -15,9 +15,9 @@ extern "C" {
 #include "Transporter.h"
 }
 
-void UaMakeCallMock(struct UserAgent *ua)
+void UaMakeCallMock(struct UserAgent *ua, char *dest)
 {
-    mock().actualCall("UaMakeCall").withParameter("dest", "88002");
+    mock().actualCall("UaMakeCall").withParameter("dest", dest);
 }
 
 void UaEndCallMock(struct UserAgent *ua)
@@ -65,7 +65,7 @@ TEST(CallManagerTestGroup, CallOutTest)
 
     mock().expectOneCall("UaMakeCall").withParameter("dest", dest);
     CallOut(account, dest);
-
+        
     CHECK_EQUAL(1, CountUas());
 }
 

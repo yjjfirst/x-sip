@@ -15,6 +15,7 @@
 #include "Header.h"
 #include "DialogManager.h"
 #include "Transaction.h"
+#include "Provision.h"
 #include "utils/list/include/list.h"
 
 struct AccountManager {
@@ -137,22 +138,22 @@ int AccountInitImpl()
                    (char *)"88001", 
                    (char *)"88001", 
                    (char *)"88001", 
-                   (char *)"192.168.10.62", 
-                   (char *)"192.168.10.62"));
+                   GetProxy(0), 
+                   GetRegistrar(0)));
     
     AddAccount(CreateAccount(
                    (char *)"88002", 
                    (char *)"88002", 
                    (char *)"88002", 
-                   (char *)"192.168.10.62", 
-                   (char *)"192.168.10.62"));
+                   GetProxy(0), 
+                   GetRegistrar(0)));
     
     AddAccount(CreateAccount(
                    (char *)"88003", 
                    (char *)"88003", 
                    (char *)"88003", 
-                   (char *)"192.168.10.62", 
-                   (char *)"192.168.10.62"));
+                   GetProxy(0), 
+                   GetRegistrar(0)));
     
     return CountAccounts();
 }
