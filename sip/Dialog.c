@@ -382,9 +382,9 @@ struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
     return invite;
 }
 
-void DialogInvite(struct Dialog *dialog)
+void DialogInvite(struct Dialog *dialog, char *dest)
 {
-    struct Message *invite = DialogBuildInvite(dialog, (char *)"88002");
+    struct Message *invite = DialogBuildInvite(dialog, dest);
     DialogNewTransaction(dialog, invite, TRANSACTION_TYPE_CLIENT_INVITE);
 }
 

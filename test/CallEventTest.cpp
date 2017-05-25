@@ -50,9 +50,20 @@ TEST(CallEventTestGroup, BuildClientMessageTest)
     int ua = 0;
     enum CALL_EVENT event = CALL_INCOMING;
     
-    BuildClientMessage(msg, ua, event);
+    BuildClientMessage(msg, ua, event, NULL);
 
     STRCMP_EQUAL("ua=0;event=CALL_INCOMING\r\n", msg);
+}
+
+TEST(CallEventTestGroup, BuildClientMessageWithDataTest)
+{
+    char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
+    int ua = 0;
+    enum CALL_EVENT event = CALL_INCOMING;
+    char data[] = "123456";
+    
+    BuildClientMessage(msg, ua, event, data);
+    STRCMP_EQUAL("ua=0;event=CALL_INCOMING;data=123456\r\n", msg);
 }
 
 TEST(CallEventTestGroup, SendClientMessageTest)

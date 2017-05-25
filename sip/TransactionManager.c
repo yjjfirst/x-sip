@@ -125,6 +125,7 @@ struct StatusCodeEventMap {
     {100, TRANSACTION_EVENT_TRYING},
     {180, TRANSACTION_EVENT_RINGING},
     {401, TRANSACTION_EVENT_UNAUTHORIZED},
+    {503, TRANSACTION_EVENT_SERVICE_UNAVAIL},
     {0, 0},
 };
 
@@ -149,7 +150,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     status = MessageGetStatusLine(message);
     statusCode = StatusLineGetStatusCode(status);
     t = MatchResponse(message);
-    
+
     if (t) {
         AddResponse(t, message);
         RunFsm(t, MapStatusCodeToEvent(statusCode));

@@ -48,7 +48,7 @@ void DestroyDialog(struct Dialog **dialog);
 struct Transaction *DialogNewTransaction(struct Dialog *dialog, struct Message *message, int type);
 
 extern void (*DialogTerminate)(struct Dialog *dialog);
-void DialogInvite(struct Dialog *dialog);
+void DialogInvite(struct Dialog *dialog, char *dest);
 void DialogOk(struct Dialog *dialog);
 extern void (*DialogRinging)(struct Dialog *dialog);
 

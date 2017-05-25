@@ -79,7 +79,7 @@ void UaSetUnbinded(struct UserAgent *ua)
 void UaMakeCallImpl(struct UserAgent *ua, char *dest)
 {
     struct Dialog *dialog = AddDialog(NULL_DIALOG_ID, ua);
-    DialogInvite(dialog);
+    DialogInvite(dialog, dest);
 }
 void (*UaMakeCall)(struct UserAgent *ua, char *dest) = UaMakeCallImpl;
 

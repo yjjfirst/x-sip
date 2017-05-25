@@ -4,7 +4,6 @@ struct Message;
 struct UserAgent;
 struct TransactionUser;
 
-
 void ClearTransactionManager();
 int SipMessageCallback(char *string, char *ipAddr, int port);
 BOOL SipMessageInput(struct Message *message);
@@ -19,6 +18,5 @@ void RemoveTransaction(struct Transaction *t);
 void RemoveTransactionById(struct TransactionId *id);
 struct Transaction *MatchResponse(struct Message *message);
 struct Transaction *MatchRequest(struct Message *message);
-
 
 void DumpTransactionManager();

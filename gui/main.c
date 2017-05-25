@@ -1,12 +1,13 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <string.h>
 
 #include "Init.h"
 #include "Udp.h"
 #include "CallEvents.h"
 
 static int sockfd;
-struct ClientEvent CurrEvent;
+struct ClientMessage CurrEvent;
 
 static void send_ringing()
 {
@@ -15,7 +16,7 @@ static void send_ringing()
 
     event.ua = CurrEvent.ua;
     event.event = RINGING;
-    BuildClientMessage(msg, event.ua, event.event);
+    BuildClientMessage(msg, event.ua, event.event, NULL);
 
     UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 
@@ -28,7 +29,7 @@ static void send_accept (GtkWidget *widget, gpointer data)
 
     event.ua = CurrEvent.ua;
     event.event = ACCEPT_CALL;
-    BuildClientMessage(msg, event.ua, event.event);
+    BuildClientMessage(msg, event.ua, event.event, NULL);
 
     UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 }
@@ -40,7 +41,8 @@ static void send_callout (GtkWidget *widget, gpointer data)
 
     event.ua = CurrEvent.ua;
     event.event = MAKE_CALL;
-    BuildClientMessage(msg, event.ua, event.event);
+    strcpy(event.data,"88005");
+    BuildClientMessage(msg, event.ua, event.event, event.data);
 
     UdpSend(msg, "192.168.10.1", 5555,  sockfd);
 }

@@ -69,11 +69,24 @@ BOOL HandleClientMessage(char *string, char *ipAddr, int port)
     return 1;
 }
 
-void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event)
+void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event, char *data)
 {
     assert(msg != NULL);
-    
-    sprintf(msg, "ua=%d;event=%s\r\n", ua, IntMap2String(event, CallEventMap));
+
+    if (data == NULL) {
+        snprintf(msg,
+                 CLIENT_MESSAGE_MAX_LENGTH - 1,
+                 "ua=%d;event=%s\r\n",
+                 ua,
+                 IntMap2String(event, CallEventMap));
+    } else {
+        snprintf(msg,
+                 CLIENT_MESSAGE_MAX_LENGTH - 1,
+                 "ua=%d;event=%s;data=%s\r\n",
+                 ua,
+                 IntMap2String(event, CallEventMap),
+                 data);        
+    }     
 }
 
 void ParseClientMessage(char *msg, struct ClientMessage *event)
@@ -101,7 +114,7 @@ void NotifyCmImpl(int event, struct UserAgent *ua)
 {
     char msg[CLIENT_MESSAGE_MAX_LENGTH] = {0};
 
-    BuildClientMessage(msg, GetUaPosition(ua), event);
+    BuildClientMessage(msg, GetUaPosition(ua), event, NULL);
     ClientTransporter->send(msg, "192.168.10.1", 5556, ClientTransporter->fd);
 }
 

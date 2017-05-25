@@ -19,7 +19,7 @@ struct ClientMessage {
 };
 struct UserAgent;
 
-void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event);
+void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event, char *data);
 void ParseClientMessage(char *msg, struct ClientMessage *event);
 
 extern void (*NotifyCm)(int event, struct UserAgent *ua);
