@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 #include "UserAgentManager.h"
 #include "UserAgent.h"
@@ -19,7 +20,8 @@ struct IntStringMap CallEventMap[] = {
     INT_STRING_MAP(CALL_PEER_CANCELED),
     
     INT_STRING_MAP(ACCEPT_CALL),
-    INT_STRING_MAP(CLIENT_RINGING),
+    INT_STRING_MAP(MAKE_CALL),
+    INT_STRING_MAP(RINGING),
     {-1, ""},
 };
 
@@ -48,7 +50,7 @@ void Ringing(struct UserAgent *ua)
 
 BOOL HandleClientMessage(char *string, char *ipAddr, int port)
 {
-    struct ClientEvent event;
+    struct ClientMessage event;
     struct UserAgent *ua = NULL;
 
     ParseClientMessage(string, &event);     
@@ -56,8 +58,12 @@ BOOL HandleClientMessage(char *string, char *ipAddr, int port)
 
     if (event.event == ACCEPT_CALL) {
         AcceptCall(ua);
-    }else if (event.event == CLIENT_RINGING) {
+    } else if (event.event == RINGING) {
         Ringing(ua);
+    } else if (event.event == MAKE_CALL) {
+        CallOut(0, event.data);
+    } else {
+        assert(0);
     }
         
     return 1;
@@ -70,7 +76,7 @@ void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event)
     sprintf(msg, "ua=%d;event=%s\r\n", ua, IntMap2String(event, CallEventMap));
 }
 
-void ParseClientMessage(char *msg, struct ClientEvent *event)
+void ParseClientMessage(char *msg, struct ClientMessage *event)
 {
     assert (msg != NULL);
     assert (event != NULL);
@@ -81,8 +87,13 @@ void ParseClientMessage(char *msg, struct ClientEvent *event)
     
 
     event->event = StringMap2Int(GetParameter(ps, "event"), CallEventMap);
-    event->ua = atoi(GetParameter(ps, "ua"));    
-
+    event->ua = atoi(GetParameter(ps, "ua"));
+    
+    if (GetParameter(ps, "data") != NULL) {
+        strncpy(event->data, GetParameter(ps, "data"), sizeof(event->data) - 1);
+        event->data[sizeof (event->data) - 1] = 0;
+    }
+    
     DestroyParameters(&ps);
 }
 

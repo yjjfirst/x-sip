@@ -158,9 +158,9 @@ TEST(CallManagerTestGroup, ClientAcceptCallMessageTest)
 
 TEST(CallManagerTestGroup, ClientRingingMessageTest)
 {
-    char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=CLIENT_RINGING";
-    char buf1[CLIENT_MESSAGE_MAX_LENGTH] = "ua=1;event=CLIENT_RINGING";
-    char buf2[CLIENT_MESSAGE_MAX_LENGTH] = "ua=2;event=CLIENT_RINGING";
+    char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=RINGING";
+    char buf1[CLIENT_MESSAGE_MAX_LENGTH] = "ua=1;event=RINGING";
+    char buf2[CLIENT_MESSAGE_MAX_LENGTH] = "ua=2;event=RINGING";
     
     struct UserAgent *ua = AddUa(0);
     struct UserAgent *ua1 = AddUa(1);
@@ -177,3 +177,19 @@ TEST(CallManagerTestGroup, ClientRingingMessageTest)
 
 }
 
+TEST(CallManagerTestGroup, ClientMakecallMessageTest)
+{
+    char buf[CLIENT_MESSAGE_MAX_LENGTH] = "ua=0;event=MAKE_CALL;data=88002";
+    char buf1[CLIENT_MESSAGE_MAX_LENGTH] = "ua=1;event=MAKE_CALL;data=88002";
+    char buf2[CLIENT_MESSAGE_MAX_LENGTH] = "ua=2;event=MAKE_CALL;data=88002";
+    
+    
+    mock().expectOneCall("UaMakeCall").withParameter("dest", "88002");
+    HandleClientMessage(buf, (char *)"192.168.10.62", 5060);
+
+    mock().expectOneCall("UaMakeCall").withParameter("dest", "88002");
+    HandleClientMessage(buf1, (char *)"192.168.10.62", 5060);
+
+    mock().expectOneCall("UaMakeCall").withParameter("dest", "88002");
+    HandleClientMessage(buf2, (char *)"192.168.10.62", 5060);
+}

@@ -85,7 +85,7 @@ TEST(CallEventTestGroup, SecondUserAgentClientMessageSendTest)
 TEST(CallEventTestGroup, ParseClientMessage)
 {
     char message[] = "ua=1;event=CALL_INCOMING\r\n";
-    struct ClientEvent event;
+    struct ClientMessage event;
     
     ParseClientMessage(message, &event);
     CHECK_EQUAL(1, event.ua);
@@ -95,7 +95,7 @@ TEST(CallEventTestGroup, ParseClientMessage)
 TEST(CallEventTestGroup, ParseAnotherClientMessage)
 {
     char message[] = "ua=2;event=CALL_ESTABLISHED\r\n";
-    struct ClientEvent event;
+    struct ClientMessage event;
     
     ParseClientMessage(message, &event);
     CHECK_EQUAL(2, event.ua);
@@ -106,10 +106,35 @@ TEST(CallEventTestGroup, ParseAnotherClientMessage)
 TEST(CallEventTestGroup, ParseCallCommandMessage)
 {
     char message[] = "ua=3;event=ACCEPT_CALL\r\n";
-    struct ClientEvent event;
+    struct ClientMessage event;
     
     ParseClientMessage(message, &event);
 
     CHECK_EQUAL(3, event.ua);
     CHECK_EQUAL(ACCEPT_CALL, event.event);
+}
+
+TEST(CallEventTestGroup, MakeCallMessageTest)
+{
+    char message[] = "ua=4;event=MAKE_CALL;data=88002\r\n";
+    struct ClientMessage event;
+
+    ParseClientMessage(message, &event);
+    
+    CHECK_EQUAL(4, event.ua);
+    CHECK_EQUAL(MAKE_CALL, event.event);
+    STRCMP_EQUAL("88002", event.data);
+}
+
+TEST(CallEventTestGroup, LongDataMessageTest)
+{
+    char message[] = "ua=4;event=MAKE_CALL;data=0123456789012345678901234567890123456789012345678901234567890123456789\r\n";
+    struct ClientMessage event;
+
+    ParseClientMessage(message, &event);
+    
+    CHECK_EQUAL(4, event.ua);
+    CHECK_EQUAL(MAKE_CALL, event.event);
+    STRCMP_EQUAL("012345678901234567890123456789012345678901234567890123456789012", event.data);
+
 }

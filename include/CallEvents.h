@@ -8,16 +8,18 @@ enum CALL_EVENT {
     CALL_PEER_CANCELED,
     
     ACCEPT_CALL,
-    CLIENT_RINGING,
+    MAKE_CALL,
+    RINGING,
 };
 
-struct ClientEvent {
+struct ClientMessage {
     int ua;
     int event;
+    char data[64];
 };
 struct UserAgent;
 
 void BuildClientMessage(char *msg, int ua, enum CALL_EVENT event);
-void ParseClientMessage(char *msg, struct ClientEvent *event);
+void ParseClientMessage(char *msg, struct ClientMessage *event);
 
 extern void (*NotifyCm)(int event, struct UserAgent *ua);
