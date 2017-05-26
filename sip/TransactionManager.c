@@ -153,7 +153,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
 
     if (t) {
         AddResponse(t, message);
-        RunFsm(t, MapStatusCodeToEvent(statusCode));
+        RunFsmByStatusCode(t, statusCode);
         return TRUE;
     }
 
@@ -265,6 +265,11 @@ struct Transaction *AddTransactionImpl(MESSAGE *message, struct TransactionUser 
     
     return t;
 
+}
+
+void RunFsmByStatusCode(struct Transaction *t, int statusCode)
+{
+    RunFsm(t, MapStatusCodeToEvent(statusCode)); 
 }
 
 struct Transaction *(*AddTransaction)(MESSAGE *message, struct TransactionUser *user, int type) = AddTransactionImpl;

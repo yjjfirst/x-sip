@@ -237,11 +237,14 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)
     }
 }
 
-IGNORE_TEST(ClientInviteTransactionTestGroup, ProceedingState5xxReceiveTest)
+TEST(ClientInviteTransactionTestGroup, ProceedingState5xxReceiveTest)
 {
-    //PrepareProceedingState();
-    //RunFsm(t, (enum TransactionEvent)MapStatusCodeToEvent(503));    
+    PrepareProceedingState();
+    RunFsmByStatusCode(t, 503);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
+
 //Completed state
 TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
 {

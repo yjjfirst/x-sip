@@ -18,5 +18,6 @@ void RemoveTransaction(struct Transaction *t);
 void RemoveTransactionById(struct TransactionId *id);
 struct Transaction *MatchResponse(struct Message *message);
 struct Transaction *MatchRequest(struct Message *message);
+void RunFsmByStatusCode(struct Transaction *t, int statusCode);
 
 void DumpTransactionManager();
