@@ -6,6 +6,10 @@ else
 CPPFLAGS += -include stdlib.h
 endif
 
+ifeq ($(strip $(LOG)), yes)
+CPPFLAGS += -DBUILD_LOG
+endif
+
 .PYONY: all clean
 
 SRCS = $(wildcard ./*.c)
@@ -19,7 +23,7 @@ libsip.a: ../utils/libutils.a sip.a
 
 sip.a: $(OBJS)
 	ar rcs $@ $^
-all:libsip.a
+all: libsip.a
 
 clean:
 	-@rm -f *.d

@@ -2,6 +2,7 @@
 #include <assert.h>
 
 #include "Bool.h"
+#include "Log.h"
 #include "Transaction.h"
 #include "TransactionId.h"
 #include "TransactionManager.h"
@@ -683,6 +684,7 @@ struct IntStringMap TransactionEventStringMap[] = {
     INT_STRING_MAP(TRANSACTION_EVENT_MOVED_TEMPORARILY),
     INT_STRING_MAP(TRANSACTION_EVENT_INVITE),
     INT_STRING_MAP(TRANSACTION_EVENT_BYE),
+    INT_STRING_MAP(TRANSACTION_EVENT_SERVICE_UNAVAIL),
     
     INT_STRING_MAP(TRANSACTION_SEND_RINGING),
     INT_STRING_MAP(TRANSACTION_SEND_TRYING),
@@ -714,13 +716,17 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     assert(t != NULL);
     struct FsmStateEventEntry *entry = NULL;
     
+    LOG("Transaction Event: State %s, event %s\n",
+           TransactionState2String(GetTransactionState(t)),
+           TransactionEvent2String(event));
+
     if ((entry = LocateEventEntry(t, event)) != NULL) {
         TransactionHandleEvent(t, event, entry);            
         RemoveTerminatedTransaction(t);
         return;
     } 
 
-    printf("Transaction Event Handle Error: State %s, event %s\n",
+    LOG("Transaction Event Handle Error: State %s, event %s\n",
            TransactionState2String(GetTransactionState(t)),
            TransactionEvent2String(event));
     assert (0);
