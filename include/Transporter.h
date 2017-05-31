@@ -20,7 +20,7 @@ struct MessageTransporter {
 };
 
 int ReceiveMessage();
-int  SendMessage(struct Message *message);
+extern int (*SendMessage)(struct Message *message);
 int InitTransporter(int port);
 struct MessageTransporter *SetTransporter(struct MessageTransporter *t);
 

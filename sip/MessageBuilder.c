@@ -328,11 +328,11 @@ struct Header *BuildResponseCSeqHeader(MESSAGE *request)
 
 struct Header *BuildResponseContactHeader(MESSAGE *request)
 {
-    char *to;
+    char *from;
     CONTACT_HEADER *c = CreateContactHeader();
 
-    GetToUser(request, &to);
-    URI *uri = CreateUri(URI_SCHEME_SIP, to, GetLocalIpAddr(), LOCAL_PORT);
+    GetFromUser(request, &from);
+    URI *uri = CreateUri(URI_SCHEME_SIP, from, GetLocalIpAddr(), LOCAL_PORT);
 
     ContactHeaderSetUri(c, uri);
 
@@ -385,10 +385,11 @@ MESSAGE *BuildResponse(MESSAGE *request, int statusCode)
     return response;    
 }
 
-MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite)
+MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite, char *ipaddr, int port)
 {
     assert(invite != NULL);
-
+    assert(ipaddr != NULL);
+    
     MESSAGE *ack = CreateMessage();
     struct RequestLine *rl = RequestLineDup(MessageGetRequestLine(invite));
     
@@ -400,5 +401,8 @@ MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite)
     struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
     CSeqHeaderSetMethod(cseq, SIP_METHOD_NAME_ACK);
 
+    SetMessageAddr(ack, ipaddr);
+    SetMessagePort(ack, port);
+    
     return ack;
 }

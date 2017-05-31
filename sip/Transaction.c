@@ -280,7 +280,11 @@ int ResponseWith100Trying(struct Transaction *t)
 
 int SendAckRequest(struct Transaction *t)
 {
-    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request);
+
+    char *ipaddr = GetMessageAddr(t->request);
+    int port = GetMessagePort(t->request);
+
+    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request, ipaddr, port);
 
     AddResponse(t, ack);
     return SendTransactionMessage(t, ack);
@@ -484,7 +488,7 @@ struct FsmState ClientInviteProceedingState = {
         {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_TRYING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
-        {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED},
+        {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_MAX},
     }
 };
@@ -494,6 +498,7 @@ struct FsmState ClientInviteCompletedState = {
     {
         {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX},
     }
@@ -726,8 +731,5 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
-    LOG("Transaction Event Handle Error: State %s, event %s\n",
-           TransactionState2String(GetTransactionState(t)),
-           TransactionEvent2String(event));
     assert (0);
 }

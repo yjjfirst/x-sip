@@ -57,6 +57,12 @@ void OnEventMock(struct Dialog *dialog, int event, MESSAGE *message)
     mock().actualCall("NotifyUser");
 }
 
+static int SendMessageMock(MESSAGE *msg)
+{
+    mock().actualCall("SendMessage");
+    return 0;
+}
+
 TEST_GROUP(ClientInviteTransactionTestGroup)
 {
     struct UserAgent *ua;
@@ -240,12 +246,31 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)
 TEST(ClientInviteTransactionTestGroup, ProceedingState5xxReceiveTest)
 {
     PrepareProceedingState();
+    
+    UT_PTR_SET(SendMessage, SendMessageMock);    
+    mock().expectOneCall("SendMessage");
     RunFsmByStatusCode(t, 503);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
 
+
 //Completed state
+TEST(ClientInviteTransactionTestGroup, CompletedState5xxReceiveTest)
+{
+    PrepareProceedingState();
+    
+    UT_PTR_SET(SendMessage, SendMessageMock);
+    mock().expectOneCall("SendMessage");
+    RunFsmByStatusCode(t, 503);
+
+    mock().expectOneCall("SendMessage");
+    RunFsmByStatusCode(t, 503);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
+}
+
+
 TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
 {
     PrepareCompletedState();

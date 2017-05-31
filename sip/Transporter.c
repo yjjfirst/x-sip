@@ -27,7 +27,7 @@ int ReceiveMessage()
     return SipTransporter->callback(received,"192.168.10.62", 5060);
 }
 
-int SendMessage(MESSAGE *message)
+int SendMessageImpl(MESSAGE *message)
 {
     if (SipTransporter->send == NULL) return -1;
 
@@ -39,6 +39,7 @@ int SendMessage(MESSAGE *message)
                                 GetMessagePort(message),
                                 SipTransporter->fd);
 }
+int (*SendMessage)(MESSAGE *message) = SendMessageImpl;
 
 int InitTransporter(int port)
 {

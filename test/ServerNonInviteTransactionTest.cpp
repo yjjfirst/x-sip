@@ -125,7 +125,7 @@ TEST(ServerNonInviteTransactionTestGroup, AckReqestMatchedTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     transaction = AddTransaction(invite, NULL, TRANSACTION_TYPE_SERVER_INVITE);
     
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(invite);
+    MESSAGE *ack = BuildAckMessageWithinClientTransaction(invite, (char *)"", 0);
 
     CHECK_TRUE(RequestTransactionMatched(transaction, ack));
 
