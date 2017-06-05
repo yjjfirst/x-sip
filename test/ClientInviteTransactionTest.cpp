@@ -60,7 +60,28 @@ void OnEventMock(struct Dialog *dialog, int event, MESSAGE *message)
 static int SendMessageMock(MESSAGE *msg)
 {
     mock().actualCall("SendMessage");
+
+    MESSAGE *ack = CreateMessage();
+    ParseMessage(UNAUTHORIZED_MESSAGE, ack); 
+
+    STRCMP_EQUAL(MessageGetToTag(ack), MessageGetToTag(msg));
+
+    DestroyMessage(&ack);
     return 0;
+}
+
+static MESSAGE *mock_message;
+MESSAGE *GetLatestResponseMock(struct Transaction *t)
+{
+    mock_message = CreateMessage();
+
+    ParseMessage(UNAUTHORIZED_MESSAGE, mock_message); 
+    return mock_message;
+}
+
+static struct Session *CreateSessionMock()
+{
+    return NULL;
 }
 
 TEST_GROUP(ClientInviteTransactionTestGroup)
@@ -129,11 +150,6 @@ TEST(ClientInviteTransactionTestGroup, GetTransactionTest)
 TEST(ClientInviteTransactionTestGroup, CreateInviteTransaction)
 { 
     CHECK_EQUAL(TRANSACTION_STATE_CALLING, GetTransactionState(t));
-}
-
-static struct Session *CreateSessionMock()
-{
-    return NULL;
 }
 
 //Calling state tests.
@@ -247,11 +263,14 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState5xxReceiveTest)
 {
     PrepareProceedingState();
     
-    UT_PTR_SET(SendMessage, SendMessageMock);    
+    UT_PTR_SET(SendMessage, SendMessageMock);
+    UT_PTR_SET(GetLatestResponse, GetLatestResponseMock);
+    
     mock().expectOneCall("SendMessage");
     RunFsmByStatusCode(t, 503);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
+    DestroyMessage(&mock_message);
 }
 
 
@@ -261,11 +280,15 @@ TEST(ClientInviteTransactionTestGroup, CompletedState5xxReceiveTest)
     PrepareProceedingState();
     
     UT_PTR_SET(SendMessage, SendMessageMock);
-    mock().expectOneCall("SendMessage");
-    RunFsmByStatusCode(t, 503);
+    UT_PTR_SET(GetLatestResponse, GetLatestResponseMock);
 
     mock().expectOneCall("SendMessage");
     RunFsmByStatusCode(t, 503);
+    DestroyMessage(&mock_message);
+    
+    mock().expectOneCall("SendMessage");
+    RunFsmByStatusCode(t, 503);
+    DestroyMessage(&mock_message);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }

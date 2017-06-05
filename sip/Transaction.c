@@ -82,11 +82,12 @@ struct TransactionId *GetTransactionId(struct Transaction *t)
     return t->id;
 }
 
-MESSAGE *GetLatestResponse(struct Transaction *t)
+MESSAGE *GetLatestResponseImpl(struct Transaction *t)
 {
     int length = get_list_len(t->responses);
     return get_data_at(t->responses, length - 1);
 }
+MESSAGE *(*GetLatestResponse)(struct Transaction *t) = GetLatestResponseImpl;
 
 void WaitForResponseTimerCallBack(void *t)
 {
@@ -283,8 +284,14 @@ int SendAckRequest(struct Transaction *t)
 
     char *ipaddr = GetMessageAddr(t->request);
     int port = GetMessagePort(t->request);
-
-    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request, ipaddr, port);
+    MESSAGE *last_response = GetLatestResponse(t);
+    char *tag = NULL;
+    
+    if (last_response != NULL) {
+        tag = MessageGetToTag(last_response);
+    }
+    
+    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request, ipaddr, port, tag);
 
     AddResponse(t, ack);
     return SendTransactionMessage(t, ack);

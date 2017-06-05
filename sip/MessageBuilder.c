@@ -385,7 +385,7 @@ MESSAGE *BuildResponse(MESSAGE *request, int statusCode)
     return response;    
 }
 
-MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite, char *ipaddr, int port)
+MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite, char *ipaddr, int port, char *to_tag)
 {
     assert(invite != NULL);
     assert(ipaddr != NULL);
@@ -397,7 +397,12 @@ MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite, char *ipaddr, i
     RequestLineSetMethod(rl, SIP_METHOD_NAME_ACK);
     SetMessageRequestLine(ack, rl);
     AddResponseHeaders(ack, invite);
-    
+
+    if (to_tag != NULL) {
+        struct ContactHeader *to = (struct ContactHeader *)MessageGetHeader(HEADER_NAME_TO,ack);
+        ContactHeaderSetParameter(to, "tag", to_tag);
+    }
+
     struct CSeqHeader *cseq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
     CSeqHeaderSetMethod(cseq, SIP_METHOD_NAME_ACK);
 
