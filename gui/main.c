@@ -125,7 +125,7 @@ gboolean sock_callback(GIOChannel *source, GIOCondition condition, gpointer data
     gsize length;
     
     g_io_channel_read_line(source, &buf, &length, NULL, NULL);
-    printf("%s\n", buf);
+
     ParseClientMessage(buf, &CurrEvent);
     if (CurrEvent.event == CALL_INCOMING)
         send_ringing();

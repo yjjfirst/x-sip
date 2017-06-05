@@ -161,7 +161,7 @@ void DialogAck(struct Dialog *dialog)
     DestroyMessage(&ack);
 }
 
-void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
+void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
 {
     struct DialogId *dialogid = GetDialogId(dialog);
 
@@ -177,7 +177,7 @@ void InviteDialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     dialog->session = CreateSession();
 }
 
-void InviteDialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
+void DialogReceiveRinging(struct Dialog *dialog, MESSAGE *message)
 {
     if (NotifyCm != NULL)
         NotifyCm(CALL_REMOTE_RINGING, DialogGetUa(dialog));
@@ -207,9 +207,9 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
     if (event == TRANSACTION_EVENT_OK) {
-        InviteDialogReceiveOk(dialog, message);
+        DialogReceiveOk(dialog, message);
     } else if (event == TRANSACTION_EVENT_RINGING) {
-        InviteDialogReceiveRinging(dialog, message);
+        DialogReceiveRinging(dialog, message);
     }
 }
 
@@ -229,8 +229,9 @@ void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *messag
             Response(t,TRANSACTION_SEND_OK);
         }
     } else {
-        if (method == SIP_METHOD_BYE)
+        if (method == SIP_METHOD_BYE) {
             DialogReceiveBye(matched, message);
+        }
         else if (method == SIP_METHOD_CANCEL)
             DialogReceiveCancel(matched, message);;
     }

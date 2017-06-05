@@ -126,7 +126,7 @@ TEST(UACDialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 
     MESSAGE *ok = CreateMessage();
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
-    InviteDialogReceiveOk(dialog, ok);
+    DialogReceiveOk(dialog, ok);
 
     DestroyMessage(&invite);
     DestroyMessage(&ok);
