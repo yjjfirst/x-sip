@@ -385,7 +385,7 @@ MESSAGE *BuildResponse(MESSAGE *request, int statusCode)
     return response;    
 }
 
-MESSAGE *BuildAckMessageWithinClientTransaction(MESSAGE *invite, char *ipaddr, int port, char *to_tag)
+MESSAGE *BuildAckMessageWithTag(MESSAGE *invite, char *ipaddr, int port, char *to_tag)
 {
     assert(invite != NULL);
     assert(ipaddr != NULL);

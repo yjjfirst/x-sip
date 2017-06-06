@@ -292,7 +292,7 @@ int SendAckRequest(struct Transaction *t)
         tag = MessageGetToTag(last_response);
     }
     
-    MESSAGE *ack=BuildAckMessageWithinClientTransaction(t->request, ipaddr, port, tag);
+    MESSAGE *ack=BuildAckMessageWithTag(t->request, ipaddr, port, tag);
 
     AddResponse(t, ack);
     return SendTransactionMessage(t, ack);

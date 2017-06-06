@@ -48,7 +48,7 @@ TEST_GROUP(AckMessageBuildTestGroup)
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port,(char *) "");
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port,(char *) "");
     
     STRCMP_EQUAL(MessageGetCallId(inviteMessage), MessageGetCallId(ack));    
 
@@ -57,7 +57,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionCallIdTest)
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionRequestUriTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
     struct RequestLine *rl = MessageGetRequestLine(ack);
 
     STRCMP_EQUAL("ACK", RequestLineGetMethodName(rl));
@@ -68,7 +68,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionRequestUriT
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHeaderTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
 
     CHECK_TRUE(ContactHeaderMatched((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM,inviteMessage), 
                                     (CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_FROM,ack)));
@@ -78,7 +78,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithinClientTransactionFromHeaderT
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"123456");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"123456");    
     CONTACT_HEADER *toHeaderOfAck = 
         ContactHeaderDup((CONTACT_HEADER *)MessageGetHeader(HEADER_NAME_TO, ack));
 
@@ -90,7 +90,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionToHeaderTest)
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
 
     CHECK_TRUE(ViaHeaderMatched((VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, inviteMessage),
                                 (VIA_HEADER *)MessageGetHeader(HEADER_NAME_VIA, ack)));
@@ -100,7 +100,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionViaHeaderTest
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
 
     struct CSeqHeader *seq = (struct CSeqHeader *)MessageGetHeader(HEADER_NAME_CSEQ, ack);
     STRCMP_EQUAL(SIP_METHOD_NAME_ACK, CSeqHeaderGetMethod(seq));
@@ -110,7 +110,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionCseqHeaderTes
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionDestAddrTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
 
     STRCMP_EQUAL((char *)"192.168.10.62", GetMessageAddr(ack));
     
@@ -119,7 +119,7 @@ TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionDestAddrTest)
 
 TEST(AckMessageBuildTestGroup, BuildAckRequestWithClientTransactionDestPortTest)
 {
-    MESSAGE *ack = BuildAckMessageWithinClientTransaction(inviteMessage, proxy, port, (char *)"");    
+    MESSAGE *ack = BuildAckMessageWithTag(inviteMessage, proxy, port, (char *)"");    
 
     CHECK_EQUAL(port, GetMessagePort(ack));
     
