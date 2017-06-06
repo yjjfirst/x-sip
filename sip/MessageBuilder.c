@@ -201,7 +201,7 @@ MESSAGE *BuildAckMessage(struct Message *invite, char *ipaddr, int port)
         MessageSetFromTag(ack, MessageGetFromTag(invite));
         MessageSetCallId(ack, MessageGetCallId(invite));
     }
-    
+
     return ack;
 }
 

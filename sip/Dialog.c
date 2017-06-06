@@ -153,11 +153,12 @@ void ExtractRemoteTarget(struct Dialog *dialog, MESSAGE *message)
 void DialogAck(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUa(dialog);
-    
-    MESSAGE *ack = BuildAckMessage(NULL, UaGetProxy(ua), UaGetProxyPort(ua));
 
-    MessageSetToTag(ack, DialogGetRemoteTag(dialog));
+    MESSAGE *ack = BuildAckMessage(GetTransactionRequest(dialog->transaction), UaGetProxy(ua), UaGetProxyPort(ua));
+
+    MessageSetToTag(ack, DialogGetRemoteTag(dialog));    
     SendMessage(ack);
+
     DestroyMessage(&ack);
 }
 
@@ -168,7 +169,7 @@ void DialogReceiveOk(struct Dialog *dialog, MESSAGE *message)
     ExtractDialogId(dialogid, message);                    
     ExtractRemoteTarget(dialog, message);
     SetDialogState(dialog, DIALOG_STATE_CONFIRMED);
-    
+
     DialogAck(dialog);
 
     if (NotifyCm != NULL)
@@ -290,7 +291,7 @@ struct Transaction *DialogNewTransaction(struct Dialog *dialog, MESSAGE *message
     struct DialogId *id = GetDialogId(dialog);
     struct Transaction *t = AddTransaction(message, (struct TransactionUser *)dialog, type);
     dialog->transaction = t;
-
+    
     if (type == TRANSACTION_TYPE_CLIENT_INVITE) {
         SetLocalTag(id, MessageGetFromTag(message));
         SetCallId(id, MessageGetCallId(message));

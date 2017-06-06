@@ -69,6 +69,15 @@ struct Transaction *AddTransactionMock(MESSAGE *message, struct TransactionUser 
     return NULL;
 }
 
+MESSAGE *invite_message;
+MESSAGE *GetTransactionRequestMock(struct Transaction *t)
+{
+    invite_message = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite_message);
+
+    return invite_message;
+}
+
 TEST_GROUP(UACDialogTestGroup)
 {
     struct UserAgent *ua;
@@ -116,7 +125,8 @@ TEST(UACDialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 {
     UT_PTR_SET(AddTransaction, AddTransactionMock);
     UT_PTR_SET(SipTransporter, &MockTransporterForAck);
-
+    UT_PTR_SET(GetTransactionRequest, GetTransactionRequestMock);
+    
     mock().expectOneCall("AddTransaction").withParameter("message", invite).
         withParameter("type", TRANSACTION_TYPE_CLIENT_INVITE);
 
@@ -126,9 +136,11 @@ TEST(UACDialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
 
     MESSAGE *ok = CreateMessage();
     ParseMessage(OK_MESSAGE_RECEIVED, ok);
+
     DialogReceiveOk(dialog, ok);
 
     DestroyMessage(&invite);
+    DestroyMessage(&invite_message);
     DestroyMessage(&ok);
 }
 

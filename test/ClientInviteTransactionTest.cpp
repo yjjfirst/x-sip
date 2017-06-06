@@ -239,13 +239,13 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState3xxReceiveTest)
 
 TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 {
+    UT_PTR_SET(OnTransactionEvent, OnEventMock);
     PrepareProceedingState();
 
-    mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(OK_MESSAGE_RECEIVED);
+    mock().expectOneCall("NotifyUser");
+    RunFsmByStatusCode(t, 200);
 
-    ReceiveMessage();    
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
- 
 }
 
 TEST(ClientInviteTransactionTestGroup, ProceedingState1xxReceiveTest)

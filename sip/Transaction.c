@@ -227,11 +227,12 @@ BOOL RequestTransactionMatched(struct Transaction *t, MESSAGE *request)
         && RequestMethodMatched(t, request);
 }
 
-MESSAGE *GetTransactionRequest(struct Transaction *t)
+MESSAGE *GetTransactionRequestImpl(struct Transaction *t)
 {
     assert (t != NULL);
     return t->request;
 }
+struct Message *(*GetTransactionRequest)(struct Transaction *t) = GetTransactionRequestImpl;
 
 enum TransactionType GetTransactionType(struct Transaction *t)
 {
@@ -492,7 +493,7 @@ struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
         {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED},
+        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{NotifyUser}},
         {TRANSACTION_EVENT_TRYING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
         {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},

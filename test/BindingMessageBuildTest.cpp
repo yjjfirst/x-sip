@@ -43,7 +43,7 @@ TEST_GROUP(BindingMessageBuildTestGroup)
     }
 };
 
-TEST(BindingMessageBuildTestGroup, MessageTypeTest)
+TEST(BindingMessageBuildTestGroup, NoneMessageTypeTest)
 {
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(m));
 
@@ -51,9 +51,17 @@ TEST(BindingMessageBuildTestGroup, MessageTypeTest)
     CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
 
-    tmpMessage = BuildAckMessage(NULL, (char *)"192.168.10.62", 5060);
+}
+
+TEST(BindingMessageBuildTestGroup, AckMessageTypeTest)
+{
+    MESSAGE *invite = CreateMessage();
+    ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
+    
+    MESSAGE *tmpMessage = BuildAckMessage(invite, (char *)"192.168.10.62", 5060);
     CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
     DestroyMessage(&tmpMessage);
+    DestroyMessage(&invite);
 }
 
 TEST(BindingMessageBuildTestGroup, RequestLineTest)

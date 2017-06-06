@@ -73,7 +73,7 @@ void Receive3xxResponse(struct Transaction *t);
 void ReceiveDupRequest(struct Transaction *t, struct Message *message);
 
 struct TransactionId *GetTransactionId(struct Transaction *t);
-struct Message * GetTransactionRequest(struct Transaction *t);
+extern struct Message *(*GetTransactionRequest)(struct Transaction *t);
 extern struct Message *(*GetLatestResponse)(struct Transaction *t);
 void AddResponse(struct Transaction *t, struct Message *message);
 enum TransactionEvent GetCurrentEvent(struct Transaction *t);
