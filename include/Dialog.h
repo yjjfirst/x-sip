@@ -15,10 +15,10 @@ enum DIALOG_STATE {
 };
 
 
-struct URI *DialogSetRemoteUri(struct Dialog *dialog, char *to);
+struct URI *DialogSetRemoteUri(struct Dialog *dialog, char *dest);
 struct URI *DialogGetRemoteUri(struct Dialog *dialog);
 struct URI *DialogGetRemoteTarget(struct Dialog *dialog);
-struct Message *DialogBuildInvite(struct Dialog *dialog, char *to);
+struct Message *DialogBuildInvite(struct Dialog *dialog, char *dest);
 
 
 char *DialogGetRemoteTag(struct Dialog *dialog);

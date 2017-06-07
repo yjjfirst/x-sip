@@ -223,9 +223,9 @@ TEST(ClientInviteTransactionTestGroup, CallingStateTimerBTest)
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
 }
 
-TEST(ClientInviteTransactionTestGroup, CallingState3xxReceiveTest)
+IGNORE_TEST(ClientInviteTransactionTestGroup, CallingState300_699ReceiveTest)
 {
-    PrepareCompletedState();
+    RunFsmByStatusCode(t, 300);
 }
 
 //Proceeding state.

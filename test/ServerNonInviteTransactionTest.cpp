@@ -241,12 +241,12 @@ TEST(ServerNonInviteTransactionTestGroup, ProceedingState200OKSentTest)
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(transaction));
 }
 
+//Completed state test
 void PrepareCompletedState(struct Transaction *transaction)
 {
     Response(transaction, TRANSACTION_SEND_RINGING);
     Response(transaction, TRANSACTION_SEND_OK);
 }
-//Completed state test
 TEST(ServerNonInviteTransactionTestGroup, CompletedStateRequestReceivedTest)
 {
     MESSAGE *dupRequest = CreateMessage();

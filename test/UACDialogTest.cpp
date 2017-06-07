@@ -121,7 +121,7 @@ TEST(UACDialogTestGroup, SetLocalTagTest)
     DestroyMessage(&invite);
 }
 
-TEST(UACDialogTestGroup, AckRequestSendAfterInviteSuccessedTest)
+TEST(UACDialogTestGroup, AckSendAfterInviteSuccessedTest)
 {
     UT_PTR_SET(AddTransaction, AddTransactionMock);
     UT_PTR_SET(SipTransporter, &MockTransporterForAck);

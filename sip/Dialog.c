@@ -154,7 +154,9 @@ void DialogAck(struct Dialog *dialog)
 {
     struct UserAgent *ua = DialogGetUa(dialog);
 
-    MESSAGE *ack = BuildAckMessage(GetTransactionRequest(dialog->transaction), UaGetProxy(ua), UaGetProxyPort(ua));
+    MESSAGE *ack = BuildAckMessage(GetTransactionRequest(dialog->transaction),
+                                   UaGetProxy(ua),
+                                   UaGetProxyPort(ua));
 
     MessageSetToTag(ack, DialogGetRemoteTag(dialog));    
     SendMessage(ack);
@@ -255,12 +257,11 @@ struct TransactionEventAction TransactionEventActions[] = {
     {-1, -1, 0},
 };
 
-void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
+SIP_METHOD GetTransactionRequestMethod(struct Dialog *dialog, MESSAGE *message)
 {
     struct Transaction *t;
     SIP_METHOD method;
     SIP_METHOD requestMethod;
-    struct TransactionEventAction *action;
 
     method = MessageGetMethod(message);
     if (dialog == NULL) {
@@ -273,6 +274,14 @@ void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
             requestMethod = SIP_METHOD_CANCEL;
         }
     }
+
+    return requestMethod;
+}
+
+void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
+{
+    struct TransactionEventAction *action;
+    SIP_METHOD requestMethod = GetTransactionRequestMethod(dialog, message);
 
     action = TransactionEventActions;    
     for (; action->requestMethod != -1; action ++)
@@ -370,16 +379,16 @@ void DialogRingingImpl(struct Dialog *dialog)
 }
 void (*DialogRinging)(struct Dialog *dialog) = DialogRingingImpl;
 
-struct Message *DialogBuildInvite(struct Dialog *dialog, char *to)
+struct Message *DialogBuildInvite(struct Dialog *dialog, char *dest)
 {
     struct UserAgent *ua = DialogGetUa(dialog);    
     struct Message *invite = BuildInviteMessage(
         UaGetUsername(ua),
-        to,
+        dest,
         UaGetProxy(ua),
         UaGetProxyPort(ua));    
 
-    DialogSetRemoteUri(dialog, to);
+    DialogSetRemoteUri(dialog, dest);
 
     return invite;
 }

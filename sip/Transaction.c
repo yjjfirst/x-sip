@@ -252,7 +252,11 @@ struct TransactionUser *GetTransactionUser(struct Transaction *t)
 int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event)
 {
     AddResponse(t, message);
-    if (SendTransactionMessage(t, message) < 0) return -1;    
+
+    if (SendTransactionMessage(t, message) < 0) {
+        return -1;
+    }
+
     RunFsm(t, event);
 
     return 0;

@@ -121,9 +121,9 @@ struct StatusCodeEventMap {
     int statusCode;
     enum TransactionEvent event;
 } StatusCodeEventMap[] = {
-    {200, TRANSACTION_EVENT_OK},
     {100, TRANSACTION_EVENT_TRYING},
     {180, TRANSACTION_EVENT_RINGING},
+    {200, TRANSACTION_EVENT_OK},
     {401, TRANSACTION_EVENT_UNAUTHORIZED},
     {503, TRANSACTION_EVENT_SERVICE_UNAVAIL},
     {0, 0},
@@ -138,7 +138,7 @@ enum TransactionEvent MapStatusCodeToEvent(int statusCode)
         }
     }
 
-    return -1;
+    return statusCode;
 }
 
 BOOL TmHandleReponseMessage(MESSAGE *message)
@@ -166,7 +166,7 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
     SIP_METHOD method = MessageGetMethod(message);
     
     if (!t) {
-            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
     } else {
         if (method == SIP_METHOD_INVITE) {
             RunFsm(t, TRANSACTION_EVENT_INVITE);
