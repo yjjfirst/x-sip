@@ -109,7 +109,7 @@ void WaitForRequestRetransmitTimerCallback(void *t)
     RunFsm(t, TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED);
 }
 
-int ResetRetransmitTimer(struct Transaction *t)
+int ResetRetransmits(struct Transaction *t)
 {
     t->retransmits = 0;
     return 0;
@@ -418,7 +418,7 @@ struct FsmState ClientNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
         {TRANSACTION_EVENT_OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
-        {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING, {ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING, {ResetRetransmits}},
         {TRANSACTION_EVENT_UNAUTHORIZED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
@@ -480,7 +480,7 @@ struct FsmState ClientInviteCallingState = {
     TRANSACTION_STATE_CALLING,
     {
         {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{NotifyUser,}},
-        {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING,{ResetRetransmitTimer}},
+        {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING,{ResetRetransmits}},
         {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
                 SendRequestMessage,
