@@ -79,6 +79,8 @@ void AddResponse(struct Transaction *t, struct Message *message);
 enum TransactionEvent GetCurrentEvent(struct Transaction *t);
 
 void RunFsm(struct Transaction *t, enum TransactionEvent event);
+void RunFsmByStatusCode(struct Transaction *t, int statusCode);
+
 void SetTransactionObserver(struct Transaction *t, struct TransactionManager *manager);
 enum TransactionState GetTransactionState(struct Transaction *t);
 void SetTransactionState(struct Transaction *t, enum TransactionState state);

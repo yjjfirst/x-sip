@@ -117,30 +117,6 @@ struct Transaction *MatchResponse(MESSAGE *message)
     return GetTransaction(branch, method);
 }
 
-struct StatusCodeEventMap {
-    int statusCode;
-    enum TransactionEvent event;
-} StatusCodeEventMap[] = {
-    {100, TRANSACTION_EVENT_TRYING},
-    {180, TRANSACTION_EVENT_RINGING},
-    {200, TRANSACTION_EVENT_OK},
-    {401, TRANSACTION_EVENT_UNAUTHORIZED},
-    {503, TRANSACTION_EVENT_SERVICE_UNAVAIL},
-    {0, 0},
-};
-
-enum TransactionEvent MapStatusCodeToEvent(int statusCode)
-{
-    int i = 0;
-    for (; StatusCodeEventMap[i].statusCode != 0; i++) {
-        if (StatusCodeEventMap[i].statusCode == statusCode) {
-            return StatusCodeEventMap[i].event;
-        }
-    }
-
-    return statusCode;
-}
-
 BOOL TmHandleReponseMessage(MESSAGE *message)
 {
     struct StatusLine *status = NULL;
@@ -265,11 +241,6 @@ struct Transaction *AddTransactionImpl(MESSAGE *message, struct TransactionUser 
     
     return t;
 
-}
-
-void RunFsmByStatusCode(struct Transaction *t, int statusCode)
-{
-    RunFsm(t, MapStatusCodeToEvent(statusCode)); 
 }
 
 struct Transaction *(*AddTransaction)(MESSAGE *message, struct TransactionUser *user, int type) = AddTransactionImpl;

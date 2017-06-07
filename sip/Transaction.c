@@ -743,5 +743,40 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
         return;
     } 
 
+    printf("Transaction Event: State %s, event %s\n",
+           TransactionState2String(GetTransactionState(t)),
+           TransactionEvent2String(event));
+
+
     assert (0);
+}
+
+struct StatusCodeEventMap {
+    int start;
+    int end;
+    enum TransactionEvent event;
+} StatusCodeEventMap[] = {
+    {100, 0, TRANSACTION_EVENT_TRYING},
+    {180, 0, TRANSACTION_EVENT_RINGING},
+    {200, 0, TRANSACTION_EVENT_OK},
+    {401, 0, TRANSACTION_EVENT_UNAUTHORIZED},
+    {503, 0, TRANSACTION_EVENT_SERVICE_UNAVAIL},
+    {0, 0, 0},
+};
+
+enum TransactionEvent MapStatusCodeToEvent(int statusCode)
+{
+    int i = 0;
+    for (; StatusCodeEventMap[i].start != 0; i++) {
+        if (StatusCodeEventMap[i].start == statusCode) {
+            return StatusCodeEventMap[i].event;
+        }
+    }
+
+    return statusCode;
+}
+
+void RunFsmByStatusCode(struct Transaction *t, int statusCode)
+{
+    RunFsm(t, MapStatusCodeToEvent(statusCode)); 
 }
