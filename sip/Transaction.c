@@ -167,7 +167,7 @@ int AddServerNonInviteWaitRequestRetransmitTimer(struct Transaction *t)
     return 0;
 }
 
-int NotifyUser(struct Transaction *t)
+int InformTU(struct Transaction *t)
 {
     if (t && t->user) {
         OnTransactionEvent((struct Dialog *)t->user, t->curEvent, GetLatestResponse(t));
@@ -417,9 +417,9 @@ struct FsmState ClientNonInviteInitState = {
 struct FsmState ClientNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
+        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
         {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING, {ResetRetransmits}},
-        {TRANSACTION_EVENT_UNAUTHORIZED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, NotifyUser}},
+        {TRANSACTION_EVENT_UNAUTHORIZED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
@@ -479,9 +479,9 @@ struct FsmState ClientInviteInitState = {
 struct FsmState ClientInviteCallingState = {
     TRANSACTION_STATE_CALLING,
     {
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{NotifyUser,}},
+        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{InformTU}},
         {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING,{ResetRetransmits}},
-        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
+        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{InformTU}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -497,9 +497,9 @@ struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
         {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{NotifyUser}},
-        {TRANSACTION_EVENT_1XX, TRANSACTION_STATE_PROCEEDING, {NotifyUser}},
-        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{NotifyUser}},
+        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{InformTU}},
+        {TRANSACTION_EVENT_1XX, TRANSACTION_STATE_PROCEEDING, {InformTU}},
+        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{InformTU}},
         {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_MAX},
     }
