@@ -52,11 +52,6 @@ static struct Timer *AddTimerMock(void *p, int interval, TimerCallback action)
     return NULL;
 }
 
-void OnEventMock(struct Dialog *dialog, int event, MESSAGE *message)
-{    
-    mock().actualCall("NotifyUser");
-}
-
 static int SendMessageMock(MESSAGE *msg)
 {
     mock().actualCall("SendMessage");
@@ -189,13 +184,13 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReceive180Without100ReceivedT
     CHECK_EQUAL(TRANSACTION_STATE_PROCEEDING, GetTransactionState(t));
 }
 
-TEST(ClientInviteTransactionTestGroup, CallingStateReveive180NotifyUserTest)
+TEST(ClientInviteTransactionTestGroup, CallingStateReveive180Test)
 {
-    UT_PTR_SET(OnTransactionEvent, OnEventMock);
+    UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
-    mock().expectOneCall("NotifyUser");
+    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_RINGING);;
     
     ReceiveMessage();
     ReceiveMessage();    
@@ -239,10 +234,10 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState3xxReceiveTest)
 
 TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
 {
-    UT_PTR_SET(OnTransactionEvent, OnEventMock);
+    UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
     PrepareProceedingState();
 
-    mock().expectOneCall("NotifyUser");
+    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_OK);
     RunFsmByStatusCode(t, 200);
 
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
