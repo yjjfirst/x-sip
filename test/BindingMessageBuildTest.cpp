@@ -163,8 +163,8 @@ TEST(BindingMessageBuildTestGroup, RingingMessageStatusLineTest)
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
-    CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(180, GetStatusCode(sl));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(sl));
 
     DestroyMessage(&invite);
     DestroyMessage(&ringing);
@@ -178,8 +178,8 @@ TEST(BindingMessageBuildTestGroup, OKMessageStatusLineTest)
     
     struct StatusLine *sl = MessageGetStatusLine(ok);
 
-    CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(200, GetStatusCode(sl));
+    STRCMP_EQUAL("OK", GetReasonPhrase(sl));
 
     DestroyMessage(&invite);
     DestroyMessage(&ok);
@@ -210,8 +210,8 @@ TEST(BindingMessageBuildTestGroup, 301MessageStatueLineTest)
     
     struct StatusLine *sl = MessageGetStatusLine(moved);
 
-    CHECK_EQUAL(301, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(301, GetStatusCode(sl));
+    STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, GetReasonPhrase(sl));
 
     DestroyMessage(&invite);
     DestroyMessage(&moved);

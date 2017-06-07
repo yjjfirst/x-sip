@@ -291,5 +291,5 @@ TEST(ClientNonInviteTransactionTestGroup, GetLatestResponse)
 
     MESSAGE *latestResponse = GetLatestResponse(t);
     struct StatusLine *sl = MessageGetStatusLine(latestResponse);
-    CHECK_EQUAL(200,StatusLineGetStatusCode(sl));
+    CHECK_EQUAL(200,GetStatusCode(sl));
 }

@@ -14,9 +14,9 @@ TEST(StatusLineTestGroup, StatusLineParseTest)
     char string[] = "SIP/2.0 180 Ringing";
 
     ParseStatusLine(string, s);
-    STRCMP_EQUAL("SIP/2.0", StatusLineGetSipVersion(s));
-    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
+    STRCMP_EQUAL("SIP/2.0", GetSIPVersion(s));
+    CHECK_EQUAL(180, GetStatusCode(s));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(s));
 
     DestroyStatusLine(s);
 }
@@ -38,8 +38,8 @@ TEST(StatusLineTestGroup, StatusLine2StringTest)
 TEST(StatusLineTestGroup, Create100StatusLineTest)
 {
     struct StatusLine *s = CreateStatusLine(100, "Trying");
-    CHECK_EQUAL(100, StatusLineGetStatusCode(s));
-    STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(s));
+    CHECK_EQUAL(100, GetStatusCode(s));
+    STRCMP_EQUAL("Trying", GetReasonPhrase(s));
 
     DestroyStatusLine(s);
 }
@@ -47,8 +47,8 @@ TEST(StatusLineTestGroup, Create100StatusLineTest)
 TEST(StatusLineTestGroup, Create180StatusLineTest)
 {
     struct StatusLine *s = CreateStatusLine(180, "Ringing");
-    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
+    CHECK_EQUAL(180, GetStatusCode(s));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(s));
 
     DestroyStatusLine(s);
 }
@@ -56,8 +56,8 @@ TEST(StatusLineTestGroup, Create180StatusLineTest)
 TEST(StatusLineTestGroup, StatusLineCreateTest)
 {
     struct StatusLine *s = CreateStatusLine(180, NULL);
-    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
-    STRCMP_EQUAL("", StatusLineGetReasonPhrase(s));
+    CHECK_EQUAL(180, GetStatusCode(s));
+    STRCMP_EQUAL("", GetReasonPhrase(s));
 
     DestroyStatusLine(s);
 }

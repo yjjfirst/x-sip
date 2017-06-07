@@ -35,7 +35,7 @@ int SendMessageMock(char *message, char *destaddr, int destport,  int fd)
             withStringParameter("Method", MethodMap2String(method)).
             returnIntValue();
     } else { 
-        statusCode = StatusLineGetStatusCode(MessageGetStatusLine(m));
+        statusCode = GetStatusCode(MessageGetStatusLine(m));
         DestroyMessage(&m);
         return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
             withIntParameter("StatusCode", statusCode).
@@ -61,7 +61,7 @@ int SendOutMessageMockForMessageDestTest(char *message, char *destaddr, int dest
             withIntParameter("port", destport).
             returnIntValue();
     } else { 
-        statusCode = StatusLineGetStatusCode(MessageGetStatusLine(m));
+        statusCode = GetStatusCode(MessageGetStatusLine(m));
         DestroyMessage(&m);
         return mock().actualCall(SEND_OUT_MESSAGE_MOCK).
             withIntParameter("StatusCode", statusCode).

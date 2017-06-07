@@ -35,8 +35,8 @@ TEST(RingingMessageBuildTestGroup, RingingMessageStatusLineTest)
     
     struct StatusLine *sl = MessageGetStatusLine(ringing);
 
-    CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(180, GetStatusCode(sl));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(sl));
 
     DestroyMessage(&invite);
     DestroyMessage(&ringing);

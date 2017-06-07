@@ -241,9 +241,9 @@ Content-Length:0\r\n";
     ParseMessage(string, message);
     StatusLine *s = MessageGetStatusLine(message);
     
-    STRCMP_EQUAL("SIP/2.0", StatusLineGetSipVersion(s));
-    CHECK_EQUAL(180, StatusLineGetStatusCode(s));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(s));
+    STRCMP_EQUAL("SIP/2.0", GetSIPVersion(s));
+    CHECK_EQUAL(180, GetStatusCode(s));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(s));
 
     DestroyMessage(&message);
 }

@@ -124,7 +124,7 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     struct Transaction *t = NULL;
 
     status = MessageGetStatusLine(message);
-    statusCode = StatusLineGetStatusCode(status);
+    statusCode = GetStatusCode(status);
     t = MatchResponse(message);
 
     if (t) {

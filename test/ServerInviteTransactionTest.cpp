@@ -27,8 +27,8 @@ int SendOut100TryingMock(char *message, char *destaddr, int destport, int fd)
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
     
-    CHECK_EQUAL(100, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(100, GetStatusCode(sl));
+    STRCMP_EQUAL("Trying", GetReasonPhrase(sl));
 
     DestroyMessage(&m);
 
@@ -49,8 +49,8 @@ int SendOut180RingingMock(char *message, char *destaddr, int destport, int fd)
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
-    CHECK_EQUAL(180, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("Ringing", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(180, GetStatusCode(sl));
+    STRCMP_EQUAL("Ringing", GetReasonPhrase(sl));
     DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
@@ -70,8 +70,8 @@ int SendOut301Mock(char *message, char *destaddr, int destport, int fd)
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
-    CHECK_EQUAL(STATUS_CODE_MOVED_PERMANENTLY, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(STATUS_CODE_MOVED_PERMANENTLY, GetStatusCode(sl));
+    STRCMP_EQUAL(REASON_PHRASE_MOVED_PERMANENTLY, GetReasonPhrase(sl));
     DestroyMessage(&m);
 
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
@@ -91,8 +91,8 @@ int SendOut200OKMock(char *message, char *destaddr, int destport, int fd)
     ParseMessage(message, m);
     struct StatusLine *sl = MessageGetStatusLine(m);
 
-    CHECK_EQUAL(200, StatusLineGetStatusCode(sl));
-    STRCMP_EQUAL("OK", StatusLineGetReasonPhrase(sl));
+    CHECK_EQUAL(200, GetStatusCode(sl));
+    STRCMP_EQUAL("OK", GetReasonPhrase(sl));
     DestroyMessage(&m);
     return mock().actualCall(SEND_OUT_MESSAGE_MOCK).returnIntValue();    
 }

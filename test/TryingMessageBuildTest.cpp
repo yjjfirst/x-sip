@@ -30,9 +30,9 @@ TEST(TryingMessageBuildTestGroup, TryingMessageStatusLineTest)
     struct StatusLine *status = MessageGetStatusLine(trying);
     
     CHECK_TRUE(status != NULL);
-    STRCMP_EQUAL(SIP_VERSION, StatusLineGetSipVersion(status));
-    CHECK_EQUAL(100, StatusLineGetStatusCode(status));
-    STRCMP_EQUAL("Trying", StatusLineGetReasonPhrase(status));
+    STRCMP_EQUAL(SIP_VERSION, GetSIPVersion(status));
+    CHECK_EQUAL(100, GetStatusCode(status));
+    STRCMP_EQUAL("Trying", GetReasonPhrase(status));
 
     DestroyMessage(&trying);
     DestroyMessage(&invite);

@@ -23,34 +23,34 @@ void ParseStatusLine(char *string, struct StatusLine *s)
     Parse(string, s, StatusLinePattern); 
 }
 
-char *StatusLineGetSipVersion(struct StatusLine *s)
+char *GetSIPVersion(struct StatusLine *s)
 {
     return s->sipVersion;
 }
 
-void StatusLineSetSipVersion(struct StatusLine *s, char *version)
+void SetSIPVersion(struct StatusLine *s, char *version)
 {
     Copy2Target(s, version, &StatusLinePattern[0]);
 }
 
-int StatusLineGetStatusCode(struct StatusLine *s)
+int GetStatusCode(struct StatusLine *s)
 {
     assert(s != NULL);
     return s->statusCode;
 }
 
-void StatusLineSetStatusCode(struct StatusLine *s, int statusCode)
+void SetStatusCode(struct StatusLine *s, int statusCode)
 {
     SetIntegerField(s, statusCode, &StatusLinePattern[1]);
 }
 
-char *StatusLineGetReasonPhrase(struct StatusLine *s)
+char *GetReasonPhrase(struct StatusLine *s)
 {
     assert (s != NULL);
     return s->reasonPhrase;
 }
 
-void StatusLineSetReasonPhrase(struct StatusLine *s, char *reasonPhrase)
+void SetReasonPhrase(struct StatusLine *s, char *reasonPhrase)
 {
     
     Copy2Target(s, reasonPhrase, &StatusLinePattern[2]);
@@ -66,10 +66,10 @@ char *StatusLine2String(char *result, struct StatusLine *s)
 struct StatusLine *CreateStatusLine(int statusCode, const char *reasonPhrase)
 {
     struct StatusLine *s = calloc(1, sizeof(struct StatusLine));
-    StatusLineSetSipVersion(s, SIP_VERSION);
-    StatusLineSetStatusCode(s, statusCode);
+    SetSIPVersion(s, SIP_VERSION);
+    SetStatusCode(s, statusCode);
     if (reasonPhrase != NULL)
-        StatusLineSetReasonPhrase(s, (char *)reasonPhrase);
+        SetReasonPhrase(s, (char *)reasonPhrase);
     return s;
 }
 
