@@ -318,6 +318,6 @@ TEST(UASDialogTestGroup, PeerCanceledNotifyCmTest)
         withParameter("ua", ua);
     mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).withIntParameter("StatusCode", 200);
 
-    OnTransactionEvent(dialog, TRANSACTION_EVENT_CANCELED, cancel);
+    OnTransactionEvent(dialog, TRANSACTION_EVENT_CANCEL, cancel);
     OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, cancel);
 }

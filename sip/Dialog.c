@@ -253,7 +253,7 @@ struct TransactionEventAction TransactionEventActions[] = {
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_CANCEL, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
-    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_CANCELED, HandleCancelEvent},
+    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_CANCEL, HandleCancelEvent},
     {-1, -1, 0},
 };
 

@@ -151,7 +151,7 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
             struct Dialog *d = (struct Dialog *)GetTransactionUser(t);
             struct Message *rt = BuildResponse(message, 487);
 
-            OnTransactionEvent(d, TRANSACTION_EVENT_CANCELED, message);            
+            OnTransactionEvent(d, TRANSACTION_EVENT_CANCEL, message);            
             ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
 
             OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);            
