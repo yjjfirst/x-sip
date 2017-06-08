@@ -31,39 +31,38 @@ enum TransactionType {
     TRANSACTION_TYPE_MAX,
 };
 
-enum TransactionEvent {    
-    TRANSACTION_SEND_RINGING,
-    TRANSACTION_SEND_TRYING,
-    TRANSACTION_SEND_OK,
-    TRANSACTION_SEND_MOVED,
-    TRANSACTION_SEND_REQUEST_TERMINATED,
-    
-    TRANSACTION_EVENT_NEW,
-    TRANSACTION_EVENT_INIT,
-    TRANSACTION_EVENT_ACK,
-    TRANSACTION_EVENT_INVITE,
-    TRANSACTION_EVENT_CANCEL,
-    TRANSACTION_EVENT_BYE,
-    TRANSACTION_EVENT_1XX,
-    TRANSACTION_EVENT_2XX,
-    TRANSACTION_EVENT_3XX,
-    TRANSACTION_EVENT_4XX,
-    TRANSACTION_EVENT_5XX,
-    TRANSACTION_EVENT_6XX,    
-    TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,
-    TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,
-    TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED,
-    TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED,
-    TRANSACTION_EVENT_TRANSPORT_ERROR,
-    TRANSACTION_EVENT_MAX,
-};
+#define TRANSACTION_SEND_RINGING 1<<0
+#define TRANSACTION_SEND_TRYING  1<<1
+#define TRANSACTION_SEND_OK 1<<2
+#define TRANSACTION_SEND_MOVED 1<<3
+#define TRANSACTION_SEND_REQUEST_TERMINATED 1<<4
+
+#define TRANSACTION_EVENT_NEW 1<<5
+#define TRANSACTION_EVENT_INIT 1<<6
+#define TRANSACTION_EVENT_ACK 1<<7
+#define TRANSACTION_EVENT_INVITE 1<<8
+#define TRANSACTION_EVENT_CANCEL 1<<9
+#define TRANSACTION_EVENT_BYE 1<<10
+#define TRANSACTION_EVENT_1XX 1<<11
+#define TRANSACTION_EVENT_2XX 1<<12
+#define TRANSACTION_EVENT_3XX 1<<13
+#define TRANSACTION_EVENT_4XX 1<<14
+#define TRANSACTION_EVENT_5XX 1<<15
+#define TRANSACTION_EVENT_6XX 1<<16  
+#define TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED 1<<17
+#define TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED 1<<18
+#define TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED 1<<19
+#define TRANSACTION_EVENT_WAIT_REQUEST_RETRANSMITS_TIMER_FIRED 1<<20
+#define TRANSACTION_EVENT_TRANSPORT_ERROR 1<<21
+
+#define TRANSACTION_EVENT_MAX 32
 
 extern void (*OnTransactionEvent)(struct Dialog *dialog, int event, struct Message *messge);
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
-int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event);
-void Response(struct Transaction *t, enum TransactionEvent e);
+int ResponseWith(struct Transaction *t, struct Message *message, int event);
+void Response(struct Transaction *t, int e);
 
 void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
@@ -73,9 +72,9 @@ struct TransactionId *GetTransactionId(struct Transaction *t);
 extern struct Message *(*GetTransactionRequest)(struct Transaction *t);
 extern struct Message *(*GetLatestResponse)(struct Transaction *t);
 void AddResponse(struct Transaction *t, struct Message *message);
-enum TransactionEvent GetCurrentEvent(struct Transaction *t);
+int GetCurrentEvent(struct Transaction *t);
 
-void RunFsm(struct Transaction *t, enum TransactionEvent event);
+void RunFsm(struct Transaction *t, int event);
 void RunFsmByStatusCode(struct Transaction *t, int statusCode);
 
 void SetTransactionObserver(struct Transaction *t, struct TransactionManager *manager);
@@ -86,9 +85,9 @@ enum TransactionType GetTransactionType(struct Transaction *t);
 
 BOOL ResponseTransactionMatched(struct Transaction *t, struct Message *response);
 BOOL RequestTransactionMatched(struct Transaction *t, struct Message *m);
-enum TransactionEvent MapStatusCodeToEvent(int statusCode);
+int MapStatusCodeToEvent(int statusCode);
 
 
 void DumpTransaction(struct Transaction *t);
 char *TransactionState2String(enum TransactionState s);
-char *TransactionEvent2String(enum TransactionEvent e);
+char *TransactionEvent2String(int e);

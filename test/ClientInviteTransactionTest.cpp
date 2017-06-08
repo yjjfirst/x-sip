@@ -218,9 +218,28 @@ TEST(ClientInviteTransactionTestGroup, CallingStateTimerBTest)
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));
 }
 
-IGNORE_TEST(ClientInviteTransactionTestGroup, CallingState300_699ReceiveTest)
+TEST(ClientInviteTransactionTestGroup, CallingState300ReceiveTest)
 {
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     RunFsmByStatusCode(t, 300);
+}
+
+TEST(ClientInviteTransactionTestGroup, CallingState301ReceiveTest)
+{
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 301);
+}
+
+TEST(ClientInviteTransactionTestGroup, CallingState501ReceiveTest)
+{
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 501);
+}
+
+TEST(ClientInviteTransactionTestGroup, CallingState699ReceiveTest)
+{
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 699);
 }
 
 //Proceeding state.

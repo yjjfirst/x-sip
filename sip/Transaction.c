@@ -35,7 +35,7 @@ struct Transaction {
 };
 
 struct FsmStateEventEntry {
-    enum TransactionEvent event;
+    int events;
     enum TransactionState nextState;
     TransactionEventAction actions[TRANSACTION_ACTIONS_MAX + 1];
 };
@@ -239,7 +239,7 @@ enum TransactionType GetTransactionType(struct Transaction *t)
     return t->type;
 }
 
-enum TransactionEvent GetCurrentEvent(struct Transaction *t)
+int GetCurrentEvent(struct Transaction *t)
 {
     return t->curEvent;
 }
@@ -249,7 +249,7 @@ struct TransactionUser *GetTransactionUser(struct Transaction *t)
     return t->user;
 }
 
-int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event)
+int ResponseWith(struct Transaction *t, struct Message *message, int event)
 {
     AddResponse(t, message);
 
@@ -262,7 +262,7 @@ int ResponseWith(struct Transaction *t, struct Message *message, enum Transactio
     return 0;
 }
 
-void Response(struct Transaction *t, enum TransactionEvent e)
+void Response(struct Transaction *t, int e)
 {
     struct Message *message = NULL;
 
@@ -511,7 +511,7 @@ struct FsmState ClientInviteCallingState = {
         },
         
         {
-            TRANSACTION_EVENT_3XX,
+            TRANSACTION_EVENT_3XX | TRANSACTION_EVENT_5XX | TRANSACTION_EVENT_6XX,
             TRANSACTION_STATE_COMPLETED,
             {
                 AddWaitForResponseTimer
@@ -663,7 +663,7 @@ void InvokeActions(struct Transaction *t, struct FsmStateEventEntry *e)
     }
 }
 
-void TransactionHandleEvent(struct Transaction *t, enum TransactionEvent event, struct FsmStateEventEntry *entry)
+void TransactionHandleEvent(struct Transaction *t, int event, struct FsmStateEventEntry *entry)
 {
 
     t->curEvent = event;
@@ -689,7 +689,7 @@ struct FsmState *LocateFsmState(struct Transaction *t)
     return fsmState;
 }
 
-struct FsmStateEventEntry *LocateEventEntry(struct Transaction *t, enum TransactionEvent event)
+struct FsmStateEventEntry *LocateEventEntry(struct Transaction *t, int event)
 {
     int i = 0;
     struct FsmStateEventEntry *entrys = NULL;
@@ -698,8 +698,8 @@ struct FsmStateEventEntry *LocateEventEntry(struct Transaction *t, enum Transact
     if ((fsmState = LocateFsmState(t)) == NULL) return NULL;
 
     entrys = fsmState->entrys;
-    for ( i = 0; entrys[i].event != TRANSACTION_EVENT_MAX; i++) {
-        if (entrys[i].event == event) {
+    for ( i = 0; entrys[i].events != TRANSACTION_EVENT_MAX; i++) {
+        if ((entrys[i].events & event) != 0) {
             return &entrys[i];
         }
     }
@@ -751,12 +751,12 @@ char *TransactionState2String(enum TransactionState s)
     return IntMap2String(s, TransactionStateStringMap);
 }
 
-char *TransactionEvent2String(enum TransactionEvent e)
+char *TransactionEvent2String(int e)
 {
     return IntMap2String(e, TransactionEventStringMap);
 }
 
-void RunFsm(struct Transaction *t, enum TransactionEvent event)
+void RunFsm(struct Transaction *t, int event)
 {
     assert(t != NULL);
     struct FsmStateEventEntry *entry = NULL;
@@ -779,7 +779,7 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     assert (0);
 }
 
-enum TransactionEvent MapStatusCodeToEvent(int statusCode)
+int MapStatusCodeToEvent(int statusCode)
 {    
     if (100 <= statusCode && statusCode < 200) {
         return TRANSACTION_EVENT_1XX;
