@@ -34,15 +34,10 @@ enum TransactionType {
 enum TransactionEvent {
     TRANSACTION_EVENT_NEW,
     TRANSACTION_EVENT_INIT,
-    TRANSACTION_EVENT_OK,
     TRANSACTION_EVENT_ACK,
-    TRANSACTION_EVENT_RINGING,
-    TRANSACTION_EVENT_UNAUTHORIZED,
-    TRANSACTION_EVENT_MOVED_TEMPORARILY,
     TRANSACTION_EVENT_INVITE,
     TRANSACTION_EVENT_CANCELED,
     TRANSACTION_EVENT_BYE,
-    TRANSACTION_EVENT_SERVICE_UNAVAIL,
     
     TRANSACTION_SEND_RINGING,
     TRANSACTION_SEND_TRYING,
@@ -51,6 +46,11 @@ enum TransactionEvent {
     TRANSACTION_SEND_REQUEST_TERMINATED,
     
     TRANSACTION_EVENT_1XX,
+    TRANSACTION_EVENT_2XX,
+    TRANSACTION_EVENT_3XX,
+    TRANSACTION_EVENT_4XX,
+    TRANSACTION_EVENT_5XX,
+    TRANSACTION_EVENT_6XX,
 
 
     
@@ -63,13 +63,11 @@ enum TransactionEvent {
 };
 
 extern void (*OnTransactionEvent)(struct Dialog *dialog, int event, struct Message *messge);
-
 struct Transaction *CreateTransaction(struct Message *request, struct TransactionUser *user, enum TransactionType type);
 void DestroyTransaction(struct Transaction **t);
 
 int ResponseWith(struct Transaction *t, struct Message *message, enum TransactionEvent event);
 void Response(struct Transaction *t, enum TransactionEvent e);
-
 
 void ReceiveAckRequest(struct Transaction *t);
 void Receive3xxResponse(struct Transaction *t);
@@ -92,6 +90,8 @@ enum TransactionType GetTransactionType(struct Transaction *t);
 
 BOOL ResponseTransactionMatched(struct Transaction *t, struct Message *response);
 BOOL RequestTransactionMatched(struct Transaction *t, struct Message *m);
+enum TransactionEvent MapStatusCodeToEvent(int statusCode);
+
 
 void DumpTransaction(struct Transaction *t);
 char *TransactionState2String(enum TransactionState s);

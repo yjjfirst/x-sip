@@ -309,7 +309,7 @@ void ReceiveAckRequest(struct Transaction *t)
 
 void Receive3xxResponse(struct Transaction *t)
 {
-    RunFsm(t, TRANSACTION_EVENT_MOVED_TEMPORARILY);
+    RunFsm(t, TRANSACTION_EVENT_3XX);
 }
 
 void ReceiveDupRequest(struct Transaction *t, MESSAGE *message)
@@ -417,9 +417,9 @@ struct FsmState ClientNonInviteInitState = {
 struct FsmState ClientNonInviteTryingState = {
     TRANSACTION_STATE_TRYING,
     {
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
+        {TRANSACTION_EVENT_2XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
         {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING, {ResetRetransmits}},
-        {TRANSACTION_EVENT_UNAUTHORIZED, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
+        {TRANSACTION_EVENT_4XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer, InformTU}},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_TRYING, {
                 SendRequestMessage,
                 IncRetransmit,
@@ -433,9 +433,8 @@ struct FsmState ClientNonInviteTryingState = {
 struct FsmState ClientNonInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_2XX, TRANSACTION_STATE_COMPLETED,{AddWaitForResponseTimer}},
         {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING},
-        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING},
         {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_PROCEEDING,{
                 SendRequestMessage,
                 IncRetransmit,
@@ -479,16 +478,46 @@ struct FsmState ClientInviteInitState = {
 struct FsmState ClientInviteCallingState = {
     TRANSACTION_STATE_CALLING,
     {
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{InformTU}},
-        {TRANSACTION_EVENT_1XX,TRANSACTION_STATE_PROCEEDING,{ResetRetransmits}},
-        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{InformTU}},
-        {TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,TRANSACTION_STATE_CALLING,{
+        {
+            TRANSACTION_EVENT_2XX,
+            TRANSACTION_STATE_TERMINATED,
+            {InformTU}
+        },
+
+        {
+            TRANSACTION_EVENT_1XX,
+            TRANSACTION_STATE_PROCEEDING,
+            {ResetRetransmits}
+        },
+
+        {
+            TRANSACTION_EVENT_RETRANSMIT_TIMER_FIRED,
+            TRANSACTION_STATE_CALLING,
+            {
                 SendRequestMessage,
                 IncRetransmit,
-                ClientInviteAddRetransmitTimer}},
-        {TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+                ClientInviteAddRetransmitTimer
+            }
+        },
+        
+        {
+            TRANSACTION_EVENT_TIMEOUT_TIMER_FIRED,
+            TRANSACTION_STATE_TERMINATED
+        },
+
+        {
+            TRANSACTION_EVENT_TRANSPORT_ERROR,
+            TRANSACTION_STATE_TERMINATED
+        },
+        
+        {
+            TRANSACTION_EVENT_3XX,
+            TRANSACTION_STATE_COMPLETED,
+            {
+                AddWaitForResponseTimer
+            }
+        },
+        
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -496,11 +525,10 @@ struct FsmState ClientInviteCallingState = {
 struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
-        {TRANSACTION_EVENT_OK, TRANSACTION_STATE_TERMINATED,{InformTU}},
+        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+        {TRANSACTION_EVENT_2XX, TRANSACTION_STATE_TERMINATED,{InformTU}},
         {TRANSACTION_EVENT_1XX, TRANSACTION_STATE_PROCEEDING, {InformTU}},
-        {TRANSACTION_EVENT_RINGING, TRANSACTION_STATE_PROCEEDING,{InformTU}},
-        {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
+        {TRANSACTION_EVENT_5XX,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_MAX},
     }
 };
@@ -508,9 +536,9 @@ struct FsmState ClientInviteProceedingState = {
 struct FsmState ClientInviteCompletedState = {
     TRANSACTION_STATE_COMPLETED,
     {
-        {TRANSACTION_EVENT_MOVED_TEMPORARILY, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
+        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_SERVICE_UNAVAIL,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
+        {TRANSACTION_EVENT_5XX,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX},
     }
@@ -544,7 +572,7 @@ struct FsmState ServerInviteProceedingState = {
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_SEND_REQUEST_TERMINATED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_SEND_OK, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_SEND_MOVED, TRANSACTION_STATE_COMPLETED, {ClientNonInviteAddRetransmitTimer, AddTimeoutTimer}},        
+        {TRANSACTION_SEND_MOVED, TRANSACTION_STATE_COMPLETED, {ClientNonInviteAddRetransmitTimer, AddTimeoutTimer}},
         {TRANSACTION_EVENT_MAX}
     }
 };
@@ -693,15 +721,15 @@ struct IntStringMap TransactionStateStringMap[] = {
 struct IntStringMap TransactionEventStringMap[] = {
     INT_STRING_MAP(TRANSACTION_EVENT_NEW),
     INT_STRING_MAP(TRANSACTION_EVENT_INIT),
-    INT_STRING_MAP(TRANSACTION_EVENT_OK),
     INT_STRING_MAP(TRANSACTION_EVENT_ACK),
     INT_STRING_MAP(TRANSACTION_EVENT_1XX),
-    INT_STRING_MAP(TRANSACTION_EVENT_RINGING),
-    INT_STRING_MAP(TRANSACTION_EVENT_UNAUTHORIZED),
-    INT_STRING_MAP(TRANSACTION_EVENT_MOVED_TEMPORARILY),
+    INT_STRING_MAP(TRANSACTION_EVENT_2XX),
+    INT_STRING_MAP(TRANSACTION_EVENT_3XX),
+    INT_STRING_MAP(TRANSACTION_EVENT_4XX),
+    INT_STRING_MAP(TRANSACTION_EVENT_5XX),
+    INT_STRING_MAP(TRANSACTION_EVENT_6XX),
     INT_STRING_MAP(TRANSACTION_EVENT_INVITE),
     INT_STRING_MAP(TRANSACTION_EVENT_BYE),
-    INT_STRING_MAP(TRANSACTION_EVENT_SERVICE_UNAVAIL),
     
     INT_STRING_MAP(TRANSACTION_SEND_RINGING),
     INT_STRING_MAP(TRANSACTION_SEND_TRYING),
@@ -751,28 +779,22 @@ void RunFsm(struct Transaction *t, enum TransactionEvent event)
     assert (0);
 }
 
-struct StatusCodeEventMap {
-    int start;
-    int end;
-    enum TransactionEvent event;
-} StatusCodeEventMap[] = {
-    {100, 0, TRANSACTION_EVENT_1XX},
-    {180, 0, TRANSACTION_EVENT_RINGING},
-    {200, 0, TRANSACTION_EVENT_OK},
-    {401, 0, TRANSACTION_EVENT_UNAUTHORIZED},
-    {503, 0, TRANSACTION_EVENT_SERVICE_UNAVAIL},
-    {0, 0, 0},
-};
-
 enum TransactionEvent MapStatusCodeToEvent(int statusCode)
-{
-    int i = 0;
-    for (; StatusCodeEventMap[i].start != 0; i++) {
-        if (StatusCodeEventMap[i].start == statusCode) {
-            return StatusCodeEventMap[i].event;
-        }
+{    
+    if (100 <= statusCode && statusCode < 200) {
+        return TRANSACTION_EVENT_1XX;
+    } else if ( 200 <= statusCode && statusCode < 300) {
+        return TRANSACTION_EVENT_2XX;
+    } else if ( 300 <= statusCode && statusCode < 400) {
+        return TRANSACTION_EVENT_3XX;
+    } else if ( 400 <= statusCode && statusCode < 500) {
+        return TRANSACTION_EVENT_4XX;
+    } else if ( 500 <= statusCode && statusCode < 600) {
+        return TRANSACTION_EVENT_5XX;
+    } else if ( 600 <= statusCode && statusCode < 700) {
+        return TRANSACTION_EVENT_6XX;
     }
-
+    
     return statusCode;
 }
 

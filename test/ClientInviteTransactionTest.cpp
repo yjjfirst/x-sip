@@ -190,7 +190,7 @@ TEST(ClientInviteTransactionTestGroup, CallingStateReveive180Test)
 
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(INVITE_100TRYING_MESSAGE);
     mock().expectOneCall(RECEIVE_IN_MESSAGE_MOCK).andReturnValue(RINGING_MESSAGE_RECEIVED);
-    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_RINGING);;
+    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_1XX);
     
     ReceiveMessage();
     ReceiveMessage();    
@@ -237,7 +237,7 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState2xxReceiveTest)
     UT_PTR_SET(OnTransactionEvent, OnTransactionEventMock);
     PrepareProceedingState();
 
-    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_OK);
+    mock().expectOneCall("OnTransactionEvent").withIntParameter("event", TRANSACTION_EVENT_2XX);
     RunFsmByStatusCode(t, 200);
 
     POINTERS_EQUAL(NULL, GetTransaction(branch, (char *)SIP_METHOD_NAME_INVITE));

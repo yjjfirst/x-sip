@@ -104,12 +104,13 @@ TEST(TransactionTestGroup, TransactionStateToStringTest)
 TEST(TransactionTestGroup, TransactionEventToStringTest)
 {
     STRCMP_EQUAL("TRANSACTION_EVENT_NEW", TransactionEvent2String(TRANSACTION_EVENT_NEW));
-    STRCMP_EQUAL("TRANSACTION_EVENT_OK",TransactionEvent2String(TRANSACTION_EVENT_OK));
+    STRCMP_EQUAL("TRANSACTION_EVENT_2XX",TransactionEvent2String(TRANSACTION_EVENT_2XX));
     STRCMP_EQUAL("TRANSACTION_EVENT_ACK",TransactionEvent2String(TRANSACTION_EVENT_ACK));
     STRCMP_EQUAL("TRANSACTION_EVENT_1XX",TransactionEvent2String(TRANSACTION_EVENT_1XX));
-    STRCMP_EQUAL("TRANSACTION_EVENT_RINGING",TransactionEvent2String(TRANSACTION_EVENT_RINGING));
-    STRCMP_EQUAL("TRANSACTION_EVENT_UNAUTHORIZED",TransactionEvent2String(TRANSACTION_EVENT_UNAUTHORIZED));
-    STRCMP_EQUAL("TRANSACTION_EVENT_MOVED_TEMPORARILY",TransactionEvent2String(TRANSACTION_EVENT_MOVED_TEMPORARILY));
+    STRCMP_EQUAL("TRANSACTION_EVENT_3XX",TransactionEvent2String(TRANSACTION_EVENT_3XX));
+    STRCMP_EQUAL("TRANSACTION_EVENT_4XX",TransactionEvent2String(TRANSACTION_EVENT_4XX));
+    STRCMP_EQUAL("TRANSACTION_EVENT_5XX",TransactionEvent2String(TRANSACTION_EVENT_5XX));
+    STRCMP_EQUAL("TRANSACTION_EVENT_6XX",TransactionEvent2String(TRANSACTION_EVENT_6XX));
     STRCMP_EQUAL("TRANSACTION_EVENT_INVITE",TransactionEvent2String(TRANSACTION_EVENT_INVITE));
     STRCMP_EQUAL("TRANSACTION_EVENT_BYE",TransactionEvent2String(TRANSACTION_EVENT_BYE));
     
@@ -130,4 +131,34 @@ TEST(TransactionTestGroup, SetTransactionStateTest)
     
     DestroyUserAgent(&ua);
     DestroyTransaction(&t);
+}
+
+TEST(TransactionTestGroup, StatusCodeMapToEventTest)
+{
+    int code;
+    
+    for (code = 100; code < 200; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_1XX, MapStatusCodeToEvent(code));
+    }
+
+    for (code = 200; code < 300; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_2XX, MapStatusCodeToEvent(code));
+    }
+
+    for (code = 300; code < 400; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_3XX, MapStatusCodeToEvent(code));
+    }
+
+    for (code = 400; code < 500; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_4XX, MapStatusCodeToEvent(code));
+    }
+
+    for (code = 500; code < 600; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_5XX, MapStatusCodeToEvent(code));
+    }
+
+    for (code = 600; code < 700; code ++) {
+        CHECK_EQUAL(TRANSACTION_EVENT_6XX, MapStatusCodeToEvent(code));
+    }
+
 }

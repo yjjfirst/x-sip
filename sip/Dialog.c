@@ -190,13 +190,13 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct UserAgent *ua = DialogGetUa(dialog);
     
-    if (event == TRANSACTION_EVENT_OK) {    
+    if (event == TRANSACTION_EVENT_2XX) {    
         if (MessageGetExpires(message) != 0) {
             UaSetBinded(ua);
         } else {
             UaSetUnbinded(ua);
         }
-    } else if (event == TRANSACTION_EVENT_UNAUTHORIZED) {
+    } else if (event == TRANSACTION_EVENT_4XX) {
         MESSAGE *authMessage = BuildAuthorizationMessage(
             message,
             UaGetAuthname(ua),
@@ -209,9 +209,9 @@ void HandleRegisterEvent (struct Dialog *dialog, int event, MESSAGE *message)
 
 void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message)
 {
-    if (event == TRANSACTION_EVENT_OK) {
+    if (event == TRANSACTION_EVENT_2XX) {
         DialogReceiveOk(dialog, message);
-    } else if (event == TRANSACTION_EVENT_RINGING) {
+    } else if (event == TRANSACTION_EVENT_1XX) {
         DialogReceiveRinging(dialog, message);
     }
 }
@@ -246,10 +246,10 @@ void HandleCancelEvent(struct Dialog *dialog, int event, MESSAGE *message)
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_OK, HandleRegisterEvent},
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_UNAUTHORIZED, HandleRegisterEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_OK, HandleInviteEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_RINGING, HandleInviteEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_2XX, HandleRegisterEvent},
+    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_4XX, HandleRegisterEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_2XX, HandleInviteEvent},
+    {SIP_METHOD_INVITE, TRANSACTION_EVENT_1XX, HandleInviteEvent},
     {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
     {SIP_METHOD_CANCEL, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
