@@ -52,7 +52,7 @@ static struct Timer *AddTimerMock(void *p, int interval, TimerCallback action)
     return NULL;
 }
 
-static int SendMessageMock(MESSAGE *msg)
+static int SendAckMessageMock(MESSAGE *msg)
 {
     mock().actualCall("SendMessage");
 
@@ -246,6 +246,7 @@ TEST(ClientInviteTransactionTestGroup, CallingState699ReceiveTest)
 TEST(ClientInviteTransactionTestGroup, ProceedingState3xxReceiveTest)
 {
     PrepareProceedingState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
     mock().expectOneCall("AddTimer").withParameter("ms", WAIT_TIME_FOR_RESPONSE_RETRANSMITS);
     Receive3xxResponse(t);
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
@@ -277,32 +278,95 @@ TEST(ClientInviteTransactionTestGroup, ProceedingState5xxReceiveTest)
 {
     PrepareProceedingState();
     
-    UT_PTR_SET(SendMessage, SendMessageMock);
+    UT_PTR_SET(SendMessage, SendAckMessageMock);
     UT_PTR_SET(GetLatestResponse, GetLatestResponseMock);
     
     mock().expectOneCall("SendMessage");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     RunFsmByStatusCode(t, 503);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
     DestroyMessage(&mock_message);
 }
 
+TEST(ClientInviteTransactionTestGroup, ProceedingState300ReceiveTest)
+{
+    PrepareProceedingState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 300);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));    
+}
+
+TEST(ClientInviteTransactionTestGroup, ProceedingState401ReceiveTest)
+{
+    PrepareProceedingState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 401);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
+    
+}
+
+TEST(ClientInviteTransactionTestGroup, ProceedingState501ReceiveTest)
+{
+    PrepareProceedingState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 501);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));     
+}
+
+TEST(ClientInviteTransactionTestGroup, ProceedingState699ReceiveTest)
+{
+    PrepareProceedingState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 699);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
+}
 
 //Completed state
-TEST(ClientInviteTransactionTestGroup, CompletedState5xxReceiveTest)
+TEST(ClientInviteTransactionTestGroup, CompletedState5XXAckMessageTest)
 {
     PrepareProceedingState();
     
-    UT_PTR_SET(SendMessage, SendMessageMock);
+    UT_PTR_SET(SendMessage, SendAckMessageMock);
     UT_PTR_SET(GetLatestResponse, GetLatestResponseMock);
 
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     mock().expectOneCall("SendMessage");
     RunFsmByStatusCode(t, 503);
     DestroyMessage(&mock_message);
     
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
     mock().expectOneCall("SendMessage");
     RunFsmByStatusCode(t, 503);
     DestroyMessage(&mock_message);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
+}
+
+TEST(ClientInviteTransactionTestGroup, CompletedState401ReceiveTest)
+{
+    PrepareCompletedState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 401);
+
+    CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));    
+}
+
+TEST(ClientInviteTransactionTestGroup, CompletedState699ReceiveTest)
+{
+    PrepareCompletedState();
+    mock().expectOneCall("SendOutMessageMock").withParameter("Method", "ACK");
+    mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
+    RunFsmByStatusCode(t, 699);
 
     CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
 }
@@ -318,6 +382,7 @@ TEST(ClientInviteTransactionTestGroup, CompletedStateReceive3xxTest)
     for (;i < 20; i++) {
         mock().expectOneCall(SEND_OUT_MESSAGE_MOCK).
             withStringParameter("Method", MethodMap2String(SIP_METHOD_ACK));
+        mock().expectOneCall("AddTimer").withIntParameter("ms", T4);    
         Receive3xxResponse(t);
         CHECK_EQUAL(TRANSACTION_STATE_COMPLETED, GetTransactionState(t));
     }

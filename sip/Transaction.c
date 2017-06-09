@@ -525,10 +525,17 @@ struct FsmState ClientInviteCallingState = {
 struct FsmState ClientInviteProceedingState = {
     TRANSACTION_STATE_PROCEEDING,
     {
-        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {AddWaitForResponseTimer}},
+        {
+            TRANSACTION_EVENT_3XX | TRANSACTION_EVENT_4XX | TRANSACTION_EVENT_5XX | TRANSACTION_EVENT_6XX,
+            TRANSACTION_STATE_COMPLETED,
+            {
+                AddWaitForResponseTimer,
+                SendAckRequest
+            }
+        },
+        
         {TRANSACTION_EVENT_2XX, TRANSACTION_STATE_TERMINATED,{InformTU}},
         {TRANSACTION_EVENT_1XX, TRANSACTION_STATE_PROCEEDING, {InformTU}},
-        {TRANSACTION_EVENT_5XX,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_MAX},
     }
 };
@@ -536,9 +543,15 @@ struct FsmState ClientInviteProceedingState = {
 struct FsmState ClientInviteCompletedState = {
     TRANSACTION_STATE_COMPLETED,
     {
-        {TRANSACTION_EVENT_3XX, TRANSACTION_STATE_COMPLETED, {SendAckRequest}},
+        {
+            TRANSACTION_EVENT_3XX | TRANSACTION_EVENT_4XX | TRANSACTION_EVENT_5XX | TRANSACTION_EVENT_6XX,
+            TRANSACTION_STATE_COMPLETED,
+            {
+                SendAckRequest,
+                AddWaitForResponseTimer,
+            }
+        },
         {TRANSACTION_EVENT_TRANSPORT_ERROR, TRANSACTION_STATE_TERMINATED},
-        {TRANSACTION_EVENT_5XX,TRANSACTION_STATE_COMPLETED,{SendAckRequest}},
         {TRANSACTION_EVENT_WAIT_FOR_RESPONSE_TIMER_FIRED, TRANSACTION_STATE_TERMINATED},
         {TRANSACTION_EVENT_MAX},
     }
@@ -774,7 +787,6 @@ void RunFsm(struct Transaction *t, int event)
     printf("Transaction Event: State %s, event %s\n",
            TransactionState2String(GetTransactionState(t)),
            TransactionEvent2String(event));
-
 
     assert (0);
 }
