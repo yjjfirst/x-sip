@@ -33,7 +33,6 @@ struct Dialog {
 
 struct TransactionEventAction {
     SIP_METHOD requestMethod;
-    int event;
     void (*action)(struct Dialog *dialog, int event, MESSAGE *message);
 };
 
@@ -211,82 +210,65 @@ void HandleInviteEvent(struct Dialog *dialog, int event, struct Message *message
 {
     if (event == TRANSACTION_EVENT_2XX) {
         DialogReceiveOk(dialog, message);
-    } else if (event == TRANSACTION_EVENT_1XX) {
+    }
+    else if (event == TRANSACTION_EVENT_1XX) {
         DialogReceiveRinging(dialog, message);
+    }
+    else if (event == TRANSACTION_EVENT_NEW) {
+        if (MatchMessage2Dialog(message) == NULL) {    
+            struct UserAgent *ua = PassiveAddUa(message);
+            struct Dialog *d = AddDialog(NULL, ua);
+            DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);             
+        }
+    }
+    else if (event == TRANSACTION_EVENT_CANCEL) {
+            NotifyCm(CALL_PEER_CANCELED, DialogGetUa(dialog));
     }
 }
 
-void HandleNewTransactionEvent(struct Dialog *dialog, int event, MESSAGE *message)
+void HandleByeEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
     struct Dialog *matched = MatchMessage2Dialog(message);
-    SIP_METHOD method = MessageGetMethod(message);
-
-    if (matched == NULL) {    
-        struct UserAgent *ua = PassiveAddUa(message);
-        struct Dialog *d = AddDialog(NULL, ua);
-
-        if (method == SIP_METHOD_INVITE) {
-            DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_INVITE);
-        } else { 
-            struct Transaction *t = DialogNewTransaction(d, message, TRANSACTION_TYPE_SERVER_NON_INVITE);
-            Response(t,TRANSACTION_SEND_OK);
-        }
-    } else {
-        if (method == SIP_METHOD_BYE) {
-            DialogReceiveBye(matched, message);
-        }
-        else if (method == SIP_METHOD_CANCEL)
-            DialogReceiveCancel(matched, message);;
-    }
+    if (matched != NULL)
+        DialogReceiveBye(matched, message);
 }
 
 void HandleCancelEvent(struct Dialog *dialog, int event, MESSAGE *message)
 {
-    NotifyCm(CALL_PEER_CANCELED, DialogGetUa(dialog));
+    struct Dialog *matched = MatchMessage2Dialog(message);
+    if (matched != NULL)
+        DialogReceiveCancel(matched, message);
 }
 
 struct TransactionEventAction TransactionEventActions[] = {
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_2XX, HandleRegisterEvent},
-    {SIP_METHOD_REGISTER, TRANSACTION_EVENT_4XX, HandleRegisterEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_2XX, HandleInviteEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_1XX, HandleInviteEvent},
-    {SIP_METHOD_INVITE, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
-    {SIP_METHOD_BYE,    TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
-    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_NEW, HandleNewTransactionEvent},
-    {SIP_METHOD_CANCEL, TRANSACTION_EVENT_CANCEL, HandleCancelEvent},
-    {-1, -1, 0},
+    {SIP_METHOD_REGISTER, HandleRegisterEvent},
+    {SIP_METHOD_INVITE,   HandleInviteEvent},
+    {SIP_METHOD_BYE,      HandleByeEvent},
+    {SIP_METHOD_CANCEL,   HandleCancelEvent},
+    {-1, NULL},
 };
 
-SIP_METHOD GetTransactionRequestMethod(struct Dialog *dialog, MESSAGE *message)
+SIP_METHOD GetRequestMethod(struct Dialog *dialog, MESSAGE *message)
 {
     struct Transaction *t;
-    SIP_METHOD method;
-    SIP_METHOD requestMethod;
 
-    method = MessageGetMethod(message);
-    if (dialog == NULL) {
-        requestMethod = method;
-    } else {
+    if (dialog != NULL) {
         t = dialog->transaction;
-        if (method != SIP_METHOD_CANCEL) {
-            requestMethod = MessageGetMethod(GetTransactionRequest(t));
-        } else {
-            requestMethod = SIP_METHOD_CANCEL;
-        }
+        return MessageGetMethod(GetTransactionRequest(t));
+    } else {
+        return MessageGetMethod(message);
     }
-
-    return requestMethod;
 }
 
 void OnTransactionEventImpl(struct Dialog *dialog,  int event, MESSAGE *message)
 {
     struct TransactionEventAction *action;
-    SIP_METHOD requestMethod = GetTransactionRequestMethod(dialog, message);
+    SIP_METHOD requestMethod = GetRequestMethod(dialog, message);
 
     action = TransactionEventActions;    
     for (; action->requestMethod != -1; action ++)
     {
-        if (requestMethod == action->requestMethod && event == action->event) {
+        if (requestMethod == action->requestMethod) {
             return action->action(dialog, event, message);
         }
     }
