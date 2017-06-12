@@ -282,3 +282,13 @@ TEST(TransactionManager, RemoteCancelNotifyCmTest)
 
     DestroyMessage(&cancel);
 }
+
+TEST(TransactionManager, ReceiveReigsterTest)
+{
+    MESSAGE *reg = CreateMessage();
+    ParseMessage(INCOMMING_REGISTER_MESSAGE, reg);
+
+    SipMessageInput(reg);
+
+    DestroyMessage(&reg);
+}

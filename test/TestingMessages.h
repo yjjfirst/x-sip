@@ -76,3 +76,15 @@ Contact: <sip:88004@192.168.10.1:5064>\r\n                              \
 Max-Forwards: 70\r\n                                                    \
 User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)\r\n                          \
 Content-Length: 0\r\n\r\n"
+
+#define  INCOMMING_REGISTER_MESSAGE (char *) "\
+REGISTER sip:88004@192.168.10.62:5060 SIP/2.0\r\n\
+Via: SIP/2.0/UDP 192.168.10.1:5064;rport;branch=z9hG4bK573969419\r\n    \
+From: <sip:88004@192.168.10.62>;tag=2074940689\r\n                      \
+To: <sip:88004@192.168.10.62>;tag=as317b5f26\r\n                        \
+Call-ID: 1312549293\r\n                                                 \
+CSeq: 22 BYE\r\n                                                        \
+Contact: <sip:88004@192.168.10.1:5064>\r\n                              \
+Max-Forwards: 70\r\n                                                    \
+User-Agent: Linphone/3.6.1 (eXosip2/4.1.0)\r\n                          \
+Content-Length: 0\r\n\r\n"

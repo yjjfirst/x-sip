@@ -142,7 +142,9 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
     SIP_METHOD method = MessageGetMethod(message);
     
     if (!t) {
-        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+        if (method != SIP_METHOD_REGISTER) {
+            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+        }
     } else {
         if (method == SIP_METHOD_INVITE) {
             RunFsm(t, TRANSACTION_EVENT_INVITE);
@@ -155,7 +157,7 @@ BOOL TmHandleRequestMessage(MESSAGE *message)
             ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
 
             OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);            
-        }        
+        } 
     }
 
     return TRUE;
