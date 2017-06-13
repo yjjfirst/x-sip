@@ -5,6 +5,6 @@
 *.Po
 cscope.out
 AllTests
-main
+gui
 t
 cscope.files
