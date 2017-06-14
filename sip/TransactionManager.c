@@ -167,9 +167,9 @@ BOOL SipMessageInput(struct Message *message)
 {
     BOOL garbage;
 
-    if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
+    if (MessageType(message) == MESSAGE_TYPE_RESPONSE) {
         garbage = !TmHandleReponseMessage(message);
-    } else if (MessageGetType(message) == MESSAGE_TYPE_REQUEST){
+    } else if (MessageType(message) == MESSAGE_TYPE_REQUEST){
         garbage = !TmHandleRequestMessage(message);
     }
     
@@ -190,6 +190,7 @@ BOOL SipMessageCallback(char *string, char *ip, int port)
     SetMessagePort(message, port);
     
     if (ParseMessage(string, message) < 0) {
+        DestroyMessage(&message);
         return FALSE;
     }
 

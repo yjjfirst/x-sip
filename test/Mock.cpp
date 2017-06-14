@@ -27,7 +27,7 @@ int SendMessageMock(char *message, char *destaddr, int destport,  int fd)
     int statusCode;
     enum MESSAGE_TYPE type;
 
-    type = MessageGetType(m);
+    type = MessageType(m);
     if (type == MESSAGE_TYPE_REQUEST) {
         method = RequestLineGetMethod(MessageGetRequestLine(m));
         DestroyMessage(&m);
@@ -51,7 +51,7 @@ int SendOutMessageMockForMessageDestTest(char *message, char *destaddr, int dest
     int statusCode;
     enum MESSAGE_TYPE type;
 
-    type = MessageGetType(m);
+    type = MessageType(m);
     if (type == MESSAGE_TYPE_REQUEST) {
         method = RequestLineGetMethod(MessageGetRequestLine(m));
         DestroyMessage(&m);

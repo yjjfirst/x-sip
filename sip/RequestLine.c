@@ -38,7 +38,9 @@ struct HeaderPattern *GetRequestLinePattern ()
 
 int ParseRequestLine(char *string, struct RequestLine *r)
 {
-    return Parse(string, r, GetRequestLinePattern());
+    int status = Parse(string, r, GetRequestLinePattern());
+
+    return status;
 }
 
 char *RequestLineGetMethodName (struct RequestLine *r)

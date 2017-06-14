@@ -292,3 +292,8 @@ TEST(TransactionManager, ReceiveReigsterTest)
 
     DestroyMessage(&reg);
 }
+
+TEST(TransactionManager, ReceiveInvalidMessageTest)
+{
+    CHECK_EQUAL(FALSE, SipMessageCallback((char *)"error message",(char *) "192.168.10.62", 5060));
+}

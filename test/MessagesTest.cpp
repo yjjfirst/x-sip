@@ -599,3 +599,10 @@ TEST(MessageTestGroup, AuthorizationHeader2StringTest)
     
     DestroyMessage(&message);    
 }
+
+TEST(MessageTestGroup, ParseWrongFormatMessageTest)
+{
+    MESSAGE *message = CreateMessage();
+    CHECK_EQUAL(-1, ParseMessage((char *)"error message", message));
+    DestroyMessage(&message);
+}

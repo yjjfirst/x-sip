@@ -28,7 +28,7 @@ int ParseMessage(const char *string, struct Message *message);
 struct Message *CreateMessage();
 void DestroyMessage(struct Message **message);
 
-enum MESSAGE_TYPE MessageGetType(struct Message *message);
+enum MESSAGE_TYPE MessageType(struct Message *message);
 SIP_METHOD MessageGetMethod(struct Message *message);
 void SetMessageType(struct Message *message, enum MESSAGE_TYPE type);
 struct RequestLine *MessageGetRequestLine(struct Message *message);

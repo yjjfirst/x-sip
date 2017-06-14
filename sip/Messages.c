@@ -41,7 +41,7 @@ void SetMessageType(MESSAGE *message, enum MESSAGE_TYPE type)
     message->type = type;
 }
 
-enum MESSAGE_TYPE MessageGetType(MESSAGE *message)
+enum MESSAGE_TYPE MessageType(MESSAGE *message)
 {
     assert(message != NULL);
     return message->type;
@@ -49,11 +49,19 @@ enum MESSAGE_TYPE MessageGetType(MESSAGE *message)
 
 enum MESSAGE_TYPE ParseMessageType(char *line)
 {
+    enum MESSAGE_TYPE type = MESSAGE_TYPE_NONE;
     if (strncmp(line, SIP_VERSION, strlen(SIP_VERSION)) == 0){
-        return MESSAGE_TYPE_RESPONSE;
+        type = MESSAGE_TYPE_RESPONSE;
     } else {
-        return MESSAGE_TYPE_REQUEST;
+        struct RequestLine *rl = CreateEmptyRequestLine();
+        ParseRequestLine(line, rl);
+        if (RequestLineGetMethod(rl) != SIP_METHOD_NONE) {
+            type = MESSAGE_TYPE_REQUEST;
+        }
+        DestroyRequestLine(rl);
     }
+
+    return type;
 }
 
 SIP_METHOD MessageGetMethod(MESSAGE *message)
@@ -106,13 +114,14 @@ int ParseHeaders(char *localString, MESSAGE *message)
     }
 
     line = strtok_r(localString, CRLF, &save_ptr);
-    
-    if (ParseMessageType(line) == MESSAGE_TYPE_REQUEST) {
-        message->type = MESSAGE_TYPE_REQUEST;
+
+    message->type = ParseMessageType(line);
+    if (message->type == MESSAGE_TYPE_REQUEST) {
         MessageParseRequestLine(line, message);
-    } else {
-        message->type = MESSAGE_TYPE_RESPONSE;
+    } else if (message->type == MESSAGE_TYPE_RESPONSE) {
         MessageParseStatusLine(line, message);
+    } else {
+        return -1;
     }
     
     line = strtok_r(NULL, CRLF, &save_ptr);

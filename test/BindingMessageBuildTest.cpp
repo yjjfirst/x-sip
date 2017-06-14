@@ -45,10 +45,10 @@ TEST_GROUP(BindingMessageBuildTestGroup)
 
 TEST(BindingMessageBuildTestGroup, NoneMessageTypeTest)
 {
-    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(m));
+    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageType(m));
 
     MESSAGE *tmpMessage = CreateMessage();
-    CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageGetType(tmpMessage));
+    CHECK_EQUAL(MESSAGE_TYPE_NONE, MessageType(tmpMessage));
     DestroyMessage(&tmpMessage);
 
 }
@@ -59,7 +59,7 @@ TEST(BindingMessageBuildTestGroup, AckMessageTypeTest)
     ParseMessage(INCOMMING_INVITE_MESSAGE, invite);
     
     MESSAGE *tmpMessage = BuildAckMessage(invite, (char *)"192.168.10.62", 5060);
-    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageGetType(tmpMessage));
+    CHECK_EQUAL(MESSAGE_TYPE_REQUEST, MessageType(tmpMessage));
     DestroyMessage(&tmpMessage);
     DestroyMessage(&invite);
 }

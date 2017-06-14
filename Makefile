@@ -1,6 +1,13 @@
-.PHONY: all clean test gui
+.PHONY: all clean test gui cli
 
 DEBUG_LOG=yes
+
+default: test
+
+cli:
+	-@make -C utils all
+	-@make -C sip all
+	-@make -C cli 
 gui:
 	-@make -C utils all
 	-@make -C sip all

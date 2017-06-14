@@ -52,7 +52,7 @@ struct DialogId *CreateFixedDialogId(char *callid, char *localTag, char *remoteT
 void ExtractDialogId(struct DialogId *dialogid, MESSAGE *message)
 {
     SetCallId(dialogid, MessageGetCallId(message));
-    if (MessageGetType(message) == MESSAGE_TYPE_RESPONSE) {
+    if (MessageType(message) == MESSAGE_TYPE_RESPONSE) {
         SetLocalTag(dialogid, MessageGetFromTag(message));
         SetRemoteTag(dialogid, MessageGetToTag(message));
     } else {
