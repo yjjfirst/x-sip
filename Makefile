@@ -23,6 +23,6 @@ clean:
 	-@make -C sip clean
 	-@make -C utils clean
 	-@make -C gui clean
-
+	-@make -C cli clean
 export TEST=$(MAKECMDGOALS)
 export LOG=$(DEBUG_LOG)
