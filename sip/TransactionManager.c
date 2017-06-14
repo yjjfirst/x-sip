@@ -136,31 +136,48 @@ BOOL TmHandleReponseMessage(MESSAGE *message)
     return FALSE;
 }
 
-BOOL TmHandleRequestMessage(MESSAGE *message)
+BOOL TmNewTransaction(MESSAGE *message)
+{
+    SIP_METHOD method = MessageGetMethod(message);
+
+    if (method != SIP_METHOD_REGISTER) {
+        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
+BOOL TmRequestInTransaction(MESSAGE *message)
 {
     struct Transaction *t = MatchRequest(message);
     SIP_METHOD method = MessageGetMethod(message);
-    
-    if (!t) {
-        if (method != SIP_METHOD_REGISTER) {
-            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);
-        }
-    } else {
-        if (method == SIP_METHOD_INVITE) {
-            RunFsm(t, TRANSACTION_EVENT_INVITE);
-            DestroyMessage(&message);
-        } else if (method == SIP_METHOD_CANCEL) {
-            struct Dialog *d = (struct Dialog *)GetTransactionUser(t);
-            struct Message *rt = BuildResponse(message, 487);
 
-            OnTransactionEvent(d, TRANSACTION_EVENT_CANCEL, message);            
-            ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
-
-            OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);            
-        } 
-    }
+    if (method == SIP_METHOD_INVITE) {
+        RunFsm(t, TRANSACTION_EVENT_INVITE);
+        DestroyMessage(&message);
+    } else if (method == SIP_METHOD_CANCEL) {
+        struct Dialog *d = (struct Dialog *)GetTransactionUser(t);
+        struct Message *rt = BuildResponse(message, 487);
+        
+        OnTransactionEvent(d, TRANSACTION_EVENT_CANCEL, message);            
+        ResponseWith(t, rt, TRANSACTION_SEND_REQUEST_TERMINATED);
+        
+        OnTransactionEvent(NULL, TRANSACTION_EVENT_NEW, message);            
+    }     
 
     return TRUE;
+}
+
+BOOL TmHandleRequestMessage(MESSAGE *message)
+{
+    struct Transaction *t = MatchRequest(message);
+    
+    if (!t) {
+        return TmNewTransaction(message);
+    } 
+
+    return TmRequestInTransaction(message);
 }
 
 BOOL SipMessageInput(struct Message *message)

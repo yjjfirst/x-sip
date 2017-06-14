@@ -288,9 +288,7 @@ TEST(TransactionManager, ReceiveReigsterTest)
     MESSAGE *reg = CreateMessage();
     ParseMessage(INCOMMING_REGISTER_MESSAGE, reg);
 
-    SipMessageInput(reg);
-
-    DestroyMessage(&reg);
+    CHECK_EQUAL(FALSE, SipMessageInput(reg));
 }
 
 TEST(TransactionManager, ReceiveInvalidMessageTest)
