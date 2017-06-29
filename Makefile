@@ -7,7 +7,7 @@ default: test
 cli:
 	-@make -C utils all
 	-@make -C sip all
-	-@make -C cli 
+	-@make -C cli cli 
 gui:
 	-@make -C utils all
 	-@make -C sip all
